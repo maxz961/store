@@ -49,3 +49,11 @@ coverage
 
 # pnpm
 pnpm-lock.yaml
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Next.js generated
+next-env.d.ts
+packages/shared/prisma/seed.d.ts*
+packages/shared/prisma/seed.js*

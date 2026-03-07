@@ -58,8 +58,9 @@ describe("AuthService", () => {
     });
 
     it("finds user by email when googleId lookup returns null", async () => {
+      const userWithoutGoogleId = { ...mockUser, googleId: null };
       mockUsersService.findByGoogleId.mockResolvedValue(null);
-      mockUsersService.findByEmail.mockResolvedValue(mockUser);
+      mockUsersService.findByEmail.mockResolvedValue(userWithoutGoogleId);
       mockUsersService.linkGoogleId.mockResolvedValue({ ...mockUser, googleId: "google-123" });
 
       const result = await service.findOrCreateGoogleUser({

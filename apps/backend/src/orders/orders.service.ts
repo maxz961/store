@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, BadRequestException } from "@nestjs/common";
-import { db, OrderStatus } from "@store/shared";
+import { db, OrderStatus, Prisma } from "@store/shared";
 import { CreateOrderDto } from "./dto/create-order.dto";
 import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 
@@ -38,7 +38,7 @@ export class OrdersService {
           userId,
           totalAmount,
           deliveryMethod: dto.deliveryMethod,
-          shippingAddress: dto.shippingAddress,
+          shippingAddress: dto.shippingAddress as unknown as Prisma.InputJsonValue,
           orderItems: {
             create: dto.items.map((item) => {
               const product = products.find((p) => p.id === item.productId)!;
