@@ -13,6 +13,7 @@ import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 
+
 type DeliveryMethod = 'COURIER' | 'PICKUP' | 'POST';
 
 const DELIVERY_OPTIONS: { value: DeliveryMethod; label: string; description: string; icon: typeof Truck }[] = [
@@ -56,7 +57,9 @@ const CheckoutPage = () => {
   };
 
   const handleSelectDelivery = (method: DeliveryMethod) => () => setDeliveryMethod(method);
+
   const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => updateField(field, e.target.value);
+
   const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => updateField('country', e.target.value.toUpperCase());
 
   const handleSubmit = async (e: React.FormEvent) => {

@@ -11,6 +11,7 @@ import { useProductParams } from '@/lib/hooks/useProductParams';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { s } from './Header.styled';
 
+
 export const Header = () => {
   const { theme, setTheme } = useTheme();
   const { get, update } = useProductParams();
@@ -28,8 +29,11 @@ export const Header = () => {
   };
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value);
+
   const handleToggleMenu = () => setMenuOpen(!menuOpen);
+
   const handleCloseMenu = () => setMenuOpen(false);
+
   const handleLogout = () => {
     setMenuOpen(false);
     logout();

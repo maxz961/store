@@ -12,6 +12,7 @@ import { useOrder } from '@/lib/hooks/useOrders';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 
+
 const STATUS_LABELS: Record<string, string> = {
   PENDING: 'Ожидает',
   PROCESSING: 'Обрабатывается',

@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/cart';
 import { s } from './ProductCard.styled';
 
+
 interface Product {
   id: string;
   name: string;

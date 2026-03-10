@@ -3,6 +3,7 @@ import { ProductCatalog } from '@/components/product/ProductCatalog';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { s } from './page.styled';
 
+
 const breadcrumbs = [
   { label: 'Главная', href: '/' },
   { label: 'Каталог' },

@@ -9,6 +9,7 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCartStore } from '@/store/cart';
 import { s } from './page.styled';
 
+
 const breadcrumbs = [
   { label: 'Главная', href: '/' },
   { label: 'Каталог', href: '/products' },
@@ -19,7 +20,9 @@ const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart } = useCartStore();
 
   const handleDecrease = (id: string, quantity: number) => () => updateQuantity(id, quantity - 1);
+
   const handleIncrease = (id: string, quantity: number) => () => updateQuantity(id, quantity + 1);
+
   const handleRemove = (id: string) => () => removeItem(id);
 
   return (

@@ -8,6 +8,7 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { s } from './page.styled';
 
+
 const breadcrumbs = [
   { label: 'Главная', href: '/' },
   { label: 'Профиль' },

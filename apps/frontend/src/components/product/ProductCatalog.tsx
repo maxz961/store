@@ -7,6 +7,7 @@ import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { s } from './ProductCatalog.styled';
 
+
 export const ProductCatalog = () => {
   const { get } = useProductParams();
 

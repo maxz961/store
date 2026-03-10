@@ -13,6 +13,7 @@ import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -62,6 +63,7 @@ const ProductPage = (props: Props) => {
   };
 
   const handleDecreaseQuantity = () => setQuantity((q) => Math.max(1, q - 1));
+
   const handleIncreaseQuantity = () => setQuantity((q) => Math.min(product.stock, q + 1));
 
   const handleAddToCart = () => {

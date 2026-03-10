@@ -5,6 +5,7 @@ import { When } from "react-if";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
+
 export default function NewProductPage() {
   const router = useRouter();
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
@@ -42,8 +43,10 @@ export default function NewProductPage() {
   };
 
   const handleNameInput = (e: React.ChangeEvent<HTMLInputElement>) => handleNameChange(e.target.value);
+
   const handleFormField = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
+
   const handlePublishedChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((f) => ({ ...f, isPublished: e.target.checked }));
 

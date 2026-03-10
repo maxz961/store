@@ -6,6 +6,7 @@ import { When } from 'react-if';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { s } from './ProductFilters.styled';
 
+
 interface Category {
   id: string;
   name: string;
@@ -36,7 +37,9 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
   };
 
   const handleClearCategory = () => update({ categorySlug: undefined });
+
   const handleSelectCategory = (slug: string) => () => update({ categorySlug: slug });
+
   const handleToggleTag = (slug: string) => () => toggleTag(slug);
 
   const hasFilters = currentCategory || currentTags.length > 0;
