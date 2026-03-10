@@ -1,0 +1,125 @@
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
+jest.mock('lucide-react', () => ({
+  ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+}));
+
+const mockPush = jest.fn();
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: mockPush }),
+}));
+
+let mockApiGet: jest.Mock;
+let mockApiPost: jest.Mock;
+
+jest.mock('@/lib/api', () => ({
+  api: {
+    get: (...args: any[]) => mockApiGet(...args),
+    post: (...args: any[]) => mockApiPost(...args),
+  },
+}));
+
+import NewProductPage from './page';
+
+const mockCategories = [
+  { id: 'cat-1', name: 'Электроника' },
+  { id: 'cat-2', name: 'Одежда' },
+];
+
+const mockTags = [
+  { id: 'tag-1', name: 'Новинка' },
+  { id: 'tag-2', name: 'Скидка' },
+];
+
+
+describe('NewProductPage', () => {
+  beforeEach(() => {
+    mockPush.mockClear();
+    mockApiGet = jest.fn().mockImplementation((path: string) => {
+      if (path === '/categories') return Promise.resolve(mockCategories);
+      if (path === '/tags') return Promise.resolve(mockTags);
+      return Promise.resolve([]);
+    });
+    mockApiPost = jest.fn().mockResolvedValue({ id: 'new-prod' });
+  });
+
+  it('renders title', () => {
+    render(<NewProductPage />);
+    expect(screen.getByRole('heading', { name: 'Новый товар' })).toBeInTheDocument();
+  });
+
+  it('renders form sections', () => {
+    render(<NewProductPage />);
+    expect(screen.getByText('Основная информация')).toBeInTheDocument();
+    expect(screen.getByText('Цена и склад')).toBeInTheDocument();
+    expect(screen.getByText('Изображения')).toBeInTheDocument();
+  });
+
+  it('renders breadcrumbs', () => {
+    render(<NewProductPage />);
+    expect(screen.getByText('Товары')).toBeInTheDocument();
+  });
+
+  it('loads categories', async () => {
+    render(<NewProductPage />);
+    expect(await screen.findByText('Электроника')).toBeInTheDocument();
+    expect(screen.getByText('Одежда')).toBeInTheDocument();
+  });
+
+  it('loads tags', async () => {
+    render(<NewProductPage />);
+    expect(await screen.findByText('Новинка')).toBeInTheDocument();
+    expect(screen.getByText('Скидка')).toBeInTheDocument();
+  });
+
+  it('auto-generates slug from name', () => {
+    render(<NewProductPage />);
+    const nameInput = screen.getByPlaceholderText('Например: Беспроводные наушники');
+    fireEvent.change(nameInput, { target: { value: 'Test Product' } });
+    const slugInput = screen.getByDisplayValue('test-product');
+    expect(slugInput).toBeInTheDocument();
+  });
+
+  it('toggles tag selection', async () => {
+    render(<NewProductPage />);
+    const tagBtn = await screen.findByText('Новинка');
+    fireEvent.click(tagBtn);
+    expect(tagBtn).toHaveClass('bg-primary');
+    fireEvent.click(tagBtn);
+    expect(tagBtn).not.toHaveClass('bg-primary');
+  });
+
+  it('submits form and redirects', async () => {
+    render(<NewProductPage />);
+
+    fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
+    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Desc' } });
+    fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
+
+    await screen.findByText('Электроника');
+    fireEvent.change(screen.getByDisplayValue('Выберите категорию'), { target: { value: 'cat-1' } });
+    fireEvent.change(screen.getByPlaceholderText(/example.com/), { target: { value: 'https://img.jpg' } });
+
+    fireEvent.submit(screen.getByText('Создать товар').closest('form')!);
+
+    await waitFor(() => {
+      expect(mockApiPost).toHaveBeenCalledWith('/products', expect.objectContaining({ name: 'Test' }));
+    });
+  });
+
+  it('shows error on submit failure', async () => {
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Ошибка валидации'));
+    render(<NewProductPage />);
+
+    fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
+    fireEvent.submit(screen.getByText('Создать товар').closest('form')!);
+
+    expect(await screen.findByText('Ошибка валидации')).toBeInTheDocument();
+  });
+
+  it('renders publish checkbox', () => {
+    render(<NewProductPage />);
+    expect(screen.getByText('Опубликовать сразу')).toBeInTheDocument();
+  });
+});
