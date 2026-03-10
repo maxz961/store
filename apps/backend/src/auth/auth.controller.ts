@@ -59,6 +59,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   logout(@Res() res: Response) {
     res.clearCookie("access_token");
-    res.json({ message: "Logged out" });
+    const frontendUrl =
+      this.configService.get("NEXT_PUBLIC_APP_URL") ?? "http://localhost:3000";
+    res.redirect(frontendUrl);
   }
 }
