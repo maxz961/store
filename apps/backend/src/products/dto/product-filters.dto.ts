@@ -1,5 +1,5 @@
 import { IsOptional, IsString, IsNumber, Min, IsArray } from "class-validator";
-import { Type } from "class-transformer";
+import { Transform, Type } from "class-transformer";
 
 export class ProductFiltersDto {
   @IsOptional()
@@ -13,6 +13,7 @@ export class ProductFiltersDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',').filter(Boolean) : value))
   tagSlugs?: string[];
 
   @IsOptional()
