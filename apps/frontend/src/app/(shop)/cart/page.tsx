@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Minus, Plus, ShoppingBag } from 'lucide-react';
+import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCartStore } from '@/store/cart';
@@ -25,29 +26,34 @@ const CartPage = () => {
         <h1 className={s.title}>Корзина</h1>
       </div>
 
-      {items.length === 0 ? (
-        <div className={s.empty}>
-          <ShoppingBag className="h-12 w-12 text-muted-foreground" />
-          <p className={s.emptyTitle}>Корзина пуста</p>
-          <p className={s.emptyText}>Добавьте товары из каталога</p>
-          <Link href="/products">
-            <Button>Перейти в каталог</Button>
-          </Link>
-        </div>
-      ) : (
-        <div className={s.layout}>
-          <div className={s.itemsList}>
-            {items.map((item) => (
-              <div key={item.id} className={s.item}>
-                <Link href={`/products/${item.slug}`} className={s.itemImageLink}>
-                  {item.imageUrl ? (
-                    <Image src={item.imageUrl} alt={item.name} fill className={s.itemImage} sizes="80px" />
-                  ) : (
-                    <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-                      Нет фото
-                    </div>
-                  )}
-                </Link>
+      <If condition={items.length === 0}>
+        <Then>
+          <div className={s.empty}>
+            <ShoppingBag className="h-12 w-12 text-muted-foreground" />
+            <p className={s.emptyTitle}>Корзина пуста</p>
+            <p className={s.emptyText}>Добавьте товары из каталога</p>
+            <Link href="/products">
+              <Button>Перейти в каталог</Button>
+            </Link>
+          </div>
+        </Then>
+        <Else>
+          <div className={s.layout}>
+            <div className={s.itemsList}>
+              {items.map((item) => (
+                <div key={item.id} className={s.item}>
+                  <Link href={`/products/${item.slug}`} className={s.itemImageLink}>
+                    <If condition={!!item.imageUrl}>
+                      <Then>
+                        <Image src={item.imageUrl} alt={item.name} fill className={s.itemImage} sizes="80px" />
+                      </Then>
+                      <Else>
+                        <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                          Нет фото
+                        </div>
+                      </Else>
+                    </If>
+                  </Link>
 
                 <div className={s.itemInfo}>
                   <Link href={`/products/${item.slug}`} className={s.itemName}>
@@ -104,7 +110,8 @@ const CartPage = () => {
             </button>
           </div>
         </div>
-      )}
+        </Else>
+      </If>
     </div>
   );
 };

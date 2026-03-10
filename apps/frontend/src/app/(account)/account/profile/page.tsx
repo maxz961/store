@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Package, LogOut, ChevronRight, UserCircle } from 'lucide-react';
+import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
@@ -67,11 +68,14 @@ const ProfilePage = () => {
 
       <div className={s.card}>
         <div className={s.cardHeader}>
-          {user.image ? (
-            <img src={user.image} alt="" className={s.avatar} referrerPolicy="no-referrer" />
-          ) : (
-            <span className={s.avatarFallback}>{initials}</span>
-          )}
+          <If condition={!!user.image}>
+            <Then>
+              <img src={user.image ?? ''} alt="" className={s.avatar} referrerPolicy="no-referrer" />
+            </Then>
+            <Else>
+              <span className={s.avatarFallback}>{initials}</span>
+            </Else>
+          </If>
           <div className={s.userInfo}>
             <p className={s.userName}>{user.name ?? 'Пользователь'}</p>
             <p className={s.userEmail}>{user.email}</p>

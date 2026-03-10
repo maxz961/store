@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { use } from 'react';
 import Image from 'next/image';
 import { ImageOff, Star, ShoppingCart, Minus, Plus } from 'lucide-react';
+import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -83,9 +84,11 @@ const ProductPage = (props: Props) => {
         {/* Gallery */}
         <div className={s.gallery}>
           <div className={s.mainImage}>
-            {product.images[selectedImage] && !mainImgError ? (
-              <>
-                {!mainImgLoaded && <div className={s.skeleton} />}
+            <If condition={!!product.images[selectedImage] && !mainImgError}>
+              <Then>
+                <When condition={!mainImgLoaded}>
+                  <div className={s.skeleton} />
+                </When>
                 <Image
                   src={product.images[selectedImage]}
                   alt={product.name}
@@ -96,15 +99,16 @@ const ProductPage = (props: Props) => {
                   onLoad={() => setMainImgLoaded(true)}
                   onError={() => setMainImgError(true)}
                 />
-              </>
-            ) : (
-              <div className={s.placeholder}>
-                <ImageOff className={s.placeholderIcon} />
-              </div>
-            )}
+              </Then>
+              <Else>
+                <div className={s.placeholder}>
+                  <ImageOff className={s.placeholderIcon} />
+                </div>
+              </Else>
+            </If>
           </div>
 
-          {product.images.length > 1 && (
+          <When condition={product.images.length > 1}>
             <div className={s.thumbnails}>
               {product.images.map((img, index) => (
                 <button
@@ -116,7 +120,7 @@ const ProductPage = (props: Props) => {
                 </button>
               ))}
             </div>
-          )}
+          </When>
         </div>
 
         {/* Info */}
@@ -124,7 +128,7 @@ const ProductPage = (props: Props) => {
           <p className={s.category}>{product.category.name}</p>
           <h1 className={s.title}>{product.name}</h1>
 
-          {product.reviews.length > 0 && (
+          <When condition={product.reviews.length > 0}>
             <div className="flex items-center gap-2">
               <div className={s.reviewStars}>
                 {[1, 2, 3, 4, 5].map((star) => (
@@ -138,14 +142,16 @@ const ProductPage = (props: Props) => {
                 {avgRating.toFixed(1)} ({product.reviews.length})
               </span>
             </div>
-          )}
+          </When>
 
           <div className={s.priceGroup}>
             <span className={s.price}>${Number(product.price).toFixed(2)}</span>
-            {product.comparePrice && (
+            <When condition={!!product.comparePrice}>
               <span className={s.oldPrice}>${Number(product.comparePrice).toFixed(2)}</span>
-            )}
-            {discount && <span className={s.discount}>-{discount}%</span>}
+            </When>
+            <When condition={!!discount}>
+              <span className={s.discount}>-{discount}%</span>
+            </When>
           </div>
 
           <p className={cn(s.stock, product.stock > 0 ? s.stockInStock : s.stockOut)}>
@@ -156,17 +162,17 @@ const ProductPage = (props: Props) => {
 
           <p className={s.description}>{product.description}</p>
 
-          {product.tags.length > 0 && (
+          <When condition={product.tags.length > 0}>
             <div className={s.tags}>
               {product.tags.map(({ tag }) => (
                 <Badge key={tag.slug} variant="secondary">{tag.name}</Badge>
               ))}
             </div>
-          )}
+          </When>
 
           <div className={s.divider} />
 
-          {product.stock > 0 && (
+          <When condition={product.stock > 0}>
             <div className={s.actions}>
               <div className={s.quantityGroup}>
                 <button
@@ -190,7 +196,7 @@ const ProductPage = (props: Props) => {
                 В корзину
               </Button>
             </div>
-          )}
+          </When>
         </div>
       </div>
 
@@ -200,31 +206,36 @@ const ProductPage = (props: Props) => {
           Отзывы {product.reviews.length > 0 && `(${product.reviews.length})`}
         </h2>
 
-        {product.reviews.length === 0 ? (
-          <p className={s.reviewsEmpty}>Пока нет отзывов</p>
-        ) : (
-          <div className={s.reviewsList}>
-            {product.reviews.map((review) => (
-              <div key={review.id} className={s.reviewCard}>
-                <div className={s.reviewHeader}>
-                  <span className={s.reviewAuthor}>{review.user.name ?? 'Аноним'}</span>
-                  <span className={s.reviewDate}>
-                    {new Date(review.createdAt).toLocaleDateString('ru-RU')}
-                  </span>
+        <If condition={product.reviews.length === 0}>
+          <Then>
+            <p className={s.reviewsEmpty}>Пока нет отзывов</p>
+          </Then>
+          <Else>
+            <div className={s.reviewsList}>
+              {product.reviews.map((review) => (
+                <div key={review.id} className={s.reviewCard}>
+                  <div className={s.reviewHeader}>
+                    <span className={s.reviewAuthor}>{review.user.name ?? 'Аноним'}</span>
+                    <span className={s.reviewDate}>
+                      {new Date(review.createdAt).toLocaleDateString('ru-RU')}
+                    </span>
+                  </div>
+                  <div className={s.reviewStars}>
+                    {[1, 2, 3, 4, 5].map((star) => (
+                      <Star
+                        key={star}
+                        className={cn(s.reviewStar, star <= review.rating ? s.reviewStarFilled : s.reviewStarEmpty)}
+                      />
+                    ))}
+                  </div>
+                  <When condition={!!review.comment}>
+                    <p className={s.reviewComment}>{review.comment}</p>
+                  </When>
                 </div>
-                <div className={s.reviewStars}>
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star
-                      key={star}
-                      className={cn(s.reviewStar, star <= review.rating ? s.reviewStarFilled : s.reviewStarEmpty)}
-                    />
-                  ))}
-                </div>
-                {review.comment && <p className={s.reviewComment}>{review.comment}</p>}
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          </Else>
+        </If>
       </div>
     </div>
   );

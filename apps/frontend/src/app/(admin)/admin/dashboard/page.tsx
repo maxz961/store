@@ -1,3 +1,4 @@
+import { When } from "react-if";
 import { api } from "@/lib/api";
 
 interface AnalyticsSummary {
@@ -66,7 +67,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Revenue by Day */}
-      {summary.revenueByDay.length > 0 && (
+      <When condition={summary.revenueByDay.length > 0}>
         <div className="mt-8 rounded-lg border p-6">
           <h2 className="mb-4 text-lg font-semibold">Revenue (Last 30 Days)</h2>
           <div className="overflow-x-auto">
@@ -86,7 +87,7 @@ export default async function DashboardPage() {
             </div>
           </div>
         </div>
-      )}
+      </When>
     </div>
   );
 }

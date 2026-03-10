@@ -1,5 +1,6 @@
 'use client';
 
+import { If, Then, Else, When } from 'react-if';
 import { ProductCard } from './ProductCard';
 import { ProductFilters } from './ProductFilters';
 import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
@@ -32,31 +33,39 @@ export const ProductCatalog = () => {
       </aside>
 
       <div className={s.content}>
-        {(isLoading || isFetching) && (
+        <When condition={isLoading || isFetching}>
           <div className={s.loadingOverlay}>
             <div className={s.spinner} />
           </div>
-        )}
+        </When>
 
-        {isError ? (
-          <div className={s.error}>
-            <p className={s.errorTitle}>Ошибка загрузки</p>
-            <p className={s.errorText}>Не удалось загрузить товары</p>
-          </div>
-        ) : !data || data.items.length === 0 ? (
-          !isLoading && (
-            <div className={s.empty}>
-              <p className={s.emptyTitle}>Товары не найдены</p>
-              <p className={s.emptyText}>Попробуйте изменить фильтры</p>
+        <If condition={isError}>
+          <Then>
+            <div className={s.error}>
+              <p className={s.errorTitle}>Ошибка загрузки</p>
+              <p className={s.errorText}>Не удалось загрузить товары</p>
             </div>
-          )
-        ) : (
-          <div className={s.grid}>
-            {data.items.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        )}
+          </Then>
+          <Else>
+            <If condition={!data || data.items.length === 0}>
+              <Then>
+                <When condition={!isLoading}>
+                  <div className={s.empty}>
+                    <p className={s.emptyTitle}>Товары не найдены</p>
+                    <p className={s.emptyText}>Попробуйте изменить фильтры</p>
+                  </div>
+                </When>
+              </Then>
+              <Else>
+                <div className={s.grid}>
+                  {data?.items.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+              </Else>
+            </If>
+          </Else>
+        </If>
       </div>
     </div>
   );

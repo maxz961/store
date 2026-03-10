@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
+import { If, Then, Else, When } from 'react-if';
 import { s } from './Breadcrumbs.styled';
 
 export interface BreadcrumbItem {
@@ -22,14 +23,19 @@ export const Breadcrumbs = ({ items }: Props) => {
 
           return (
             <li key={index} className={s.item}>
-              {index > 0 && <ChevronRight className={s.separator} />}
-              {isLast || !item.href ? (
-                <span className={s.current}>{item.label}</span>
-              ) : (
-                <Link href={item.href} className={s.link}>
-                  {item.label}
-                </Link>
-              )}
+              <When condition={index > 0}>
+                <ChevronRight className={s.separator} />
+              </When>
+              <If condition={isLast || !item.href}>
+                <Then>
+                  <span className={s.current}>{item.label}</span>
+                </Then>
+                <Else>
+                  <Link href={item.href!} className={s.link}>
+                    {item.label}
+                  </Link>
+                </Else>
+              </If>
             </li>
           );
         })}

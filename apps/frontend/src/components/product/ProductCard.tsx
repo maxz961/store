@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, ImageOff } from 'lucide-react';
+import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/cart';
@@ -48,9 +49,11 @@ export const ProductCard = ({ product }: Props) => {
   return (
     <div className={s.card}>
       <Link href={`/products/${product.slug}`} className={s.imageLink}>
-        {product.images[0] && !imgError ? (
-          <>
-            {!imgLoaded && <div className={s.skeleton} />}
+        <If condition={!!product.images[0] && !imgError}>
+          <Then>
+            <When condition={!imgLoaded}>
+              <div className={s.skeleton} />
+            </When>
             <Image
               src={product.images[0]}
               alt={product.name}
@@ -60,16 +63,17 @@ export const ProductCard = ({ product }: Props) => {
               onLoad={() => setImgLoaded(true)}
               onError={() => setImgError(true)}
             />
-          </>
-        ) : (
-          <div className={s.placeholder}>
-            <ImageOff className={s.placeholderIcon} />
-            <span className={s.placeholderText}>Нет фото</span>
-          </div>
-        )}
-        {discount && (
+          </Then>
+          <Else>
+            <div className={s.placeholder}>
+              <ImageOff className={s.placeholderIcon} />
+              <span className={s.placeholderText}>Нет фото</span>
+            </div>
+          </Else>
+        </If>
+        <When condition={!!discount}>
           <span className={s.discount}>-{discount}%</span>
-        )}
+        </When>
       </Link>
 
       <div className={s.content}>
@@ -78,7 +82,7 @@ export const ProductCard = ({ product }: Props) => {
         </Link>
         <p className={s.category}>{product.category.name}</p>
 
-        {product.tags.length > 0 && (
+        <When condition={product.tags.length > 0}>
           <div className={s.tags}>
             {product.tags.slice(0, 3).map(({ tag }) => (
               <Badge key={tag.slug} variant="secondary" className={s.tag}>
@@ -86,32 +90,35 @@ export const ProductCard = ({ product }: Props) => {
               </Badge>
             ))}
           </div>
-        )}
+        </When>
 
         <div className={s.footer}>
           <div className={s.priceGroup}>
-            {product.comparePrice && (
+            <When condition={!!product.comparePrice}>
               <span className={s.oldPrice}>
                 ${Number(product.comparePrice).toFixed(2)}
               </span>
-            )}
+            </When>
             <span className={s.price}>
               ${Number(product.price).toFixed(2)}
             </span>
           </div>
 
-          {product.stock > 0 ? (
-            <Button
-              size="icon"
-              className={s.cartButton}
-              onClick={handleAddToCart}
-              aria-label="Добавить в корзину"
-            >
-              <ShoppingCart className={s.cartButtonIcon} />
-            </Button>
-          ) : (
-            <span className={s.outOfStock}>Нет в наличии</span>
-          )}
+          <If condition={product.stock > 0}>
+            <Then>
+              <Button
+                size="icon"
+                className={s.cartButton}
+                onClick={handleAddToCart}
+                aria-label="Добавить в корзину"
+              >
+                <ShoppingCart className={s.cartButtonIcon} />
+              </Button>
+            </Then>
+            <Else>
+              <span className={s.outOfStock}>Нет в наличии</span>
+            </Else>
+          </If>
         </div>
       </div>
     </div>

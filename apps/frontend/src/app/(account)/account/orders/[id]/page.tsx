@@ -4,6 +4,7 @@ import { use } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Package, ArrowLeft } from 'lucide-react';
+import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -132,19 +133,22 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
           {order.orderItems.map((item) => (
             <div key={item.id} className={s.item}>
               <div className={s.itemImageWrapper}>
-                {item.product.images[0] ? (
-                  <Image
-                    src={item.product.images[0]}
-                    alt={item.product.name}
-                    fill
-                    className={s.itemImage}
-                    sizes="56px"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-                    Нет фото
-                  </div>
-                )}
+                <If condition={!!item.product.images[0]}>
+                  <Then>
+                    <Image
+                      src={item.product.images[0]}
+                      alt={item.product.name}
+                      fill
+                      className={s.itemImage}
+                      sizes="56px"
+                    />
+                  </Then>
+                  <Else>
+                    <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+                      Нет фото
+                    </div>
+                  </Else>
+                </If>
               </div>
               <div className={s.itemInfo}>
                 <Link
@@ -168,7 +172,7 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
       </div>
 
       {/* Адрес доставки */}
-      {order.deliveryMethod !== 'PICKUP' && address && (
+      <When condition={order.deliveryMethod !== 'PICKUP' && !!address}>
         <div className={s.section}>
           <div className={s.sectionHeader}>
             <p className={s.sectionTitle}>Адрес доставки</p>
@@ -182,7 +186,7 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
             </p>
           </div>
         </div>
-      )}
+      </When>
     </div>
   );
 };

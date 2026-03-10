@@ -2,6 +2,7 @@
 
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { When } from 'react-if';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { s } from './ProductFilters.styled';
 
@@ -38,7 +39,7 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
 
   return (
     <div className={s.wrapper}>
-      {categories.length > 0 && (
+      <When condition={categories.length > 0}>
         <div className={s.section}>
           <p className={s.label}>Категории</p>
           <div className={s.categoryList}>
@@ -59,40 +60,36 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
             ))}
           </div>
         </div>
-      )}
+      </When>
 
-      {tags.length > 0 && (
-        <>
-          <div className={s.divider} />
-          <div className={s.section}>
-            <p className={s.label}>Теги</p>
-            <div className={s.tags}>
-              {tags.map((tag) => (
-                <button key={tag.id} onClick={() => toggleTag(tag.slug)}>
-                  <Badge
-                    variant={currentTags.includes(tag.slug) ? 'default' : 'outline'}
-                    className="cursor-pointer transition-opacity duration-150 hover:opacity-80"
-                  >
-                    {tag.name}
-                  </Badge>
-                </button>
-              ))}
-            </div>
+      <When condition={tags.length > 0}>
+        <div className={s.divider} />
+        <div className={s.section}>
+          <p className={s.label}>Теги</p>
+          <div className={s.tags}>
+            {tags.map((tag) => (
+              <button key={tag.id} onClick={() => toggleTag(tag.slug)}>
+                <Badge
+                  variant={currentTags.includes(tag.slug) ? 'default' : 'outline'}
+                  className="cursor-pointer transition-opacity duration-150 hover:opacity-80"
+                >
+                  {tag.name}
+                </Badge>
+              </button>
+            ))}
           </div>
-        </>
-      )}
+        </div>
+      </When>
 
-      {hasFilters && (
-        <>
-          <div className={s.divider} />
-          <button
-            className={s.resetButton}
-            onClick={reset}
-          >
-            Сбросить фильтры
-          </button>
-        </>
-      )}
+      <When condition={hasFilters}>
+        <div className={s.divider} />
+        <button
+          className={s.resetButton}
+          onClick={reset}
+        >
+          Сбросить фильтры
+        </button>
+      </When>
     </div>
   );
 };

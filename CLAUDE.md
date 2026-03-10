@@ -164,6 +164,11 @@ analytics/
 - Server Components по умолчанию, `"use client"` только для событий/браузерных API/Zustand
 - Никаких прямых обращений к БД из frontend — только через Backend API
 - `lib/api.ts` — единственное место для fetch к backend
+- **Условный рендеринг — только через `react-if`**:
+  - `condition ? <A/> : <B/>` → `<If condition={...}><Then><A/></Then><Else><B/></Else></If>`
+  - `condition && <A/>` → `<When condition={...}><A/></When>`
+  - Ранний return (`if (isLoading) return ...`) — оставлять как есть, это flow control
+  - `cn()` условия в className и текстовые тернарники — оставлять как есть
 
 ### Backend
 - НИКОГДА не создавать `new PrismaClient()` — импортировать `db` из `packages/shared/src/db`

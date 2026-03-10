@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
 import { ShoppingCart, Sun, Moon, Store, Search, User, Package, LogOut, LayoutDashboard } from 'lucide-react';
+import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { useCartStore } from '@/store/cart';
 import { useProductParams } from '@/lib/hooks/useProductParams';
@@ -72,53 +73,56 @@ export const Header = () => {
           <Link href="/cart">
             <Button variant="ghost" size="icon" className="relative" aria-label="Корзина">
               <ShoppingCart className={s.cartIcon} />
-              {itemCount > 0 && (
+              <When condition={itemCount > 0}>
                 <span className={s.cartBadge}>{itemCount}</span>
-              )}
+              </When>
             </Button>
           </Link>
 
-          {isAuthenticated && user ? (
-            <div className="relative" ref={menuRef}>
-              <button
-                className={s.userButton}
-                onClick={() => setMenuOpen(!menuOpen)}
-                aria-label="Меню пользователя"
-              >
-                {user.image ? (
-                  <img src={user.image} alt="" className={s.userAvatar} referrerPolicy="no-referrer" />
-                ) : (
-                  <span className={s.userFallback}>{initials}</span>
-                )}
-              </button>
+          <If condition={isAuthenticated && !!user}>
+            <Then>
+              <div className="relative" ref={menuRef}>
+                <button
+                  className={s.userButton}
+                  onClick={() => setMenuOpen(!menuOpen)}
+                  aria-label="Меню пользователя"
+                >
+                  <If condition={!!user?.image}>
+                    <Then>
+                      <img src={user?.image ?? ''} alt="" className={s.userAvatar} referrerPolicy="no-referrer" />
+                    </Then>
+                    <Else>
+                      <span className={s.userFallback}>{initials}</span>
+                    </Else>
+                  </If>
+                </button>
 
-              {menuOpen && (
-                <div className={s.dropdown}>
-                  <div className={s.dropdownHeader}>
-                    <p className={s.dropdownName}>{user.name ?? 'Пользователь'}</p>
-                    <p className={s.dropdownEmail}>{user.email}</p>
-                  </div>
+                <When condition={menuOpen}>
+                  <div className={s.dropdown}>
+                    <div className={s.dropdownHeader}>
+                      <p className={s.dropdownName}>{user?.name ?? 'Пользователь'}</p>
+                      <p className={s.dropdownEmail}>{user?.email}</p>
+                    </div>
 
-                  <Link
-                    href="/account/profile"
-                    className={s.dropdownItem}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <User className={s.dropdownIcon} />
-                    Профиль
-                  </Link>
+                    <Link
+                      href="/account/profile"
+                      className={s.dropdownItem}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <User className={s.dropdownIcon} />
+                      Профиль
+                    </Link>
 
-                  <Link
-                    href="/account/orders"
-                    className={s.dropdownItem}
-                    onClick={() => setMenuOpen(false)}
-                  >
-                    <Package className={s.dropdownIcon} />
-                    Мои заказы
-                  </Link>
+                    <Link
+                      href="/account/orders"
+                      className={s.dropdownItem}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      <Package className={s.dropdownIcon} />
+                      Мои заказы
+                    </Link>
 
-                  {isAdmin && (
-                    <>
+                    <When condition={isAdmin}>
                       <div className={s.dropdownDivider} />
                       <Link
                         href="/admin/dashboard"
@@ -128,28 +132,29 @@ export const Header = () => {
                         <LayoutDashboard className={s.dropdownIcon} />
                         Админ-панель
                       </Link>
-                    </>
-                  )}
+                    </When>
 
-                  <div className={s.dropdownDivider} />
-                  <button
-                    className={s.dropdownDanger}
-                    onClick={() => {
-                      setMenuOpen(false);
-                      logout();
-                    }}
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Выйти
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <Button variant="ghost" size="sm" className={s.loginButton} onClick={login}>
-              Войти
-            </Button>
-          )}
+                    <div className={s.dropdownDivider} />
+                    <button
+                      className={s.dropdownDanger}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        logout();
+                      }}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Выйти
+                    </button>
+                  </div>
+                </When>
+              </div>
+            </Then>
+            <Else>
+              <Button variant="ghost" size="sm" className={s.loginButton} onClick={login}>
+                Войти
+              </Button>
+            </Else>
+          </If>
         </div>
       </div>
     </header>

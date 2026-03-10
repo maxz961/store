@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Truck, MapPin, Package, LogIn, ImageOff } from 'lucide-react';
+import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCartStore } from '@/store/cart';
@@ -231,17 +232,20 @@ const CheckoutPage = () => {
               {items.map((item) => (
                 <div key={item.id} className={s.summaryItem}>
                   <div className={s.summaryItemImage}>
-                    {item.imageUrl ? (
-                      <Image
-                        src={item.imageUrl}
-                        alt={item.name}
-                        fill
-                        className={s.summaryItemImageEl}
-                        sizes="48px"
-                      />
-                    ) : (
-                      <ImageOff className="m-auto h-5 w-5 text-muted-foreground/30" />
-                    )}
+                    <If condition={!!item.imageUrl}>
+                      <Then>
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.name}
+                          fill
+                          className={s.summaryItemImageEl}
+                          sizes="48px"
+                        />
+                      </Then>
+                      <Else>
+                        <ImageOff className="m-auto h-5 w-5 text-muted-foreground/30" />
+                      </Else>
+                    </If>
                   </div>
                   <div className={s.summaryItemInfo}>
                     <p className={s.summaryItemName}>{item.name}</p>
@@ -258,7 +262,9 @@ const CheckoutPage = () => {
               <span className={s.summaryTotalPrice}>${totalPrice().toFixed(2)}</span>
             </div>
 
-            {error && <p className={s.error}>{error}</p>}
+            <When condition={!!error}>
+              <p className={s.error}>{error}</p>
+            </When>
 
             <Button type="submit" size="lg" className={s.submitButton} disabled={submitting}>
               {submitting ? 'Оформляем...' : 'Оформить заказ'}

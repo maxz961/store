@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { When } from "react-if";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
@@ -156,7 +157,7 @@ export default function NewProductPage() {
         />
 
         {/* Tags */}
-        {tags.length > 0 && (
+        <When condition={tags.length > 0}>
           <div>
             <p className="mb-2 text-sm font-medium">Tags</p>
             <div className="flex flex-wrap gap-2">
@@ -176,7 +177,7 @@ export default function NewProductPage() {
               ))}
             </div>
           </div>
-        )}
+        </When>
 
         <label className="flex items-center gap-2 text-sm">
           <input
@@ -187,7 +188,9 @@ export default function NewProductPage() {
           Publish immediately
         </label>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        <When condition={!!error}>
+          <p className="text-sm text-destructive">{error}</p>
+        </When>
 
         <button
           type="submit"

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Package, ChevronRight, UserCircle } from 'lucide-react';
+import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -84,18 +85,20 @@ const OrdersPage = () => {
 
       <h1 className={`${s.title} mt-6 mb-6`}>Мои заказы</h1>
 
-      {!orders || orders.length === 0 ? (
-        <div className={s.empty}>
-          <Package className="h-12 w-12 text-muted-foreground" />
-          <p className={s.emptyTitle}>Заказов пока нет</p>
-          <p className={s.emptyText}>Ваши заказы появятся здесь после оформления</p>
-          <Link href="/products">
-            <Button>Перейти в каталог</Button>
-          </Link>
-        </div>
-      ) : (
-        <div className={s.list}>
-          {orders.map((order) => {
+      <If condition={!orders || orders.length === 0}>
+        <Then>
+          <div className={s.empty}>
+            <Package className="h-12 w-12 text-muted-foreground" />
+            <p className={s.emptyTitle}>Заказов пока нет</p>
+            <p className={s.emptyText}>Ваши заказы появятся здесь после оформления</p>
+            <Link href="/products">
+              <Button>Перейти в каталог</Button>
+            </Link>
+          </div>
+        </Then>
+        <Else>
+          <div className={s.list}>
+            {orders?.map((order) => {
             const itemCount = order.orderItems.reduce((sum, i) => sum + i.quantity, 0);
             const date = new Date(order.createdAt).toLocaleDateString('ru-RU', {
               year: 'numeric',
@@ -124,8 +127,9 @@ const OrdersPage = () => {
               </Link>
             );
           })}
-        </div>
-      )}
+          </div>
+        </Else>
+      </If>
     </div>
   );
 };
