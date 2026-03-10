@@ -19,8 +19,7 @@ export const s = {
   userFallback: 'flex h-full w-full items-center justify-center bg-primary/10 text-xs font-medium text-primary',
   loginButton: 'text-sm',
 
-  // Dropdown
-  dropdown: 'absolute right-0 top-full mt-2 w-52 rounded-xl border border-border bg-card shadow-lg py-1 z-50',
+  // Dropdown content
   dropdownHeader: 'px-4 py-3 border-b border-border',
   dropdownName: 'text-sm font-medium truncate',
   dropdownEmail: 'text-xs text-muted-foreground truncate',

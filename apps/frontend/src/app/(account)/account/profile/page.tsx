@@ -6,6 +6,7 @@ import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { getInitials } from '@/lib/utils';
 import { s } from './page.styled';
 
 
@@ -51,9 +52,7 @@ const ProfilePage = () => {
     );
   }
 
-  const initials = user.name
-    ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2).toUpperCase()
-    : user.email[0].toUpperCase();
+  const initials = getInitials(user.name, user.email);
 
   const memberSince = new Date(user.createdAt).toLocaleDateString('ru-RU', {
     year: 'numeric',
