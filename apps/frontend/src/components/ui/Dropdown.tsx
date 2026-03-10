@@ -1,16 +1,9 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect, type ReactNode } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { When } from 'react-if';
+import type { Props } from './Dropdown.types';
 import { s } from './Dropdown.styled';
-
-
-interface Props {
-  trigger: ReactNode;
-  children: ReactNode;
-  onClose?: () => void;
-  className?: string;
-}
 
 export const Dropdown = ({ trigger, children, onClose, className }: Props) => {
   const [open, setOpen] = useState(false);

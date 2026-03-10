@@ -14,11 +14,7 @@ import { useProduct } from '@/lib/hooks/useProducts';
 import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
-
-
-interface Props {
-  params: Promise<{ slug: string }>;
-}
+import type { Props } from './page.types';
 
 const ProductPage = (props: Props) => {
   const { slug } = use(props.params);

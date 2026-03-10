@@ -1,14 +1,6 @@
-import { type ReactNode } from 'react';
 import { When } from 'react-if';
+import type { Props } from './StatsCard.types';
 import { s } from './StatsCard.styled';
-
-
-interface Props {
-  label: string;
-  value: string | number;
-  subtitle?: string;
-  icon: ReactNode;
-}
 
 export const StatsCard = ({ label, value, subtitle, icon }: Props) => {
   return (

@@ -9,30 +9,9 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyOrders } from '@/lib/hooks/useOrders';
 import { cn } from '@/lib/utils';
+import { STATUS_LABELS } from '@/lib/constants/order';
 import { s } from './page.styled';
-
-
-const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Профиль', href: '/account/profile' },
-  { label: 'Мои заказы' },
-];
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Ожидает',
-  PROCESSING: 'Обрабатывается',
-  SHIPPED: 'Отправлен',
-  DELIVERED: 'Доставлен',
-  CANCELLED: 'Отменён',
-};
-
-const STATUS_STYLES: Record<string, string> = {
-  PENDING: s.statusPending,
-  PROCESSING: s.statusProcessing,
-  SHIPPED: s.statusShipped,
-  DELIVERED: s.statusDelivered,
-  CANCELLED: s.statusCancelled,
-};
+import { breadcrumbs, STATUS_STYLES } from './page.constants';
 
 const OrdersPage = () => {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Truck, MapPin, Package, LogIn, ImageOff } from 'lucide-react';
+import { LogIn, ImageOff } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -12,21 +12,8 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
-
-
-type DeliveryMethod = 'COURIER' | 'PICKUP' | 'POST';
-
-const DELIVERY_OPTIONS: { value: DeliveryMethod; label: string; description: string; icon: typeof Truck }[] = [
-  { value: 'COURIER', label: 'Курьер', description: 'Доставка до двери', icon: Truck },
-  { value: 'PICKUP', label: 'Самовывоз', description: 'Забрать из магазина', icon: MapPin },
-  { value: 'POST', label: 'Почта', description: 'Почтовая доставка', icon: Package },
-];
-
-const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Корзина', href: '/cart' },
-  { label: 'Оформление заказа' },
-];
+import type { DeliveryMethod } from './page.types';
+import { DELIVERY_OPTIONS, breadcrumbs } from './page.constants';
 
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCartStore();

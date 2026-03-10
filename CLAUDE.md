@@ -107,6 +107,7 @@ components/
   admin/                 ← StatsCard, RevenueChart, OrderStatusPie
 lib/
   api.ts                 ← fetch-клиент к backend (:3001)
+  constants/             ← общие константы (order.ts, format.ts)
   validations/           ← Zod схемы (импортировать из packages/shared)
 store/
   cart.ts                ← Zustand + persist middleware
@@ -197,6 +198,12 @@ analytics/
   - Чистые функции (форматирование, вычисления, трансформации) выносить в `lib/utils.ts`
   - Если одна и та же логика встречается 2+ раза — обязательно вынести
   - Примеры: `getInitials(name, email)`, `formatPrice(price)`, `pluralize(count, forms)`
+- **Константы и интерфейсы — в отдельных файлах**:
+  - Интерфейсы/типы → `page.types.ts` (для страниц) или `ComponentName.types.ts` (для компонентов)
+  - Константы вне компонента → `page.constants.ts` или `ComponentName.constants.ts`
+  - В компонентном файле НЕ должно быть module-level констант или интерфейсов — только импорты и сам компонент
+  - Общие константы (STATUS_LABELS, DELIVERY_LABELS, formatCurrency, formatDate) — в `lib/constants/`
+  - Исключение: shadcn/ui компоненты (`components/ui/button.tsx` и т.д.) — не трогать
 - **Производительность — приоритет**:
   - `useCallback` для обработчиков, передаваемых в дочерние компоненты или в зависимости хуков
   - `useMemo` для тяжёлых вычислений (фильтрация, сортировка, маппинг больших массивов)

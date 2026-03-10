@@ -4,27 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { When } from 'react-if';
 import { useProductParams } from '@/lib/hooks/useProductParams';
+import type { Props } from './ProductFilters.types';
 import { s } from './ProductFilters.styled';
-
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Tag {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Props {
-  categories: Category[];
-  tags: Tag[];
-  currentCategory?: string;
-  currentTags: string[];
-}
 
 export const ProductFilters = ({ categories, tags, currentCategory, currentTags }: Props) => {
   const { update, reset } = useProductParams();

@@ -8,26 +8,8 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
-
-
-interface CategoryOption {
-  id: string;
-  name: string;
-}
-
-interface TagOption {
-  id: string;
-  name: string;
-}
-
-const breadcrumbs = [
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Товары', href: '/admin/products' },
-  { label: 'Новый товар' },
-];
-
-const generateSlug = (name: string) =>
-  name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+import type { CategoryOption, TagOption } from './page.types';
+import { breadcrumbs, generateSlug } from './page.constants';
 
 const NewProductPage = () => {
   const router = useRouter();

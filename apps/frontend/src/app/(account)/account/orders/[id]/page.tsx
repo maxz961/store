@@ -10,34 +10,10 @@ import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useOrder } from '@/lib/hooks/useOrders';
 import { cn } from '@/lib/utils';
+import { STATUS_LABELS, DELIVERY_LABELS } from '@/lib/constants/order';
+import type { OrderDetailPageProps } from './page.types';
+import { STATUS_STYLES } from './page.constants';
 import { s } from './page.styled';
-
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Ожидает',
-  PROCESSING: 'Обрабатывается',
-  SHIPPED: 'Отправлен',
-  DELIVERED: 'Доставлен',
-  CANCELLED: 'Отменён',
-};
-
-const STATUS_STYLES: Record<string, string> = {
-  PENDING: s.statusPending,
-  PROCESSING: s.statusProcessing,
-  SHIPPED: s.statusShipped,
-  DELIVERED: s.statusDelivered,
-  CANCELLED: s.statusCancelled,
-};
-
-const DELIVERY_LABELS: Record<string, string> = {
-  COURIER: 'Курьер',
-  PICKUP: 'Самовывоз',
-  POST: 'Почта',
-};
-
-interface OrderDetailPageProps {
-  params: Promise<{ id: string }>;
-}
 
 const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
   const { id } = use(params);

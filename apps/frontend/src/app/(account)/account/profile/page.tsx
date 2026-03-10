@@ -8,12 +8,7 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { getInitials } from '@/lib/utils';
 import { s } from './page.styled';
-
-
-const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Профиль' },
-];
+import { breadcrumbs } from './page.constants';
 
 const ProfilePage = () => {
   const { user, isLoading, isAuthenticated, logout } = useAuth();

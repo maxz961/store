@@ -4,17 +4,9 @@ import { useState, useRef, useCallback } from 'react';
 import { ImagePlus, X } from 'lucide-react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
+import type { ImageUploadProps } from './ImageUpload.types';
+import { MAX_FILE_SIZE } from './ImageUpload.constants';
 import { s } from './ImageUpload.styled';
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-
-interface ImageUploadProps {
-  files: File[];
-  existingUrls?: string[];
-  onChange: (files: File[]) => void;
-  onRemoveExisting?: (url: string) => void;
-  maxFiles?: number;
-}
 
 export const ImageUpload = ({
   files,

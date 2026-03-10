@@ -11,41 +11,10 @@ import { api } from '@/lib/api';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { StatsCard } from '@/components/admin/StatsCard';
 import { s, statusDotColors } from './page.styled';
-
-
-interface AnalyticsSummary {
-  totalRevenue: number;
-  ordersCount: number;
-  ordersThisMonth: number;
-  revenueThisMonth: number;
-  ordersByStatus: { status: string; count: number }[];
-  topProducts: { product: { name: string; price: number } | undefined; soldCount: number }[];
-  newUsersThisMonth: number;
-  revenueByDay: { date: string; revenue: number }[];
-}
-
-const PIE_COLORS: Record<string, string> = {
-  PENDING: '#eab308',
-  PROCESSING: '#3b82f6',
-  SHIPPED: '#a855f7',
-  DELIVERED: '#22c55e',
-  CANCELLED: '#ef4444',
-};
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Ожидает',
-  PROCESSING: 'Обрабатывается',
-  SHIPPED: 'Отправлен',
-  DELIVERED: 'Доставлен',
-  CANCELLED: 'Отменён',
-};
-
-const breadcrumbs = [
-  { label: 'Админ-панель' },
-];
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'UAH', minimumFractionDigits: 0 }).format(value);
+import { STATUS_LABELS, PIE_COLORS } from '@/lib/constants/order';
+import { formatCurrency } from '@/lib/constants/format';
+import type { AnalyticsSummary } from './page.types';
+import { breadcrumbs } from './page.constants';
 
 const DashboardPage = () => {
   const [summary, setSummary] = useState<AnalyticsSummary | null>(null);

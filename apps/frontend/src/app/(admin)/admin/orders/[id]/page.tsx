@@ -10,54 +10,9 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { StatusBadge } from '@/components/admin/StatusBadge';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
-
-
-interface OrderItem {
-  id: string;
-  quantity: number;
-  price: number;
-  product: { name: string };
-}
-
-interface Order {
-  id: string;
-  status: string;
-  deliveryMethod: string;
-  totalAmount: number;
-  createdAt: string;
-  shippingAddress: {
-    fullName: string;
-    line1: string;
-    city: string;
-    state: string;
-    postalCode: string;
-    country: string;
-  };
-  orderItems: OrderItem[];
-  user: { name: string | null; email: string } | null;
-}
-
-const STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
-
-const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Ожидает',
-  PROCESSING: 'Обрабатывается',
-  SHIPPED: 'Отправлен',
-  DELIVERED: 'Доставлен',
-  CANCELLED: 'Отменён',
-};
-
-const DELIVERY_LABELS: Record<string, string> = {
-  COURIER: 'Курьер',
-  PICKUP: 'Самовывоз',
-  POST: 'Почта',
-};
-
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'UAH', minimumFractionDigits: 0 }).format(value);
+import { STATUSES, STATUS_LABELS, DELIVERY_LABELS } from '@/lib/constants/order';
+import { formatCurrency, formatDate } from '@/lib/constants/format';
+import type { Order } from './page.types';
 
 const AdminOrderDetailPage = () => {
   const params = useParams<{ id: string }>();
@@ -185,7 +140,7 @@ const AdminOrderDetailPage = () => {
         <StatusBadge status={order.status} />
       </div>
       <p className={s.subtitle}>
-        {order.user?.name ?? order.user?.email ?? '—'} · {formatDate(order.createdAt)}
+        {order.user?.name ?? order.user?.email ?? '—'} · {formatDate(order.createdAt, 'long')}
       </p>
 
       {statusSection}

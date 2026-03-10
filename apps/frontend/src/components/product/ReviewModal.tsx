@@ -19,21 +19,9 @@ import {
   type ReviewSort,
 } from '@/lib/hooks/useReviews';
 import { cn } from '@/lib/utils';
+import type { ReviewModalProps } from './ReviewModal.types';
+import { SORT_OPTIONS } from './ReviewModal.constants';
 import { s } from './ReviewModal.styled';
-
-
-interface ReviewModalProps {
-  productId: string;
-  productSlug: string;
-  onClose: () => void;
-}
-
-const SORT_OPTIONS: { value: ReviewSort; label: string }[] = [
-  { value: 'newest', label: 'Новые' },
-  { value: 'oldest', label: 'Старые' },
-  { value: 'highest', label: 'Высокий рейтинг' },
-  { value: 'lowest', label: 'Низкий рейтинг' },
-];
 
 export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProps) => {
   const { user, isAdmin } = useAuth();

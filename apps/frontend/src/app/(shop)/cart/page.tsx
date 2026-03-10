@@ -8,13 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCartStore } from '@/store/cart';
 import { s } from './page.styled';
-
-
-const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Каталог', href: '/products' },
-  { label: 'Корзина' },
-];
+import { breadcrumbs } from './page.constants';
 
 const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart } = useCartStore();

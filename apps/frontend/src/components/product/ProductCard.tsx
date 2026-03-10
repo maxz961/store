@@ -9,25 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
+import type { Props } from './ProductCard.types';
 import { s } from './ProductCard.styled';
-
-
-interface Product {
-  id: string;
-  name: string;
-  slug: string;
-  price: number;
-  comparePrice?: number;
-  images: string[];
-  stock: number;
-  category: { name: string; slug: string };
-  tags: { tag: { name: string; slug: string } }[];
-  reviews: { rating: number }[];
-}
-
-interface Props {
-  product: Product;
-}
 
 export const ProductCard = ({ product }: Props) => {
   const addItem = useCartStore((state) => state.addItem);

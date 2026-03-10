@@ -6,49 +6,10 @@ import { StatusBadge } from '@/components/admin/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
-
-
-interface Order {
-  id: string;
-  status: string;
-  deliveryMethod: string;
-  totalAmount: number;
-  createdAt: string;
-  user: { name: string | null; email: string } | null;
-}
-
-interface OrdersResponse {
-  items: Order[];
-  total: number;
-  page: number;
-  totalPages: number;
-}
-
-const FILTER_TABS = [
-  { value: '', label: 'Все' },
-  { value: 'PENDING', label: 'Ожидает' },
-  { value: 'PROCESSING', label: 'Обрабатывается' },
-  { value: 'SHIPPED', label: 'Отправлен' },
-  { value: 'DELIVERED', label: 'Доставлен' },
-  { value: 'CANCELLED', label: 'Отменён' },
-];
-
-const DELIVERY_LABELS: Record<string, string> = {
-  COURIER: 'Курьер',
-  PICKUP: 'Самовывоз',
-  POST: 'Почта',
-};
-
-const breadcrumbs = [
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Заказы' },
-];
-
-const formatDate = (date: string) =>
-  new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'UAH', minimumFractionDigits: 0 }).format(value);
+import { FILTER_TABS, DELIVERY_LABELS } from '@/lib/constants/order';
+import { formatCurrency, formatDate } from '@/lib/constants/format';
+import type { OrdersResponse } from './page.types';
+import { breadcrumbs } from './page.constants';
 
 const AdminOrdersPage = async ({
   searchParams,

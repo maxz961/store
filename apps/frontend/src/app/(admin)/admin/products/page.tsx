@@ -5,33 +5,9 @@ import { api } from '@/lib/api';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { s } from './page.styled';
-
-
-interface Product {
-  id: string;
-  name: string;
-  price: number;
-  stock: number;
-  isPublished: boolean;
-  images: string[];
-  category: { name: string } | null;
-  tags: { tag: { slug: string; name: string } }[];
-}
-
-interface ProductsResponse {
-  items: Product[];
-  total: number;
-  page: number;
-  totalPages: number;
-}
-
-const breadcrumbs = [
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Товары' },
-];
-
-const formatCurrency = (value: number) =>
-  new Intl.NumberFormat('ru-RU', { style: 'currency', currency: 'UAH', minimumFractionDigits: 0 }).format(value);
+import { formatCurrency } from '@/lib/constants/format';
+import type { ProductsResponse } from './page.types';
+import { breadcrumbs } from './page.constants';
 
 const AdminProductsPage = async ({
   searchParams,

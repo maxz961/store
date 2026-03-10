@@ -3,19 +3,9 @@
 import { useState, useCallback } from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import type { StarRatingProps } from './StarRating.types';
+import { SIZES } from './StarRating.constants';
 import { s } from './StarRating.styled';
-
-const SIZES = {
-  sm: 'h-3.5 w-3.5',
-  md: 'h-4 w-4',
-  lg: 'h-5 w-5',
-};
-
-interface StarRatingProps {
-  value: number;
-  onChange?: (value: number) => void;
-  size?: 'sm' | 'md' | 'lg';
-}
 
 export const StarRating = ({ value, onChange, size = 'md' }: StarRatingProps) => {
   const [hoverValue, setHoverValue] = useState(0);

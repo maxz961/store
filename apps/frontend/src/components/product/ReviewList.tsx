@@ -6,15 +6,8 @@ import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
 import { getInitials } from '@/lib/utils';
-import type { Review } from '@/lib/hooks/useReviews';
+import type { ReviewListProps } from './ReviewList.types';
 import { s } from './ReviewList.styled';
-
-interface ReviewListProps {
-  reviews: Review[];
-  currentUserId?: string | null;
-  onEdit?: (review: Review) => void;
-  onDelete?: (reviewId: string) => void;
-}
 
 export const ReviewList = ({ reviews, currentUserId, onEdit, onDelete }: ReviewListProps) => {
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
