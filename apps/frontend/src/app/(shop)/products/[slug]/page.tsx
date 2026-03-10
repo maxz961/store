@@ -1,139 +1,233 @@
-import { api } from "@/lib/api";
-import { notFound } from "next/navigation";
+'use client';
 
-interface ProductDetail {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  price: number;
-  comparePrice?: number;
-  images: string[];
-  stock: number;
-  category: { name: string; slug: string };
-  tags: { tag: { name: string; slug: string } }[];
-  reviews: {
-    id: string;
-    rating: number;
-    comment?: string;
-    user: { name?: string; image?: string };
-    createdAt: string;
-  }[];
+import { useState } from 'react';
+import { use } from 'react';
+import Image from 'next/image';
+import { ImageOff, Star, ShoppingCart, Minus, Plus } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { useProduct } from '@/lib/hooks/useProducts';
+import { useCartStore } from '@/store/cart';
+import { cn } from '@/lib/utils';
+import { s } from './page.styled';
+
+interface Props {
+  params: Promise<{ slug: string }>;
 }
 
-export default async function ProductDetailPage({
-  params,
-}: {
-  params: { slug: string };
-}) {
-  let product: ProductDetail;
+const ProductPage = (props: Props) => {
+  const { slug } = use(props.params);
+  const { data: product, isLoading, isError } = useProduct(slug);
+  const addItem = useCartStore((state) => state.addItem);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [quantity, setQuantity] = useState(1);
+  const [mainImgError, setMainImgError] = useState(false);
+  const [mainImgLoaded, setMainImgLoaded] = useState(false);
 
-  try {
-    product = await api.get<ProductDetail>(`/products/${params.slug}`, {
-      cache: "no-store",
-    });
-  } catch {
-    notFound();
+  if (isLoading) {
+    return (
+      <div className={s.page}>
+        <div className={s.loading}>
+          <div className={s.spinner} />
+        </div>
+      </div>
+    );
   }
 
-  const avgRating =
-    product.reviews.length > 0
-      ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
-      : null;
+  if (isError || !product) {
+    return (
+      <div className={s.page}>
+        <div className={s.error}>
+          <p className={s.errorTitle}>Товар не найден</p>
+          <p className={s.errorText}>Возможно, он был удалён или ссылка неверна</p>
+        </div>
+      </div>
+    );
+  }
+
+  const discount = product.comparePrice
+    ? Math.round((1 - product.price / Number(product.comparePrice)) * 100)
+    : null;
+
+  const avgRating = product.reviews.length > 0
+    ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
+    : 0;
+
+  const handleAddToCart = () => {
+    for (let i = 0; i < quantity; i++) {
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.images[0] ?? '',
+        slug: product.slug,
+        stock: product.stock,
+      });
+    }
+    setQuantity(1);
+  };
+
+  const breadcrumbs = [
+    { label: 'Главная', href: '/' },
+    { label: 'Каталог', href: '/products' },
+    { label: product.category.name, href: `/products?categorySlug=${product.category.slug}` },
+    { label: product.name },
+  ];
 
   return (
-    <div className="container mx-auto py-8">
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
-        {/* Images */}
-        <div>
-          <img
-            src={product.images[0]}
-            alt={product.name}
-            className="w-full rounded-lg object-cover"
-          />
+    <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
+
+      <div className={s.layout}>
+        {/* Gallery */}
+        <div className={s.gallery}>
+          <div className={s.mainImage}>
+            {product.images[selectedImage] && !mainImgError ? (
+              <>
+                {!mainImgLoaded && <div className={s.skeleton} />}
+                <Image
+                  src={product.images[selectedImage]}
+                  alt={product.name}
+                  fill
+                  className={s.image}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  priority
+                  onLoad={() => setMainImgLoaded(true)}
+                  onError={() => setMainImgError(true)}
+                />
+              </>
+            ) : (
+              <div className={s.placeholder}>
+                <ImageOff className={s.placeholderIcon} />
+              </div>
+            )}
+          </div>
+
           {product.images.length > 1 && (
-            <div className="mt-4 grid grid-cols-4 gap-2">
-              {product.images.slice(1).map((img, i) => (
-                <img key={i} src={img} alt="" className="rounded-md object-cover" />
+            <div className={s.thumbnails}>
+              {product.images.map((img, index) => (
+                <button
+                  key={index}
+                  onClick={() => { setSelectedImage(index); setMainImgLoaded(false); setMainImgError(false); }}
+                  className={cn(s.thumb, index === selectedImage ? s.thumbActive : s.thumbInactive)}
+                >
+                  <Image src={img} alt={`${product.name} ${index + 1}`} fill className={s.thumbImage} sizes="64px" />
+                </button>
               ))}
             </div>
           )}
         </div>
 
         {/* Info */}
-        <div>
-          <p className="mb-1 text-sm text-muted-foreground">{product.category.name}</p>
-          <h1 className="mb-3 text-3xl font-bold">{product.name}</h1>
+        <div className={s.info}>
+          <p className={s.category}>{product.category.name}</p>
+          <h1 className={s.title}>{product.name}</h1>
 
-          <div className="mb-4 flex flex-wrap gap-1">
-            {product.tags.map(({ tag }) => (
-              <span
-                key={tag.slug}
-                className="rounded-full bg-secondary px-3 py-1 text-xs"
-              >
-                {tag.name}
+          {product.reviews.length > 0 && (
+            <div className="flex items-center gap-2">
+              <div className={s.reviewStars}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <Star
+                    key={star}
+                    className={cn(s.reviewStar, star <= Math.round(avgRating) ? s.reviewStarFilled : s.reviewStarEmpty)}
+                  />
+                ))}
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {avgRating.toFixed(1)} ({product.reviews.length})
               </span>
-            ))}
-          </div>
-
-          <div className="mb-4 flex items-baseline gap-3">
-            <span className="text-3xl font-bold">${Number(product.price).toFixed(2)}</span>
-            {product.comparePrice && (
-              <span className="text-lg text-muted-foreground line-through">
-                ${Number(product.comparePrice).toFixed(2)}
-              </span>
-            )}
-          </div>
-
-          {avgRating && (
-            <p className="mb-4 text-sm text-muted-foreground">
-              ★ {avgRating.toFixed(1)} ({product.reviews.length} reviews)
-            </p>
+            </div>
           )}
 
-          <p className="mb-6 text-muted-foreground">{product.description}</p>
-
-          <p className="mb-4 text-sm">
-            {product.stock > 0 ? (
-              <span className="text-green-600">{product.stock} in stock</span>
-            ) : (
-              <span className="text-destructive">Out of stock</span>
+          <div className={s.priceGroup}>
+            <span className={s.price}>${Number(product.price).toFixed(2)}</span>
+            {product.comparePrice && (
+              <span className={s.oldPrice}>${Number(product.comparePrice).toFixed(2)}</span>
             )}
+            {discount && <span className={s.discount}>-{discount}%</span>}
+          </div>
+
+          <p className={cn(s.stock, product.stock > 0 ? s.stockInStock : s.stockOut)}>
+            {product.stock > 0 ? `В наличии: ${product.stock} шт.` : 'Нет в наличии'}
           </p>
 
-          <button
-            className="w-full rounded-md bg-primary py-3 font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-            disabled={product.stock === 0}
-          >
-            Add to Cart
-          </button>
+          <div className={s.divider} />
+
+          <p className={s.description}>{product.description}</p>
+
+          {product.tags.length > 0 && (
+            <div className={s.tags}>
+              {product.tags.map(({ tag }) => (
+                <Badge key={tag.slug} variant="secondary">{tag.name}</Badge>
+              ))}
+            </div>
+          )}
+
+          <div className={s.divider} />
+
+          {product.stock > 0 && (
+            <div className={s.actions}>
+              <div className={s.quantityGroup}>
+                <button
+                  className={s.quantityButton}
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  disabled={quantity <= 1}
+                >
+                  <Minus className="h-4 w-4" />
+                </button>
+                <span className={s.quantity}>{quantity}</span>
+                <button
+                  className={s.quantityButton}
+                  onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                  disabled={quantity >= product.stock}
+                >
+                  <Plus className="h-4 w-4" />
+                </button>
+              </div>
+              <Button size="lg" className={s.addToCartButton} onClick={handleAddToCart}>
+                <ShoppingCart className="mr-2 h-4 w-4" />
+                В корзину
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Reviews */}
-      {product.reviews.length > 0 && (
-        <section className="mt-16">
-          <h2 className="mb-6 text-2xl font-bold">Reviews</h2>
-          <div className="space-y-4">
+      <div className={s.reviewsSection}>
+        <h2 className={s.reviewsTitle}>
+          Отзывы {product.reviews.length > 0 && `(${product.reviews.length})`}
+        </h2>
+
+        {product.reviews.length === 0 ? (
+          <p className={s.reviewsEmpty}>Пока нет отзывов</p>
+        ) : (
+          <div className={s.reviewsList}>
             {product.reviews.map((review) => (
-              <div key={review.id} className="rounded-lg border p-4">
-                <div className="mb-2 flex items-center gap-3">
-                  {review.user.image && (
-                    <img
-                      src={review.user.image}
-                      alt=""
-                      className="h-8 w-8 rounded-full"
-                    />
-                  )}
-                  <span className="font-medium">{review.user.name ?? "Anonymous"}</span>
-                  <span className="text-yellow-500">{"★".repeat(review.rating)}</span>
+              <div key={review.id} className={s.reviewCard}>
+                <div className={s.reviewHeader}>
+                  <span className={s.reviewAuthor}>{review.user.name ?? 'Аноним'}</span>
+                  <span className={s.reviewDate}>
+                    {new Date(review.createdAt).toLocaleDateString('ru-RU')}
+                  </span>
                 </div>
-                {review.comment && <p className="text-muted-foreground">{review.comment}</p>}
+                <div className={s.reviewStars}>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      className={cn(s.reviewStar, star <= review.rating ? s.reviewStarFilled : s.reviewStarEmpty)}
+                    />
+                  ))}
+                </div>
+                {review.comment && <p className={s.reviewComment}>{review.comment}</p>}
               </div>
             ))}
           </div>
-        </section>
-      )}
+        )}
+      </div>
     </div>
   );
-}
+};
+
+export default ProductPage;

@@ -32,6 +32,9 @@ build
 npm-debug.log*
 pnpm-debug.log*
 
+# Design references (screenshots for Claude)
+.design-references
+
 # OS
 .DS_Store
 Thumbs.db

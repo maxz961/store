@@ -18,7 +18,7 @@ async function request<T>(
     method,
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      ...(body ? { "Content-Type": "application/json" } : {}),
       ...headers,
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -27,7 +27,7 @@ async function request<T>(
   });
 
   if (!res.ok) {
-    const error = await res.json().catch(() => ({ message: "Request failed" }));
+    const error = await res.json().catch(() => ({ message: 'Request failed' }));
     throw new Error(error.message ?? `HTTP ${res.status}`);
   }
 

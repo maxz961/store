@@ -4,11 +4,12 @@ import Link from "next/link";
 export default async function AdminProductsPage({
   searchParams,
 }: {
-  searchParams: { page?: string; search?: string };
+  searchParams: Promise<{ page?: string; search?: string }>;
 }) {
+  const sp = await searchParams;
   const params = new URLSearchParams();
-  if (searchParams.page) params.set("page", searchParams.page);
-  if (searchParams.search) params.set("search", searchParams.search);
+  if (sp.page) params.set("page", sp.page);
+  if (sp.search) params.set("search", sp.search);
 
   const data = await api.get<{
     items: any[];

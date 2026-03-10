@@ -12,11 +12,12 @@ const STATUS_COLORS: Record<string, string> = {
 export default async function AdminOrdersPage({
   searchParams,
 }: {
-  searchParams: { status?: string; page?: string };
+  searchParams: Promise<{ status?: string; page?: string }>;
 }) {
+  const sp = await searchParams;
   const params = new URLSearchParams();
-  if (searchParams.status) params.set("status", searchParams.status);
-  if (searchParams.page) params.set("page", searchParams.page);
+  if (sp.status) params.set("status", sp.status);
+  if (sp.page) params.set("page", sp.page);
 
   const data = await api.get<{
     items: any[];
@@ -37,7 +38,7 @@ export default async function AdminOrdersPage({
               key={status}
               href={status ? `/admin/orders?status=${status}` : "/admin/orders"}
               className={`rounded-full px-3 py-1 text-sm border transition-colors ${
-                (searchParams.status ?? "") === status
+                (sp.status ?? "") === status
                   ? "bg-primary text-primary-foreground"
                   : "hover:bg-accent"
               }`}
