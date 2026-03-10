@@ -20,11 +20,19 @@ export const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
+  const handleToggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark');
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     update({ search: query.trim() || undefined });
+  };
+
+  const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value);
+  const handleToggleMenu = () => setMenuOpen(!menuOpen);
+  const handleCloseMenu = () => setMenuOpen(false);
+  const handleLogout = () => {
+    setMenuOpen(false);
+    logout();
   };
 
   // Close dropdown on outside click
@@ -57,7 +65,7 @@ export const Header = () => {
             <input
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={handleSearchInput}
               placeholder="Поиск товаров..."
               className={s.searchInput}
             />
@@ -65,7 +73,7 @@ export const Header = () => {
         </form>
 
         <div className={s.actions}>
-          <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Переключить тему">
+          <Button variant="ghost" size="icon" onClick={handleToggleTheme} aria-label="Переключить тему">
             <Sun className={s.sunIcon} />
             <Moon className={s.moonIcon} />
           </Button>
@@ -84,7 +92,7 @@ export const Header = () => {
               <div className="relative" ref={menuRef}>
                 <button
                   className={s.userButton}
-                  onClick={() => setMenuOpen(!menuOpen)}
+                  onClick={handleToggleMenu}
                   aria-label="Меню пользователя"
                 >
                   <If condition={!!user?.image}>
@@ -107,7 +115,7 @@ export const Header = () => {
                     <Link
                       href="/account/profile"
                       className={s.dropdownItem}
-                      onClick={() => setMenuOpen(false)}
+                      onClick={handleCloseMenu}
                     >
                       <User className={s.dropdownIcon} />
                       Профиль
@@ -116,7 +124,7 @@ export const Header = () => {
                     <Link
                       href="/account/orders"
                       className={s.dropdownItem}
-                      onClick={() => setMenuOpen(false)}
+                      onClick={handleCloseMenu}
                     >
                       <Package className={s.dropdownIcon} />
                       Мои заказы
@@ -127,7 +135,7 @@ export const Header = () => {
                       <Link
                         href="/admin/dashboard"
                         className={s.dropdownItem}
-                        onClick={() => setMenuOpen(false)}
+                        onClick={handleCloseMenu}
                       >
                         <LayoutDashboard className={s.dropdownIcon} />
                         Админ-панель
@@ -137,10 +145,7 @@ export const Header = () => {
                     <div className={s.dropdownDivider} />
                     <button
                       className={s.dropdownDanger}
-                      onClick={() => {
-                        setMenuOpen(false);
-                        logout();
-                      }}
+                      onClick={handleLogout}
                     >
                       <LogOut className="h-4 w-4" />
                       Выйти

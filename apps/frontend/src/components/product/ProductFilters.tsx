@@ -35,6 +35,10 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
     update({ tagSlugs: next });
   };
 
+  const handleClearCategory = () => update({ categorySlug: undefined });
+  const handleSelectCategory = (slug: string) => () => update({ categorySlug: slug });
+  const handleToggleTag = (slug: string) => () => toggleTag(slug);
+
   const hasFilters = currentCategory || currentTags.length > 0;
 
   return (
@@ -44,7 +48,7 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
           <p className={s.label}>Категории</p>
           <div className={s.categoryList}>
             <button
-              onClick={() => update({ categorySlug: undefined })}
+              onClick={handleClearCategory}
               className={cn(s.categoryItem, !currentCategory ? s.categoryActive : s.categoryInactive)}
             >
               Все товары
@@ -52,7 +56,7 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => update({ categorySlug: cat.slug })}
+                onClick={handleSelectCategory(cat.slug)}
                 className={cn(s.categoryItem, currentCategory === cat.slug ? s.categoryActive : s.categoryInactive)}
               >
                 {cat.name}
@@ -68,7 +72,7 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
           <p className={s.label}>Теги</p>
           <div className={s.tags}>
             {tags.map((tag) => (
-              <button key={tag.id} onClick={() => toggleTag(tag.slug)}>
+              <button key={tag.id} onClick={handleToggleTag(tag.slug)}>
                 <Badge
                   variant={currentTags.includes(tag.slug) ? 'default' : 'outline'}
                   className="cursor-pointer transition-opacity duration-150 hover:opacity-80"

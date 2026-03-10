@@ -18,6 +18,10 @@ const breadcrumbs = [
 const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart } = useCartStore();
 
+  const handleDecrease = (id: string, quantity: number) => () => updateQuantity(id, quantity - 1);
+  const handleIncrease = (id: string, quantity: number) => () => updateQuantity(id, quantity + 1);
+  const handleRemove = (id: string) => () => removeItem(id);
+
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
@@ -65,20 +69,20 @@ const CartPage = () => {
                     <div className={s.quantityGroup}>
                       <button
                         className={s.quantityButton}
-                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        onClick={handleDecrease(item.id, item.quantity)}
                       >
                         <Minus className="h-3 w-3" />
                       </button>
                       <span className={s.quantity}>{item.quantity}</span>
                       <button
                         className={s.quantityButton}
-                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        onClick={handleIncrease(item.id, item.quantity)}
                         disabled={item.quantity >= item.stock}
                       >
                         <Plus className="h-3 w-3" />
                       </button>
                     </div>
-                    <button className={s.removeButton} onClick={() => removeItem(item.id)}>
+                    <button className={s.removeButton} onClick={handleRemove(item.id)}>
                       Удалить
                     </button>
                   </div>

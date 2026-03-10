@@ -169,6 +169,12 @@ analytics/
   - `condition && <A/>` → `<When condition={...}><A/></When>`
   - Ранний return (`if (isLoading) return ...`) — оставлять как есть, это flow control
   - `cn()` условия в className и текстовые тернарники — оставлять как есть
+- **Обработчики событий — только именованные функции**:
+  - НЕ писать инлайн: `onClick={() => setOpen(false)}` или `onChange={(e) => setValue(e.target.value)}`
+  - Выносить в именованную функцию: `const handleClose = () => setOpen(false);` → `onClick={handleClose}`
+  - Имена: `handle` + действие: `handleSubmit`, `handleToggleTheme`, `handleRemoveItem`
+  - Для параметрических обработчиков: функция возвращает функцию: `const handleSelectImage = (index: number) => () => { ... };`
+  - Исключение: `onLoad`, `onError` на `<Image>` / `<img>` — можно оставить инлайн (они техничные, а не пользовательские)
 
 ### Backend
 - НИКОГДА не создавать `new PrismaClient()` — импортировать `db` из `packages/shared/src/db`

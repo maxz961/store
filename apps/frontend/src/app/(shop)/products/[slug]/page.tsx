@@ -55,6 +55,15 @@ const ProductPage = (props: Props) => {
     ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
     : 0;
 
+  const handleSelectImage = (index: number) => () => {
+    setSelectedImage(index);
+    setMainImgLoaded(false);
+    setMainImgError(false);
+  };
+
+  const handleDecreaseQuantity = () => setQuantity((q) => Math.max(1, q - 1));
+  const handleIncreaseQuantity = () => setQuantity((q) => Math.min(product.stock, q + 1));
+
   const handleAddToCart = () => {
     for (let i = 0; i < quantity; i++) {
       addItem({
@@ -113,7 +122,7 @@ const ProductPage = (props: Props) => {
               {product.images.map((img, index) => (
                 <button
                   key={index}
-                  onClick={() => { setSelectedImage(index); setMainImgLoaded(false); setMainImgError(false); }}
+                  onClick={handleSelectImage(index)}
                   className={cn(s.thumb, index === selectedImage ? s.thumbActive : s.thumbInactive)}
                 >
                   <Image src={img} alt={`${product.name} ${index + 1}`} fill className={s.thumbImage} sizes="64px" />
@@ -177,7 +186,7 @@ const ProductPage = (props: Props) => {
               <div className={s.quantityGroup}>
                 <button
                   className={s.quantityButton}
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                  onClick={handleDecreaseQuantity}
                   disabled={quantity <= 1}
                 >
                   <Minus className="h-4 w-4" />
@@ -185,7 +194,7 @@ const ProductPage = (props: Props) => {
                 <span className={s.quantity}>{quantity}</span>
                 <button
                   className={s.quantityButton}
-                  onClick={() => setQuantity((q) => Math.min(product.stock, q + 1))}
+                  onClick={handleIncreaseQuantity}
                   disabled={quantity >= product.stock}
                 >
                   <Plus className="h-4 w-4" />

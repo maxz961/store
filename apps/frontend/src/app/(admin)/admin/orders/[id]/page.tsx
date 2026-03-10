@@ -20,6 +20,8 @@ export default function AdminOrderDetailPage() {
       .finally(() => setLoading(false));
   }, [params.id]);
 
+  const handleUpdateStatus = (status: string) => () => updateStatus(status);
+
   const updateStatus = async (status: string) => {
     setUpdating(true);
     try {
@@ -49,7 +51,7 @@ export default function AdminOrderDetailPage() {
           {STATUSES.map((status) => (
             <button
               key={status}
-              onClick={() => updateStatus(status)}
+              onClick={handleUpdateStatus(status)}
               disabled={updating || order.status === status}
               className={`rounded-full px-3 py-1 text-sm transition-colors ${
                 order.status === status

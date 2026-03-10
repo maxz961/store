@@ -55,6 +55,10 @@ const CheckoutPage = () => {
     setAddress((prev) => ({ ...prev, [field]: value }));
   };
 
+  const handleSelectDelivery = (method: DeliveryMethod) => () => setDeliveryMethod(method);
+  const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => updateField(field, e.target.value);
+  const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => updateField('country', e.target.value.toUpperCase());
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -125,7 +129,7 @@ const CheckoutPage = () => {
                   <button
                     key={opt.value}
                     type="button"
-                    onClick={() => setDeliveryMethod(opt.value)}
+                    onClick={handleSelectDelivery(opt.value)}
                     className={cn(s.deliveryOption, active ? s.deliveryOptionActive : s.deliveryOptionInactive)}
                   >
                     <Icon className={active ? s.deliveryIconActive : s.deliveryIcon} />
@@ -148,7 +152,7 @@ const CheckoutPage = () => {
                   placeholder="Иван Петров"
                   required
                   value={address.fullName}
-                  onChange={(e) => updateField('fullName', e.target.value)}
+                  onChange={handleFieldChange('fullName')}
                 />
               </div>
 
@@ -159,7 +163,7 @@ const CheckoutPage = () => {
                   placeholder="ул. Шевченко, 10, кв. 5"
                   required
                   value={address.line1}
-                  onChange={(e) => updateField('line1', e.target.value)}
+                  onChange={handleFieldChange('line1')}
                 />
               </div>
 
@@ -169,7 +173,7 @@ const CheckoutPage = () => {
                   className={s.input}
                   placeholder="Подъезд, этаж, домофон"
                   value={address.line2}
-                  onChange={(e) => updateField('line2', e.target.value)}
+                  onChange={handleFieldChange('line2')}
                 />
               </div>
 
@@ -181,7 +185,7 @@ const CheckoutPage = () => {
                     placeholder="Киев"
                     required
                     value={address.city}
-                    onChange={(e) => updateField('city', e.target.value)}
+                    onChange={handleFieldChange('city')}
                   />
                 </div>
                 <div>
@@ -191,7 +195,7 @@ const CheckoutPage = () => {
                     placeholder="Киевская обл."
                     required
                     value={address.state}
-                    onChange={(e) => updateField('state', e.target.value)}
+                    onChange={handleFieldChange('state')}
                   />
                 </div>
               </div>
@@ -204,7 +208,7 @@ const CheckoutPage = () => {
                     placeholder="01001"
                     required
                     value={address.postalCode}
-                    onChange={(e) => updateField('postalCode', e.target.value)}
+                    onChange={handleFieldChange('postalCode')}
                   />
                 </div>
                 <div>
@@ -215,7 +219,7 @@ const CheckoutPage = () => {
                     required
                     maxLength={2}
                     value={address.country}
-                    onChange={(e) => updateField('country', e.target.value.toUpperCase())}
+                    onChange={handleCountryChange}
                   />
                 </div>
               </div>

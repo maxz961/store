@@ -41,11 +41,19 @@ export default function NewProductPage() {
     setForm((f) => ({ ...f, name, slug }));
   };
 
+  const handleNameInput = (e: React.ChangeEvent<HTMLInputElement>) => handleNameChange(e.target.value);
+  const handleFormField = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
+    setForm((f) => ({ ...f, [field]: e.target.value }));
+  const handlePublishedChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setForm((f) => ({ ...f, isPublished: e.target.checked }));
+
   const toggleTag = (id: string) => {
     setSelectedTags((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
     );
   };
+
+  const handleToggleTag = (id: string) => () => toggleTag(id);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,14 +85,14 @@ export default function NewProductPage() {
           placeholder="Product Name"
           required
           value={form.name}
-          onChange={(e) => handleNameChange(e.target.value)}
+          onChange={handleNameInput}
           className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
         />
         <input
           placeholder="Slug (auto-generated)"
           required
           value={form.slug}
-          onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
+          onChange={handleFormField('slug')}
           className="w-full rounded-md border px-3 py-2 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-ring"
         />
         <textarea
@@ -92,7 +100,7 @@ export default function NewProductPage() {
           required
           rows={4}
           value={form.description}
-          onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+          onChange={handleFormField('description')}
           className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
         />
 
@@ -104,7 +112,7 @@ export default function NewProductPage() {
             step="0.01"
             min="0"
             value={form.price}
-            onChange={(e) => setForm((f) => ({ ...f, price: e.target.value }))}
+            onChange={handleFormField('price')}
             className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
           />
           <input
@@ -113,7 +121,7 @@ export default function NewProductPage() {
             step="0.01"
             min="0"
             value={form.comparePrice}
-            onChange={(e) => setForm((f) => ({ ...f, comparePrice: e.target.value }))}
+            onChange={handleFormField('comparePrice')}
             className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
@@ -125,13 +133,13 @@ export default function NewProductPage() {
             type="number"
             min="0"
             value={form.stock}
-            onChange={(e) => setForm((f) => ({ ...f, stock: e.target.value }))}
+            onChange={handleFormField('stock')}
             className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
           />
           <input
             placeholder="SKU (optional)"
             value={form.sku}
-            onChange={(e) => setForm((f) => ({ ...f, sku: e.target.value }))}
+            onChange={handleFormField('sku')}
             className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
@@ -139,7 +147,7 @@ export default function NewProductPage() {
         <select
           required
           value={form.categoryId}
-          onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
+          onChange={handleFormField('categoryId')}
           className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
         >
           <option value="">Select Category</option>
@@ -152,7 +160,7 @@ export default function NewProductPage() {
           placeholder="Image URLs (comma-separated)"
           required
           value={form.images}
-          onChange={(e) => setForm((f) => ({ ...f, images: e.target.value }))}
+          onChange={handleFormField('images')}
           className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
         />
 
@@ -165,7 +173,7 @@ export default function NewProductPage() {
                 <button
                   key={tag.id}
                   type="button"
-                  onClick={() => toggleTag(tag.id)}
+                  onClick={handleToggleTag(tag.id)}
                   className={`rounded-full px-3 py-1 text-sm border transition-colors ${
                     selectedTags.includes(tag.id)
                       ? "bg-primary text-primary-foreground"
@@ -183,7 +191,7 @@ export default function NewProductPage() {
           <input
             type="checkbox"
             checked={form.isPublished}
-            onChange={(e) => setForm((f) => ({ ...f, isPublished: e.target.checked }))}
+            onChange={handlePublishedChange}
           />
           Publish immediately
         </label>
