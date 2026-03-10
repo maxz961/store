@@ -2,9 +2,8 @@
 
 import { use } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { Package, ArrowLeft } from 'lucide-react';
-import { If, Then, Else, When } from 'react-if';
+import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
@@ -14,6 +13,8 @@ import { STATUS_LABELS, DELIVERY_LABELS } from '@/lib/constants/order';
 import type { OrderDetailPageProps } from './page.types';
 import { STATUS_STYLES } from './page.constants';
 import { s } from './page.styled';
+import { OrderDetailItem } from './OrderDetailItem';
+import { OrderDetailSkeleton } from './OrderDetailSkeleton';
 
 const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
   const { id } = use(params);
@@ -35,14 +36,7 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
           <div className={`${s.skeleton} h-6 w-24 mb-8`} />
           <div className="rounded-xl border border-border bg-card">
             {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-4 p-5 border-b border-border last:border-0">
-                <div className={`${s.skeleton} h-14 w-14 rounded-lg`} />
-                <div className="flex-1">
-                  <div className={`${s.skeleton} h-4 w-48 mb-2`} />
-                  <div className={`${s.skeleton} h-3 w-20`} />
-                </div>
-                <div className={`${s.skeleton} h-4 w-16`} />
-              </div>
+              <OrderDetailSkeleton key={i} />
             ))}
           </div>
         </div>
@@ -108,38 +102,7 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
         </div>
         <div className={s.sectionBody}>
           {order.orderItems.map((item) => (
-            <div key={item.id} className={s.item}>
-              <div className={s.itemImageWrapper}>
-                <If condition={!!item.product.images[0]}>
-                  <Then>
-                    <Image
-                      src={item.product.images[0]}
-                      alt={item.product.name}
-                      fill
-                      className={s.itemImage}
-                      sizes="56px"
-                    />
-                  </Then>
-                  <Else>
-                    <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
-                      Нет фото
-                    </div>
-                  </Else>
-                </If>
-              </div>
-              <div className={s.itemInfo}>
-                <Link
-                  href={`/products/${item.product.slug}`}
-                  className={`${s.itemName} hover:text-primary transition-colors duration-150`}
-                >
-                  {item.product.name}
-                </Link>
-                <p className={s.itemQuantity}>{item.quantity} шт. × ${Number(item.price).toFixed(2)}</p>
-              </div>
-              <span className={s.itemPrice}>
-                ${(Number(item.price) * item.quantity).toFixed(2)}
-              </span>
-            </div>
+            <OrderDetailItem key={item.id} item={item} />
           ))}
         </div>
         <div className={s.totalRow}>

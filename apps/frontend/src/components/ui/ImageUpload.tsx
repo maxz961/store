@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { ImagePlus, X } from 'lucide-react';
+import { ImagePlus } from 'lucide-react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
+import { ImageThumb } from './ImageThumb';
 import type { ImageUploadProps } from './ImageUpload.types';
 import { MAX_FILE_SIZE } from './ImageUpload.constants';
 import { s } from './ImageUpload.styled';
@@ -65,20 +66,10 @@ export const ImageUpload = ({
       <When condition={totalCount > 0}>
         <div className={s.thumbnails}>
           {existingUrls.map((url) => (
-            <div key={url} className={s.thumb}>
-              <img src={url} alt="" className={s.thumbImage} />
-              <button className={s.thumbRemove} onClick={removeExisting(url)} type="button">
-                <X className="h-3 w-3" />
-              </button>
-            </div>
+            <ImageThumb key={url} src={url} onRemove={removeExisting(url)} />
           ))}
           {files.map((file, index) => (
-            <div key={`${file.name}-${index}`} className={s.thumb}>
-              <img src={URL.createObjectURL(file)} alt="" className={s.thumbImage} />
-              <button className={s.thumbRemove} onClick={removeFile(index)} type="button">
-                <X className="h-3 w-3" />
-              </button>
-            </div>
+            <ImageThumb key={`${file.name}-${index}`} src={URL.createObjectURL(file)} onRemove={removeFile(index)} />
           ))}
         </div>
       </When>

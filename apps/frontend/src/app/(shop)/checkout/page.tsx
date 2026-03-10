@@ -2,73 +2,73 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { LogIn, ImageOff } from 'lucide-react';
-import { If, Then, Else, When } from 'react-if';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { LogIn } from 'lucide-react';
+import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { TextField } from '@/components/ui/TextField';
 import { useCartStore } from '@/store/cart';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { api } from '@/lib/api';
-import { cn } from '@/lib/utils';
+import { useCreateOrder } from '@/lib/hooks/useOrders';
+import { DeliveryOption } from './DeliveryOption';
+import { CheckoutSummaryItem } from './CheckoutSummaryItem';
 import { s } from './page.styled';
 import type { DeliveryMethod } from './page.types';
-import { DELIVERY_OPTIONS, breadcrumbs } from './page.constants';
+import {
+  DELIVERY_OPTIONS,
+  breadcrumbs,
+  checkoutFormSchema,
+  type CheckoutFormValues,
+} from './page.constants';
 
 const CheckoutPage = () => {
   const { items, totalPrice, clearCart } = useCartStore();
   const { isAuthenticated, isLoading: authLoading, login } = useAuth();
   const router = useRouter();
+  const createOrder = useCreateOrder();
   const [hydrated, setHydrated] = useState(false);
-
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('COURIER');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
-  const [address, setAddress] = useState({
-    fullName: '',
-    line1: '',
-    line2: '',
-    city: '',
-    state: '',
-    postalCode: '',
-    country: 'UA',
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutFormSchema),
+    defaultValues: {
+      fullName: '',
+      line1: '',
+      line2: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: 'UA',
+    },
   });
 
   useEffect(() => {
     setHydrated(true);
   }, []);
 
-  const updateField = (field: string, value: string) => {
-    setAddress((prev) => ({ ...prev, [field]: value }));
-  };
-
   const handleSelectDelivery = (method: DeliveryMethod) => () => setDeliveryMethod(method);
 
-  const handleFieldChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => updateField(field, e.target.value);
-
-  const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => updateField('country', e.target.value.toUpperCase());
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-
-    try {
-      const order = await api.post<{ id: string }>('/orders', {
-        deliveryMethod,
-        shippingAddress: address,
-        items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
-      });
-
-      clearCart();
-      router.push(`/account/orders/${order.id}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Не удалось оформить заказ');
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const onSubmit = handleSubmit((data) => {
+    createOrder.mutate({
+      deliveryMethod,
+      shippingAddress: {
+        ...data,
+        line2: data.line2 || undefined,
+      },
+      items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
+    }, {
+      onSuccess: (order) => {
+        clearCart();
+        router.push(`/account/orders/${order.id}`);
+      },
+    });
+  });
 
   if (!hydrated || authLoading) {
     return (
@@ -80,7 +80,7 @@ const CheckoutPage = () => {
     );
   }
 
-  if (hydrated && items.length === 0 && !submitting) {
+  if (hydrated && items.length === 0 && !createOrder.isPending) {
     router.replace('/cart');
     return null;
   }
@@ -105,29 +105,21 @@ const CheckoutPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <form onSubmit={handleSubmit} className={s.layout}>
+      <form onSubmit={onSubmit} className={s.layout}>
         {/* Left column — form */}
         <div className={s.formColumn}>
           {/* Delivery method */}
           <div className={s.section}>
             <h2 className={s.sectionTitle}>Способ доставки</h2>
             <div className={s.deliveryGrid}>
-              {DELIVERY_OPTIONS.map((opt) => {
-                const active = deliveryMethod === opt.value;
-                const Icon = opt.icon;
-                return (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={handleSelectDelivery(opt.value)}
-                    className={cn(s.deliveryOption, active ? s.deliveryOptionActive : s.deliveryOptionInactive)}
-                  >
-                    <Icon className={active ? s.deliveryIconActive : s.deliveryIcon} />
-                    <span className={s.deliveryLabel}>{opt.label}</span>
-                    <span className={s.deliveryDescription}>{opt.description}</span>
-                  </button>
-                );
-              })}
+              {DELIVERY_OPTIONS.map((opt) => (
+                <DeliveryOption
+                  key={opt.value}
+                  option={opt}
+                  active={deliveryMethod === opt.value}
+                  onSelect={handleSelectDelivery(opt.value)}
+                />
+              ))}
             </div>
           </div>
 
@@ -135,83 +127,56 @@ const CheckoutPage = () => {
           <div className={s.section}>
             <h2 className={s.sectionTitle}>Адрес доставки</h2>
             <div className={s.fieldGroup}>
-              <div>
-                <label className={s.label}>Полное имя</label>
-                <input
-                  className={s.input}
-                  placeholder="Иван Петров"
-                  required
-                  value={address.fullName}
-                  onChange={handleFieldChange('fullName')}
-                />
-              </div>
+              <TextField
+                label="Полное имя"
+                placeholder="Иван Петров"
+                error={errors.fullName?.message}
+                {...register('fullName')}
+              />
 
-              <div>
-                <label className={s.label}>Адрес</label>
-                <input
-                  className={s.input}
-                  placeholder="ул. Шевченко, 10, кв. 5"
-                  required
-                  value={address.line1}
-                  onChange={handleFieldChange('line1')}
-                />
-              </div>
+              <TextField
+                label="Адрес"
+                placeholder="ул. Шевченко, 10, кв. 5"
+                error={errors.line1?.message}
+                {...register('line1')}
+              />
 
-              <div>
-                <label className={s.label}>Адрес (дополнительно)</label>
-                <input
-                  className={s.input}
-                  placeholder="Подъезд, этаж, домофон"
-                  value={address.line2}
-                  onChange={handleFieldChange('line2')}
+              <TextField
+                label="Адрес (дополнительно)"
+                placeholder="Подъезд, этаж, домофон"
+                error={errors.line2?.message}
+                {...register('line2')}
+              />
+
+              <div className={s.fieldRow}>
+                <TextField
+                  label="Город"
+                  placeholder="Киев"
+                  error={errors.city?.message}
+                  {...register('city')}
+                />
+                <TextField
+                  label="Область / Регион"
+                  placeholder="Киевская обл."
+                  error={errors.state?.message}
+                  {...register('state')}
                 />
               </div>
 
               <div className={s.fieldRow}>
-                <div>
-                  <label className={s.label}>Город</label>
-                  <input
-                    className={s.input}
-                    placeholder="Киев"
-                    required
-                    value={address.city}
-                    onChange={handleFieldChange('city')}
-                  />
-                </div>
-                <div>
-                  <label className={s.label}>Область / Регион</label>
-                  <input
-                    className={s.input}
-                    placeholder="Киевская обл."
-                    required
-                    value={address.state}
-                    onChange={handleFieldChange('state')}
-                  />
-                </div>
-              </div>
-
-              <div className={s.fieldRow}>
-                <div>
-                  <label className={s.label}>Почтовый индекс</label>
-                  <input
-                    className={s.input}
-                    placeholder="01001"
-                    required
-                    value={address.postalCode}
-                    onChange={handleFieldChange('postalCode')}
-                  />
-                </div>
-                <div>
-                  <label className={s.label}>Страна</label>
-                  <input
-                    className={s.input}
-                    placeholder="UA"
-                    required
-                    maxLength={2}
-                    value={address.country}
-                    onChange={handleCountryChange}
-                  />
-                </div>
+                <TextField
+                  label="Почтовый индекс"
+                  placeholder="01001"
+                  error={errors.postalCode?.message}
+                  {...register('postalCode')}
+                />
+                <TextField
+                  label="Страна"
+                  placeholder="UA"
+                  maxLength={2}
+                  error={errors.country?.message}
+                  {...register('country')}
+                />
               </div>
             </div>
           </div>
@@ -224,28 +189,7 @@ const CheckoutPage = () => {
 
             <div className={s.summaryItems}>
               {items.map((item) => (
-                <div key={item.id} className={s.summaryItem}>
-                  <div className={s.summaryItemImage}>
-                    <If condition={!!item.imageUrl}>
-                      <Then>
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          fill
-                          className={s.summaryItemImageEl}
-                          sizes="48px"
-                        />
-                      </Then>
-                      <Else>
-                        <ImageOff className="m-auto h-5 w-5 text-muted-foreground/30" />
-                      </Else>
-                    </If>
-                  </div>
-                  <div className={s.summaryItemInfo}>
-                    <p className={s.summaryItemName}>{item.name}</p>
-                    <p className={s.summaryItemQty}>{item.quantity} шт. × ${Number(item.price).toFixed(2)}</p>
-                  </div>
-                </div>
+                <CheckoutSummaryItem key={item.id} item={item} />
               ))}
             </div>
 
@@ -256,12 +200,14 @@ const CheckoutPage = () => {
               <span className={s.summaryTotalPrice}>${totalPrice().toFixed(2)}</span>
             </div>
 
-            <When condition={!!error}>
-              <p className={s.error}>{error}</p>
+            <When condition={createOrder.isError}>
+              <p className={s.error}>
+                {createOrder.error instanceof Error ? createOrder.error.message : 'Не удалось оформить заказ'}
+              </p>
             </When>
 
-            <Button type="submit" size="lg" className={s.submitButton} disabled={submitting}>
-              {submitting ? 'Оформляем...' : 'Оформить заказ'}
+            <Button type="submit" size="lg" className={s.submitButton} disabled={createOrder.isPending}>
+              {createOrder.isPending ? 'Оформляем...' : 'Оформить заказ'}
             </Button>
           </div>
         </div>

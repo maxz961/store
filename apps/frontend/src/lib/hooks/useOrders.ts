@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 interface OrderItem {
@@ -48,4 +48,24 @@ export const useOrder = (id: string) =>
     retry: false,
   });
 
-export type { Order, OrderItem };
+interface CreateOrderInput {
+  deliveryMethod: 'COURIER' | 'PICKUP' | 'POST';
+  shippingAddress: {
+    fullName: string;
+    line1: string;
+    line2?: string;
+    city: string;
+    state: string;
+    postalCode: string;
+    country: string;
+  };
+  items: { productId: string; quantity: number }[];
+}
+
+export const useCreateOrder = () =>
+  useMutation({
+    mutationFn: (data: CreateOrderInput) =>
+      api.post<{ id: string }>('/orders', data),
+  });
+
+export type { Order, OrderItem, CreateOrderInput };

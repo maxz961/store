@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { StarRating } from '@/components/ui/StarRating';
 import { ReviewModal } from '@/components/product/ReviewModal';
+import { GalleryThumb } from './GalleryThumb';
 import { useProduct } from '@/lib/hooks/useProducts';
 import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
@@ -120,13 +121,13 @@ const ProductPage = (props: Props) => {
           <When condition={product.images.length > 1}>
             <div className={s.thumbnails}>
               {product.images.map((img, index) => (
-                <button
+                <GalleryThumb
                   key={index}
+                  src={img}
+                  alt={`${product.name} ${index + 1}`}
+                  isActive={index === selectedImage}
                   onClick={handleSelectImage(index)}
-                  className={cn(s.thumb, index === selectedImage ? s.thumbActive : s.thumbInactive)}
-                >
-                  <Image src={img} alt={`${product.name} ${index + 1}`} fill className={s.thumbImage} sizes="64px" />
-                </button>
+                />
               ))}
             </div>
           </When>

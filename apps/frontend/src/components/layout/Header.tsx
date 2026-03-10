@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import Link from 'next/link';
 import { useTheme } from 'next-themes';
-import { ShoppingCart, Sun, Moon, Store, Search, User, Package, LogOut, LayoutDashboard } from 'lucide-react';
+import { ShoppingCart, Sun, Moon, Store, Search } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Dropdown } from '@/components/ui/Dropdown';
@@ -11,6 +11,8 @@ import { useCartStore } from '@/store/cart';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { getInitials } from '@/lib/utils';
+import { UserTrigger } from './UserTrigger';
+import { UserMenu } from './UserMenu';
 import { s } from './Header.styled';
 
 
@@ -31,52 +33,6 @@ export const Header = () => {
   const handleSearchInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value), []);
 
   const initials = getInitials(user?.name, user?.email);
-
-  const userTrigger = (
-    <div className={s.userButton} aria-label="Меню пользователя">
-      <If condition={!!user?.image}>
-        <Then>
-          <img src={user?.image ?? ''} alt="" className={s.userAvatar} referrerPolicy="no-referrer" />
-        </Then>
-        <Else>
-          <span className={s.userFallback}>{initials}</span>
-        </Else>
-      </If>
-    </div>
-  );
-
-  const userMenu = (
-    <>
-      <div className={s.dropdownHeader}>
-        <p className={s.dropdownName}>{user?.name ?? 'Пользователь'}</p>
-        <p className={s.dropdownEmail}>{user?.email}</p>
-      </div>
-
-      <Link href="/account/profile" className={s.dropdownItem}>
-        <User className={s.dropdownIcon} />
-        Профиль
-      </Link>
-
-      <Link href="/account/orders" className={s.dropdownItem}>
-        <Package className={s.dropdownIcon} />
-        Мои заказы
-      </Link>
-
-      <When condition={isAdmin}>
-        <div className={s.dropdownDivider} />
-        <Link href="/admin/dashboard" className={s.dropdownItem}>
-          <LayoutDashboard className={s.dropdownIcon} />
-          Админ-панель
-        </Link>
-      </When>
-
-      <div className={s.dropdownDivider} />
-      <button className={s.dropdownDanger} onClick={logout}>
-        <LogOut className="h-4 w-4" />
-        Выйти
-      </button>
-    </>
-  );
 
   return (
     <header className={s.header}>
@@ -116,8 +72,8 @@ export const Header = () => {
 
           <If condition={isAuthenticated && !!user}>
             <Then>
-              <Dropdown className="relative" trigger={userTrigger}>
-                {userMenu}
+              <Dropdown className="relative" trigger={<UserTrigger image={user?.image} initials={initials} />}>
+                <UserMenu user={user!} isAdmin={isAdmin} logout={logout} />
               </Dropdown>
             </Then>
             <Else>

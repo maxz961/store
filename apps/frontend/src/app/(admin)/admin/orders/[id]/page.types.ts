@@ -1,17 +1,15 @@
-export interface OrderItem {
-  id: string;
-  quantity: number;
-  price: number;
-  product: { name: string };
+export interface StatusSectionProps {
+  orderStatus: string;
+  onUpdateStatus: (status: string) => () => void;
+  isPending: boolean;
 }
 
-export interface Order {
-  id: string;
-  status: string;
+export interface DeliveryCardProps {
   deliveryMethod: string;
-  totalAmount: number;
-  createdAt: string;
-  shippingAddress: {
+}
+
+export interface AddressCardProps {
+  address: {
     fullName: string;
     line1: string;
     city: string;
@@ -19,6 +17,28 @@ export interface Order {
     postalCode: string;
     country: string;
   };
-  orderItems: OrderItem[];
-  user: { name: string | null; email: string } | null;
+}
+
+export interface OrderItem {
+  id: string;
+  quantity: number;
+  price: number;
+  product: { name: string };
+}
+
+export interface OrderItemsListProps {
+  items: OrderItem[];
+  totalAmount: number;
+}
+
+export interface OrderItemRowProps {
+  item: OrderItem;
+}
+
+export interface StatusButtonProps {
+  status: string;
+  label: string;
+  isActive: boolean;
+  disabled: boolean;
+  onClick: () => void;
 }

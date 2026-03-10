@@ -16,3 +16,15 @@ export interface Props {
   currentCategory?: string;
   currentTags: string[];
 }
+
+export interface CategoryButtonProps {
+  category: Category;
+  isActive: boolean;
+  onClick: () => void;
+}
+
+export interface TagButtonProps {
+  tag: Tag;
+  isActive: boolean;
+  onClick: () => void;
+}

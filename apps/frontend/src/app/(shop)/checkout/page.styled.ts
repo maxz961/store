@@ -22,9 +22,6 @@ export const s = {
   // Form fields
   fieldGroup: 'space-y-4',
   fieldRow: 'grid grid-cols-1 gap-4 sm:grid-cols-2',
-  label: 'block text-sm font-medium text-foreground mb-1.5',
-  input: 'w-full h-10 rounded-lg border border-border bg-background px-3 text-sm outline-none transition-colors duration-150 focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground/50',
-  fieldError: 'mt-1 text-xs text-destructive',
 
   // Sidebar (order summary)
   sidebar: 'space-y-6 lg:sticky lg:top-20',

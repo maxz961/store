@@ -107,6 +107,7 @@ components/
   admin/                 ← StatsCard, RevenueChart, OrderStatusPie
 lib/
   api.ts                 ← fetch-клиент к backend (:3001)
+  hooks/                 ← React Query хуки (useProducts, useOrders, useAdmin, useReviews, useAuth)
   constants/             ← общие константы (order.ts, format.ts)
   validations/           ← Zod схемы (импортировать из packages/shared)
 store/
@@ -183,6 +184,7 @@ analytics/
 - **Читаемость JSX — приоритет**:
   - Сложную разметку (больше 5-7 строк) выносить в именованные константы перед `return`
   - Пример: `const userAvatar = (<div>...</div>);` → в JSX просто `{userAvatar}`
+  - Трансформации данных (`.map`, `.filter`) НЕ писать inline в пропсах — выносить в `useMemo`: `const categoryOptions = useMemo(() => categories.map(...), [categories])` → `options={categoryOptions}`
   - Render props и children-as-function — избегать. Предпочитать простой API: `trigger={node}` и `children` как обычный ReactNode
   - Компонент в return должен читаться как оглавление: видишь структуру, не вникая в детали
 - **Форматирование компонентов**:
@@ -190,14 +192,45 @@ analytics/
   - Между функциями-обработчиками — **1 пустая строка**
   - Группировка: сначала все хуки, потом все обработчики, потом return
 - **useEffect — минимизировать**:
+  - **ЗАПРЕЩЕНО** использовать `useEffect` для загрузки данных (data fetching) — только React Query (`useQuery` / `useMutation`)
+  - Хуки для запросов: `lib/hooks/useProducts.ts`, `lib/hooks/useOrders.ts`, `lib/hooks/useAdmin.ts`, `lib/hooks/useReviews.ts`
+  - Если нужен новый запрос — создать хук в соответствующем файле `lib/hooks/`, не писать `useEffect` + `api.get`
   - НЕ использовать `useEffect` для обновления стейта в ответ на другой стейт — лишний ре-рендер
   - Логику, привязанную к действию пользователя, вешать на обработчик события, а не на `useEffect`
   - Если `useEffect` нужен (подписки, DOM API) — инкапсулировать в кастомный хук или компонент
-  - Допустимые случаи: `useEffect` при маунте (`[]`), подписка на внешние события, интеграция с non-React API
+  - Допустимые случаи: Zustand hydration (`setHydrated`), подписка на внешние события, интеграция с non-React API
 - **Утилитарная логика — в `lib/utils.ts`**:
   - Чистые функции (форматирование, вычисления, трансформации) выносить в `lib/utils.ts`
   - Если одна и та же логика встречается 2+ раза — обязательно вынести
   - Примеры: `getInitials(name, email)`, `formatPrice(price)`, `pluralize(count, forms)`
+- **Поля форм — только через переиспользуемые компоненты**:
+  - `<label>` + `<input>` → `<TextField>` из `components/ui/TextField`
+  - `<label>` + `<textarea>` → `<TextareaField>` из `components/ui/TextareaField`
+  - `<label>` + `<select>` → `<SelectField>` из `components/ui/SelectField`
+  - `<label>` + `<input type="checkbox">` → `<CheckboxField>` из `components/ui/CheckboxField`
+  - ЗАПРЕЩЕНО дублировать label + input inline — всегда использовать компоненты выше
+  - Стили полей централизованы в `*.styled.ts` каждого компонента
+  - Все поля поддерживают `error` проп для inline-ошибок и `forwardRef` для интеграции с React Hook Form
+- **Формы — React Hook Form + Zod**:
+  - ЗАПРЕЩЕНО использовать `useState` для управления формами — только `useForm` из `react-hook-form`
+  - Валидация через Zod: `resolver: zodResolver(schema)` — не ручные проверки
+  - Zod схема формы определяется в `page.constants.ts` (или `ComponentName.constants.ts`)
+  - Поля регистрируются через `{...register('fieldName')}`, ошибки — `errors.fieldName?.message`
+  - Для нестандартных полей (теги, toggle-группы) — использовать `watch` + `setValue`
+  - Трансформация данных (строка → число, строка → массив) — в `onSubmit`, не в схеме
+  - Сабмит: `handleSubmit((data) => mutation.mutate(data))` — не `api.post` напрямую
+- **Большие JSX-блоки — выносить в отдельные компоненты**:
+  - ЗАПРЕЩЕНО хранить JSX в переменных (`const card = (<div>...</div>)`) — это должен быть отдельный компонент
+  - Секции страницы → отдельные файлы в той же директории: `StatusSection.tsx`, `PricingSection.tsx`
+  - Для форм: использовать `FormProvider` + `useFormContext` в секциях, а не пробрасывать `register`/`errors` через пропсы
+  - Стили: секции импортируют `{ s } from './page.styled'` (общие стили страницы)
+  - Пропсы секций: типы в `page.types.ts` этой же страницы
+- **`.map()` — многострочный JSX выносить в отдельный компонент**:
+  - Если `.map()` callback содержит >5 строк JSX — вынести в отдельный компонент-элемент
+  - Файл элемента: рядом с родителем, имя = единственное число от списка: `OrderItemRow.tsx`, `ReviewItem.tsx`
+  - Пропсы: через `interface` в `page.types.ts` или `ComponentName.types.ts`
+  - Стили: импортировать `{ s } from './page.styled'` или `'./ParentComponent.styled'`
+  - Результат: `.map((item) => <OrderItemRow key={item.id} {...item} />)` — чистый однострочник
 - **Константы и интерфейсы — в отдельных файлах**:
   - Интерфейсы/типы → `page.types.ts` (для страниц) или `ComponentName.types.ts` (для компонентов)
   - Константы вне компонента → `page.constants.ts` или `ComponentName.constants.ts`

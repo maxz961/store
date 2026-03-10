@@ -15,3 +15,17 @@ export interface ProductsResponse {
   page: number;
   totalPages: number;
 }
+
+export interface ProductsTableProps {
+  products: ProductsResponse['items'];
+}
+
+export interface ProductRowProps {
+  product: Product;
+}
+
+export interface ProductsPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  total: number;
+}
