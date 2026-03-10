@@ -12,16 +12,10 @@ import {
   useCreateReview,
   useUpdateReview,
   useUploadReviewImages,
-  type Review,
 } from '@/lib/hooks/useReviews';
+import type { ReviewFormProps } from './ReviewForm.types';
 import { s } from './ReviewForm.styled';
 
-interface ReviewFormProps {
-  productId: string;
-  productSlug: string;
-  existingReview?: Review | null;
-  onSuccess?: () => void;
-}
 
 export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }: ReviewFormProps) => {
   const { isAuthenticated } = useAuth();

@@ -1,4 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 
 jest.mock('lucide-react', () => ({
   ArrowLeft: (props: any) => <div data-testid="icon-arrow" {...props} />,
@@ -25,6 +27,20 @@ jest.mock('@/lib/api', () => ({
 }));
 
 import AdminOrderDetailPage from './page';
+
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
+};
+
+const renderPage = () => render(<AdminOrderDetailPage />, { wrapper: createWrapper() });
 
 const mockOrder = {
   id: 'order-abc12345',
@@ -56,37 +72,37 @@ describe('AdminOrderDetailPage', () => {
   });
 
   it('renders order ID in heading after loading', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     const heading = await screen.findByRole('heading', { name: /abc12345/ });
     expect(heading).toBeInTheDocument();
   });
 
   it('renders customer name', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     // Name appears in subtitle and address — just check at least one exists
     const names = await screen.findAllByText(/Иван Петров/);
     expect(names.length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders delivery method in Russian', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     expect(await screen.findByText('Курьер')).toBeInTheDocument();
   });
 
   it('renders shipping address', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     expect(await screen.findByText(/ул. Центральная 15/)).toBeInTheDocument();
     expect(screen.getByText(/Киев/)).toBeInTheDocument();
   });
 
   it('renders order items', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     expect(await screen.findByText('Наушники Sony')).toBeInTheDocument();
     expect(screen.getByText('Клавиатура')).toBeInTheDocument();
   });
 
   it('renders status buttons', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     // "Ожидает" appears in StatusBadge + status button — check both exist
     const pending = await screen.findAllByText('Ожидает');
     expect(pending.length).toBeGreaterThanOrEqual(2);
@@ -95,7 +111,7 @@ describe('AdminOrderDetailPage', () => {
   });
 
   it('calls API to update status on button click', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     const processingBtn = await screen.findByText('Обрабатывается');
     fireEvent.click(processingBtn);
     await waitFor(() => {
@@ -104,13 +120,13 @@ describe('AdminOrderDetailPage', () => {
   });
 
   it('renders breadcrumbs', async () => {
-    render(<AdminOrderDetailPage />);
+    renderPage();
     expect(await screen.findByText('Заказы')).toBeInTheDocument();
   });
 
   it('redirects to orders on fetch error', async () => {
     mockApiGet = jest.fn().mockRejectedValue(new Error('Not found'));
-    render(<AdminOrderDetailPage />);
+    renderPage();
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/admin/orders');
     });

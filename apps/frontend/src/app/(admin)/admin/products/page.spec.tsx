@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
+
 jest.mock('lucide-react', () => ({
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   Pencil: (props: any) => <div data-testid="icon-pencil" {...props} />,
@@ -15,6 +16,7 @@ jest.mock('@/lib/api', () => ({
 }));
 
 import AdminProductsPage from './page';
+
 
 const mockProducts = {
   items: [

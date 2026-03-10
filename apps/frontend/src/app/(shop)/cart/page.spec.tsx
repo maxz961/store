@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
+
 jest.mock('lucide-react', () => ({
   Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
@@ -8,6 +9,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 import CartPage from './page';
+
 
 const mockRemoveItem = jest.fn();
 const mockUpdateQuantity = jest.fn();
@@ -22,6 +24,7 @@ jest.mock('@/store/cart', () => ({
 
 jest.mock('next/image', () => ({
   __esModule: true,
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
   default: (props: any) => <img {...props} />,
 }));
 

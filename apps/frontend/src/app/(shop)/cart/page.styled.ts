@@ -9,6 +9,7 @@ export const s = {
   item: 'flex gap-4 rounded-xl border border-border bg-card p-4',
   itemImageLink: 'relative h-20 w-20 shrink-0 overflow-hidden rounded-lg bg-white',
   itemImage: 'object-contain p-1',
+  itemImageFallback: 'flex h-full items-center justify-center text-xs text-muted-foreground',
   itemInfo: 'flex flex-1 flex-col gap-1',
   itemName: 'text-sm font-medium transition-colors duration-150 hover:text-primary',
   itemPrice: 'text-sm text-muted-foreground',
@@ -29,6 +30,7 @@ export const s = {
   clearButton: 'mt-3 w-full text-center text-sm text-muted-foreground transition-colors duration-150 hover:text-destructive',
 
   // Empty
+  emptyIcon: 'h-12 w-12 text-muted-foreground',
   empty: 'flex min-h-[400px] flex-col items-center justify-center gap-4 text-center',
   emptyTitle: 'text-lg font-medium',
   emptyText: 'text-sm text-muted-foreground',

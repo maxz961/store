@@ -1,4 +1,6 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
@@ -21,6 +23,20 @@ jest.mock('@/lib/api', () => ({
 }));
 
 import NewProductPage from './page';
+
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
+};
+
+const renderPage = () => render(<NewProductPage />, { wrapper: createWrapper() });
 
 const mockCategories = [
   { id: 'cat-1', name: 'Электроника' },
@@ -45,36 +61,36 @@ describe('NewProductPage', () => {
   });
 
   it('renders title', () => {
-    render(<NewProductPage />);
+    renderPage();
     expect(screen.getByRole('heading', { name: 'Новый товар' })).toBeInTheDocument();
   });
 
   it('renders form sections', () => {
-    render(<NewProductPage />);
+    renderPage();
     expect(screen.getByText('Основная информация')).toBeInTheDocument();
     expect(screen.getByText('Цена и склад')).toBeInTheDocument();
     expect(screen.getByText('Изображения')).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', () => {
-    render(<NewProductPage />);
+    renderPage();
     expect(screen.getByText('Товары')).toBeInTheDocument();
   });
 
   it('loads categories', async () => {
-    render(<NewProductPage />);
+    renderPage();
     expect(await screen.findByText('Электроника')).toBeInTheDocument();
     expect(screen.getByText('Одежда')).toBeInTheDocument();
   });
 
   it('loads tags', async () => {
-    render(<NewProductPage />);
+    renderPage();
     expect(await screen.findByText('Новинка')).toBeInTheDocument();
     expect(screen.getByText('Скидка')).toBeInTheDocument();
   });
 
   it('auto-generates slug from name', () => {
-    render(<NewProductPage />);
+    renderPage();
     const nameInput = screen.getByPlaceholderText('Например: Беспроводные наушники');
     fireEvent.change(nameInput, { target: { value: 'Test Product' } });
     const slugInput = screen.getByDisplayValue('test-product');
@@ -82,7 +98,7 @@ describe('NewProductPage', () => {
   });
 
   it('toggles tag selection', async () => {
-    render(<NewProductPage />);
+    renderPage();
     const tagBtn = await screen.findByText('Новинка');
     fireEvent.click(tagBtn);
     expect(tagBtn).toHaveClass('bg-primary');
@@ -91,7 +107,7 @@ describe('NewProductPage', () => {
   });
 
   it('submits form and redirects', async () => {
-    render(<NewProductPage />);
+    renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
     fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Desc' } });
@@ -110,16 +126,24 @@ describe('NewProductPage', () => {
 
   it('shows error on submit failure', async () => {
     mockApiPost = jest.fn().mockRejectedValue(new Error('Ошибка валидации'));
-    render(<NewProductPage />);
+    renderPage();
 
+    // Fill all required fields to pass Zod validation
     fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
+    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Desc' } });
+    fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
+
+    await screen.findByText('Электроника');
+    fireEvent.change(screen.getByDisplayValue('Выберите категорию'), { target: { value: 'cat-1' } });
+    fireEvent.change(screen.getByPlaceholderText(/example.com/), { target: { value: 'https://img.jpg' } });
+
     fireEvent.submit(screen.getByText('Создать товар').closest('form')!);
 
     expect(await screen.findByText('Ошибка валидации')).toBeInTheDocument();
   });
 
   it('renders publish checkbox', () => {
-    render(<NewProductPage />);
+    renderPage();
     expect(screen.getByText('Опубликовать сразу')).toBeInTheDocument();
   });
 });

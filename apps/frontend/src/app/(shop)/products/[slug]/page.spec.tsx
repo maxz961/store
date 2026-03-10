@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 
+
 jest.mock('lucide-react', () => ({
   ImageOff: (props: any) => <div data-testid="icon-imageoff" {...props} />,
   Star: (props: any) => <div data-testid="icon-star" {...props} />,
@@ -12,6 +13,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 import ProductPage from './page';
+
 
 const mockAddItem = jest.fn();
 
@@ -38,6 +40,8 @@ jest.mock('@/lib/hooks/useProducts', () => ({
 
 jest.mock('@/components/product/ReviewModal', () => ({
   ReviewModal: ({ productId, onClose }: any) => (
+
+
     <div data-testid="review-modal">
       ReviewModal-{productId}
       <button onClick={onClose}>Close</button>
@@ -52,6 +56,7 @@ jest.mock('@/store/cart', () => ({
 
 jest.mock('next/image', () => ({
   __esModule: true,
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
   default: (props: any) => <img {...props} />,
 }));
 

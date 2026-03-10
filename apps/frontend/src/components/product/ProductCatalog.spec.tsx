@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { ProductCatalog } from './ProductCatalog';
 
+
 const mockGet = jest.fn().mockReturnValue(undefined);
 
 jest.mock('@/lib/hooks/useProductParams', () => ({
@@ -27,6 +28,8 @@ jest.mock('./ProductCard', () => ({
 // Mock ProductFilters
 jest.mock('./ProductFilters', () => ({
   ProductFilters: () => <div data-testid="product-filters" />,
+
+
 }));
 
 const mockProduct = {

@@ -1,4 +1,6 @@
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
 
 jest.mock('lucide-react', () => ({
   DollarSign: (props: any) => <div data-testid="icon-dollar" {...props} />,
@@ -31,6 +33,20 @@ jest.mock('@/lib/api', () => ({
 
 import DashboardPage from './page';
 
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
+};
+
+const renderPage = () => render(<DashboardPage />, { wrapper: createWrapper() });
+
 const mockSummary = {
   totalRevenue: 50000,
   ordersCount: 120,
@@ -59,12 +75,12 @@ describe('DashboardPage', () => {
   });
 
   it('renders title', async () => {
-    render(<DashboardPage />);
+    renderPage();
     expect(screen.getByText('Аналитика')).toBeInTheDocument();
   });
 
   it('renders stats cards after loading', async () => {
-    render(<DashboardPage />);
+    renderPage();
     expect(await screen.findByText('Общая выручка')).toBeInTheDocument();
     expect(screen.getByText('Всего заказов')).toBeInTheDocument();
     expect(screen.getByText('Заказы за месяц')).toBeInTheDocument();
@@ -72,29 +88,29 @@ describe('DashboardPage', () => {
   });
 
   it('renders orders count value', async () => {
-    render(<DashboardPage />);
+    renderPage();
     expect(await screen.findByText('120')).toBeInTheDocument();
   });
 
   it('renders top products', async () => {
-    render(<DashboardPage />);
+    renderPage();
     expect(await screen.findByText('Наушники Sony')).toBeInTheDocument();
     expect(screen.getByText('Клавиатура Logitech')).toBeInTheDocument();
   });
 
   it('renders orders by status section', async () => {
-    render(<DashboardPage />);
+    renderPage();
     expect(await screen.findByText('Заказы по статусам')).toBeInTheDocument();
   });
 
   it('renders error state', async () => {
     mockApiGet = jest.fn().mockRejectedValue(new Error('Forbidden'));
-    render(<DashboardPage />);
+    renderPage();
     expect(await screen.findByText(/Не удалось загрузить аналитику/)).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', () => {
-    render(<DashboardPage />);
+    renderPage();
     expect(screen.getByText('Админ-панель')).toBeInTheDocument();
   });
 });

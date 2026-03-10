@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { s } from './page.styled';
 
+
 const LoginPage = () => {
   const { isAuthenticated, isLoading, login } = useAuth();
   const router = useRouter();

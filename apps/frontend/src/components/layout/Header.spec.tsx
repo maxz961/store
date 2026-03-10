@@ -1,5 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
+
 jest.mock('lucide-react', () => ({
   ShoppingCart: (props: any) => <div data-testid="icon-cart" {...props} />,
   Sun: (props: any) => <div data-testid="icon-sun" {...props} />,
@@ -13,6 +14,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 import { Header } from './Header';
+
 
 const mockSetTheme = jest.fn();
 const mockUpdate = jest.fn();

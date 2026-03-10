@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Mock lucide-react before importing components
 jest.mock('lucide-react', () => ({
@@ -12,11 +13,12 @@ jest.mock('lucide-react', () => ({
 
 import CheckoutPage from './page';
 
+
 const mockReplace = jest.fn();
 const mockPush = jest.fn();
 const mockLogin = jest.fn();
 const mockClearCart = jest.fn();
-const mockApiPost = jest.fn();
+let mockApiPost: jest.Mock;
 
 let mockAuthState = {
   isAuthenticated: true,
@@ -30,6 +32,7 @@ let mockCartState = {
   ],
   totalPrice: () => 399.98,
   clearCart: mockClearCart,
+  hydrated: true,
 };
 
 jest.mock('next/navigation', () => ({
@@ -46,14 +49,31 @@ jest.mock('@/store/cart', () => ({
 }));
 
 jest.mock('@/lib/api', () => ({
-  api: { post: (...args: unknown[]) => mockApiPost(...args) },
+  api: {
+    get: jest.fn().mockResolvedValue([]),
+    post: (...args: unknown[]) => mockApiPost(...args),
+  },
 }));
 
 // Mock Next.js Image
 jest.mock('next/image', () => ({
   __esModule: true,
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
   default: (props: any) => <img {...props} />,
 }));
+
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
+};
+
+const renderPage = () => render(<CheckoutPage />, { wrapper: createWrapper() });
 
 describe('CheckoutPage', () => {
   beforeEach(() => {
@@ -61,7 +81,7 @@ describe('CheckoutPage', () => {
     mockPush.mockClear();
     mockLogin.mockClear();
     mockClearCart.mockClear();
-    mockApiPost.mockClear();
+    mockApiPost = jest.fn().mockResolvedValue({ id: 'order-123' });
 
     mockAuthState = {
       isAuthenticated: true,
@@ -75,13 +95,14 @@ describe('CheckoutPage', () => {
       ],
       totalPrice: () => 399.98,
       clearCart: mockClearCart,
+      hydrated: true,
     };
   });
 
   it('shows auth prompt when not authenticated', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false };
 
-    render(<CheckoutPage />);
+    renderPage();
 
     expect(screen.getByText('Войдите, чтобы оформить заказ')).toBeInTheDocument();
     expect(screen.getByText('Войти через Google')).toBeInTheDocument();
@@ -90,7 +111,7 @@ describe('CheckoutPage', () => {
   it('calls login on auth button click', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false };
 
-    render(<CheckoutPage />);
+    renderPage();
 
     fireEvent.click(screen.getByText('Войти через Google'));
     expect(mockLogin).toHaveBeenCalledTimes(1);
@@ -99,13 +120,13 @@ describe('CheckoutPage', () => {
   it('redirects to cart when cart is empty', () => {
     mockCartState = { ...mockCartState, items: [] };
 
-    render(<CheckoutPage />);
+    renderPage();
 
     expect(mockReplace).toHaveBeenCalledWith('/cart');
   });
 
   it('renders delivery method options', () => {
-    render(<CheckoutPage />);
+    renderPage();
 
     expect(screen.getByText('Курьер')).toBeInTheDocument();
     expect(screen.getByText('Самовывоз')).toBeInTheDocument();
@@ -113,7 +134,7 @@ describe('CheckoutPage', () => {
   });
 
   it('renders address form fields', () => {
-    render(<CheckoutPage />);
+    renderPage();
 
     expect(screen.getByText('Полное имя')).toBeInTheDocument();
     expect(screen.getByText('Адрес')).toBeInTheDocument();
@@ -123,7 +144,7 @@ describe('CheckoutPage', () => {
   });
 
   it('renders order summary with cart items', () => {
-    render(<CheckoutPage />);
+    renderPage();
 
     expect(screen.getByText('Ваш заказ')).toBeInTheDocument();
     expect(screen.getByText('Наушники')).toBeInTheDocument();
@@ -131,15 +152,13 @@ describe('CheckoutPage', () => {
   });
 
   it('renders total price', () => {
-    render(<CheckoutPage />);
+    renderPage();
 
     expect(screen.getByText('$399.98')).toBeInTheDocument();
   });
 
   it('submits order successfully', async () => {
-    mockApiPost.mockResolvedValue({ id: 'order-123' });
-
-    render(<CheckoutPage />);
+    renderPage();
 
     // Fill required fields
     fireEvent.change(screen.getByPlaceholderText('Иван Петров'), { target: { value: 'Тест Юзер' } });
@@ -158,14 +177,16 @@ describe('CheckoutPage', () => {
       });
     });
 
-    expect(mockClearCart).toHaveBeenCalled();
-    expect(mockPush).toHaveBeenCalledWith('/account/orders/order-123');
+    await waitFor(() => {
+      expect(mockClearCart).toHaveBeenCalled();
+      expect(mockPush).toHaveBeenCalledWith('/account/orders/order-123');
+    });
   });
 
   it('shows error when order fails', async () => {
-    mockApiPost.mockRejectedValue(new Error('Недостаточно товара'));
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Недостаточно товара'));
 
-    render(<CheckoutPage />);
+    renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Иван Петров'), { target: { value: 'Тест' } });
     fireEvent.change(screen.getByPlaceholderText('ул. Шевченко, 10, кв. 5'), { target: { value: 'Адрес' } });
@@ -183,7 +204,7 @@ describe('CheckoutPage', () => {
   });
 
   it('switches delivery method', () => {
-    render(<CheckoutPage />);
+    renderPage();
 
     fireEvent.click(screen.getByText('Самовывоз'));
 
@@ -193,7 +214,7 @@ describe('CheckoutPage', () => {
   });
 
   it('renders breadcrumbs', () => {
-    render(<CheckoutPage />);
+    renderPage();
 
     expect(screen.getByText('Корзина')).toBeInTheDocument();
     expect(screen.getByText('Оформление заказа')).toBeInTheDocument();

@@ -1,20 +1,14 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { ImagePlus, X } from 'lucide-react';
+import { ImagePlus } from 'lucide-react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
+import { ImageThumb } from './ImageThumb';
+import type { ImageUploadProps } from './ImageUpload.types';
+import { MAX_FILE_SIZE } from './ImageUpload.constants';
 import { s } from './ImageUpload.styled';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-
-interface ImageUploadProps {
-  files: File[];
-  existingUrls?: string[];
-  onChange: (files: File[]) => void;
-  onRemoveExisting?: (url: string) => void;
-  maxFiles?: number;
-}
 
 export const ImageUpload = ({
   files,
@@ -68,25 +62,17 @@ export const ImageUpload = ({
     onRemoveExisting?.(url);
   }, [onRemoveExisting]);
 
+  const handleTriggerInput = () => inputRef.current?.click();
+
   return (
     <div className={s.container}>
       <When condition={totalCount > 0}>
         <div className={s.thumbnails}>
           {existingUrls.map((url) => (
-            <div key={url} className={s.thumb}>
-              <img src={url} alt="" className={s.thumbImage} />
-              <button className={s.thumbRemove} onClick={removeExisting(url)} type="button">
-                <X className="h-3 w-3" />
-              </button>
-            </div>
+            <ImageThumb key={url} src={url} onRemove={removeExisting(url)} />
           ))}
           {files.map((file, index) => (
-            <div key={`${file.name}-${index}`} className={s.thumb}>
-              <img src={URL.createObjectURL(file)} alt="" className={s.thumbImage} />
-              <button className={s.thumbRemove} onClick={removeFile(index)} type="button">
-                <X className="h-3 w-3" />
-              </button>
-            </div>
+            <ImageThumb key={`${file.name}-${index}`} src={URL.createObjectURL(file)} onRemove={removeFile(index)} />
           ))}
         </div>
       </When>
@@ -97,7 +83,7 @@ export const ImageUpload = ({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onClick={() => inputRef.current?.click()}
+          onClick={handleTriggerInput}
         >
           <ImagePlus className={s.dropzoneIcon} />
           <p className={s.dropzoneText}>Добавить фото</p>

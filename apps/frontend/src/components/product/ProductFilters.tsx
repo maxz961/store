@@ -1,30 +1,13 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { When } from 'react-if';
 import { useProductParams } from '@/lib/hooks/useProductParams';
+import { CategoryButton } from './CategoryButton';
+import { TagButton } from './TagButton';
+import type { Props } from './ProductFilters.types';
 import { s } from './ProductFilters.styled';
 
-
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Tag {
-  id: string;
-  name: string;
-  slug: string;
-}
-
-interface Props {
-  categories: Category[];
-  tags: Tag[];
-  currentCategory?: string;
-  currentTags: string[];
-}
 
 export const ProductFilters = ({ categories, tags, currentCategory, currentTags }: Props) => {
   const { update, reset } = useProductParams();
@@ -57,13 +40,12 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
               Все товары
             </button>
             {categories.map((cat) => (
-              <button
+              <CategoryButton
                 key={cat.id}
+                category={cat}
+                isActive={currentCategory === cat.slug}
                 onClick={handleSelectCategory(cat.slug)}
-                className={cn(s.categoryItem, currentCategory === cat.slug ? s.categoryActive : s.categoryInactive)}
-              >
-                {cat.name}
-              </button>
+              />
             ))}
           </div>
         </div>
@@ -75,14 +57,12 @@ export const ProductFilters = ({ categories, tags, currentCategory, currentTags 
           <p className={s.label}>Теги</p>
           <div className={s.tags}>
             {tags.map((tag) => (
-              <button key={tag.id} onClick={handleToggleTag(tag.slug)}>
-                <Badge
-                  variant={currentTags.includes(tag.slug) ? 'default' : 'outline'}
-                  className="cursor-pointer transition-opacity duration-150 hover:opacity-80"
-                >
-                  {tag.name}
-                </Badge>
-              </button>
+              <TagButton
+                key={tag.id}
+                tag={tag}
+                isActive={currentTags.includes(tag.slug)}
+                onClick={handleToggleTag(tag.slug)}
+              />
             ))}
           </div>
         </div>

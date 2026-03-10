@@ -3,17 +3,12 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
+import type { Props } from './Breadcrumbs.types';
+
+
+export type { BreadcrumbItem } from './Breadcrumbs.types';
 import { s } from './Breadcrumbs.styled';
 
-
-export interface BreadcrumbItem {
-  label: string;
-  href?: string;
-}
-
-interface Props {
-  items: BreadcrumbItem[];
-}
 
 export const Breadcrumbs = ({ items }: Props) => {
   return (

@@ -1,11 +1,7 @@
 import { cn } from '@/lib/utils';
+import type { Props } from './StatusBadge.types';
 import { s, statusStyles, statusLabels } from './StatusBadge.styled';
 
-
-interface Props {
-  status: string;
-  className?: string;
-}
 
 export const StatusBadge = ({ status, className }: Props) => {
   return (

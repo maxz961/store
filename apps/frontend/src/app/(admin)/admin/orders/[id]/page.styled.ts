@@ -15,12 +15,15 @@ export const s = {
   // Info grid
   infoGrid: 'mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2',
   infoCard: 'rounded-xl border border-border bg-card p-5 shadow-sm',
+  infoTitleRow: 'flex items-center gap-2',
+  infoTitleIcon: 'h-4 w-4 text-muted-foreground',
   infoTitle: 'text-sm font-medium text-muted-foreground uppercase tracking-wider',
   infoValue: 'mt-2 text-sm text-foreground leading-relaxed',
 
   // Items
   itemsCard: 'mt-6 rounded-xl border border-border bg-card shadow-sm',
   itemsTitle: 'px-5 pt-5 text-sm font-medium text-muted-foreground uppercase tracking-wider',
+  itemsBody: 'mt-3',
   itemRow: 'flex items-center justify-between px-5 py-3.5 border-b border-border last:border-0',
   itemName: 'text-sm font-medium text-foreground',
   itemQty: 'text-xs text-muted-foreground mt-0.5',
@@ -29,6 +32,12 @@ export const s = {
   totalLabel: 'text-sm font-semibold text-foreground',
   totalValue: 'text-lg font-semibold text-foreground',
 
+  // Title row
+  titleRow: 'flex items-center gap-3',
+
   // Loading skeleton
   skeleton: 'animate-pulse rounded-xl border border-border bg-muted/50',
+  skeletonTitle: 'animate-pulse rounded-xl border border-border bg-muted/50 h-8 w-48',
+  skeletonStatusBar: 'animate-pulse rounded-xl border border-border bg-muted/50 mt-6 h-24',
+  skeletonItemsBlock: 'animate-pulse rounded-xl border border-border bg-muted/50 mt-6 h-48',
 };

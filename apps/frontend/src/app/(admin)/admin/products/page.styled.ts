@@ -1,6 +1,7 @@
 export const s = {
   page: 'mx-auto max-w-6xl px-4 py-8 sm:px-6',
   title: 'text-2xl font-semibold text-foreground',
+  buttonIcon: 'mr-2 h-4 w-4',
   header: 'mt-6 flex items-center justify-between gap-4',
 
   // Table

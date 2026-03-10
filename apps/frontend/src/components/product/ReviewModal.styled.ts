@@ -47,6 +47,11 @@ export const s = {
   replyTextarea: 'w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none transition-colors duration-150 focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none',
   replyActions: 'flex items-center gap-2',
 
+  // Button icons
+  buttonIcon: 'h-7 w-7',
+  buttonIconDestructive: 'h-7 w-7 text-destructive hover:text-destructive',
+  buttonIconSmDestructive: 'h-6 w-6 text-destructive hover:text-destructive',
+
   // Admin actions
   adminActions: 'flex items-center gap-1',
 

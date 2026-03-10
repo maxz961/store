@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 
+
 type ParamValue = string | string[] | undefined;
 
 export const useProductParams = () => {
