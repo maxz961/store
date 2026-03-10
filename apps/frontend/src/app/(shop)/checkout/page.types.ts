@@ -20,3 +20,15 @@ export interface DeliveryOptionProps {
 export interface CheckoutSummaryItemProps {
   item: CartItem;
 }
+
+export interface DeliveryMethodSectionProps {
+  deliveryMethod: DeliveryMethod;
+  onSelectDelivery: (method: DeliveryMethod) => () => void;
+}
+
+export interface OrderSummaryProps {
+  items: CartItem[];
+  totalPrice: number;
+  error: Error | null;
+  isPending: boolean;
+}

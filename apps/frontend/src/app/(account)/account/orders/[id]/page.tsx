@@ -3,18 +3,16 @@
 import { use } from 'react';
 import Link from 'next/link';
 import { Package, ArrowLeft } from 'lucide-react';
-import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useOrder } from '@/lib/hooks/useOrders';
-import { cn } from '@/lib/utils';
-import { STATUS_LABELS, DELIVERY_LABELS } from '@/lib/constants/order';
 import type { OrderDetailPageProps } from './page.types';
-import { STATUS_STYLES } from './page.constants';
 import { s } from './page.styled';
-import { OrderDetailItem } from './OrderDetailItem';
 import { OrderDetailSkeleton } from './OrderDetailSkeleton';
+import { OrderHeader } from './OrderHeader';
+import { OrderStatusMeta } from './OrderStatusMeta';
+import { OrderItemsSection } from './OrderItemsSection';
+import { OrderAddressSection } from './OrderAddressSection';
 
 
 const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
@@ -71,63 +69,13 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
     minute: '2-digit',
   });
 
-  const address = order.shippingAddress;
-
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
-
-      <div className={s.titleRow}>
-        <Link href="/account/orders">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <h1 className={s.title}>Заказ #{order.id.slice(-8)}</h1>
-      </div>
-      <p className={s.subtitle}>{date}</p>
-
-      <div className={s.meta}>
-        <Badge className={cn(STATUS_STYLES[order.status])}>
-          {STATUS_LABELS[order.status] ?? order.status}
-        </Badge>
-        <Badge className={s.deliveryBadge}>
-          {DELIVERY_LABELS[order.deliveryMethod] ?? order.deliveryMethod}
-        </Badge>
-      </div>
-
-      {/* Товары */}
-      <div className={s.section}>
-        <div className={s.sectionHeader}>
-          <p className={s.sectionTitle}>Товары</p>
-        </div>
-        <div className={s.sectionBody}>
-          {order.orderItems.map((item) => (
-            <OrderDetailItem key={item.id} item={item} />
-          ))}
-        </div>
-        <div className={s.totalRow}>
-          <span className={s.totalLabel}>Итого</span>
-          <span className={s.totalAmount}>${Number(order.totalAmount).toFixed(2)}</span>
-        </div>
-      </div>
-
-      {/* Адрес доставки */}
-      <When condition={order.deliveryMethod !== 'PICKUP' && !!address}>
-        <div className={s.section}>
-          <div className={s.sectionHeader}>
-            <p className={s.sectionTitle}>Адрес доставки</p>
-          </div>
-          <div className={s.sectionBody}>
-            <p className={s.addressText}>
-              {address.fullName}<br />
-              {address.line1}<br />
-              {address.city}, {address.state} {address.postalCode}<br />
-              {address.country}
-            </p>
-          </div>
-        </div>
-      </When>
+      <OrderHeader orderId={order.id} date={date} />
+      <OrderStatusMeta status={order.status} deliveryMethod={order.deliveryMethod} />
+      <OrderItemsSection items={order.orderItems} totalAmount={order.totalAmount} />
+      <OrderAddressSection deliveryMethod={order.deliveryMethod} address={order.shippingAddress} />
     </div>
   );
 };
