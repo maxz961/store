@@ -3,6 +3,7 @@ import { TextField } from '@/components/ui/TextField';
 import { s } from './page.styled';
 import type { CreateProductFormValues } from './page.constants';
 
+
 export const ImagesSection = () => {
   const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
 

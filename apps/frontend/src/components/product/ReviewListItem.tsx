@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Pencil, Trash2 } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { StarRating } from '@/components/ui/StarRating';
 import { getInitials } from '@/lib/utils';
 import type { ReviewListItemProps } from './ReviewListItem.types';
 import { s } from './ReviewList.styled';
+
 
 export const ReviewListItem = ({
   review,
@@ -16,14 +18,22 @@ export const ReviewListItem = ({
   const initials = getInitials(review.user.name, undefined);
   const date = new Date(review.createdAt).toLocaleDateString('ru-RU');
 
+  const handleEdit = () => onEdit?.(review);
+
+  const handleDelete = () => onDelete?.(review.id);
+
+  const handleImageClick = (url: string) => () => onImageClick(url);
+
   return (
     <div className={s.card}>
       <div className={s.header}>
         <If condition={!!review.user.image}>
           <Then>
-            <img
+            <Image
               src={review.user.image ?? ''}
               alt=""
+              width={40}
+              height={40}
               className={s.avatar}
               referrerPolicy="no-referrer"
             />
@@ -44,8 +54,8 @@ export const ReviewListItem = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7"
-                onClick={() => onEdit?.(review)}
+                className={s.buttonIcon}
+                onClick={handleEdit}
               >
                 <Pencil className="h-3.5 w-3.5" />
               </Button>
@@ -54,8 +64,8 @@ export const ReviewListItem = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-destructive hover:text-destructive"
-                onClick={() => onDelete?.(review.id)}
+                className={s.buttonIconDestructive}
+                onClick={handleDelete}
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </Button>
@@ -75,12 +85,15 @@ export const ReviewListItem = ({
       <When condition={review.images.length > 0}>
         <div className={s.images}>
           {review.images.map((url) => (
-            <img
+            <Image
               key={url}
               src={url}
               alt=""
+              width={80}
+              height={80}
               className={s.imageThumb}
-              onClick={() => onImageClick(url)}
+              onClick={handleImageClick(url)}
+              unoptimized
             />
           ))}
         </div>

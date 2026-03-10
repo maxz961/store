@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 import type { GalleryThumbProps } from './GalleryThumb.types';
 
+
 export const GalleryThumb = ({ src, alt, isActive, onClick }: GalleryThumbProps) => (
   <button
     onClick={onClick}

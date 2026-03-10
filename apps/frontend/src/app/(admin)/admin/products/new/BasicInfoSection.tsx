@@ -4,6 +4,7 @@ import { TextareaField } from '@/components/ui/TextareaField';
 import { s } from './page.styled';
 import type { CreateProductFormValues } from './page.constants';
 
+
 export const BasicInfoSection = () => {
   const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
 

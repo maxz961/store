@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+
 jest.mock('lucide-react', () => ({
   ArrowLeft: (props: any) => <div data-testid="icon-arrow" {...props} />,
   MapPin: (props: any) => <div data-testid="icon-map" {...props} />,
@@ -27,13 +28,16 @@ jest.mock('@/lib/api', () => ({
 
 import AdminOrderDetailPage from './page';
 
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
 };
 
 const renderPage = () => render(<AdminOrderDetailPage />, { wrapper: createWrapper() });

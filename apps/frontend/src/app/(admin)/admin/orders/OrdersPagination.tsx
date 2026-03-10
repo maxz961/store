@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { s } from './page.styled';
 import type { OrdersPaginationProps } from './page.types';
 
+
 export const OrdersPagination = ({ currentPage, totalPages, total, activeStatus }: OrdersPaginationProps) => (
   <div className={s.pagination}>
     <p className={s.pageInfo}>

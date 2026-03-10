@@ -1,5 +1,6 @@
 import type { SelectOption } from '@/components/ui/SelectField.types';
 
+
 export interface CategoryTagsSectionProps {
   categoryOptions: SelectOption[];
   tags: { id: string; name: string }[];

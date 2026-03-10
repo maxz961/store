@@ -20,6 +20,7 @@ import type { ReviewModalProps } from './ReviewModal.types';
 import { SORT_OPTIONS } from './ReviewModal.constants';
 import { s } from './ReviewModal.styled';
 
+
 export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProps) => {
   const { user, isAdmin } = useAuth();
   const [sort, setSort] = useState<ReviewSort>('newest');
@@ -169,6 +170,7 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
           <button className={s.lightboxClose} onClick={closeLightbox}>
             <X className="h-5 w-5" />
           </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={lightboxUrl ?? ''} alt="" className={s.lightboxImage} />
         </div>
       </When>

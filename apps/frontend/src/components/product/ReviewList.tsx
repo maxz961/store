@@ -7,6 +7,7 @@ import { ReviewListItem } from '@/components/product/ReviewListItem';
 import type { ReviewListProps } from './ReviewList.types';
 import { s } from './ReviewList.styled';
 
+
 export const ReviewList = ({ reviews, currentUserId, onEdit, onDelete }: ReviewListProps) => {
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
 
@@ -37,6 +38,7 @@ export const ReviewList = ({ reviews, currentUserId, onEdit, onDelete }: ReviewL
           <button className={s.lightboxClose} onClick={closeLightbox}>
             <X className="h-5 w-5" />
           </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={lightboxUrl ?? ''} alt="" className={s.lightboxImage} />
         </div>
       </When>

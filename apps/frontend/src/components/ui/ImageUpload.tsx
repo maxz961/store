@@ -9,6 +9,7 @@ import type { ImageUploadProps } from './ImageUpload.types';
 import { MAX_FILE_SIZE } from './ImageUpload.constants';
 import { s } from './ImageUpload.styled';
 
+
 export const ImageUpload = ({
   files,
   existingUrls = [],
@@ -61,6 +62,8 @@ export const ImageUpload = ({
     onRemoveExisting?.(url);
   }, [onRemoveExisting]);
 
+  const handleTriggerInput = () => inputRef.current?.click();
+
   return (
     <div className={s.container}>
       <When condition={totalCount > 0}>
@@ -80,7 +83,7 @@ export const ImageUpload = ({
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onClick={() => inputRef.current?.click()}
+          onClick={handleTriggerInput}
         >
           <ImagePlus className={s.dropzoneIcon} />
           <p className={s.dropzoneText}>Добавить фото</p>

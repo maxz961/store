@@ -1,5 +1,6 @@
 import { s } from './page.styled';
 
+
 export const breadcrumbs = [
   { label: 'Главная', href: '/' },
   { label: 'Профиль', href: '/account/profile' },

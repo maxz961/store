@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,6 +9,7 @@ import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { TextField } from '@/components/ui/TextField';
+import { Spinner } from '@/components/ui/Spinner';
 import { useCartStore } from '@/store/cart';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useCreateOrder } from '@/lib/hooks/useOrders';
@@ -23,12 +24,12 @@ import {
   type CheckoutFormValues,
 } from './page.constants';
 
+
 const CheckoutPage = () => {
-  const { items, totalPrice, clearCart } = useCartStore();
+  const { items, totalPrice, clearCart, hydrated } = useCartStore();
   const { isAuthenticated, isLoading: authLoading, login } = useAuth();
   const router = useRouter();
   const createOrder = useCreateOrder();
-  const [hydrated, setHydrated] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('COURIER');
 
   const {
@@ -47,10 +48,6 @@ const CheckoutPage = () => {
       country: 'UA',
     },
   });
-
-  useEffect(() => {
-    setHydrated(true);
-  }, []);
 
   const handleSelectDelivery = (method: DeliveryMethod) => () => setDeliveryMethod(method);
 
@@ -73,9 +70,7 @@ const CheckoutPage = () => {
   if (!hydrated || authLoading) {
     return (
       <div className={s.page}>
-        <div className={s.loading}>
-          <div className={s.spinner} />
-        </div>
+        <Spinner />
       </div>
     );
   }

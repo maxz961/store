@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import type { CheckboxFieldProps } from './CheckboxField.types';
 import { s } from './CheckboxField.styled';
 
+
 export const CheckboxField = forwardRef<HTMLInputElement, CheckboxFieldProps>(({
   label,
   checked,

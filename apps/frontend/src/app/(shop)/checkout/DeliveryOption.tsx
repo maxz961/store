@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 import type { DeliveryOptionProps } from './page.types';
 
+
 export const DeliveryOption = ({ option, active, onSelect }: DeliveryOptionProps) => {
   const Icon = option.icon;
 

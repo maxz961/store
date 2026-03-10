@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import LoginPage from './page';
 
+
 const mockReplace = jest.fn();
 const mockLogin = jest.fn();
 let mockAuthState = {

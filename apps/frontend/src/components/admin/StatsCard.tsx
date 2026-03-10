@@ -2,6 +2,7 @@ import { When } from 'react-if';
 import type { Props } from './StatsCard.types';
 import { s } from './StatsCard.styled';
 
+
 export const StatsCard = ({ label, value, subtitle, icon }: Props) => {
   return (
     <div className={s.card}>

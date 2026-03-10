@@ -6,6 +6,7 @@ import { s } from './page.styled';
 import type { CreateProductFormValues } from './page.constants';
 import type { CategoryTagsSectionProps } from './page.types';
 
+
 export const CategoryTagsSection = ({
   categoryOptions,
   tags,

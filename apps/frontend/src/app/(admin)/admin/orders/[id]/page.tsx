@@ -14,6 +14,7 @@ import { DeliveryCard } from './DeliveryCard';
 import { AddressCard } from './AddressCard';
 import { OrderItemsList } from './OrderItemsList';
 
+
 const AdminOrderDetailPage = () => {
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -32,9 +33,9 @@ const AdminOrderDetailPage = () => {
   if (isLoading) {
     return (
       <div className={s.page}>
-        <div className={`${s.skeleton} h-8 w-48`} />
-        <div className={`${s.skeleton} mt-6 h-24`} />
-        <div className={`${s.skeleton} mt-6 h-48`} />
+        <div className={s.skeletonTitle} />
+        <div className={s.skeletonStatusBar} />
+        <div className={s.skeletonItemsBlock} />
       </div>
     );
   }
@@ -56,7 +57,7 @@ const AdminOrderDetailPage = () => {
         Назад к заказам
       </Link>
 
-      <div className="flex items-center gap-3">
+      <div className={s.titleRow}>
         <h1 className={s.title}>Заказ #{order.id.slice(-8)}</h1>
         <StatusBadge status={order.status} />
       </div>

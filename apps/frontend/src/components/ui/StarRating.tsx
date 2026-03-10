@@ -5,6 +5,7 @@ import { StarIcon } from './StarIcon';
 import type { StarRatingProps } from './StarRating.types';
 import { s } from './StarRating.styled';
 
+
 export const StarRating = ({ value, onChange, size = 'md' }: StarRatingProps) => {
   const [hoverValue, setHoverValue] = useState(0);
   const isInteractive = !!onChange;

@@ -6,10 +6,11 @@ import { StatusRow } from './StatusRow';
 import { s } from './page.styled';
 import type { OrdersByStatusCardProps } from './page.types';
 
+
 export const OrdersByStatusCard = ({ ordersByStatus, pieData }: OrdersByStatusCardProps) => (
   <div className={s.card}>
     <h2 className={s.cardTitle}>Заказы по статусам</h2>
-    <div className="mt-4">
+    <div className={s.cardBody}>
       <When condition={pieData.length > 0}>
         <ResponsiveContainer width="100%" height={200}>
           <PieChart>
@@ -30,7 +31,7 @@ export const OrdersByStatusCard = ({ ordersByStatus, pieData }: OrdersByStatusCa
           </PieChart>
         </ResponsiveContainer>
       </When>
-      <div className="mt-4 space-y-1">
+      <div className={s.statusList}>
         {ordersByStatus.map(({ status, count }) => (
           <StatusRow key={status} status={status} count={count} />
         ))}

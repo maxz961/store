@@ -35,6 +35,7 @@ export const s = {
   quantityGroup: 'flex items-center gap-0 rounded-lg border border-border',
   quantityButton: 'flex h-10 w-10 items-center justify-center text-lg transition-colors duration-150 hover:bg-accent',
   quantity: 'flex h-10 w-10 items-center justify-center text-sm font-medium',
+  buttonIcon: 'mr-2 h-4 w-4',
   addToCartButton: 'flex-1',
 
   // Rating row (in product info)
@@ -49,9 +50,7 @@ export const s = {
   reviewsSummaryRating: 'flex items-center gap-2',
   reviewsSummaryText: 'text-sm text-muted-foreground',
 
-  // Loading / Error
-  loading: 'flex min-h-[400px] items-center justify-center',
-  spinner: 'h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary',
+  // Error
   error: 'flex min-h-[400px] flex-col items-center justify-center gap-2',
   errorTitle: 'text-base font-medium text-destructive',
   errorText: 'text-sm text-muted-foreground',

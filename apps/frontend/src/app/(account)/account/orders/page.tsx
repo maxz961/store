@@ -12,6 +12,7 @@ import { breadcrumbs } from './page.constants';
 import { OrderCard } from './OrderCard';
 import { OrderSkeleton } from './OrderSkeleton';
 
+
 const OrdersPage = () => {
   const { user, isLoading: authLoading, isAuthenticated } = useAuth();
   const { data: orders, isLoading: ordersLoading } = useMyOrders();
@@ -22,7 +23,7 @@ const OrdersPage = () => {
     return (
       <div className={s.page}>
         <Breadcrumbs items={breadcrumbs} />
-        <h1 className={`${s.title} mt-6 mb-6`}>Мои заказы</h1>
+        <h1 className={s.pageTitle}>Мои заказы</h1>
         <div className={s.list}>
           {Array.from({ length: 3 }).map((_, i) => (
             <OrderSkeleton key={i} />
@@ -36,7 +37,7 @@ const OrdersPage = () => {
     return (
       <div className={s.page}>
         <div className={s.notAuth}>
-          <UserCircle className="h-12 w-12 text-muted-foreground" />
+          <UserCircle className={s.errorIcon} />
           <p className={s.notAuthTitle}>Вы не авторизованы</p>
           <p className={s.notAuthText}>Войдите, чтобы увидеть свои заказы</p>
           <Link href="/login">
@@ -51,12 +52,12 @@ const OrdersPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <h1 className={`${s.title} mt-6 mb-6`}>Мои заказы</h1>
+      <h1 className={s.pageTitle}>Мои заказы</h1>
 
       <If condition={!orders || orders.length === 0}>
         <Then>
           <div className={s.empty}>
-            <Package className="h-12 w-12 text-muted-foreground" />
+            <Package className={s.emptyIcon} />
             <p className={s.emptyTitle}>Заказов пока нет</p>
             <p className={s.emptyText}>Ваши заказы появятся здесь после оформления</p>
             <Link href="/products">

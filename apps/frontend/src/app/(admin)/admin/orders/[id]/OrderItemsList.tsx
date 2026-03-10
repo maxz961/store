@@ -3,10 +3,11 @@ import { formatCurrency } from '@/lib/constants/format';
 import { OrderItemRow } from './OrderItemRow';
 import type { OrderItemsListProps } from './page.types';
 
+
 export const OrderItemsList = ({ items, totalAmount }: OrderItemsListProps) => (
   <div className={s.itemsCard}>
     <p className={s.itemsTitle}>Товары</p>
-    <div className="mt-3">
+    <div className={s.itemsBody}>
       {items.map((item) => (
         <OrderItemRow key={item.id} item={item} />
       ))}

@@ -1,6 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { useProductParams } from './useProductParams';
 
+
 const mockPush = jest.fn();
 let mockSearchParams = new URLSearchParams();
 

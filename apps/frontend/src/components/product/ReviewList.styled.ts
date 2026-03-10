@@ -10,6 +10,8 @@ export const s = {
   authorName: 'text-sm font-medium truncate',
   date: 'text-xs text-muted-foreground',
   ownActions: 'flex items-center gap-1 shrink-0',
+  buttonIcon: 'h-7 w-7',
+  buttonIconDestructive: 'h-7 w-7 text-destructive hover:text-destructive',
 
   // Stars
   stars: 'mt-2',

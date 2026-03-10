@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { Pencil } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
@@ -5,13 +6,14 @@ import { s } from './page.styled';
 import { formatCurrency } from '@/lib/constants/format';
 import type { ProductRowProps } from './page.types';
 
+
 export const ProductRow = ({ product }: ProductRowProps) => (
   <tr key={product.id} className={s.tr}>
     <td className={s.td}>
       <div className={s.productCell}>
         <If condition={product.images.length > 0}>
           <Then>
-            <img src={product.images[0]} alt="" className={s.productImage} />
+            <Image src={product.images[0]} alt="" width={40} height={40} className={s.productImage} />
           </Then>
           <Else>
             <div className={s.productImageFallback}>—</div>

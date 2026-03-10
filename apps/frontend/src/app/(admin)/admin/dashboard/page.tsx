@@ -11,6 +11,7 @@ import { OrdersByStatusCard } from './OrdersByStatusCard';
 import { TopProductsCard } from './TopProductsCard';
 import { RevenueChart } from './RevenueChart';
 
+
 const DashboardPage = () => {
   const { data: summary, error: queryError, isLoading } = useAnalyticsSummary();
   const error = queryError ? 'Не удалось загрузить аналитику. Убедитесь, что вы администратор.' : null;
@@ -47,10 +48,10 @@ const DashboardPage = () => {
     return (
       <div className={s.page}>
         <Breadcrumbs items={breadcrumbs} />
-        <h1 className={`${s.title} mt-6`}>Аналитика</h1>
+        <h1 className={s.pageTitle}>Аналитика</h1>
         <div className={s.statsGrid}>
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-28 animate-pulse rounded-xl border border-border bg-muted/50" />
+            <div key={i} className={s.statsSkeleton} />
           ))}
         </div>
       </div>
@@ -60,7 +61,7 @@ const DashboardPage = () => {
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
-      <h1 className={`${s.title} mt-6`}>Аналитика</h1>
+      <h1 className={s.pageTitle}>Аналитика</h1>
 
       <StatsSection summary={summary} />
 

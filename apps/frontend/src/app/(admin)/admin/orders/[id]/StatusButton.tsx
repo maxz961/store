@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 import type { StatusButtonProps } from './page.types';
 
+
 export const StatusButton = ({ label, isActive, disabled, onClick }: StatusButtonProps) => (
   <button
     onClick={onClick}

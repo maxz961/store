@@ -4,6 +4,7 @@ import { If, Then, Else } from 'react-if';
 import { s } from './page.styled';
 import type { OrderDetailItemProps } from './page.types';
 
+
 export const OrderDetailItem = ({ item }: OrderDetailItemProps) => (
   <div className={s.item}>
     <div className={s.itemImageWrapper}>
@@ -18,7 +19,7 @@ export const OrderDetailItem = ({ item }: OrderDetailItemProps) => (
           />
         </Then>
         <Else>
-          <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+          <div className={s.imageFallback}>
             Нет фото
           </div>
         </Else>
@@ -27,7 +28,7 @@ export const OrderDetailItem = ({ item }: OrderDetailItemProps) => (
     <div className={s.itemInfo}>
       <Link
         href={`/products/${item.product.slug}`}
-        className={`${s.itemName} hover:text-primary transition-colors duration-150`}
+        className={s.itemName}
       >
         {item.product.name}
       </Link>

@@ -7,6 +7,7 @@ import { s } from './page.styled';
 import { STATUS_STYLES } from './page.constants';
 import type { OrderCardProps } from './page.types';
 
+
 export const OrderCard = ({ order }: OrderCardProps) => {
   const itemCount = order.orderItems.reduce((sum, i) => sum + i.quantity, 0);
   const date = new Date(order.createdAt).toLocaleDateString('ru-RU', {

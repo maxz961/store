@@ -1,6 +1,7 @@
 export const s = {
   page: 'mx-auto max-w-3xl px-4 py-8 sm:px-6',
   title: 'text-2xl font-semibold tracking-tight',
+  pageTitle: 'text-2xl font-semibold tracking-tight mt-6 mb-6',
 
   // Profile card
   card: 'rounded-xl border border-border bg-card p-6',
@@ -25,10 +26,19 @@ export const s = {
   linkDescription: 'text-xs text-muted-foreground',
   linkArrow: 'h-4 w-4 text-muted-foreground',
 
+  // Quick links wrapper
+  quickLinks: 'space-y-3',
+
   // Loading
+  loadingSection: 'mt-6',
   skeleton: 'animate-pulse rounded-md bg-muted',
+  skeletonAvatar: 'animate-pulse rounded-full bg-muted h-16 w-16',
+  skeletonName: 'animate-pulse rounded-md bg-muted h-5 w-40 mb-2',
+  skeletonEmail: 'animate-pulse rounded-md bg-muted h-4 w-56',
 
   // Not authenticated
+  avatarFallbackIcon: 'h-12 w-12 text-muted-foreground',
+  logoutIcon: 'h-4 w-4 mr-2',
   notAuth: 'flex min-h-[400px] flex-col items-center justify-center gap-4 text-center',
   notAuthTitle: 'text-lg font-medium',
   notAuthText: 'text-sm text-muted-foreground',

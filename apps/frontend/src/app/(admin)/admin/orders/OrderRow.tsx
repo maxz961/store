@@ -5,6 +5,7 @@ import { DELIVERY_LABELS } from '@/lib/constants/order';
 import { formatCurrency, formatDate } from '@/lib/constants/format';
 import type { OrderRowProps } from './page.types';
 
+
 export const OrderRow = ({ order }: OrderRowProps) => (
   <tr key={order.id} className={s.tr}>
     <td className={s.td}>

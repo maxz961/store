@@ -31,6 +31,7 @@ export const s = {
   summaryItem: 'flex items-center gap-3',
   summaryItemImage: 'relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border border-border bg-white',
   summaryItemImageEl: 'object-contain p-1',
+  summaryItemImageFallback: 'm-auto h-5 w-5 text-muted-foreground/30',
   summaryItemInfo: 'flex-1 min-w-0',
   summaryItemName: 'text-sm font-medium truncate',
   summaryItemQty: 'text-xs text-muted-foreground',
@@ -50,8 +51,4 @@ export const s = {
   authIcon: 'h-12 w-12 text-muted-foreground/40',
   authTitle: 'text-lg font-medium',
   authText: 'text-sm text-muted-foreground',
-
-  // Loading
-  loading: 'flex min-h-[400px] items-center justify-center',
-  spinner: 'h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-primary',
 };

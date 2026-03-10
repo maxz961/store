@@ -9,6 +9,7 @@ import { breadcrumbs } from './page.constants';
 import { ProductsTable } from './ProductsTable';
 import { ProductsPagination } from './ProductsPagination';
 
+
 const AdminProductsPage = async ({
   searchParams,
 }: {
@@ -30,7 +31,7 @@ const AdminProductsPage = async ({
         <h1 className={s.title}>Товары</h1>
         <Link href="/admin/products/new">
           <Button size="sm">
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className={s.buttonIcon} />
             Добавить товар
           </Button>
         </Link>

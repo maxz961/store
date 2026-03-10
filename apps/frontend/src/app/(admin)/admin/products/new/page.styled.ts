@@ -1,6 +1,7 @@
 export const s = {
   page: 'mx-auto max-w-2xl px-4 py-8 sm:px-6',
   title: 'text-2xl font-semibold text-foreground',
+  pageTitle: 'text-2xl font-semibold text-foreground mt-6',
 
   // Form
   form: 'mt-6 space-y-6',

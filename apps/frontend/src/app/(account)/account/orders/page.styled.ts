@@ -1,6 +1,7 @@
 export const s = {
   page: 'mx-auto max-w-3xl px-4 py-8 sm:px-6',
   title: 'text-2xl font-semibold tracking-tight',
+  pageTitle: 'text-2xl font-semibold tracking-tight mt-6 mb-6',
 
   // Order list
   list: 'space-y-3',
@@ -27,6 +28,18 @@ export const s = {
 
   // Loading
   skeleton: 'animate-pulse rounded-md bg-muted',
+  skeletonCard: 'rounded-xl border border-border bg-card p-4',
+  skeletonRow: 'flex items-center gap-4',
+  skeletonLeft: 'flex-1',
+  skeletonRight: 'text-right',
+  skeletonTitle: 'animate-pulse rounded-md bg-muted h-4 w-32 mb-2',
+  skeletonSubtitle: 'animate-pulse rounded-md bg-muted h-3 w-24',
+  skeletonAmount: 'animate-pulse rounded-md bg-muted h-4 w-20 mb-2',
+  skeletonBadge: 'animate-pulse rounded-md bg-muted h-5 w-24',
+
+  // Icons
+  errorIcon: 'h-12 w-12 text-muted-foreground',
+  emptyIcon: 'h-12 w-12 text-muted-foreground',
 
   // Not authenticated
   notAuth: 'flex min-h-[400px] flex-col items-center justify-center gap-4 text-center',

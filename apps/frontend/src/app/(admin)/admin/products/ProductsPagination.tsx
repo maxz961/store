@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { s } from './page.styled';
 import type { ProductsPaginationProps } from './page.types';
 
+
 export const ProductsPagination = ({ currentPage, totalPages, total }: ProductsPaginationProps) => (
   <div className={s.pagination}>
     <p className={s.pageInfo}>

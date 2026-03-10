@@ -4,6 +4,7 @@ import { SIZES } from './StarRating.constants';
 import { s } from './StarRating.styled';
 import type { StarIconProps } from './StarIcon.types';
 
+
 export const StarIcon = ({
   isFilled,
   isHovering,

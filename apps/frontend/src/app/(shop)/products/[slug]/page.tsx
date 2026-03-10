@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { StarRating } from '@/components/ui/StarRating';
+import { Spinner } from '@/components/ui/Spinner';
 import { ReviewModal } from '@/components/product/ReviewModal';
 import { GalleryThumb } from './GalleryThumb';
 import { useProduct } from '@/lib/hooks/useProducts';
@@ -16,6 +17,7 @@ import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 import type { Props } from './page.types';
+
 
 const ProductPage = (props: Props) => {
   const { slug } = use(props.params);
@@ -30,9 +32,7 @@ const ProductPage = (props: Props) => {
   if (isLoading) {
     return (
       <div className={s.page}>
-        <div className={s.loading}>
-          <div className={s.spinner} />
-        </div>
+        <Spinner />
       </div>
     );
   }
@@ -55,6 +55,14 @@ const ProductPage = (props: Props) => {
   const avgRating = product.reviews.length > 0
     ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
     : 0;
+
+  const handleMainImgLoad = () => setMainImgLoaded(true);
+
+  const handleMainImgError = () => setMainImgError(true);
+
+  const handleOpenReviewModal = () => setShowReviewModal(true);
+
+  const handleCloseReviewModal = () => setShowReviewModal(false);
 
   const handleSelectImage = (index: number) => () => {
     setSelectedImage(index);
@@ -106,8 +114,8 @@ const ProductPage = (props: Props) => {
                   className={s.image}
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   priority
-                  onLoad={() => setMainImgLoaded(true)}
-                  onError={() => setMainImgError(true)}
+                  onLoad={handleMainImgLoad}
+                  onError={handleMainImgError}
                 />
               </Then>
               <Else>
@@ -195,7 +203,7 @@ const ProductPage = (props: Props) => {
                 </button>
               </div>
               <Button size="lg" className={s.addToCartButton} onClick={handleAddToCart}>
-                <ShoppingCart className="mr-2 h-4 w-4" />
+                <ShoppingCart className={s.buttonIcon} />
                 В корзину
               </Button>
             </div>
@@ -220,9 +228,9 @@ const ProductPage = (props: Props) => {
           </div>
           <Button
             variant="outline"
-            onClick={() => setShowReviewModal(true)}
+            onClick={handleOpenReviewModal}
           >
-            <MessageSquare className="mr-2 h-4 w-4" />
+            <MessageSquare className={s.buttonIcon} />
             {product.reviews.length > 0 ? 'Показать все' : 'Оставить отзыв'}
           </Button>
         </div>
@@ -232,7 +240,7 @@ const ProductPage = (props: Props) => {
         <ReviewModal
           productId={product.id}
           productSlug={slug}
-          onClose={() => setShowReviewModal(false)}
+          onClose={handleCloseReviewModal}
         />
       </When>
     </div>

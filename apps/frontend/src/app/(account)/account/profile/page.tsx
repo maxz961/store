@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { Package, LogOut, ChevronRight, UserCircle } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
@@ -10,6 +11,7 @@ import { getInitials } from '@/lib/utils';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 
+
 const ProfilePage = () => {
   const { user, isLoading, isAuthenticated, logout } = useAuth();
 
@@ -17,13 +19,13 @@ const ProfilePage = () => {
     return (
       <div className={s.page}>
         <Breadcrumbs items={breadcrumbs} />
-        <div className="mt-6">
+        <div className={s.loadingSection}>
           <div className={s.card}>
             <div className={s.cardHeader}>
-              <div className={`${s.skeleton} h-16 w-16 rounded-full`} />
+              <div className={s.skeletonAvatar} />
               <div className={s.userInfo}>
-                <div className={`${s.skeleton} h-5 w-40 mb-2`} />
-                <div className={`${s.skeleton} h-4 w-56`} />
+                <div className={s.skeletonName} />
+                <div className={s.skeletonEmail} />
               </div>
             </div>
           </div>
@@ -36,7 +38,7 @@ const ProfilePage = () => {
     return (
       <div className={s.page}>
         <div className={s.notAuth}>
-          <UserCircle className="h-12 w-12 text-muted-foreground" />
+          <UserCircle className={s.avatarFallbackIcon} />
           <p className={s.notAuthTitle}>Вы не авторизованы</p>
           <p className={s.notAuthText}>Войдите, чтобы увидеть свой профиль</p>
           <Link href="/login">
@@ -59,13 +61,13 @@ const ProfilePage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <h1 className={`${s.title} mt-6 mb-6`}>Профиль</h1>
+      <h1 className={s.pageTitle}>Профиль</h1>
 
       <div className={s.card}>
         <div className={s.cardHeader}>
           <If condition={!!user.image}>
             <Then>
-              <img src={user.image ?? ''} alt="" className={s.avatar} referrerPolicy="no-referrer" />
+              <Image src={user.image ?? ''} alt="" width={80} height={80} className={s.avatar} referrerPolicy="no-referrer" />
             </Then>
             <Else>
               <span className={s.avatarFallback}>{initials}</span>
@@ -80,7 +82,7 @@ const ProfilePage = () => {
 
         <div className={s.actions}>
           <Button variant="outline" size="sm" onClick={logout}>
-            <LogOut className="h-4 w-4 mr-2" />
+            <LogOut className={s.logoutIcon} />
             Выйти
           </Button>
         </div>
@@ -88,7 +90,7 @@ const ProfilePage = () => {
 
       <div className={s.section}>
         <h2 className={s.sectionTitle}>Быстрые ссылки</h2>
-        <div className="space-y-3">
+        <div className={s.quickLinks}>
           <Link href="/account/orders" className={s.linkCard}>
             <div className={s.linkIcon}>
               <Package className="h-5 w-5" />

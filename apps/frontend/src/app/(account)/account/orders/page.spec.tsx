@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 
+
 jest.mock('lucide-react', () => ({
   Package: (props: any) => <div data-testid="icon-package" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
@@ -7,6 +8,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 import OrdersPage from './page';
+
 
 let mockAuthState: any;
 let mockOrdersState: any;

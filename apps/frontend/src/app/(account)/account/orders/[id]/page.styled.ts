@@ -17,7 +17,7 @@ export const s = {
   itemImageWrapper: 'relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white',
   itemImage: 'object-contain p-1',
   itemInfo: 'flex-1 min-w-0',
-  itemName: 'text-sm font-medium truncate',
+  itemName: 'text-sm font-medium truncate hover:text-primary transition-colors duration-150',
   itemQuantity: 'text-xs text-muted-foreground mt-0.5',
   itemPrice: 'text-sm font-medium shrink-0',
 
@@ -39,8 +39,29 @@ export const s = {
   // Delivery badge
   deliveryBadge: 'bg-secondary text-secondary-foreground',
 
+  // Image fallback
+  imageFallback: 'flex h-full items-center justify-center text-xs text-muted-foreground',
+
+  // Title row with back button
+  titleRow: 'mt-6 mb-2 flex items-center gap-3',
+
   // Loading
+  loadingSection: 'mt-6',
   skeleton: 'animate-pulse rounded-md bg-muted',
+  skeletonTitle: 'animate-pulse rounded-md bg-muted h-7 w-64 mb-2',
+  skeletonDate: 'animate-pulse rounded-md bg-muted h-4 w-40 mb-4',
+  skeletonStatus: 'animate-pulse rounded-md bg-muted h-6 w-24 mb-8',
+  skeletonCard: 'rounded-xl border border-border bg-card',
+  skeletonRow: 'flex items-center gap-4 p-5 border-b border-border last:border-0',
+  skeletonImage: 'animate-pulse rounded-lg bg-muted h-14 w-14',
+  skeletonInfo: 'flex-1',
+  skeletonName: 'animate-pulse rounded-md bg-muted h-4 w-48 mb-2',
+  skeletonQty: 'animate-pulse rounded-md bg-muted h-3 w-20',
+  skeletonPrice: 'animate-pulse rounded-md bg-muted h-4 w-16',
+
+  // Icons
+  emptyIcon: 'h-12 w-12 text-muted-foreground',
+  backIcon: 'h-4 w-4 mr-2',
 
   // Error
   error: 'flex min-h-[400px] flex-col items-center justify-center gap-4 text-center',

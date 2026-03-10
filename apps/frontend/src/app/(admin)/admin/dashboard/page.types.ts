@@ -1,5 +1,6 @@
 import type { AnalyticsSummary } from '@/lib/hooks/useAdmin';
 
+
 export interface StatsSectionProps {
   summary: AnalyticsSummary;
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -21,6 +21,7 @@ import { BasicInfoSection } from './BasicInfoSection';
 import { PricingSection } from './PricingSection';
 import { CategoryTagsSection } from './CategoryTagsSection';
 import { ImagesSection } from './ImagesSection';
+
 
 const NewProductPage = () => {
   const router = useRouter();
@@ -52,12 +53,13 @@ const NewProductPage = () => {
 
   const { handleSubmit, watch, setValue, register, formState: { errors } } = methods;
 
-  const name = watch('name');
   const selectedTags = watch('tagIds');
 
-  useEffect(() => {
-    setValue('slug', generateSlug(name));
-  }, [name, setValue]);
+  watch((values, { name: field }) => {
+    if (field === 'name') {
+      setValue('slug', generateSlug(values.name ?? ''));
+    }
+  });
 
   const handleToggleTag = (id: string) => () => {
     const updated = selectedTags.includes(id)
@@ -83,7 +85,7 @@ const NewProductPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <h1 className={`${s.title} mt-6`}>Новый товар</h1>
+      <h1 className={s.pageTitle}>Новый товар</h1>
 
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className={s.form}>

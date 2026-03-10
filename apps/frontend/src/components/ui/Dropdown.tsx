@@ -5,6 +5,7 @@ import { When } from 'react-if';
 import type { Props } from './Dropdown.types';
 import { s } from './Dropdown.styled';
 
+
 export const Dropdown = ({ trigger, children, onClose, className }: Props) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);

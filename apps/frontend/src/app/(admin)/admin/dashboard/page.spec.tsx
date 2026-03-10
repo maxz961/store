@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+
 jest.mock('lucide-react', () => ({
   DollarSign: (props: any) => <div data-testid="icon-dollar" {...props} />,
   ShoppingBag: (props: any) => <div data-testid="icon-bag" {...props} />,
@@ -32,13 +33,16 @@ jest.mock('@/lib/api', () => ({
 
 import DashboardPage from './page';
 
+
 const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
   });
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
 };
 
 const renderPage = () => render(<DashboardPage />, { wrapper: createWrapper() });

@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { Trash2, MessageSquare, Pencil } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,7 @@ import { StarRating } from '@/components/ui/StarRating';
 import { getInitials } from '@/lib/utils';
 import type { ReviewCardProps } from './ReviewCard.types';
 import { s } from './ReviewModal.styled';
+
 
 export const ReviewCard = ({
   review,
@@ -25,14 +27,28 @@ export const ReviewCard = ({
   const initials = getInitials(review.user.name, undefined);
   const date = new Date(review.createdAt).toLocaleDateString('ru-RU');
 
+  const handleDeleteOwn = () => onDeleteOwn(review.id);
+
+  const handleStartReply = () => onStartReply(review.id);
+
+  const handleAdminDelete = () => onAdminDelete(review.id);
+
+  const handleImageClick = (url: string) => () => onImageClick(url);
+
+  const handleDeleteReply = () => onDeleteReply(review.id);
+
+  const handleSubmitReply = () => onSubmitReply(review.id);
+
   return (
     <div className={s.card}>
       <div className={s.cardHeader}>
         <If condition={!!review.user.image}>
           <Then>
-            <img
+            <Image
               src={review.user.image ?? ''}
               alt=""
+              width={40}
+              height={40}
               className={s.avatar}
               referrerPolicy="no-referrer"
             />
@@ -54,14 +70,14 @@ export const ReviewCard = ({
         {/* Own review actions */}
         <When condition={isOwn}>
           <div className={s.ownActions}>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={onEditReview}>
+            <Button variant="ghost" size="icon" className={s.buttonIcon} onClick={onEditReview}>
               <Pencil className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-destructive hover:text-destructive"
-              onClick={() => onDeleteOwn(review.id)}
+              className={s.buttonIconDestructive}
+              onClick={handleDeleteOwn}
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
@@ -72,15 +88,15 @@ export const ReviewCard = ({
         <When condition={isAdmin && !isOwn}>
           <div className={s.adminActions}>
             <When condition={!review.adminReply}>
-              <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => onStartReply(review.id)}>
+              <Button variant="ghost" size="icon" className={s.buttonIcon} onClick={handleStartReply}>
                 <MessageSquare className="h-3.5 w-3.5" />
               </Button>
             </When>
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-destructive hover:text-destructive"
-              onClick={() => onAdminDelete(review.id)}
+              className={s.buttonIconDestructive}
+              onClick={handleAdminDelete}
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
@@ -95,12 +111,15 @@ export const ReviewCard = ({
       <When condition={review.images.length > 0}>
         <div className={s.images}>
           {review.images.map((url) => (
-            <img
+            <Image
               key={url}
               src={url}
               alt=""
+              width={80}
+              height={80}
               className={s.imageThumb}
-              onClick={() => onImageClick(url)}
+              onClick={handleImageClick(url)}
+              unoptimized
             />
           ))}
         </div>
@@ -115,8 +134,8 @@ export const ReviewCard = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-6 w-6 text-destructive hover:text-destructive"
-                onClick={() => onDeleteReply(review.id)}
+                className={s.buttonIconSmDestructive}
+                onClick={handleDeleteReply}
               >
                 <Trash2 className="h-3 w-3" />
               </Button>
@@ -143,7 +162,7 @@ export const ReviewCard = ({
             maxLength={2000}
           />
           <div className={s.replyActions}>
-            <Button size="sm" onClick={() => onSubmitReply(review.id)} disabled={!replyText.trim()}>
+            <Button size="sm" onClick={handleSubmitReply} disabled={!replyText.trim()}>
               Ответить
             </Button>
             <Button size="sm" variant="ghost" onClick={onCancelReply}>

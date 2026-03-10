@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ProductFilters } from './ProductFilters';
 
+
 const mockUpdate = jest.fn();
 const mockReset = jest.fn();
 

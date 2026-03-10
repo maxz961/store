@@ -13,6 +13,7 @@ jest.mock('lucide-react', () => ({
 
 import CheckoutPage from './page';
 
+
 const mockReplace = jest.fn();
 const mockPush = jest.fn();
 const mockLogin = jest.fn();
@@ -31,6 +32,7 @@ let mockCartState = {
   ],
   totalPrice: () => 399.98,
   clearCart: mockClearCart,
+  hydrated: true,
 };
 
 jest.mock('next/navigation', () => ({
@@ -56,6 +58,7 @@ jest.mock('@/lib/api', () => ({
 // Mock Next.js Image
 jest.mock('next/image', () => ({
   __esModule: true,
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
   default: (props: any) => <img {...props} />,
 }));
 
@@ -63,9 +66,11 @@ const createWrapper = () => {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
   });
-  return ({ children }: { children: React.ReactNode }) => (
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
     <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
   );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
 };
 
 const renderPage = () => render(<CheckoutPage />, { wrapper: createWrapper() });
@@ -90,6 +95,7 @@ describe('CheckoutPage', () => {
       ],
       totalPrice: () => 399.98,
       clearCart: mockClearCart,
+      hydrated: true,
     };
   });
 

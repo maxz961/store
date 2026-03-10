@@ -5,6 +5,7 @@ import { If, Then, Else } from 'react-if';
 import { s } from './page.styled';
 import type { CartItemProps } from './page.types';
 
+
 export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemProps) => {
   return (
     <div className={s.item}>
@@ -14,7 +15,7 @@ export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemPro
             <Image src={item.imageUrl} alt={item.name} fill className={s.itemImage} sizes="80px" />
           </Then>
           <Else>
-            <div className="flex h-full items-center justify-center text-xs text-muted-foreground">
+            <div className={s.itemImageFallback}>
               Нет фото
             </div>
           </Else>

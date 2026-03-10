@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { render, screen, act } from '@testing-library/react';
 
+
 jest.mock('lucide-react', () => ({
   Package: (props: any) => <div data-testid="icon-package" {...props} />,
   ArrowLeft: (props: any) => <div data-testid="icon-arrow" {...props} />,
@@ -8,6 +9,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 import OrderDetailPage from './page';
+
 
 let mockOrderState: any;
 
@@ -42,6 +44,7 @@ jest.mock('@/lib/hooks/useOrders', () => ({
 
 jest.mock('next/image', () => ({
   __esModule: true,
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
   default: (props: any) => <img {...props} />,
 }));
 

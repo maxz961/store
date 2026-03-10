@@ -2,10 +2,11 @@ import { MapPin } from 'lucide-react';
 import { s } from './page.styled';
 import type { AddressCardProps } from './page.types';
 
+
 export const AddressCard = ({ address }: AddressCardProps) => (
   <div className={s.infoCard}>
-    <div className="flex items-center gap-2">
-      <MapPin className="h-4 w-4 text-muted-foreground" />
+    <div className={s.infoTitleRow}>
+      <MapPin className={s.infoTitleIcon} />
       <p className={s.infoTitle}>Адрес</p>
     </div>
     <p className={s.infoValue}>

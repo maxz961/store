@@ -7,6 +7,7 @@ import { OrderFilterTabs } from './OrderFilterTabs';
 import { OrdersTable } from './OrdersTable';
 import { OrdersPagination } from './OrdersPagination';
 
+
 const AdminOrdersPage = async ({
   searchParams,
 }: {

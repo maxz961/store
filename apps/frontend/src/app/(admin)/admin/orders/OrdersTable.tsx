@@ -3,6 +3,7 @@ import { s } from './page.styled';
 import { OrderRow } from './OrderRow';
 import type { OrdersTableProps } from './page.types';
 
+
 export const OrdersTable = ({ orders }: OrdersTableProps) => (
   <div className={s.tableWrapper}>
     <table className={s.table}>

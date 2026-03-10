@@ -6,11 +6,12 @@ import { s } from './page.styled';
 import { formatCurrency } from '@/lib/constants/format';
 import type { RevenueChartProps } from './page.types';
 
+
 export const RevenueChart = ({ chartData }: RevenueChartProps) => (
   <When condition={chartData.length > 0}>
     <div className={s.revenueCard}>
       <h2 className={s.cardTitle}>Выручка за 30 дней</h2>
-      <div className="mt-4">
+      <div className={s.chartBody}>
         <ResponsiveContainer width="100%" height={280}>
           <AreaChart data={chartData}>
             <defs>

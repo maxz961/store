@@ -4,6 +4,7 @@ import { If, Then, Else } from 'react-if';
 import { s } from './page.styled';
 import type { CheckoutSummaryItemProps } from './page.types';
 
+
 export const CheckoutSummaryItem = ({ item }: CheckoutSummaryItemProps) => {
   return (
     <div className={s.summaryItem}>
@@ -19,7 +20,7 @@ export const CheckoutSummaryItem = ({ item }: CheckoutSummaryItemProps) => {
             />
           </Then>
           <Else>
-            <ImageOff className="m-auto h-5 w-5 text-muted-foreground/30" />
+            <ImageOff className={s.summaryItemImageFallback} />
           </Else>
         </If>
       </div>

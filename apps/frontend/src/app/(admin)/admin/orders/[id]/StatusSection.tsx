@@ -3,6 +3,7 @@ import { StatusButton } from './StatusButton';
 import { STATUSES, STATUS_LABELS } from '@/lib/constants/order';
 import type { StatusSectionProps } from './page.types';
 
+
 export const StatusSection = ({ orderStatus, onUpdateStatus, isPending }: StatusSectionProps) => (
   <div className={s.statusCard}>
     <p className={s.statusTitle}>Статус заказа</p>

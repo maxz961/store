@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 import type { TagToggleButtonProps } from './page.types';
 
+
 export const TagToggleButton = ({ tag, isActive, onClick }: TagToggleButtonProps) => (
   <button
     type="button"

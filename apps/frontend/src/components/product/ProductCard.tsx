@@ -12,6 +12,7 @@ import { useCartStore } from '@/store/cart';
 import type { Props } from './ProductCard.types';
 import { s } from './ProductCard.styled';
 
+
 export const ProductCard = ({ product }: Props) => {
   const addItem = useCartStore((state) => state.addItem);
   const [imgError, setImgError] = useState(false);
@@ -24,6 +25,10 @@ export const ProductCard = ({ product }: Props) => {
   const avgRating = product.reviews.length > 0
     ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
     : 0;
+
+  const handleImgLoad = () => setImgLoaded(true);
+
+  const handleImgError = () => setImgError(true);
 
   const handleAddToCart = () => {
     addItem({
@@ -50,8 +55,8 @@ export const ProductCard = ({ product }: Props) => {
               fill
               className={s.image}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              onLoad={() => setImgLoaded(true)}
-              onError={() => setImgError(true)}
+              onLoad={handleImgLoad}
+              onError={handleImgError}
             />
           </Then>
           <Else>

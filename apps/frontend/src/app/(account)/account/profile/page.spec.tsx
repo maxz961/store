@@ -1,5 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
+
+// eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
+jest.mock('next/image', () => ({
+  __esModule: true,
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
+  default: (props: any) => <img {...props} />,
+}));
+
 jest.mock('lucide-react', () => ({
   Package: (props: any) => <div data-testid="icon-package" {...props} />,
   LogOut: (props: any) => <div data-testid="icon-logout" {...props} />,
@@ -8,6 +16,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 import ProfilePage from './page';
+
 
 const mockLogout = jest.fn();
 

@@ -2,7 +2,8 @@ import Link from 'next/link';
 import { User, Package, LogOut, LayoutDashboard } from 'lucide-react';
 import { When } from 'react-if';
 import { s } from './Header.styled';
-import { UserMenuProps } from './UserMenu.types';
+import type { UserMenuProps } from './UserMenu.types';
+
 
 export const UserMenu = ({ user, isAdmin, logout }: UserMenuProps) => (
   <>

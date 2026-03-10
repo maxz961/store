@@ -10,8 +10,15 @@ import { CartItem } from './CartItem';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 
+
 const CartPage = () => {
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart } = useCartStore();
+
+  const handleDecrease = (id: string, qty: number) => () => updateQuantity(id, qty - 1);
+
+  const handleIncrease = (id: string, qty: number) => () => updateQuantity(id, qty + 1);
+
+  const handleRemove = (id: string) => () => removeItem(id);
 
   return (
     <div className={s.page}>
@@ -24,7 +31,7 @@ const CartPage = () => {
       <If condition={items.length === 0}>
         <Then>
           <div className={s.empty}>
-            <ShoppingBag className="h-12 w-12 text-muted-foreground" />
+            <ShoppingBag className={s.emptyIcon} />
             <p className={s.emptyTitle}>Корзина пуста</p>
             <p className={s.emptyText}>Добавьте товары из каталога</p>
             <Link href="/products">
@@ -39,9 +46,9 @@ const CartPage = () => {
                 <CartItem
                   key={item.id}
                   item={item}
-                  onDecrease={() => updateQuantity(item.id, item.quantity - 1)}
-                  onIncrease={() => updateQuantity(item.id, item.quantity + 1)}
-                  onRemove={() => removeItem(item.id)}
+                  onDecrease={handleDecrease(item.id, item.quantity)}
+                  onIncrease={handleIncrease(item.id, item.quantity)}
+                  onRemove={handleRemove(item.id)}
                 />
               ))}
           </div>

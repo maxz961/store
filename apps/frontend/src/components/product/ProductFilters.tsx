@@ -8,6 +8,7 @@ import { TagButton } from './TagButton';
 import type { Props } from './ProductFilters.types';
 import { s } from './ProductFilters.styled';
 
+
 export const ProductFilters = ({ categories, tags, currentCategory, currentTags }: Props) => {
   const { update, reset } = useProductParams();
 

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+
 export const breadcrumbs = [
   { label: 'Админ-панель', href: '/admin/dashboard' },
   { label: 'Товары', href: '/admin/products' },

@@ -6,6 +6,7 @@ import { QueryProvider } from '@/components/layout/QueryProvider';
 import { Header } from '@/components/layout/Header';
 import './globals.css';
 
+
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   display: 'swap',

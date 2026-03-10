@@ -5,6 +5,7 @@ import { ProductCard } from './ProductCard';
 import { ProductFilters } from './ProductFilters';
 import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
+import { Spinner } from '@/components/ui/Spinner';
 import { s } from './ProductCatalog.styled';
 
 
@@ -36,7 +37,7 @@ export const ProductCatalog = () => {
       <div className={s.content}>
         <When condition={isLoading || isFetching}>
           <div className={s.loadingOverlay}>
-            <div className={s.spinner} />
+            <Spinner />
           </div>
         </When>
 

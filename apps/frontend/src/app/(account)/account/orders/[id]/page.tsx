@@ -16,6 +16,7 @@ import { s } from './page.styled';
 import { OrderDetailItem } from './OrderDetailItem';
 import { OrderDetailSkeleton } from './OrderDetailSkeleton';
 
+
 const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
   const { id } = use(params);
   const { data: order, isLoading, error } = useOrder(id);
@@ -30,11 +31,11 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
     return (
       <div className={s.page}>
         <Breadcrumbs items={breadcrumbs} />
-        <div className="mt-6">
-          <div className={`${s.skeleton} h-7 w-64 mb-2`} />
-          <div className={`${s.skeleton} h-4 w-40 mb-4`} />
-          <div className={`${s.skeleton} h-6 w-24 mb-8`} />
-          <div className="rounded-xl border border-border bg-card">
+        <div className={s.loadingSection}>
+          <div className={s.skeletonTitle} />
+          <div className={s.skeletonDate} />
+          <div className={s.skeletonStatus} />
+          <div className={s.skeletonCard}>
             {Array.from({ length: 2 }).map((_, i) => (
               <OrderDetailSkeleton key={i} />
             ))}
@@ -48,12 +49,12 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
     return (
       <div className={s.page}>
         <div className={s.error}>
-          <Package className="h-12 w-12 text-muted-foreground" />
+          <Package className={s.emptyIcon} />
           <p className={s.errorTitle}>Заказ не найден</p>
           <p className={s.errorText}>Возможно, заказ был удалён или вы не имеете к нему доступа</p>
           <Link href="/account/orders">
             <Button variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className={s.backIcon} />
               К заказам
             </Button>
           </Link>
@@ -76,7 +77,7 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <div className="mt-6 mb-2 flex items-center gap-3">
+      <div className={s.titleRow}>
         <Link href="/account/orders">
           <Button variant="ghost" size="icon" className="h-8 w-8">
             <ArrowLeft className="h-4 w-4" />

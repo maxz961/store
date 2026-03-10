@@ -2,6 +2,7 @@ import { s } from './page.styled';
 import { formatCurrency } from '@/lib/constants/format';
 import type { OrderItemRowProps } from './page.types';
 
+
 export const OrderItemRow = ({ item }: OrderItemRowProps) => (
   <div className={s.itemRow}>
     <div>
