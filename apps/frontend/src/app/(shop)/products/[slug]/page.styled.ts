@@ -37,20 +37,17 @@ export const s = {
   quantity: 'flex h-10 w-10 items-center justify-center text-sm font-medium',
   addToCartButton: 'flex-1',
 
-  // Reviews
+  // Rating row (in product info)
+  ratingRow: 'flex items-center gap-2',
+  ratingText: 'text-sm text-muted-foreground',
+
+  // Reviews section
   reviewsSection: 'mt-12',
+  reviewsSummary: 'flex items-center justify-between rounded-xl border border-border bg-card p-5',
+  reviewsSummaryLeft: 'flex flex-col gap-1.5',
   reviewsTitle: 'text-lg font-medium',
-  reviewsEmpty: 'mt-4 text-sm text-muted-foreground',
-  reviewsList: 'mt-4 space-y-4',
-  reviewCard: 'rounded-xl border border-border bg-card p-4',
-  reviewHeader: 'flex items-center justify-between',
-  reviewAuthor: 'text-sm font-medium',
-  reviewDate: 'text-xs text-muted-foreground',
-  reviewStars: 'mt-1 flex gap-0.5',
-  reviewStar: 'h-4 w-4',
-  reviewStarFilled: 'text-yellow-400 fill-yellow-400',
-  reviewStarEmpty: 'text-muted-foreground/30',
-  reviewComment: 'mt-2 text-sm text-muted-foreground',
+  reviewsSummaryRating: 'flex items-center gap-2',
+  reviewsSummaryText: 'text-sm text-muted-foreground',
 
   // Loading / Error
   loading: 'flex min-h-[400px] items-center justify-center',

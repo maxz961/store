@@ -130,12 +130,15 @@ model OrderItem {
 // ─────────────────────────────────────────────
 
 model Review {
-  id        String   @id @default(cuid())
-  userId    String
-  productId String
-  rating    Int
-  comment   String?  @db.Text
-  createdAt DateTime @default(now())
+  id           String    @id @default(cuid())
+  userId       String
+  productId    String
+  rating       Int
+  comment      String?   @db.Text
+  images       String[]
+  adminReply   String?   @db.Text
+  adminReplyAt DateTime?
+  createdAt    DateTime  @default(now())
 
   user    User    @relation(fields: [userId], references: [id])
   product Product @relation(fields: [productId], references: [id])

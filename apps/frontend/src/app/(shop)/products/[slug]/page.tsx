@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { use } from 'react';
 import Image from 'next/image';
-import { ImageOff, Star, ShoppingCart, Minus, Plus } from 'lucide-react';
+import { ImageOff, ShoppingCart, Minus, Plus, MessageSquare } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { StarRating } from '@/components/ui/StarRating';
+import { ReviewModal } from '@/components/product/ReviewModal';
 import { useProduct } from '@/lib/hooks/useProducts';
 import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
@@ -26,6 +28,7 @@ const ProductPage = (props: Props) => {
   const [quantity, setQuantity] = useState(1);
   const [mainImgError, setMainImgError] = useState(false);
   const [mainImgLoaded, setMainImgLoaded] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
 
   if (isLoading) {
     return (
@@ -140,16 +143,9 @@ const ProductPage = (props: Props) => {
           <h1 className={s.title}>{product.name}</h1>
 
           <When condition={product.reviews.length > 0}>
-            <div className="flex items-center gap-2">
-              <div className={s.reviewStars}>
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    className={cn(s.reviewStar, star <= Math.round(avgRating) ? s.reviewStarFilled : s.reviewStarEmpty)}
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-muted-foreground">
+            <div className={s.ratingRow}>
+              <StarRating value={Math.round(avgRating)} size="sm" />
+              <span className={s.ratingText}>
                 {avgRating.toFixed(1)} ({product.reviews.length})
               </span>
             </div>
@@ -211,43 +207,38 @@ const ProductPage = (props: Props) => {
         </div>
       </div>
 
-      {/* Reviews */}
+      {/* Reviews summary */}
       <div className={s.reviewsSection}>
-        <h2 className={s.reviewsTitle}>
-          Отзывы {product.reviews.length > 0 && `(${product.reviews.length})`}
-        </h2>
-
-        <If condition={product.reviews.length === 0}>
-          <Then>
-            <p className={s.reviewsEmpty}>Пока нет отзывов</p>
-          </Then>
-          <Else>
-            <div className={s.reviewsList}>
-              {product.reviews.map((review) => (
-                <div key={review.id} className={s.reviewCard}>
-                  <div className={s.reviewHeader}>
-                    <span className={s.reviewAuthor}>{review.user.name ?? 'Аноним'}</span>
-                    <span className={s.reviewDate}>
-                      {new Date(review.createdAt).toLocaleDateString('ru-RU')}
-                    </span>
-                  </div>
-                  <div className={s.reviewStars}>
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star
-                        key={star}
-                        className={cn(s.reviewStar, star <= review.rating ? s.reviewStarFilled : s.reviewStarEmpty)}
-                      />
-                    ))}
-                  </div>
-                  <When condition={!!review.comment}>
-                    <p className={s.reviewComment}>{review.comment}</p>
-                  </When>
-                </div>
-              ))}
-            </div>
-          </Else>
-        </If>
+        <div className={s.reviewsSummary}>
+          <div className={s.reviewsSummaryLeft}>
+            <h2 className={s.reviewsTitle}>Отзывы</h2>
+            <When condition={product.reviews.length > 0}>
+              <div className={s.reviewsSummaryRating}>
+                <StarRating value={Math.round(avgRating)} size="sm" />
+                <span className={s.reviewsSummaryText}>
+                  {avgRating.toFixed(1)} · {product.reviews.length}{' '}
+                  {product.reviews.length === 1 ? 'отзыв' : product.reviews.length < 5 ? 'отзыва' : 'отзывов'}
+                </span>
+              </div>
+            </When>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setShowReviewModal(true)}
+          >
+            <MessageSquare className="mr-2 h-4 w-4" />
+            {product.reviews.length > 0 ? 'Показать все' : 'Оставить отзыв'}
+          </Button>
+        </div>
       </div>
+
+      <When condition={showReviewModal}>
+        <ReviewModal
+          productId={product.id}
+          productSlug={slug}
+          onClose={() => setShowReviewModal(false)}
+        />
+      </When>
     </div>
   );
 };

@@ -112,14 +112,16 @@ async function main() {
   console.log(`✅ ${products.length} products created`);
 
   // ── Reviews ──
+  const reviewImg = (id: string) => `https://images.unsplash.com/${id}?w=400&h=400&fit=crop&q=80`;
+
   await prisma.review.createMany({
     data: [
-      { userId: customer.id, productId: products[0].id, rating: 5, comment: "Отличные наушники! Шумоподавление на высоте, батарея держит как заявлено." },
+      { userId: customer.id, productId: products[0].id, rating: 5, comment: "Отличные наушники! Шумоподавление на высоте, батарея держит как заявлено.", images: [reviewImg("photo-1505740420928-5e560c06d30e"), reviewImg("photo-1484704849700-f032a568e944")], adminReply: "Спасибо за отзыв! Рады, что наушники оправдали ожидания.", adminReplyAt: new Date("2026-01-05") },
       { userId: admin.id, productId: products[0].id, rating: 4, comment: "Хороший звук, но немного давят после 3 часов." },
-      { userId: customer.id, productId: products[1].id, rating: 5, comment: "Лучшие смарт-часы в этом ценовом сегменте. GPS работает точно." },
-      { userId: customer.id, productId: products[4].id, rating: 5, comment: "Качественный хлопок, приятная к телу. Заказал ещё 3 штуки." },
+      { userId: customer.id, productId: products[1].id, rating: 5, comment: "Лучшие смарт-часы в этом ценовом сегменте. GPS работает точно.", images: [reviewImg("photo-1523275335684-37898b6baf30")] },
+      { userId: customer.id, productId: products[4].id, rating: 5, comment: "Качественный хлопок, приятная к телу. Заказал ещё 3 штуки.", images: [reviewImg("photo-1521572163474-6864f9cf17ab")], adminReply: "Благодарим за покупку! У нас также есть модели из бамбукового волокна — рекомендуем попробовать.", adminReplyAt: new Date("2026-02-10") },
       { userId: admin.id, productId: products[4].id, rating: 4, comment: "Хорошая базовая футболка. За эти деньги — отлично." },
-      { userId: customer.id, productId: products[6].id, rating: 5, comment: "Бегаю в них каждый день, очень удобные и лёгкие." },
+      { userId: customer.id, productId: products[6].id, rating: 5, comment: "Бегаю в них каждый день, очень удобные и лёгкие.", images: [reviewImg("photo-1542291026-7eec264c27ff"), reviewImg("photo-1460353581641-37baddab0fa2")] },
       { userId: customer.id, productId: products[13].id, rating: 5, comment: "Настольная книга. Каждый разработчик должен прочитать." },
     ],
   });

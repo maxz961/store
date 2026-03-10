@@ -8,6 +8,7 @@ jest.mock('lucide-react', () => ({
   Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+  MessageSquare: (props: any) => <div data-testid="icon-message" {...props} />,
 }));
 
 import ProductPage from './page';
@@ -26,21 +27,22 @@ const baseProduct = {
   sku: 'SKU-001',
   category: { name: 'Электроника', slug: 'electronics' },
   tags: [{ tag: { name: 'Новинка', slug: 'new' } }],
-  reviews: [
-    {
-      id: 'r1',
-      rating: 5,
-      comment: 'Отличный товар!',
-      createdAt: '2026-01-01T00:00:00Z',
-      user: { id: 'u1', name: 'Анна', image: null },
-    },
-  ],
+  reviews: [{ rating: 5 }, { rating: 4 }],
 };
 
 let mockProductHook: any;
 
 jest.mock('@/lib/hooks/useProducts', () => ({
   useProduct: () => mockProductHook,
+}));
+
+jest.mock('@/components/product/ReviewModal', () => ({
+  ReviewModal: ({ productId, onClose }: any) => (
+    <div data-testid="review-modal">
+      ReviewModal-{productId}
+      <button onClick={onClose}>Close</button>
+    </div>
+  ),
 }));
 
 jest.mock('@/store/cart', () => ({
@@ -108,17 +110,24 @@ describe('ProductPage', () => {
     expect(screen.getByText('Возможно, он был удалён или ссылка неверна')).toBeInTheDocument();
   });
 
-  it('renders reviews section with count', async () => {
+  it('renders reviews summary with count and rating', async () => {
     await renderPage();
-    expect(screen.getByText('Отзывы (1)')).toBeInTheDocument();
-    expect(screen.getByText('Отличный товар!')).toBeInTheDocument();
-    expect(screen.getByText('Анна')).toBeInTheDocument();
+    expect(screen.getByText('Отзывы')).toBeInTheDocument();
+    expect(screen.getByText(/4\.5 · 2 отзыва/)).toBeInTheDocument();
+    expect(screen.getByText('Показать все')).toBeInTheDocument();
   });
 
-  it('shows empty reviews message when no reviews', async () => {
+  it('shows "Оставить отзыв" button when no reviews', async () => {
     mockProductHook = { ...mockProductHook, data: { ...baseProduct, reviews: [] } };
     await renderPage();
-    expect(screen.getByText('Пока нет отзывов')).toBeInTheDocument();
+    expect(screen.getByText('Оставить отзыв')).toBeInTheDocument();
+  });
+
+  it('opens ReviewModal when "Показать все" is clicked', async () => {
+    await renderPage();
+    expect(screen.queryByTestId('review-modal')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText('Показать все'));
+    expect(screen.getByTestId('review-modal')).toBeInTheDocument();
   });
 
   it('renders add to cart button and calls addItem on click', async () => {

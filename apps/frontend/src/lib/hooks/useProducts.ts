@@ -11,12 +11,14 @@ interface Product {
   stock: number;
   category: { name: string; slug: string };
   tags: { tag: { name: string; slug: string } }[];
+  reviews: { rating: number }[];
 }
 
 interface Review {
   id: string;
   rating: number;
   comment: string | null;
+  images: string[];
   createdAt: string;
   user: { id: string; name: string | null; image: string | null };
 }

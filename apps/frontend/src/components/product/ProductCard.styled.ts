@@ -11,6 +11,8 @@ export const s = {
   tag: 'text-[10px] px-1.5 py-0',
   name: 'text-sm leading-snug text-card-foreground transition-colors duration-150 group-hover:text-primary line-clamp-2',
   category: 'text-xs text-muted-foreground',
+  rating: 'flex items-center gap-1',
+  ratingCount: 'text-xs text-muted-foreground',
   footer: 'flex items-end justify-between mt-auto pt-3',
   priceGroup: 'flex flex-col',
   price: 'text-lg font-bold text-foreground',

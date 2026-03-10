@@ -47,4 +47,22 @@ export const api = {
 
   delete: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) =>
     request<T>(path, { ...opts, method: "DELETE" }),
+
+  uploadFiles: async <T = { urls: string[] }>(path: string, files: File[]): Promise<T> => {
+    const formData = new FormData();
+    files.forEach((file) => formData.append('images', file));
+
+    const res = await fetch(`${API_URL}/api${path}`, {
+      method: 'POST',
+      credentials: 'include',
+      body: formData,
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({ message: 'Upload failed' }));
+      throw new Error(error.message ?? `HTTP ${res.status}`);
+    }
+
+    return res.json();
+  },
 };

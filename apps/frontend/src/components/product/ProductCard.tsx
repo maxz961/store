@@ -7,6 +7,7 @@ import { ShoppingCart, ImageOff } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
 import { s } from './ProductCard.styled';
 
@@ -21,6 +22,7 @@ interface Product {
   stock: number;
   category: { name: string; slug: string };
   tags: { tag: { name: string; slug: string } }[];
+  reviews: { rating: number }[];
 }
 
 interface Props {
@@ -35,6 +37,10 @@ export const ProductCard = ({ product }: Props) => {
   const discount = product.comparePrice
     ? Math.round((1 - product.price / product.comparePrice) * 100)
     : null;
+
+  const avgRating = product.reviews.length > 0
+    ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
+    : 0;
 
   const handleAddToCart = () => {
     addItem({
@@ -82,6 +88,13 @@ export const ProductCard = ({ product }: Props) => {
           <h3 className={s.name}>{product.name}</h3>
         </Link>
         <p className={s.category}>{product.category.name}</p>
+
+        <When condition={product.reviews.length > 0}>
+          <div className={s.rating}>
+            <StarRating value={Math.round(avgRating)} size="sm" />
+            <span className={s.ratingCount}>({product.reviews.length})</span>
+          </div>
+        </When>
 
         <When condition={product.tags.length > 0}>
           <div className={s.tags}>

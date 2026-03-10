@@ -32,7 +32,11 @@ export class ProductsService {
     const [items, total] = await Promise.all([
       db.product.findMany({
         where,
-        include: { category: true, tags: { include: { tag: true } } },
+        include: {
+          category: true,
+          tags: { include: { tag: true } },
+          reviews: { select: { rating: true } },
+        },
         skip: (page - 1) * limit,
         take: limit,
         orderBy: { createdAt: "desc" },
