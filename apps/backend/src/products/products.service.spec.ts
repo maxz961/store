@@ -72,6 +72,64 @@ describe("ProductsService", () => {
       const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
       expect(call.where.isPublished).toBeUndefined();
     });
+
+    it("filters by tagSlugs", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ tagSlugs: ["new", "sale"] }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.tags).toEqual({
+        some: { tag: { slug: { in: ["new", "sale"] } } },
+      });
+    });
+
+    it("filters by categorySlug", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ categorySlug: "electronics" }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.category).toEqual({ slug: "electronics" });
+    });
+
+    it("filters by search term across name and description", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ search: "laptop" }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.OR).toEqual([
+        { name: { contains: "laptop", mode: "insensitive" } },
+        { description: { contains: "laptop", mode: "insensitive" } },
+      ]);
+    });
+
+    it("paginates correctly", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(50);
+
+      const result = await service.findAll({ page: 3, limit: 10 }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.skip).toBe(20);
+      expect(call.take).toBe(10);
+      expect(result.totalPages).toBe(5);
+      expect(result.page).toBe(3);
+    });
+
+    it("ignores empty tagSlugs array", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ tagSlugs: [] }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.tags).toBeUndefined();
+    });
   });
 
   describe("findBySlug", () => {
