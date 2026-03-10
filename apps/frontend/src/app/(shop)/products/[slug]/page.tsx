@@ -84,7 +84,6 @@ const ProductPage = (props: Props) => {
   };
 
   const breadcrumbs = [
-    { label: 'Главная', href: '/' },
     { label: 'Каталог', href: '/products' },
     { label: product.category.name, href: `/products?categorySlug=${product.category.slug}` },
     { label: product.name },
