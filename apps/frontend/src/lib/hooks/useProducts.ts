@@ -75,6 +75,10 @@ interface ProductsFilters {
   categorySlug?: string;
   tagSlugs?: string;
   page?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  sortBy?: string;
+  sortOrder?: string;
 }
 
 export const useProducts = (filters: ProductsFilters) => {
@@ -83,6 +87,10 @@ export const useProducts = (filters: ProductsFilters) => {
   if (filters.categorySlug) params.set('categorySlug', filters.categorySlug);
   if (filters.tagSlugs) params.set('tagSlugs', filters.tagSlugs);
   if (filters.page) params.set('page', filters.page);
+  if (filters.minPrice) params.set('minPrice', filters.minPrice);
+  if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
+  if (filters.sortBy) params.set('sortBy', filters.sortBy);
+  if (filters.sortOrder) params.set('sortOrder', filters.sortOrder);
 
   return useQuery({
     queryKey: ['products', filters],

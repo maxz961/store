@@ -175,6 +175,10 @@ describe('ProductCatalog', () => {
       categorySlug: 'electronics',
       tagSlugs: undefined,
       page: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
+      sortBy: undefined,
+      sortOrder: undefined,
     });
   });
 

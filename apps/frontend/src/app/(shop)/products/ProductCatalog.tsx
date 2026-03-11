@@ -18,6 +18,10 @@ export const ProductCatalog = () => {
     categorySlug: get('categorySlug'),
     tagSlugs: get('tagSlugs'),
     page: get('page'),
+    minPrice: get('minPrice'),
+    maxPrice: get('maxPrice'),
+    sortBy: get('sortBy'),
+    sortOrder: get('sortOrder'),
   };
 
   const { data, isLoading, isFetching, isError } = useProducts(filters);
@@ -32,6 +36,10 @@ export const ProductCatalog = () => {
           tags={tags}
           currentCategory={filters.categorySlug}
           currentTags={filters.tagSlugs?.split(',').filter(Boolean) ?? []}
+          currentMinPrice={filters.minPrice}
+          currentMaxPrice={filters.maxPrice}
+          currentSort={filters.sortBy && filters.sortOrder
+            ? `${filters.sortBy}_${filters.sortOrder}` : undefined}
         />
       </aside>
 

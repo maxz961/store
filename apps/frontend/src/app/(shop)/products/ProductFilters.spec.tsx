@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ProductFilters } from './ProductFilters';
 
@@ -11,13 +11,15 @@ jest.mock('@/lib/hooks/useProductParams', () => ({
 }));
 
 const categories = [
-  { id: '1', name: 'Электроника', slug: 'electronics' },
-  { id: '2', name: 'Одежда', slug: 'clothing' },
+  { id: '1', name: 'Электроника', slug: 'electronics', _count: { products: 5 } },
+  { id: '2', name: 'Одежда', slug: 'clothing', _count: { products: 3 } },
+  { id: '3', name: 'Пустая', slug: 'empty', _count: { products: 0 } },
 ];
 
 const tags = [
-  { id: '1', name: 'Новинка', slug: 'new' },
-  { id: '2', name: 'Скидка', slug: 'sale' },
+  { id: '1', name: 'Новинка', slug: 'new', _count: { products: 2 } },
+  { id: '2', name: 'Скидка', slug: 'sale', _count: { products: 1 } },
+  { id: '3', name: 'Нет товаров', slug: 'no-products', _count: { products: 0 } },
 ];
 
 describe('ProductFilters', () => {
@@ -26,7 +28,7 @@ describe('ProductFilters', () => {
     mockReset.mockClear();
   });
 
-  it('renders categories and tags', () => {
+  it('renders categories and tags with products', () => {
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
@@ -36,6 +38,20 @@ describe('ProductFilters', () => {
     expect(screen.getByText('Одежда')).toBeInTheDocument();
     expect(screen.getByText('Новинка')).toBeInTheDocument();
     expect(screen.getByText('Скидка')).toBeInTheDocument();
+  });
+
+  it('does not render category with 0 products', () => {
+    render(
+      <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
+    );
+    expect(screen.queryByText('Пустая')).not.toBeInTheDocument();
+  });
+
+  it('does not render tag with 0 products', () => {
+    render(
+      <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
+    );
+    expect(screen.queryByText('Нет товаров')).not.toBeInTheDocument();
   });
 
   it('calls update with categorySlug on category click', async () => {
@@ -83,6 +99,62 @@ describe('ProductFilters', () => {
     expect(mockUpdate).toHaveBeenCalledWith({ tagSlugs: ['sale'] });
   });
 
+  it('renders price inputs and apply button', () => {
+    render(
+      <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
+    );
+    expect(screen.getByPlaceholderText('От')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('До')).toBeInTheDocument();
+    expect(screen.getByText('Применить')).toBeInTheDocument();
+  });
+
+  it('calls update with minPrice and maxPrice on apply click', async () => {
+    const user = userEvent.setup();
+    render(
+      <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
+    );
+
+    await user.type(screen.getByPlaceholderText('От'), '100');
+    await user.type(screen.getByPlaceholderText('До'), '500');
+    await user.click(screen.getByText('Применить'));
+
+    expect(mockUpdate).toHaveBeenCalledWith({ minPrice: '100', maxPrice: '500' });
+  });
+
+  it('renders sort select', () => {
+    render(
+      <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
+    );
+    expect(screen.getByRole('combobox', { name: 'Сортировка' })).toBeInTheDocument();
+  });
+
+  it('calls update with sortBy and sortOrder on sort change', () => {
+    render(
+      <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
+    );
+
+    const select = screen.getByRole('combobox', { name: 'Сортировка' });
+    fireEvent.change(select, { target: { value: 'price_asc' } });
+
+    expect(mockUpdate).toHaveBeenCalledWith({ sortBy: 'price', sortOrder: 'asc' });
+  });
+
+  it('resets sort when empty option selected', () => {
+    render(
+      <ProductFilters
+        categories={categories}
+        tags={tags}
+        currentTags={[]}
+        currentSort="price_asc"
+      />,
+    );
+
+    const select = screen.getByRole('combobox', { name: 'Сортировка' });
+    fireEvent.change(select, { target: { value: '' } });
+
+    expect(mockUpdate).toHaveBeenCalledWith({ sortBy: undefined, sortOrder: undefined });
+  });
+
   it('shows reset button when filters active', () => {
     render(
       <ProductFilters
@@ -90,6 +162,19 @@ describe('ProductFilters', () => {
         tags={tags}
         currentCategory="electronics"
         currentTags={[]}
+      />,
+    );
+
+    expect(screen.getByText('Сбросить фильтры')).toBeInTheDocument();
+  });
+
+  it('shows reset button when minPrice is set', () => {
+    render(
+      <ProductFilters
+        categories={categories}
+        tags={tags}
+        currentTags={[]}
+        currentMinPrice="100"
       />,
     );
 
