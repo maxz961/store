@@ -67,9 +67,8 @@ export const ProductCatalog = () => {
                 </div>
                 <When condition={(data?.totalPages ?? 1) > 1}>
                   <CatalogPagination
-                    page={data?.page ?? 1}
+                    page={Number(filters.page ?? '1')}
                     totalPages={data?.totalPages ?? 1}
-                    total={data?.total ?? 0}
                   />
                 </When>
               </Else>
