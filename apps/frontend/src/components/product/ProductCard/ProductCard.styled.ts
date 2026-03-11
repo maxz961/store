@@ -1,7 +1,7 @@
 export const s = {
   card: 'group flex flex-1 flex-col rounded-xl border border-border bg-card shadow-sm overflow-hidden transition-all duration-200 hover:shadow-lg',
-  imageLink: 'relative block aspect-square overflow-hidden bg-white dark:bg-muted/30 p-4',
-  image: 'object-contain transition-transform duration-300 group-hover:scale-105',
+  imageLink: 'relative block aspect-square overflow-hidden bg-muted/30',
+  image: 'object-cover transition-transform duration-300 group-hover:scale-105',
   placeholder: 'flex h-full flex-col items-center justify-center gap-2 text-muted-foreground/30',
   placeholderIcon: 'h-10 w-10',
   placeholderText: 'text-xs',

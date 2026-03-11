@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { ProductInfoProps } from './page.types';
 
@@ -58,9 +59,9 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       </When>
 
       <div className={s.priceGroup}>
-        <span className={s.price}>${Number(product.price).toFixed(2)}</span>
+        <span className={s.price}>{formatCurrency(Number(product.price))}</span>
         <When condition={!!product.comparePrice}>
-          <span className={s.oldPrice}>${Number(product.comparePrice).toFixed(2)}</span>
+          <span className={s.oldPrice}>{formatCurrency(Number(product.comparePrice))}</span>
         </When>
         <When condition={!!discount}>
           <span className={s.discount}>-{discount}%</span>

@@ -120,7 +120,7 @@ describe('NewProductPage', () => {
     renderPage();
     fireEvent.click(screen.getByText('Предпросмотр'));
     expect(screen.getByText('Нет в наличии')).toBeInTheDocument();
-    expect(screen.getByText('$0.00')).toBeInTheDocument();
+    expect(screen.getByText('0 ₴')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('icon-x'));
     expect(screen.queryByText('Нет в наличии')).not.toBeInTheDocument();

@@ -101,7 +101,7 @@ describe('ProductPage', () => {
   it('renders product name and price', async () => {
     await renderPage();
     expect(screen.getByRole('heading', { name: 'Тестовый товар' })).toBeInTheDocument();
-    expect(screen.getByText('$199.99')).toBeInTheDocument();
+    expect(screen.getByText('199,99 ₴')).toBeInTheDocument();
   });
 
   it('renders category name', async () => {
@@ -182,7 +182,7 @@ describe('ProductPage', () => {
       data: { ...baseProduct, comparePrice: 299.99 },
     };
     await renderPage();
-    expect(screen.getByText('$299.99')).toBeInTheDocument();
+    expect(screen.getByText('299,99 ₴')).toBeInTheDocument();
     expect(screen.getByText('-33%')).toBeInTheDocument();
   });
 });

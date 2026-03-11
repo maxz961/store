@@ -78,7 +78,7 @@ describe('ProductCard', () => {
     render(<ProductCard product={baseProduct} />);
     expect(screen.getByText('Тестовый товар')).toBeInTheDocument();
     expect(screen.getByText('Электроника')).toBeInTheDocument();
-    expect(screen.getByText('$99.99')).toBeInTheDocument();
+    expect(screen.getByText('99,99 ₴')).toBeInTheDocument();
   });
 
   it('links to product page', () => {
@@ -121,7 +121,7 @@ describe('ProductCard', () => {
     const product = { ...baseProduct, comparePrice: 149.99 };
     render(<ProductCard product={product} />);
     expect(screen.getByText('-33%')).toBeInTheDocument();
-    expect(screen.getByText('$149.99')).toBeInTheDocument();
+    expect(screen.getByText('149,99 ₴')).toBeInTheDocument();
   });
 
   it('does not show discount badge without comparePrice', () => {

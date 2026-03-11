@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Minus, Plus } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { CartItemProps } from './page.types';
 
@@ -26,7 +27,7 @@ export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemPro
         <Link href={`/products/${item.slug}`} className={s.itemName}>
           {item.name}
         </Link>
-        <span className={s.itemPrice}>${item.price.toFixed(2)}</span>
+        <span className={s.itemPrice}>{formatCurrency(item.price)}</span>
 
         <div className={s.itemActions}>
           <div className={s.quantityGroup}>
@@ -51,7 +52,7 @@ export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemPro
         </div>
       </div>
 
-      <span className={s.itemTotal}>${(item.price * item.quantity).toFixed(2)}</span>
+      <span className={s.itemTotal}>{formatCurrency(item.price * item.quantity)}</span>
     </div>
   );
 };

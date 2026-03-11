@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
+import { formatCurrency } from '@/lib/constants/format';
 import type { Props } from './ProductCard.types';
 import { s } from './ProductCard.styled';
 
@@ -109,11 +110,11 @@ export const ProductCard = ({ product }: Props) => {
           <div className={s.priceGroup}>
             <When condition={!!product.comparePrice}>
               <span className={s.oldPrice}>
-                ${Number(product.comparePrice).toFixed(2)}
+                {formatCurrency(Number(product.comparePrice))}
               </span>
             </When>
             <span className={s.price}>
-              ${Number(product.price).toFixed(2)}
+              {formatCurrency(Number(product.price))}
             </span>
           </div>
 

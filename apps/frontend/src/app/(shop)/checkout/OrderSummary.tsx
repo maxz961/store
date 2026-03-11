@@ -1,6 +1,7 @@
 import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { CheckoutSummaryItem } from './CheckoutSummaryItem';
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { OrderSummaryProps } from './page.types';
 
@@ -20,7 +21,7 @@ export const OrderSummary = ({ items, totalPrice, error, isPending }: OrderSumma
 
       <div className={s.summaryTotal}>
         <span className={s.summaryTotalLabel}>Итого</span>
-        <span className={s.summaryTotalPrice}>${totalPrice.toFixed(2)}</span>
+        <span className={s.summaryTotalPrice}>{formatCurrency(totalPrice)}</span>
       </div>
 
       <When condition={!!error}>

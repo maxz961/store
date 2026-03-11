@@ -148,13 +148,13 @@ describe('CheckoutPage', () => {
 
     expect(screen.getByText('Ваш заказ')).toBeInTheDocument();
     expect(screen.getByText('Наушники')).toBeInTheDocument();
-    expect(screen.getByText('2 шт. × $199.99')).toBeInTheDocument();
+    expect(screen.getByText('2 шт. × 199,99 ₴')).toBeInTheDocument();
   });
 
   it('renders total price', () => {
     renderPage();
 
-    expect(screen.getByText('$399.98')).toBeInTheDocument();
+    expect(screen.getByText('399,98 ₴')).toBeInTheDocument();
   });
 
   it('submits order successfully', async () => {

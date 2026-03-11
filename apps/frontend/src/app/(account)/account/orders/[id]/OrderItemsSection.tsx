@@ -1,3 +1,4 @@
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import { OrderDetailItem } from './OrderDetailItem';
 import type { OrderItemsSectionProps } from './page.types';
@@ -15,7 +16,7 @@ export const OrderItemsSection = ({ items, totalAmount }: OrderItemsSectionProps
     </div>
     <div className={s.totalRow}>
       <span className={s.totalLabel}>Итого</span>
-      <span className={s.totalAmount}>${Number(totalAmount).toFixed(2)}</span>
+      <span className={s.totalAmount}>{formatCurrency(Number(totalAmount))}</span>
     </div>
   </div>
 );

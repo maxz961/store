@@ -54,7 +54,7 @@ describe('CartPage', () => {
   it('renders cart item name and unit price', () => {
     render(<CartPage />);
     expect(screen.getByText('Наушники')).toBeInTheDocument();
-    expect(screen.getByText('$149.99')).toBeInTheDocument();
+    expect(screen.getByText('149,99 ₴')).toBeInTheDocument();
   });
 
   it('renders summary total and item count', () => {
@@ -96,6 +96,6 @@ describe('CartPage', () => {
   it('renders Сумма with total price', () => {
     render(<CartPage />);
     expect(screen.getByText('Сумма')).toBeInTheDocument();
-    expect(screen.getAllByText('$449.97').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('449,97 ₴').length).toBeGreaterThanOrEqual(1);
   });
 });

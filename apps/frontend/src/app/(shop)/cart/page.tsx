@@ -6,6 +6,7 @@ import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCartStore } from '@/store/cart';
+import { formatCurrency } from '@/lib/constants/format';
 import { CartItem } from './CartItem';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
@@ -62,7 +63,7 @@ const CartPage = () => {
             <div className={s.summaryDivider} />
             <div className={s.summaryTotal}>
               <span>Сумма</span>
-              <span>${totalPrice().toFixed(2)}</span>
+              <span>{formatCurrency(totalPrice())}</span>
             </div>
             <Link href="/checkout">
               <Button size="lg" className={s.checkoutButton}>
