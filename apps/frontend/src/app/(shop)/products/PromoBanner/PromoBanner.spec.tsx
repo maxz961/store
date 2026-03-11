@@ -130,7 +130,7 @@ describe('PromoBanner', () => {
     renderBanner();
     await screen.findByText('Весенняя распродажа');
 
-    const track = screen.getByText('Весенняя распродажа').closest('[class*="flex"]')!.parentElement!;
+    const track = screen.getByTestId('promo-track');
     expect(track).toHaveStyle({ transform: 'translateX(-0%)' });
 
     fireEvent.click(screen.getByLabelText('Следующий баннер'));
@@ -141,7 +141,7 @@ describe('PromoBanner', () => {
     renderBanner();
     await screen.findByText('Весенняя распродажа');
 
-    const track = screen.getByText('Весенняя распродажа').closest('[class*="flex"]')!.parentElement!;
+    const track = screen.getByTestId('promo-track');
 
     fireEvent.click(screen.getByLabelText('Баннер 2'));
     expect(track).toHaveStyle({ transform: 'translateX(-100%)' });
