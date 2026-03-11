@@ -12,6 +12,7 @@ jest.mock("@store/shared", () => ({
       update: jest.fn(),
       delete: jest.fn(),
       count: jest.fn(),
+      aggregate: jest.fn(),
     },
   },
 }));
@@ -292,6 +293,33 @@ describe("ProductsService", () => {
       const result = await service.getImageErrorCount();
 
       expect(result).toEqual({ count: 0 });
+    });
+  });
+
+  describe("getPriceRange", () => {
+    it("returns min and max price of published products", async () => {
+      (mockDb.product.aggregate as jest.Mock).mockResolvedValue({
+        _min: { price: 100 },
+        _max: { price: 5000 },
+      });
+
+      const result = await service.getPriceRange();
+
+      expect(result).toEqual({ min: 100, max: 5000 });
+      expect(mockDb.product.aggregate).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { isPublished: true } })
+      );
+    });
+
+    it("returns zeros when no published products exist", async () => {
+      (mockDb.product.aggregate as jest.Mock).mockResolvedValue({
+        _min: { price: null },
+        _max: { price: null },
+      });
+
+      const result = await service.getPriceRange();
+
+      expect(result).toEqual({ min: 0, max: 0 });
     });
   });
 

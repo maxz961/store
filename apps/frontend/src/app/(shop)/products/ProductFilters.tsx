@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { cn } from '@/lib/utils';
 import { When } from 'react-if';
 import { useProductParams } from '@/lib/hooks/useProductParams';
+import { usePriceRange } from '@/lib/hooks/useProducts';
+import { PriceRangeSlider } from '@/components/ui/PriceRangeSlider';
 import { CategoryButton } from './CategoryButton';
 import { TagButton } from './TagButton';
 import { SORT_OPTIONS } from './ProductFilters.constants';
@@ -21,14 +23,7 @@ export const ProductFilters = ({
   currentSort,
 }: Props) => {
   const { update, reset } = useProductParams();
-
-  const [localMin, setLocalMin] = useState(currentMinPrice ?? '');
-  const [localMax, setLocalMax] = useState(currentMaxPrice ?? '');
-
-  useEffect(() => {
-    setLocalMin(currentMinPrice ?? '');
-    setLocalMax(currentMaxPrice ?? '');
-  }, [currentMinPrice, currentMaxPrice]);
+  const { data: priceRange } = usePriceRange();
 
   const filteredCategories = useMemo(
     () => categories.filter((c) => (c._count?.products ?? 0) > 0),
@@ -46,6 +41,13 @@ export const ProductFilters = ({
     currentMinPrice ||
     currentMaxPrice ||
     currentSort
+  );
+
+  const handlePriceRangeChange = useCallback(
+    ([newMin, newMax]: [number, number]) => {
+      update({ minPrice: String(newMin), maxPrice: String(newMax) });
+    },
+    [update],
   );
 
   const toggleTag = useCallback((slug: string) => {
@@ -67,20 +69,6 @@ export const ProductFilters = ({
     [toggleTag],
   );
 
-  const handleMinChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setLocalMin(e.target.value),
-    [],
-  );
-
-  const handleMaxChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => setLocalMax(e.target.value),
-    [],
-  );
-
-  const handlePriceApply = useCallback(() => {
-    update({ minPrice: localMin || undefined, maxPrice: localMax || undefined });
-  }, [update, localMin, localMax]);
-
   const handleSortChange = useCallback(
     (e: React.ChangeEvent<HTMLSelectElement>) => {
       const val = e.target.value;
@@ -91,8 +79,6 @@ export const ProductFilters = ({
   );
 
   const handleReset = useCallback(() => {
-    setLocalMin('');
-    setLocalMax('');
     reset();
   }, [reset]);
 
@@ -137,34 +123,21 @@ export const ProductFilters = ({
         </div>
       </When>
 
-      <div className={s.divider} />
-      <div className={s.section}>
-        <p className={s.label}>Цена</p>
-        <div className={s.priceRow}>
-          <input
-            type="number"
-            min={0}
-            placeholder="От"
-            value={localMin}
-            onChange={handleMinChange}
-            className={s.priceInput}
-            aria-label="Минимальная цена"
-          />
-          <span className={s.priceSeparator}>—</span>
-          <input
-            type="number"
-            min={0}
-            placeholder="До"
-            value={localMax}
-            onChange={handleMaxChange}
-            className={s.priceInput}
-            aria-label="Максимальная цена"
+      <When condition={!!priceRange}>
+        <div className={s.divider} />
+        <div className={s.section}>
+          <p className={s.label}>Цена</p>
+          <PriceRangeSlider
+            min={priceRange!.min}
+            max={priceRange!.max}
+            value={[
+              Number(currentMinPrice ?? priceRange!.min),
+              Number(currentMaxPrice ?? priceRange!.max),
+            ]}
+            onChange={handlePriceRangeChange}
           />
         </div>
-        <button className={s.priceApply} onClick={handlePriceApply}>
-          Применить
-        </button>
-      </div>
+      </When>
 
       <div className={s.divider} />
       <div className={s.section}>

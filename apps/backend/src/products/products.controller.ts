@@ -60,6 +60,11 @@ export class ProductsController {
     return this.productsService.reportImageError(id);
   }
 
+  @Get("price-range")
+  getPriceRange() {
+    return this.productsService.getPriceRange();
+  }
+
   @Get(":slug/similar")
   findSimilar(@Param("slug") slug: string) {
     return this.productsService.findSimilar(slug);

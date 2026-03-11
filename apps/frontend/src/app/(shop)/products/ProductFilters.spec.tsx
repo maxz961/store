@@ -10,6 +10,10 @@ jest.mock('@/lib/hooks/useProductParams', () => ({
   useProductParams: () => ({ update: mockUpdate, reset: mockReset }),
 }));
 
+jest.mock('@/lib/hooks/useProducts', () => ({
+  usePriceRange: () => ({ data: { min: 100, max: 5000 } }),
+}));
+
 const categories = [
   { id: '1', name: 'Электроника', slug: 'electronics', _count: { products: 5 } },
   { id: '2', name: 'Одежда', slug: 'clothing', _count: { products: 3 } },
@@ -99,26 +103,25 @@ describe('ProductFilters', () => {
     expect(mockUpdate).toHaveBeenCalledWith({ tagSlugs: ['sale'] });
   });
 
-  it('renders price inputs and apply button', () => {
+  it('renders price range slider inputs', () => {
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
-    expect(screen.getByPlaceholderText('От')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('До')).toBeInTheDocument();
-    expect(screen.getByText('Применить')).toBeInTheDocument();
+    expect(screen.getByLabelText('Минимальная цена')).toBeInTheDocument();
+    expect(screen.getByLabelText('Максимальная цена')).toBeInTheDocument();
   });
 
-  it('calls update with minPrice and maxPrice on apply click', async () => {
-    const user = userEvent.setup();
+  it('calls update on price range change (mouseUp on slider)', () => {
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
 
-    await user.type(screen.getByPlaceholderText('От'), '100');
-    await user.type(screen.getByPlaceholderText('До'), '500');
-    await user.click(screen.getByText('Применить'));
+    const sliders = screen.getAllByLabelText(/слайдер/);
+    fireEvent.mouseUp(sliders[0]);
 
-    expect(mockUpdate).toHaveBeenCalledWith({ minPrice: '100', maxPrice: '500' });
+    expect(mockUpdate).toHaveBeenCalledWith(
+      expect.objectContaining({ minPrice: expect.any(String), maxPrice: expect.any(String) }),
+    );
   });
 
   it('renders sort select', () => {

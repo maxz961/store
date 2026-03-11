@@ -151,4 +151,16 @@ export class ProductsService {
     const count = await db.product.count({ where: { hasImageError: true } });
     return { count };
   }
+
+  async getPriceRange(): Promise<{ min: number; max: number }> {
+    const result = await db.product.aggregate({
+      where: { isPublished: true },
+      _min: { price: true },
+      _max: { price: true },
+    });
+    return {
+      min: Number(result._min.price ?? 0),
+      max: Number(result._max.price ?? 0),
+    };
+  }
 }

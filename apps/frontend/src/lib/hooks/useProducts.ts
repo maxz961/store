@@ -136,6 +136,13 @@ export const useSimilarProducts = (slug: string) =>
     staleTime: 5 * 60 * 1000,
   });
 
+export const usePriceRange = () =>
+  useQuery({
+    queryKey: ['products', 'price-range'],
+    queryFn: () => api.get<{ min: number; max: number }>('/products/price-range'),
+    staleTime: 1000 * 60 * 10,
+  });
+
 // ─── Category mutations ───
 
 export const useCreateCategory = () => {

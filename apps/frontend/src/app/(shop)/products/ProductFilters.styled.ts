@@ -10,9 +10,5 @@ export const s = {
   tags: 'flex flex-wrap gap-1.5',
   tagBadge: 'cursor-pointer transition-opacity duration-150 hover:opacity-80',
   resetButton: 'flex items-center justify-center w-full h-8 text-xs text-muted-foreground rounded-lg hover:bg-muted hover:text-foreground transition-colors duration-150',
-  priceRow: 'flex items-center gap-2',
-  priceSeparator: 'text-xs text-muted-foreground shrink-0',
-  priceInput: 'w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary',
-  priceApply: 'mt-2 w-full rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90',
   sortSelect: 'w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer',
 };
