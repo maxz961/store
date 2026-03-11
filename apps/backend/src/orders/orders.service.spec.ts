@@ -160,5 +160,26 @@ describe("OrdersService", () => {
       const result = await service.findAll(-5, 20);
       expect(result.page).toBe(1);
     });
+
+    it("sorts by createdAt desc by default", async () => {
+      await service.findAll(1, 20);
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { createdAt: "desc" } }),
+      );
+    });
+
+    it("sorts by totalAmount asc when specified", async () => {
+      await service.findAll(1, 20, undefined, "totalAmount", "asc");
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { totalAmount: "asc" } }),
+      );
+    });
+
+    it("sorts by createdAt asc when specified", async () => {
+      await service.findAll(1, 20, undefined, "createdAt", "asc");
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { createdAt: "asc" } }),
+      );
+    });
   });
 });

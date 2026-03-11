@@ -6,7 +6,6 @@ import { UpdateOrderStatusDto } from "./dto/update-order-status.dto";
 @Injectable()
 export class OrdersService {
   async create(userId: string, dto: CreateOrderDto) {
-    // Fetch all products and validate stock
     const productIds = dto.items.map((i) => i.productId);
     const products = await db.product.findMany({
       where: { id: { in: productIds }, isPublished: true },
@@ -20,18 +19,16 @@ export class OrdersService {
       const product = products.find((p) => p.id === item.productId)!;
       if (product.stock < item.quantity) {
         throw new BadRequestException(
-          `Insufficient stock for product "${product.name}"`
+          `Insufficient stock for product "${product.name}"`,
         );
       }
     }
 
-    // Calculate total
     const totalAmount = dto.items.reduce((sum, item) => {
       const product = products.find((p) => p.id === item.productId)!;
       return sum + Number(product.price) * item.quantity;
     }, 0);
 
-    // Create order + items + decrement stock in transaction
     const order = await db.$transaction(async (tx) => {
       const created = await tx.order.create({
         data: {
@@ -53,7 +50,6 @@ export class OrdersService {
         include: { orderItems: { include: { product: true } } },
       });
 
-      // Decrement stock
       for (const item of dto.items) {
         await tx.product.update({
           where: { id: item.productId },
@@ -75,10 +71,20 @@ export class OrdersService {
     });
   }
 
-  async findAll(rawPage?: number | string, rawLimit?: number | string, status?: OrderStatus) {
+  async findAll(
+    rawPage?: number | string,
+    rawLimit?: number | string,
+    status?: OrderStatus,
+    sortBy: 'createdAt' | 'totalAmount' = 'createdAt',
+    sortOrder: 'asc' | 'desc' = 'desc',
+  ) {
     const page = Math.max(1, Number(rawPage) || 1);
     const limit = Math.max(1, Math.min(100, Number(rawLimit) || 20));
     const where = status ? { status } : {};
+    const orderBy = sortBy === 'totalAmount'
+      ? { totalAmount: sortOrder }
+      : { createdAt: sortOrder };
+
     const [items, total] = await Promise.all([
       db.order.findMany({
         where,
@@ -88,7 +94,7 @@ export class OrdersService {
         },
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy,
       }),
       db.order.count({ where }),
     ]);
