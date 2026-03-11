@@ -9,7 +9,11 @@
 - Какие тесты напишу или обновлю
 - Ждать подтверждения перед началом
 
-**ОБЯЗАТЕЛЬНО после написания/редактирования каждого файла** — прогнать через чеклист аудита (раздел "Frontend") перед тем как считать задачу завершённой. Не пропускать ни одного пункта. Не полагаться на "я и так помню правила" — проверять явно.
+**ОБЯЗАТЕЛЬНО после написания/редактирования каждого файла** — прогнать через чеклист аудита (MEMORY.md) перед тем как считать задачу завершённой. Не пропускать ни одного пункта. Не полагаться на "я и так помню правила" — проверять явно.
+
+**При добавлении нового правила в этот файл** — СРАЗУ добавить соответствующий пункт в чеклист аудита (MEMORY.md). Правило без пункта в чеклисте = правило которое будет забыто.
+
+**ПЕРЕД написанием нового файла** — прочитать самый похожий существующий файл, проверить какие компоненты/хуки/утилиты уже есть. Не изобретать — переиспользовать.
 
 ### 2. Ветки и коммиты
 - Каждый новый функционал — новая ветка, checkout от `develop`
@@ -32,7 +36,22 @@
 - Async/await вместо .then()/.catch()
 - Не использовать `any` без крайней необходимости
 
-### 5. Качество кода — уровень Senior
+### 5. Безопасность — приоритет
+- **Код должен быть невозможно взломать** — думать как атакующий при каждом решении
+- **Валидация на КАЖДОМ уровне**: frontend (Zod), backend (class-validator), база (Prisma constraints)
+- **Никогда не доверять данным от клиента**: всегда валидировать, санитизировать, проверять типы
+- **SQL injection**: только Prisma ORM, никаких raw SQL без параметризации
+- **XSS**: не использовать `dangerouslySetInnerHTML`, экранировать пользовательский ввод
+- **CSRF/CORS**: строгая настройка CORS (только разрешённые origins), httpOnly cookies
+- **Авторизация**: КАЖДЫЙ endpoint проверяет права доступа (JWT guard + Roles guard). Никогда не полагаться только на frontend-проверки — backend ВСЕГДА проверяет повторно
+- **ID пользователя**: брать ТОЛЬКО из JWT токена (`req.user`), НИКОГДА из тела запроса или query параметров
+- **Rate limiting**: защита от brute-force и DDoS на критичных эндпоинтах (auth, orders, reviews)
+- **Загрузка файлов**: проверять тип, размер, содержимое. Не доверять расширению файла
+- **Секреты**: никогда не логировать токены, пароли, ключи. Не коммитить `.env`
+- **Ошибки**: не раскрывать внутреннюю информацию (stack traces, SQL ошибки) пользователю — только generic messages
+- **Зависимости**: не устанавливать пакеты без необходимости, проверять что пакет популярный и поддерживаемый
+
+### 6. Качество кода — уровень Senior
 - **Писать код как Senior-разработчик, думать как архитектор высшего класса**
 - Код должен выглядеть так, будто его писал опытный инженер из топовой компании — чистый, продуманный, масштабируемый
 - Никаких "костылей", обходных решений ради скорости, или "потом поправим"
@@ -41,7 +60,7 @@
 - Код должен быть самодокументируемым: понятные имена, логичная структура, очевидный flow
 - Думать о масштабируемости, производительности и поддерживаемости при каждом решении
 
-### 6. Тесты
+### 7. Тесты
 - Перед написанием тестов подумать: покрывает ли тест реальное поведение?
 - Тестировать happy path, ошибки (404, 403, 409) и граничные случаи
 - Не писать тесты "для галочки" — каждый тест должен ловить реальный баг
@@ -84,36 +103,64 @@ store/                          ← монорепо корень
 
 ## Структура Frontend (apps/frontend/src/)
 
+### Принцип: folder-per-component
+- Каждый компонент — своя папка: `ComponentName/ComponentName.tsx` + `.styled.ts` + `.types.ts` + `index.ts`
+- `index.ts` — barrel export: `export { ComponentName } from './ComponentName'`
+- Под-компоненты (используются ТОЛЬКО родителем) — подпапки внутри родителя
+- shadcn/ui компоненты (`button.tsx`, `badge.tsx`) — плоские файлы, без папок
+- **`components/`** = переиспользуемые (нужны на 2+ страницах)
+- **`app/.../page-folder/`** = привязаны к одной странице (co-located)
+
 ```
 app/
-  (auth)/login/          ← страница входа, кнопка Google OAuth
-  (auth)/register/       ← регистрация (редирект на Google)
-  (shop)/products/       ← каталог с фильтрами по тегам/категориям
-  (shop)/products/[slug]/← страница товара + отзывы
-  (shop)/cart/           ← корзина (Zustand, localStorage)
-  (shop)/checkout/       ← форма доставки (COURIER|PICKUP|POST)
-  (account)/profile/     ← профиль пользователя
-  (account)/orders/[id]/ ← детали заказа
-  (admin)/dashboard/     ← аналитика (Recharts графики)
-  (admin)/products/      ← таблица товаров
-  (admin)/products/new/  ← добавить товар + теги
-  (admin)/products/[id]/ ← редактировать товар
-  (admin)/orders/        ← все заказы с фильтрами
-  (admin)/orders/[id]/   ← детали + смена статуса
+  (auth)/login/            ← страница входа, кнопка Google OAuth
+  (shop)/products/         ← каталог + co-located: ProductCatalog, ProductFilters, CategoryButton, TagButton
+  (shop)/products/[slug]/  ← страница товара + co-located: ProductGallery, ProductInfo, ProductReviews
+  (shop)/cart/             ← корзина (Zustand, localStorage)
+  (shop)/checkout/         ← форма доставки (COURIER|PICKUP|POST)
+  (account)/account/profile/    ← профиль пользователя
+  (account)/account/orders/     ← мои заказы
+  (account)/account/orders/[id]/← детали заказа
+  (admin)/admin/dashboard/ ← аналитика (Recharts графики)
+  (admin)/admin/products/  ← таблица товаров
+  (admin)/admin/products/new/  ← добавить товар + теги
+  (admin)/admin/products/[id]/ ← редактировать товар
+  (admin)/admin/orders/    ← все заказы с фильтрами
+  (admin)/admin/orders/[id]/← детали + смена статуса
 components/
-  ui/                    ← shadcn/ui (не редактировать вручную)
-  layout/                ← Header, Footer
-  product/               ← ProductCard, ProductGrid, ProductFilters
-  cart/                  ← CartDrawer, CartItem
-  checkout/              ← DeliveryMethodSelect, AddressForm
-  admin/                 ← StatsCard, RevenueChart, OrderStatusPie
+  ui/                      ← shadcn (плоские) + кастомные (folder-per-component)
+    Breadcrumbs/           ← Breadcrumbs.tsx + styled + types + index.ts
+    Spinner/
+    Dropdown/
+    StarRating/            ← + StarIcon (под-компонент)
+    ImageUpload/           ← + ImageThumb (под-компонент)
+    TextField/
+    TextareaField/
+    SelectField/
+    CheckboxField/
+    button.tsx, badge.tsx, input.tsx, textarea.tsx  ← shadcn (не трогать)
+  layout/
+    Header/                ← Header.tsx + styled + spec + index.ts
+      UserMenu/            ← под-компонент хедера
+      UserTrigger/         ← под-компонент хедера
+  providers/               ← QueryProvider/, ThemeProvider/ (инфраструктура)
+  product/
+    ProductCard/           ← переиспользуемая карточка товара
+  review/
+    ReviewCard/
+    ReviewForm/
+    ReviewList/            ← + ReviewListItem (под-компонент)
+    ReviewModal/
+  admin/
+    StatsCard/
+    StatusBadge/
 lib/
-  api.ts                 ← fetch-клиент к backend (:3001)
-  hooks/                 ← React Query хуки (useProducts, useOrders, useAdmin, useReviews, useAuth)
-  constants/             ← общие константы (order.ts, format.ts)
-  validations/           ← Zod схемы (импортировать из packages/shared)
+  api.ts                   ← fetch-клиент к backend (:3001)
+  hooks/                   ← React Query хуки (useProducts, useOrders, useAdmin, useReviews, useAuth)
+  constants/               ← общие константы (order.ts, format.ts)
+  validations/             ← Zod схемы (импортировать из packages/shared)
 store/
-  cart.ts                ← Zustand + persist middleware
+  cart.ts                  ← Zustand + persist middleware
 ```
 
 ## Структура Backend (apps/backend/src/)

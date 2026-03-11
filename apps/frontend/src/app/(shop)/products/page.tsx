@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ProductCatalog } from '@/components/product/ProductCatalog';
+import { ProductCatalog } from './ProductCatalog';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCategories } from '@/lib/hooks/useProducts';
 import { s } from './page.styled';

@@ -11,8 +11,8 @@ import { useCartStore } from '@/store/cart';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { getInitials } from '@/lib/utils';
-import { UserTrigger } from './UserTrigger';
-import { UserMenu } from './UserMenu';
+import { UserTrigger } from './UserTrigger/UserTrigger';
+import { UserMenu } from './UserMenu/UserMenu';
 import { s } from './Header.styled';
 
 

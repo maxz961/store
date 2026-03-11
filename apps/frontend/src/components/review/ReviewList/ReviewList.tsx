@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { When } from 'react-if';
-import { ReviewListItem } from '@/components/product/ReviewListItem';
+import { ReviewListItem } from './ReviewListItem';
 import type { ReviewListProps } from './ReviewList.types';
 import { s } from './ReviewList.styled';
 

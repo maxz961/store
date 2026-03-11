@@ -38,7 +38,7 @@ jest.mock('@/lib/hooks/useProducts', () => ({
   useProduct: () => mockProductHook,
 }));
 
-jest.mock('@/components/product/ReviewModal', () => ({
+jest.mock('@/components/review/ReviewModal', () => ({
   ReviewModal: ({ productId, onClose }: any) => (
 
 

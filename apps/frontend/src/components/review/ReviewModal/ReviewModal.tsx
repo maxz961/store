@@ -3,8 +3,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
-import { ReviewForm } from '@/components/product/ReviewForm';
-import { ReviewCard } from '@/components/product/ReviewCard';
+import { ReviewForm } from '@/components/review/ReviewForm';
+import { ReviewCard } from '@/components/review/ReviewCard';
 import { useAuth } from '@/lib/hooks/useAuth';
 import {
   useProductReviews,

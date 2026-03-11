@@ -5,7 +5,7 @@ import { MessageSquare } from 'lucide-react';
 import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
-import { ReviewModal } from '@/components/product/ReviewModal';
+import { ReviewModal } from '@/components/review/ReviewModal';
 import { s } from './page.styled';
 import type { ProductReviewsProps } from './page.types';
 

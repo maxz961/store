@@ -9,7 +9,7 @@ import { StarRating } from '@/components/ui/StarRating';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { getInitials } from '@/lib/utils';
 import type { ReviewCardProps } from './ReviewCard.types';
-import { s } from './ReviewModal.styled';
+import { s } from '../ReviewModal/ReviewModal.styled';
 
 
 export const ReviewCard = ({

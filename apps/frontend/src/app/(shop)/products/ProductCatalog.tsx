@@ -1,7 +1,7 @@
 'use client';
 
 import { If, Then, Else, When } from 'react-if';
-import { ProductCard } from './ProductCard';
+import { ProductCard } from '@/components/product/ProductCard';
 import { ProductFilters } from './ProductFilters';
 import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';

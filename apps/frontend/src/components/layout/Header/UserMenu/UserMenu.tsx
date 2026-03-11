@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { User, Package, LogOut, LayoutDashboard } from 'lucide-react';
 import { When } from 'react-if';
-import { s } from './Header.styled';
+import { s } from '../Header.styled';
 import type { UserMenuProps } from './UserMenu.types';
 
 

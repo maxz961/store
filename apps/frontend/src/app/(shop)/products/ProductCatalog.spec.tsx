@@ -19,7 +19,7 @@ jest.mock('@/lib/hooks/useProducts', () => ({
 }));
 
 // Mock ProductCard to avoid Next.js Image issues in tests
-jest.mock('./ProductCard', () => ({
+jest.mock('@/components/product/ProductCard', () => ({
   ProductCard: ({ product }: { product: { name: string } }) => (
     <div data-testid="product-card">{product.name}</div>
   ),

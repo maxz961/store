@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { If, Then, Else } from 'react-if';
-import { s } from './Header.styled';
+import { s } from '../Header.styled';
 import type { UserTriggerProps } from './UserTrigger.types';
 
 
