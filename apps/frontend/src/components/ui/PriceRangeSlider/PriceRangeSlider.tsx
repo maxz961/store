@@ -36,6 +36,9 @@ const THUMB_STYLES = `
 `;
 
 export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }: Props) => {
+  const rMin = Math.round(min);
+  const rMax = Math.round(max);
+
   const [localMin, setLocalMin] = useState(Math.round(minVal));
   const [localMax, setLocalMax] = useState(Math.round(maxVal));
 
@@ -45,18 +48,18 @@ export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }
   }, [minVal, maxVal]);
 
   const minPercent = useMemo(
-    () => (max === min ? 0 : ((localMin - min) / (max - min)) * 100),
-    [localMin, min, max],
+    () => (rMax === rMin ? 0 : ((localMin - rMin) / (rMax - rMin)) * 100),
+    [localMin, rMin, rMax],
   );
 
   const maxPercent = useMemo(
-    () => (max === min ? 100 : ((localMax - min) / (max - min)) * 100),
-    [localMax, min, max],
+    () => (rMax === rMin ? 100 : ((localMax - rMin) / (rMax - rMin)) * 100),
+    [localMax, rMin, rMax],
   );
 
   const handleMinSlider = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const val = Math.min(Number(e.target.value), localMax - 1);
+      const val = Math.round(Math.min(Number(e.target.value), localMax - 1));
       setLocalMin(val);
     },
     [localMax],
@@ -64,7 +67,7 @@ export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }
 
   const handleMaxSlider = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const val = Math.max(Number(e.target.value), localMin + 1);
+      const val = Math.round(Math.max(Number(e.target.value), localMin + 1));
       setLocalMax(val);
     },
     [localMin],
@@ -76,25 +79,25 @@ export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }
 
   const handleMinInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, '');
-    setLocalMin(val === '' ? min : Number(val));
-  }, [min]);
+    setLocalMin(val === '' ? rMin : Number(val));
+  }, [rMin]);
 
   const handleMaxInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(/\D/g, '');
-    setLocalMax(val === '' ? max : Number(val));
-  }, [max]);
+    setLocalMax(val === '' ? rMax : Number(val));
+  }, [rMax]);
 
   const handleMinBlur = useCallback(() => {
-    const clamped = Math.max(min, Math.min(localMin, localMax - 1));
+    const clamped = Math.max(rMin, Math.min(localMin, localMax - 1));
     setLocalMin(clamped);
     onChange([clamped, localMax]);
-  }, [min, localMin, localMax, onChange]);
+  }, [rMin, localMin, localMax, onChange]);
 
   const handleMaxBlur = useCallback(() => {
-    const clamped = Math.max(localMin + 1, Math.min(localMax, max));
+    const clamped = Math.max(localMin + 1, Math.min(localMax, rMax));
     setLocalMax(clamped);
     onChange([localMin, clamped]);
-  }, [max, localMin, localMax, onChange]);
+  }, [rMax, localMin, localMax, onChange]);
 
   return (
     <div className={s.wrapper}>
@@ -130,8 +133,8 @@ export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }
         />
         <input
           type="range"
-          min={min}
-          max={max}
+          min={rMin}
+          max={rMax}
           value={localMin}
           onChange={handleMinSlider}
           onMouseUp={handleRelease}
@@ -141,8 +144,8 @@ export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }
         />
         <input
           type="range"
-          min={min}
-          max={max}
+          min={rMin}
+          max={rMax}
           value={localMax}
           onChange={handleMaxSlider}
           onMouseUp={handleRelease}
