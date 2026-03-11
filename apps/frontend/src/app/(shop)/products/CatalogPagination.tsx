@@ -18,7 +18,7 @@ export const CatalogPagination = ({ page, totalPages }: CatalogPaginationProps) 
 
   const handleGoTo = useCallback(
     (p: number) => () => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo(0, 0);
       update({ page: String(p) });
     },
     [update],
