@@ -110,6 +110,30 @@ export class ProductsService {
     });
   }
 
+  async findSimilar(slug: string, limit = 8) {
+    const product = await db.product.findUnique({
+      where: { slug },
+      select: { id: true, categoryId: true },
+    });
+
+    if (!product) throw new NotFoundException(`Product "${slug}" not found`);
+
+    return db.product.findMany({
+      where: {
+        isPublished: true,
+        categoryId: product.categoryId,
+        id: { not: product.id },
+      },
+      include: {
+        category: true,
+        tags: { include: { tag: true } },
+        reviews: { select: { rating: true } },
+      },
+      take: limit,
+      orderBy: { createdAt: "desc" },
+    });
+  }
+
   async remove(id: string) {
     await this.findById(id);
     return db.product.delete({ where: { id } });

@@ -36,6 +36,11 @@ export class ProductsController {
     return this.productsService.findAll(filters, true);
   }
 
+  @Get(":slug/similar")
+  findSimilar(@Param("slug") slug: string) {
+    return this.productsService.findSimilar(slug);
+  }
+
   @Get(":slug")
   findBySlug(@Param("slug") slug: string) {
     return this.productsService.findBySlug(slug);

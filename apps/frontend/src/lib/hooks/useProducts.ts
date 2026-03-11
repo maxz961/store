@@ -89,3 +89,11 @@ export const useTags = () =>
     queryFn: () => api.get<Tag[]>('/tags'),
     staleTime: 5 * 60 * 1000,
   });
+
+export const useSimilarProducts = (slug: string) =>
+  useQuery({
+    queryKey: ['products', 'similar', slug],
+    queryFn: () => api.get<Product[]>(`/products/${slug}/similar`),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000,
+  });

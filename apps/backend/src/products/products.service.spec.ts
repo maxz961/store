@@ -186,6 +186,76 @@ describe("ProductsService", () => {
     });
   });
 
+  describe("findSimilar", () => {
+    it("returns products from the same category excluding current", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue({
+        id: "product-1",
+        categoryId: "cat-1",
+      });
+      const similar = [{ ...mockProduct, id: "product-2", slug: "other" }];
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue(similar);
+
+      const result = await service.findSimilar("test-product");
+
+      expect(result).toEqual(similar);
+      expect(mockDb.product.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({
+            isPublished: true,
+            categoryId: "cat-1",
+            id: { not: "product-1" },
+          }),
+        })
+      );
+    });
+
+    it("throws NotFoundException for nonexistent slug", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.findSimilar("nonexistent")).rejects.toThrow(
+        NotFoundException
+      );
+    });
+
+    it("returns only published products", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue({
+        id: "product-1",
+        categoryId: "cat-1",
+      });
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+
+      await service.findSimilar("test-product");
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.isPublished).toBe(true);
+    });
+
+    it("limits results to 8 by default", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue({
+        id: "product-1",
+        categoryId: "cat-1",
+      });
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+
+      await service.findSimilar("test-product");
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.take).toBe(8);
+    });
+
+    it("returns empty array when no similar products exist", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue({
+        id: "product-1",
+        categoryId: "cat-1",
+      });
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await service.findSimilar("test-product");
+
+      expect(result).toEqual([]);
+    });
+  });
+
   describe("remove", () => {
     it("deletes existing product", async () => {
       (mockDb.product.findUnique as jest.Mock).mockResolvedValue(mockProduct);

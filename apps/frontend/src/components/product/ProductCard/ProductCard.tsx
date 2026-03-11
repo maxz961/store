@@ -22,8 +22,10 @@ export const ProductCard = ({ product }: Props) => {
     ? Math.round((1 - product.price / product.comparePrice) * 100)
     : null;
 
-  const avgRating = product.reviews.length > 0
-    ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
+  const reviews = product.reviews ?? [];
+  const tags = product.tags ?? [];
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
 
   const handleImgLoad = () => setImgLoaded(true);
@@ -77,16 +79,16 @@ export const ProductCard = ({ product }: Props) => {
         </Link>
         <p className={s.category}>{product.category.name}</p>
 
-        <When condition={product.reviews.length > 0}>
+        <When condition={reviews.length > 0}>
           <div className={s.rating}>
             <StarRating value={Math.round(avgRating)} size="sm" />
-            <span className={s.ratingCount}>({product.reviews.length})</span>
+            <span className={s.ratingCount}>({reviews.length})</span>
           </div>
         </When>
 
-        <When condition={product.tags.length > 0}>
+        <When condition={tags.length > 0}>
           <div className={s.tags}>
-            {product.tags.slice(0, 3).map(({ tag }) => (
+            {tags.slice(0, 3).map(({ tag }) => (
               <Badge key={tag.slug} variant="secondary" className={s.tag}>
                 {tag.name}
               </Badge>

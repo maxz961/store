@@ -16,8 +16,8 @@ export interface ProductInfoProps {
     images: string[];
     stock: number;
     category: { name: string; slug: string };
-    tags: { tag: { name: string; slug: string } }[];
-    reviews: { rating: number }[];
+    tags?: { tag: { name: string; slug: string } }[];
+    reviews?: { rating: number }[];
     description: string;
     id: string;
   };
@@ -27,4 +27,12 @@ export interface ProductReviewsProps {
   productId: string;
   productSlug: string;
   reviews: { rating: number }[];
+}
+
+export interface SimilarProductsProps {
+  slug: string;
+}
+
+export interface RecentlyViewedProps {
+  currentProductId: string;
 }

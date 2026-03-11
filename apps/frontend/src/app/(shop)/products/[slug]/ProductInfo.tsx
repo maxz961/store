@@ -16,8 +16,10 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const [quantity, setQuantity] = useState(1);
 
-  const avgRating = product.reviews.length > 0
-    ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
+  const reviews = product.reviews ?? [];
+  const tags = product.tags ?? [];
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
 
   const discount = product.comparePrice
@@ -46,11 +48,11 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       <p className={s.category}>{product.category.name}</p>
       <h1 className={s.title}>{product.name}</h1>
 
-      <When condition={product.reviews.length > 0}>
+      <When condition={reviews.length > 0}>
         <div className={s.ratingRow}>
           <StarRating value={Math.round(avgRating)} size="sm" />
           <span className={s.ratingText}>
-            {avgRating.toFixed(1)} ({product.reviews.length})
+            {avgRating.toFixed(1)} ({reviews.length})
           </span>
         </div>
       </When>
@@ -73,9 +75,9 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
 
       <p className={s.description}>{product.description}</p>
 
-      <When condition={product.tags.length > 0}>
+      <When condition={tags.length > 0}>
         <div className={s.tags}>
-          {product.tags.map(({ tag }) => (
+          {tags.map(({ tag }) => (
             <Badge key={tag.slug} variant="secondary">{tag.name}</Badge>
           ))}
         </div>

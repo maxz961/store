@@ -7,8 +7,8 @@ export interface Product {
   images: string[];
   stock: number;
   category: { name: string; slug: string };
-  tags: { tag: { name: string; slug: string } }[];
-  reviews: { rating: number }[];
+  tags?: { tag: { name: string; slug: string } }[];
+  reviews?: { rating: number }[];
 }
 
 export interface Props {

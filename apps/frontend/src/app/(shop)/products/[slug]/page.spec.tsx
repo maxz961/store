@@ -49,6 +49,18 @@ jest.mock('@/components/review/ReviewModal', () => ({
   ),
 }));
 
+jest.mock('./SimilarProducts', () => ({
+  SimilarProducts: () => <div data-testid="similar-products">Similar</div>,
+}));
+
+jest.mock('./RecentlyViewed', () => ({
+  RecentlyViewed: () => <div data-testid="recently-viewed">Recent</div>,
+}));
+
+jest.mock('./useTrackProductView', () => ({
+  useTrackProductView: jest.fn(),
+}));
+
 jest.mock('@/store/cart', () => ({
   useCartStore: (selector?: (state: any) => any) =>
     selector ? selector({ addItem: mockAddItem }) : { addItem: mockAddItem },
