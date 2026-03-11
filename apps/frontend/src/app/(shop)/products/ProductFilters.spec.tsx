@@ -10,8 +10,10 @@ jest.mock('@/lib/hooks/useProductParams', () => ({
   useProductParams: () => ({ update: mockUpdate, reset: mockReset }),
 }));
 
+const mockUsePriceRange = jest.fn(() => ({ data: { min: 100, max: 5000 } }));
+
 jest.mock('@/lib/hooks/useProducts', () => ({
-  usePriceRange: () => ({ data: { min: 100, max: 5000 } }),
+  usePriceRange: () => mockUsePriceRange(),
 }));
 
 const categories = [
@@ -30,6 +32,14 @@ describe('ProductFilters', () => {
   beforeEach(() => {
     mockUpdate.mockClear();
     mockReset.mockClear();
+    mockUsePriceRange.mockReturnValue({ data: { min: 100, max: 5000 } });
+  });
+
+  it('renders without crash when priceRange is still loading (data=undefined)', () => {
+    mockUsePriceRange.mockReturnValue({ data: undefined });
+    expect(() =>
+      render(<ProductFilters categories={categories} tags={tags} currentTags={[]} />),
+    ).not.toThrow();
   });
 
   it('renders categories and tags with products', () => {

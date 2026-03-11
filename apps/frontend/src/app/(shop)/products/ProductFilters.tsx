@@ -128,11 +128,11 @@ export const ProductFilters = ({
         <div className={s.section}>
           <p className={s.label}>Цена</p>
           <PriceRangeSlider
-            min={priceRange!.min}
-            max={priceRange!.max}
+            min={priceRange?.min ?? 0}
+            max={priceRange?.max ?? 0}
             value={[
-              Number(currentMinPrice ?? priceRange!.min),
-              Number(currentMaxPrice ?? priceRange!.max),
+              Number(currentMinPrice ?? priceRange?.min ?? 0),
+              Number(currentMaxPrice ?? priceRange?.max ?? 0),
             ]}
             onChange={handlePriceRangeChange}
           />
