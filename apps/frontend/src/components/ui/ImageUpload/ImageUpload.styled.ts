@@ -13,4 +13,7 @@ export const s = {
   thumb: 'group relative h-20 w-20 overflow-hidden rounded-lg border border-border bg-white',
   thumbImage: 'h-full w-full object-cover',
   thumbRemove: 'absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity duration-150 group-hover:opacity-100',
+
+  // Error
+  error: 'rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-xs text-destructive',
 };

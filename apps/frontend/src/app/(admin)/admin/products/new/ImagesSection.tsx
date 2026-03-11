@@ -51,7 +51,7 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
         <ImageUpload
           files={files}
           onChange={onFilesChange}
-          maxFiles={5}
+          maxFiles={6}
         />
       </When>
 

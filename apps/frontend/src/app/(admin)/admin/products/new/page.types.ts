@@ -22,4 +22,5 @@ export interface ImagesSectionProps {
 export interface ProductPreviewProps {
   isOpen: boolean;
   onClose: () => void;
+  files: File[];
 }

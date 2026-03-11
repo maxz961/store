@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { ImagePlus } from 'lucide-react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
@@ -10,25 +10,60 @@ import { MAX_FILE_SIZE } from './ImageUpload.constants';
 import { s } from './ImageUpload.styled';
 
 
+const MAX_FILE_SIZE_MB = MAX_FILE_SIZE / (1024 * 1024);
+
 export const ImageUpload = ({
   files,
   existingUrls = [],
   onChange,
   onRemoveExisting,
-  maxFiles = 5,
+  maxFiles = 6,
 }: ImageUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const totalCount = files.length + existingUrls.length;
   const canAdd = totalCount < maxFiles;
 
+  const fileUrls = useMemo(
+    () => files.map((file) => URL.createObjectURL(file)),
+    [files],
+  );
+
+  useEffect(() => {
+    return () => {
+      fileUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [fileUrls]);
+
   const addFiles = useCallback((newFiles: FileList | File[]) => {
-    const valid = Array.from(newFiles).filter(
+    const all = Array.from(newFiles);
+
+    const tooLarge = all.filter((f) => f.type.startsWith('image/') && f.size > MAX_FILE_SIZE);
+    const wrongType = all.filter((f) => !f.type.startsWith('image/'));
+    const valid = all.filter(
       (f) => f.type.startsWith('image/') && f.size <= MAX_FILE_SIZE,
     );
+
     const remaining = maxFiles - totalCount;
+    const overLimit = valid.length > remaining;
     const toAdd = valid.slice(0, remaining);
+
+    const errors: string[] = [];
+    if (tooLarge.length > 0) {
+      const names = tooLarge.map((f) => f.name).join(', ');
+      errors.push(`Файл слишком большой (макс. ${MAX_FILE_SIZE_MB} МБ): ${names}`);
+    }
+    if (wrongType.length > 0) {
+      errors.push('Поддерживаются только JPG, PNG и WebP');
+    }
+    if (overLimit) {
+      errors.push(`Можно загрузить ещё ${remaining} фото (макс. ${maxFiles})`);
+    }
+
+    setError(errors.length > 0 ? errors.join('. ') : null);
+
     if (toAdd.length > 0) {
       onChange([...files, ...toAdd]);
     }
@@ -71,8 +106,8 @@ export const ImageUpload = ({
           {existingUrls.map((url) => (
             <ImageThumb key={url} src={url} onRemove={removeExisting(url)} />
           ))}
-          {files.map((file, index) => (
-            <ImageThumb key={`${file.name}-${index}`} src={URL.createObjectURL(file)} onRemove={removeFile(index)} />
+          {fileUrls.map((url, index) => (
+            <ImageThumb key={url} src={url} onRemove={removeFile(index)} />
           ))}
         </div>
       </When>
@@ -87,7 +122,7 @@ export const ImageUpload = ({
         >
           <ImagePlus className={s.dropzoneIcon} />
           <p className={s.dropzoneText}>Добавить фото</p>
-          <p className={s.dropzoneHint}>JPG, PNG или WebP, до 5 МБ</p>
+          <p className={s.dropzoneHint}>JPG, PNG или WebP, до {MAX_FILE_SIZE_MB} МБ</p>
           <input
             ref={inputRef}
             type="file"
@@ -97,6 +132,10 @@ export const ImageUpload = ({
             className="hidden"
           />
         </div>
+      </When>
+
+      <When condition={!!error}>
+        <p className={s.error} role="alert">{error}</p>
       </When>
     </div>
   );

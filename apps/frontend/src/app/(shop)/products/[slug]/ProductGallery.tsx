@@ -9,7 +9,7 @@ import { s } from './page.styled';
 import type { ProductGalleryProps } from './page.types';
 
 
-export const ProductGallery = ({ images, name }: ProductGalleryProps) => {
+export const ProductGallery = ({ images, name, unoptimized }: ProductGalleryProps) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [mainImgLoaded, setMainImgLoaded] = useState(false);
   const [mainImgError, setMainImgError] = useState(false);
@@ -38,6 +38,7 @@ export const ProductGallery = ({ images, name }: ProductGalleryProps) => {
               className={s.image}
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
+              unoptimized={unoptimized}
               onLoad={handleMainImgLoad}
               onError={handleMainImgError}
             />
@@ -59,6 +60,7 @@ export const ProductGallery = ({ images, name }: ProductGalleryProps) => {
               alt={`${name} ${index + 1}`}
               isActive={index === selectedImage}
               onClick={handleSelectImage(index)}
+              unoptimized={unoptimized}
             />
           ))}
         </div>

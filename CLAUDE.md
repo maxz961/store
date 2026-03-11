@@ -382,6 +382,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - `env.ts` в backend загружает `.env` с `override: true` ДО инициализации Prisma — не убирать
 - Перед запуском `pnpm dev` убить старые процессы: `pkill -f "nest.js start"; pkill -f "next dev"`
 - Никогда не запускать `pnpm dev` дважды — накапливаются зомби-процессы на портах 3000/3001
+- **После каждой миграции** (`prisma:migrate`) — запускать `pnpm --filter shared prisma:seed` чтобы тестовые данные были актуальны. Пустая БД = фичи работают но ничего не показывают
 
 ## Next.js 15 — важные изменения
 

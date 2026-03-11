@@ -2,43 +2,68 @@
 
 import { useMemo, useCallback, useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { X, ImageIcon } from 'lucide-react';
-import { If, Then, Else, When } from 'react-if';
-import Image from 'next/image';
-import { formatCurrency } from '@/lib/constants/format';
+import { X } from 'lucide-react';
+import { ProductGallery } from '@/app/(shop)/products/[slug]/ProductGallery';
+import { ProductInfo } from '@/app/(shop)/products/[slug]/ProductInfo';
 import { useCategories, useTags } from '@/lib/hooks/useProducts';
 import { s } from './page.styled';
 import type { CreateProductFormValues } from './page.constants';
 import type { ProductPreviewProps } from './page.types';
+import type { ProductInfoProps } from '@/app/(shop)/products/[slug]/page.types';
 
 
-export const ProductPreview = ({ isOpen, onClose }: ProductPreviewProps) => {
+export const ProductPreview = ({ isOpen, onClose, files }: ProductPreviewProps) => {
   const { watch } = useFormContext<CreateProductFormValues>();
   const { data: categories = [] } = useCategories();
   const { data: tags = [] } = useTags();
 
   const values = watch();
 
-  const price = parseFloat(values.price) || 0;
-  const comparePrice = values.comparePrice ? parseFloat(values.comparePrice) : null;
-
-  const categoryName = useMemo(
-    () => categories.find((c) => c.id === values.categoryId)?.name ?? '',
-    [categories, values.categoryId],
+  const fileUrls = useMemo(
+    () => files.map((file) => URL.createObjectURL(file)),
+    [files],
   );
 
-  const selectedTagNames = useMemo(
-    () => tags.filter((t) => values.tagIds.includes(t.id)).map((t) => t.name),
-    [tags, values.tagIds],
-  );
+  useEffect(() => {
+    return () => {
+      fileUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [fileUrls]);
 
-  const imageUrls = useMemo(() => {
-    const urls = values.imageUrls
+  const urlImages = useMemo(() => {
+    return values.imageUrls
       .split(',')
       .map((u) => u.trim())
       .filter(Boolean);
-    return urls;
   }, [values.imageUrls]);
+
+  const allImages = useMemo(
+    () => [...fileUrls, ...urlImages],
+    [fileUrls, urlImages],
+  );
+
+  const product: ProductInfoProps['product'] = useMemo(() => {
+    const category = categories.find((c) => c.id === values.categoryId);
+
+    return {
+      id: 'preview',
+      name: values.name || 'Название товара',
+      slug: values.slug || 'preview',
+      price: parseFloat(values.price) || 0,
+      comparePrice: values.comparePrice ? parseFloat(values.comparePrice) : undefined,
+      images: allImages,
+      stock: parseInt(values.stock, 10) || 0,
+      category: {
+        name: category?.name ?? '',
+        slug: category?.slug ?? '',
+      },
+      tags: tags
+        .filter((t) => values.tagIds.includes(t.id))
+        .map((t) => ({ tag: { name: t.name, slug: t.slug } })),
+      reviews: [],
+      description: values.description || '',
+    };
+  }, [values, categories, tags, allImages]);
 
   const handleOverlayClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onClose();
@@ -69,69 +94,10 @@ export const ProductPreview = ({ isOpen, onClose }: ProductPreviewProps) => {
           <X className="h-5 w-5" />
         </button>
 
-        <If condition={imageUrls.length > 0}>
-          <Then>
-            <div className={s.previewGallery}>
-              <div className={s.previewMainImage}>
-                <Image
-                  src={imageUrls[0]}
-                  alt={values.name || 'Превью'}
-                  fill
-                  className="object-contain p-4"
-                  unoptimized
-                />
-              </div>
-              {imageUrls.slice(1, 5).map((url) => (
-                <div key={url} className={s.previewThumb}>
-                  <Image
-                    src={url}
-                    alt=""
-                    fill
-                    className="object-contain p-1"
-                    unoptimized
-                  />
-                </div>
-              ))}
-            </div>
-          </Then>
-          <Else>
-            <div className={s.previewEmpty}>
-              <ImageIcon className="mr-2 h-5 w-5" />
-              Изображения не добавлены
-            </div>
-          </Else>
-        </If>
-
-        <When condition={!!categoryName}>
-          <span className={s.previewBadge}>{categoryName}</span>
-        </When>
-
-        <h2 className={s.previewTitle}>
-          {values.name || 'Название товара'}
-        </h2>
-
-        <div className={s.previewPrice}>
-          <span className={s.previewCurrentPrice}>
-            {price > 0 ? formatCurrency(price) : '0 ₴'}
-          </span>
-          <When condition={!!comparePrice && comparePrice! > price}>
-            <span className={s.previewComparePrice}>
-              {formatCurrency(comparePrice!)}
-            </span>
-          </When>
+        <div className={s.previewLayout}>
+          <ProductGallery images={allImages} name={product.name} unoptimized />
+          <ProductInfo product={product} />
         </div>
-
-        <When condition={!!values.description}>
-          <p className={s.previewDescription}>{values.description}</p>
-        </When>
-
-        <When condition={selectedTagNames.length > 0}>
-          <div className={s.previewMeta}>
-            {selectedTagNames.map((name) => (
-              <span key={name} className={s.previewTag}>{name}</span>
-            ))}
-          </div>
-        </When>
       </div>
     </div>
   );

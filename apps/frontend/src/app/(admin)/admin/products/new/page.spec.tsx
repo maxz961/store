@@ -9,6 +9,10 @@ jest.mock('lucide-react', () => ({
   X: (props: any) => <div data-testid="icon-x" {...props} />,
   Eye: (props: any) => <div data-testid="icon-eye" {...props} />,
   ImageIcon: (props: any) => <div data-testid="icon-image" {...props} />,
+  ImageOff: (props: any) => <div data-testid="icon-image-off" {...props} />,
+  ShoppingCart: (props: any) => <div data-testid="icon-cart" {...props} />,
+  Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
+  Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
 }));
 
 jest.mock('next/image', () => {
@@ -63,8 +67,15 @@ const mockTags = [
 ];
 
 
+let blobCounter = 0;
+
 describe('NewProductPage', () => {
   beforeEach(() => {
+    blobCounter = 0;
+    global.URL.createObjectURL = jest.fn(
+      () => `blob:http://localhost/${++blobCounter}`,
+    );
+    global.URL.revokeObjectURL = jest.fn();
     mockPush.mockClear();
     mockApiGet = jest.fn().mockImplementation((path: string) => {
       if (path === '/categories') return Promise.resolve(mockCategories);
@@ -113,10 +124,11 @@ describe('NewProductPage', () => {
   it('opens and closes preview modal', () => {
     renderPage();
     fireEvent.click(screen.getByText('Предпросмотр'));
-    expect(screen.getByText('Изображения не добавлены')).toBeInTheDocument();
+    expect(screen.getByText('Нет в наличии')).toBeInTheDocument();
+    expect(screen.getByText('$0.00')).toBeInTheDocument();
 
     fireEvent.click(screen.getByTestId('icon-x'));
-    expect(screen.queryByText('Изображения не добавлены')).not.toBeInTheDocument();
+    expect(screen.queryByText('Нет в наличии')).not.toBeInTheDocument();
   });
 
   it('loads categories', async () => {
@@ -191,5 +203,24 @@ describe('NewProductPage', () => {
   it('renders publish checkbox', () => {
     renderPage();
     expect(screen.getByText('Опубликовать сразу')).toBeInTheDocument();
+  });
+
+  it('displays thumbnail after file selection', () => {
+    renderPage();
+
+    const input = document.querySelector('input[type="file"]')!;
+    const file = new File(['image-data'], 'photo.png', { type: 'image/png' });
+
+    fireEvent.change(input, { target: { files: [file] } });
+
+    const thumbnail = document.querySelector('img[src^="blob:"]');
+    expect(thumbnail).toBeInTheDocument();
+    expect(thumbnail).toHaveAttribute('src', 'blob:http://localhost/1');
+  });
+
+  it('file tab is active by default', () => {
+    renderPage();
+    const fileTab = screen.getByText('Загрузить файл');
+    expect(fileTab).toHaveClass('bg-white');
   });
 });

@@ -58,7 +58,7 @@ export class ProductsController {
   @Post('upload')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
-  @UseInterceptors(FilesInterceptor('images', 5))
+  @UseInterceptors(FilesInterceptor('images', 6))
   async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
     const urls = await Promise.all(
       files.map((file) => this.uploadService.uploadFile(BUCKET, file)),

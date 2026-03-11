@@ -5,6 +5,7 @@ export interface Props {
 export interface ProductGalleryProps {
   images: string[];
   name: string;
+  unoptimized?: boolean;
 }
 
 export interface ProductInfoProps {

@@ -1,5 +1,12 @@
 import { PrismaClient, Role } from "@prisma/client";
 
+// Ensure pgbouncer=true for Supabase transaction pooler (port 6543)
+const dbUrl = process.env.DATABASE_URL;
+if (dbUrl && !dbUrl.includes('pgbouncer=true')) {
+  const sep = dbUrl.includes('?') ? '&' : '?';
+  process.env.DATABASE_URL = `${dbUrl}${sep}pgbouncer=true`;
+}
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -135,8 +142,8 @@ async function main() {
       title: "Весенняя распродажа",
       slug: "spring-sale",
       description: "Скидки до 25% на электронику и аксессуары",
-      bannerImageUrl: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&h=300&fit=crop",
-      bannerBgColor: "#e8f5e9",
+      bannerImageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=300&fit=crop",
+      bannerBgColor: "#b2dfdb",
       startDate: new Date("2026-03-01"),
       endDate: new Date("2026-04-30"),
       discountType: "PERCENTAGE",
@@ -159,8 +166,8 @@ async function main() {
       title: "Новинки сезона",
       slug: "new-arrivals",
       description: "Топовые новинки уже в каталоге",
-      bannerImageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=300&fit=crop",
-      bannerBgColor: "#e3f2fd",
+      bannerImageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=300&fit=crop",
+      bannerBgColor: "#d1c4e9",
       startDate: new Date("2026-03-01"),
       endDate: new Date("2026-05-31"),
       discountType: "PERCENTAGE",
@@ -183,8 +190,8 @@ async function main() {
       title: "Спорт со скидкой",
       slug: "sport-discount",
       description: "Товары для спорта по специальной цене",
-      bannerImageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=300&fit=crop",
-      bannerBgColor: "#fff3e0",
+      bannerImageUrl: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=300&fit=crop",
+      bannerBgColor: "#ffccbc",
       startDate: new Date("2026-03-15"),
       endDate: new Date("2026-04-15"),
       discountType: "FIXED",

@@ -4,11 +4,11 @@ import { s } from './page.styled';
 import type { GalleryThumbProps } from './GalleryThumb.types';
 
 
-export const GalleryThumb = ({ src, alt, isActive, onClick }: GalleryThumbProps) => (
+export const GalleryThumb = ({ src, alt, isActive, onClick, unoptimized }: GalleryThumbProps) => (
   <button
     onClick={onClick}
     className={cn(s.thumb, isActive ? s.thumbActive : s.thumbInactive)}
   >
-    <Image src={src} alt={alt} fill className={s.thumbImage} sizes="64px" />
+    <Image src={src} alt={alt} fill className={s.thumbImage} sizes="64px" unoptimized={unoptimized} />
   </button>
 );

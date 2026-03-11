@@ -6,6 +6,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { When } from 'react-if';
 import { Eye } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { CheckboxField } from '@/components/ui/CheckboxField';
@@ -150,7 +151,7 @@ const NewProductPage = () => {
               type="button"
               variant="outline"
               onClick={handleOpenPreview}
-              className="flex-1"
+              className={cn('flex-1', s.previewBtn)}
             >
               <Eye className="mr-2 h-4 w-4" />
               Предпросмотр
@@ -164,6 +165,7 @@ const NewProductPage = () => {
         <ProductPreview
           isOpen={isPreviewOpen}
           onClose={handleClosePreview}
+          files={files}
         />
       </FormProvider>
     </div>
