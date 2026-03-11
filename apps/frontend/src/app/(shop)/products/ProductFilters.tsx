@@ -6,6 +6,7 @@ import { When } from 'react-if';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { usePriceRange } from '@/lib/hooks/useProducts';
 import { PriceRangeSlider } from '@/components/ui/PriceRangeSlider';
+import { SelectField } from '@/components/ui/SelectField';
 import { CategoryButton } from './CategoryButton';
 import { TagButton } from './TagButton';
 import { SORT_OPTIONS } from './ProductFilters.constants';
@@ -84,7 +85,16 @@ export const ProductFilters = ({
 
   return (
     <div className={s.wrapper}>
+      <SelectField
+        label="Сортировка"
+        value={currentSort ?? ''}
+        onChange={handleSortChange}
+        options={SORT_OPTIONS}
+        placeholder="По умолчанию"
+      />
+
       <When condition={filteredCategories.length > 0}>
+        <div className={s.divider} />
         <div className={s.section}>
           <p className={s.label}>Категории</p>
           <div className={s.categoryList}>
@@ -138,23 +148,6 @@ export const ProductFilters = ({
           />
         </div>
       </When>
-
-      <div className={s.divider} />
-      <div className={s.section}>
-        <p className={s.label}>Сортировка</p>
-        <select
-          className={s.sortSelect}
-          value={currentSort ?? ''}
-          onChange={handleSortChange}
-          aria-label="Сортировка"
-        >
-          {SORT_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
 
       <When condition={hasFilters}>
         <div className={s.divider} />

@@ -3,6 +3,11 @@ import userEvent from '@testing-library/user-event';
 import { ProductFilters } from './ProductFilters';
 
 
+jest.mock('lucide-react', () => ({
+  ChevronDown: (props: React.SVGProps<SVGSVGElement>) => <svg data-testid="icon-chevron-down" {...props} />,
+}));
+
+
 const mockUpdate = jest.fn();
 const mockReset = jest.fn();
 
@@ -138,21 +143,24 @@ describe('ProductFilters', () => {
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
-    expect(screen.getByRole('combobox', { name: 'Сортировка' })).toBeInTheDocument();
+    expect(screen.getByText('Сортировка')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Сортировка' })).toBeInTheDocument();
   });
 
-  it('calls update with sortBy and sortOrder on sort change', () => {
+  it('calls update with sortBy and sortOrder on sort change', async () => {
+    const user = userEvent.setup();
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
 
-    const select = screen.getByRole('combobox', { name: 'Сортировка' });
-    fireEvent.change(select, { target: { value: 'price_asc' } });
+    await user.click(screen.getByRole('button', { name: 'Сортировка' }));
+    await user.click(screen.getByRole('option', { name: 'Сначала дешёвые' }));
 
     expect(mockUpdate).toHaveBeenCalledWith({ sortBy: 'price', sortOrder: 'asc' });
   });
 
-  it('resets sort when empty option selected', () => {
+  it('resets sort when empty option selected', async () => {
+    const user = userEvent.setup();
     render(
       <ProductFilters
         categories={categories}
@@ -162,8 +170,8 @@ describe('ProductFilters', () => {
       />,
     );
 
-    const select = screen.getByRole('combobox', { name: 'Сортировка' });
-    fireEvent.change(select, { target: { value: '' } });
+    await user.click(screen.getByRole('button', { name: 'Сортировка' }));
+    await user.click(screen.getByRole('option', { name: 'По умолчанию' }));
 
     expect(mockUpdate).toHaveBeenCalledWith({ sortBy: undefined, sortOrder: undefined });
   });
