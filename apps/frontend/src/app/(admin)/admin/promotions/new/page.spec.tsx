@@ -8,6 +8,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 jest.mock('next/image', () => {
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
   const MockImage = (props: any) => <img {...props} />;
   MockImage.displayName = 'MockImage';
   return { __esModule: true, default: MockImage };
