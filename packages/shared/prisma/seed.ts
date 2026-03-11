@@ -6,6 +6,8 @@ async function main() {
   console.log("🌱 Seeding database...");
 
   // Cleanup to avoid unique constraint issues on re-seed
+  await prisma.promotionProduct.deleteMany();
+  await prisma.promotion.deleteMany();
   await prisma.review.deleteMany();
   await prisma.productTag.deleteMany();
   await prisma.orderItem.deleteMany();
@@ -126,6 +128,79 @@ async function main() {
     ],
   });
   console.log("✅ Reviews created");
+
+  // ── Promotions ──
+  await prisma.promotion.create({
+    data: {
+      title: "Весенняя распродажа",
+      slug: "spring-sale",
+      description: "Скидки до 25% на электронику и аксессуары",
+      bannerImageUrl: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=800&h=300&fit=crop",
+      bannerBgColor: "#e8f5e9",
+      startDate: new Date("2026-03-01"),
+      endDate: new Date("2026-04-30"),
+      discountType: "PERCENTAGE",
+      discountValue: 25,
+      isActive: true,
+      position: 0,
+      link: "/products?tagSlugs=sale",
+      products: {
+        create: [
+          { productId: products[0].id },
+          { productId: products[2].id },
+          { productId: products[4].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.promotion.create({
+    data: {
+      title: "Новинки сезона",
+      slug: "new-arrivals",
+      description: "Топовые новинки уже в каталоге",
+      bannerImageUrl: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&h=300&fit=crop",
+      bannerBgColor: "#e3f2fd",
+      startDate: new Date("2026-03-01"),
+      endDate: new Date("2026-05-31"),
+      discountType: "PERCENTAGE",
+      discountValue: 10,
+      isActive: true,
+      position: 1,
+      link: "/products?tagSlugs=new",
+      products: {
+        create: [
+          { productId: products[1].id },
+          { productId: products[5].id },
+          { productId: products[7].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.promotion.create({
+    data: {
+      title: "Спорт со скидкой",
+      slug: "sport-discount",
+      description: "Товары для спорта по специальной цене",
+      bannerImageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=800&h=300&fit=crop",
+      bannerBgColor: "#fff3e0",
+      startDate: new Date("2026-03-15"),
+      endDate: new Date("2026-04-15"),
+      discountType: "FIXED",
+      discountValue: 50,
+      isActive: true,
+      position: 2,
+      link: "/products?categorySlug=sports",
+      products: {
+        create: [
+          { productId: products[10].id },
+          { productId: products[11].id },
+        ],
+      },
+    },
+  });
+  console.log("✅ Promotions created");
 
   console.log("🎉 Seeding complete!");
 }

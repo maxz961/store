@@ -72,10 +72,11 @@ model Product {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  category   Category     @relation(fields: [categoryId], references: [id])
+  category   Category           @relation(fields: [categoryId], references: [id])
   tags       ProductTag[]
   orderItems OrderItem[]
   reviews    Review[]
+  promotions PromotionProduct[]
 
   @@map("products")
 }
@@ -148,8 +149,50 @@ model Review {
 }
 
 // ─────────────────────────────────────────────
+// Promotions
+// ─────────────────────────────────────────────
+
+model Promotion {
+  id             String             @id @default(cuid())
+  title          String
+  slug           String             @unique
+  description    String?            @db.Text
+  bannerImageUrl String
+  bannerBgColor  String?
+  startDate      DateTime
+  endDate        DateTime
+  discountType   DiscountType
+  discountValue  Decimal            @db.Decimal(10, 2)
+  isActive       Boolean            @default(true)
+  position       Int                @default(0)
+  link           String?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  products PromotionProduct[]
+
+  @@map("promotions")
+}
+
+model PromotionProduct {
+  promotionId String
+  productId   String
+
+  promotion Promotion @relation(fields: [promotionId], references: [id], onDelete: Cascade)
+  product   Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([promotionId, productId])
+  @@map("promotion_products")
+}
+
+// ─────────────────────────────────────────────
 // Enums
 // ─────────────────────────────────────────────
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
 
 enum Role {
   CUSTOMER

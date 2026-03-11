@@ -5,6 +5,7 @@ export interface TextFieldProps {
   type?: 'text' | 'number' | 'email' | 'tel' | 'url';
   placeholder?: string;
   hint?: string;
+  tooltip?: string;
   error?: string;
   required?: boolean;
   disabled?: boolean;

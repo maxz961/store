@@ -9,6 +9,7 @@ export interface SelectFieldProps {
   onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   options: SelectOption[];
   placeholder?: string;
+  tooltip?: string;
   error?: string;
   required?: boolean;
   className?: string;

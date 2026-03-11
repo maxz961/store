@@ -6,6 +6,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductsController } from './products.controller';
 import { ProductsService } from './products.service';
+import { UploadService } from '../upload/upload.service';
+import { ConfigService } from '@nestjs/config';
 
 jest.mock('@store/shared', () => ({
   db: {
@@ -29,7 +31,17 @@ describe('ProductsController (smoke)', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductsController],
-      providers: [ProductsService],
+      providers: [
+        ProductsService,
+        {
+          provide: UploadService,
+          useValue: { uploadFile: jest.fn().mockResolvedValue('https://example.com/img.jpg') },
+        },
+        {
+          provide: ConfigService,
+          useValue: { get: jest.fn() },
+        },
+      ],
     }).compile();
 
     controller = module.get<ProductsController>(ProductsController);

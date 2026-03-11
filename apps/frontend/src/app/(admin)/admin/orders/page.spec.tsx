@@ -101,6 +101,14 @@ describe('AdminOrdersPage', () => {
     expect(screen.getByText('Админ-панель')).toBeInTheDocument();
   });
 
+  it('passes server: true for cookie forwarding', async () => {
+    await AdminOrdersPage({ searchParams: Promise.resolve({}) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ server: true }),
+    );
+  });
+
   it('passes status filter to API call', async () => {
     await AdminOrdersPage({ searchParams: Promise.resolve({ status: 'PENDING' }) });
     expect(mockApiGet).toHaveBeenCalledWith(

@@ -20,7 +20,7 @@ const AdminProductsPage = async ({
   if (sp.page) params.set('page', sp.page);
   if (sp.search) params.set('search', sp.search);
 
-  const data = await api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store' });
+  const data = await api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store', server: true });
   const currentPage = data.page;
 
   return (

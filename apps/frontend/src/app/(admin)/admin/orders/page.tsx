@@ -18,7 +18,7 @@ const AdminOrdersPage = async ({
   if (sp.status) params.set('status', sp.status);
   if (sp.page) params.set('page', sp.page);
 
-  const data = await api.get<OrdersResponse>(`/orders/admin?${params.toString()}`, { cache: 'no-store' });
+  const data = await api.get<OrdersResponse>(`/orders/admin?${params.toString()}`, { cache: 'no-store', server: true });
   const currentPage = data.page;
   const activeStatus = sp.status ?? '';
 

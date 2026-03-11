@@ -75,7 +75,9 @@ export class OrdersService {
     });
   }
 
-  async findAll(page = 1, limit = 20, status?: OrderStatus) {
+  async findAll(rawPage?: number | string, rawLimit?: number | string, status?: OrderStatus) {
+    const page = Math.max(1, Number(rawPage) || 1);
+    const limit = Math.max(1, Math.min(100, Number(rawLimit) || 20));
     const where = status ? { status } : {};
     const [items, total] = await Promise.all([
       db.order.findMany({

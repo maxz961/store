@@ -102,6 +102,14 @@ describe('AdminProductsPage', () => {
     expect(screen.getByText('Админ-панель')).toBeInTheDocument();
   });
 
+  it('passes server: true for cookie forwarding', async () => {
+    await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ server: true }),
+    );
+  });
+
   it('shows empty message when no products', async () => {
     mockApiGet = jest.fn().mockResolvedValue({ items: [], total: 0, page: 1, totalPages: 1 });
     const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });

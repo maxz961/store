@@ -29,6 +29,26 @@ export const s = {
   productName: 'ml-3 text-sm text-foreground truncate',
   productSold: 'text-sm text-muted-foreground shrink-0',
 
+  // Charts row 2
+  chartsRow2: 'mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2',
+  miniChartsStack: 'flex flex-col gap-6',
+  barChartBody: 'mt-4',
+
+  // AOV chart
+  aovCard: 'mt-6 rounded-xl border border-border bg-card p-6 shadow-sm',
+
+  // Low stock
+  lowStockCard: 'mt-6 rounded-xl border border-amber-200 bg-card p-6 shadow-sm dark:border-amber-800',
+  lowStockTitle: 'text-lg font-medium text-foreground flex items-center gap-2',
+  lowStockRow: 'flex items-center justify-between py-3 border-b border-border last:border-0',
+  lowStockInfo: 'flex items-center gap-3 min-w-0',
+  lowStockImage: 'h-8 w-8 rounded-md object-cover bg-muted shrink-0',
+  lowStockName: 'text-sm text-foreground truncate',
+  lowStockBadgeCritical: 'rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  lowStockBadgeWarning: 'rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+  lowStockEmpty: 'flex flex-col items-center gap-2 py-8 text-sm text-muted-foreground',
+  chartSkeleton: 'h-64 animate-pulse rounded-xl border border-border bg-muted/50',
+
   // Empty
   emptyText: 'text-sm text-muted-foreground py-8 text-center',
   errorText: 'text-sm text-destructive py-8 text-center',

@@ -4,6 +4,7 @@ export interface TextareaFieldProps {
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   placeholder?: string;
   hint?: string;
+  tooltip?: string;
   error?: string;
   required?: boolean;
   rows?: number;

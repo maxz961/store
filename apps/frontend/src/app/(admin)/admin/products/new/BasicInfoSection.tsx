@@ -2,6 +2,7 @@ import { useFormContext } from 'react-hook-form';
 import { TextField } from '@/components/ui/TextField';
 import { TextareaField } from '@/components/ui/TextareaField';
 import { s } from './page.styled';
+import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 
 
@@ -14,6 +15,7 @@ export const BasicInfoSection = () => {
 
       <TextField
         label="Название товара"
+        tooltip={FIELD_TOOLTIPS.name}
         placeholder="Например: Беспроводные наушники"
         error={errors.name?.message}
         {...register('name')}
@@ -21,6 +23,7 @@ export const BasicInfoSection = () => {
 
       <TextField
         label="Slug"
+        tooltip={FIELD_TOOLTIPS.slug}
         hint="Генерируется автоматически из названия"
         inputClassName={s.slugInput}
         error={errors.slug?.message}
@@ -29,6 +32,7 @@ export const BasicInfoSection = () => {
 
       <TextareaField
         label="Описание"
+        tooltip={FIELD_TOOLTIPS.description}
         placeholder="Подробное описание товара..."
         error={errors.description?.message}
         {...register('description')}

@@ -8,10 +8,14 @@ import {
   Body,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import { ProductsService } from "./products.service";
+import { UploadService } from "../upload/upload.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductFiltersDto } from "./dto/product-filters.dto";
@@ -20,9 +24,14 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { Role } from "@store/shared";
 
+const BUCKET = 'product-images';
+
 @Controller("products")
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   @Get()
   findAll(@Query() filters: ProductFiltersDto) {
@@ -44,6 +53,17 @@ export class ProductsController {
   @Get(":slug")
   findBySlug(@Param("slug") slug: string) {
     return this.productsService.findBySlug(slug);
+  }
+
+  @Post('upload')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  @UseInterceptors(FilesInterceptor('images', 5))
+  async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+    const urls = await Promise.all(
+      files.map((file) => this.uploadService.uploadFile(BUCKET, file)),
+    );
+    return { urls };
   }
 
   @Post()

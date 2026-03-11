@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
+import { FieldTooltip } from '@/components/ui/FieldTooltip';
 import type { CheckboxFieldProps } from './CheckboxField.types';
 import { s } from './CheckboxField.styled';
 
@@ -9,6 +10,7 @@ export const CheckboxField = forwardRef<HTMLInputElement, CheckboxFieldProps>(({
   label,
   checked,
   onChange,
+  tooltip,
   error,
   className,
   ...rest
@@ -24,7 +26,12 @@ export const CheckboxField = forwardRef<HTMLInputElement, CheckboxFieldProps>(({
           className={s.checkbox}
           {...rest}
         />
-        {label}
+        <span className={s.labelText}>
+          {label}
+          <When condition={!!tooltip}>
+            <FieldTooltip text={tooltip!} />
+          </When>
+        </span>
       </label>
       <When condition={!!error}>
         <p className={s.error}>{error}</p>

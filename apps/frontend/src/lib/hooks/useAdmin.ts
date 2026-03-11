@@ -13,6 +13,12 @@ interface AnalyticsSummary {
   topProducts: { product: { name: string; price: number } | undefined; soldCount: number }[];
   newUsersThisMonth: number;
   revenueByDay: { date: string; revenue: number }[];
+  revenueByCategory: { categoryName: string; revenue: number }[];
+  aovByDay: { date: string; aov: number }[];
+  averageOrderValue: number;
+  deliveryMethodDistribution: { method: string; count: number }[];
+  ratingDistribution: { rating: number; count: number }[];
+  lowStockProducts: { id: string; name: string; slug: string; stock: number; image: string | null }[];
 }
 
 interface AdminOrder {
@@ -92,5 +98,11 @@ export const useCreateProduct = () => {
     },
   });
 };
+
+export const useUploadProductImages = () =>
+  useMutation({
+    mutationFn: (files: File[]) =>
+      api.uploadFiles<{ urls: string[] }>('/products/upload', files),
+  });
 
 export type { AnalyticsSummary, AdminOrder, CreateProductInput };

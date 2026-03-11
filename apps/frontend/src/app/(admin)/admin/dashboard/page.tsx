@@ -4,12 +4,17 @@ import { useMemo } from 'react';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAnalyticsSummary } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
-import { STATUS_LABELS, PIE_COLORS } from '@/lib/constants/order';
+import { STATUS_LABELS, PIE_COLORS, DELIVERY_LABELS } from '@/lib/constants/order';
 import { breadcrumbs } from './page.constants';
 import { StatsSection } from './StatsSection';
 import { OrdersByStatusCard } from './OrdersByStatusCard';
 import { TopProductsCard } from './TopProductsCard';
 import { RevenueChart } from './RevenueChart';
+import { RevenueByCategoryCard } from './RevenueByCategoryCard';
+import { DeliveryMethodCard } from './DeliveryMethodCard';
+import { RatingDistributionCard } from './RatingDistributionCard';
+import { AovTrendChart } from './AovTrendChart';
+import { LowStockCard } from './LowStockCard';
 
 
 const DashboardPage = () => {
@@ -35,6 +40,23 @@ const DashboardPage = () => {
       }));
   }, [summary]);
 
+  const aovChartData = useMemo(() => {
+    if (!summary) return [];
+    return summary.aovByDay.map(({ date, aov }) => ({
+      date: new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+      aov,
+    }));
+  }, [summary]);
+
+  const deliveryData = useMemo(() => {
+    if (!summary) return [];
+    return summary.deliveryMethodDistribution.map(({ method, count }) => ({
+      method,
+      label: DELIVERY_LABELS[method] ?? method,
+      count,
+    }));
+  }, [summary]);
+
   if (error) {
     return (
       <div className={s.page}>
@@ -54,6 +76,10 @@ const DashboardPage = () => {
             <div key={i} className={s.statsSkeleton} />
           ))}
         </div>
+        <div className={s.chartsGrid}>
+          <div className={s.chartSkeleton} />
+          <div className={s.chartSkeleton} />
+        </div>
       </div>
     );
   }
@@ -70,7 +96,17 @@ const DashboardPage = () => {
         <TopProductsCard topProducts={summary.topProducts} />
       </div>
 
+      <div className={s.chartsRow2}>
+        <RevenueByCategoryCard revenueByCategory={summary.revenueByCategory} />
+        <div className={s.miniChartsStack}>
+          <DeliveryMethodCard data={deliveryData} />
+          <RatingDistributionCard data={summary.ratingDistribution} />
+        </div>
+      </div>
+
       <RevenueChart chartData={revenueChartData} />
+      <AovTrendChart chartData={aovChartData} />
+      <LowStockCard products={summary.lowStockProducts} />
     </div>
   );
 };

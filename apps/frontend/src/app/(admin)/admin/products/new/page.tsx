@@ -1,26 +1,29 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { When } from 'react-if';
+import { Eye } from 'lucide-react';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { CheckboxField } from '@/components/ui/CheckboxField';
 import { useCategories, useTags } from '@/lib/hooks/useProducts';
-import { useCreateProduct } from '@/lib/hooks/useAdmin';
+import { useCreateProduct, useUploadProductImages } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
 import {
   breadcrumbs,
   generateSlug,
   createProductFormSchema,
+  FIELD_TOOLTIPS,
   type CreateProductFormValues,
 } from './page.constants';
 import { BasicInfoSection } from './BasicInfoSection';
 import { PricingSection } from './PricingSection';
 import { CategoryTagsSection } from './CategoryTagsSection';
 import { ImagesSection } from './ImagesSection';
+import { ProductPreview } from './ProductPreview';
 
 
 const NewProductPage = () => {
@@ -28,6 +31,10 @@ const NewProductPage = () => {
   const { data: categories = [] } = useCategories();
   const { data: tags = [] } = useTags();
   const createProduct = useCreateProduct();
+  const uploadImages = useUploadProductImages();
+
+  const [files, setFiles] = useState<File[]>([]);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const categoryOptions = useMemo(
     () => categories.map((c) => ({ value: c.id, label: c.name })),
@@ -46,7 +53,7 @@ const NewProductPage = () => {
       sku: '',
       categoryId: '',
       isPublished: false,
-      images: '',
+      imageUrls: '',
       tagIds: [],
     },
   });
@@ -68,14 +75,38 @@ const NewProductPage = () => {
     setValue('tagIds', updated);
   };
 
-  const onSubmit = handleSubmit((data) => {
+  const handleOpenPreview = useCallback(() => setIsPreviewOpen(true), []);
+
+  const handleClosePreview = useCallback(() => setIsPreviewOpen(false), []);
+
+  const isSubmitting = createProduct.isPending || uploadImages.isPending;
+
+  const onSubmit = handleSubmit(async (data) => {
+    let imageList: string[] = [];
+
+    if (files.length > 0) {
+      const uploaded = await uploadImages.mutateAsync(files);
+      imageList = [...imageList, ...uploaded.urls];
+    }
+
+    const urlImages = data.imageUrls
+      .split(',')
+      .map((u) => u.trim())
+      .filter(Boolean);
+    imageList = [...imageList, ...urlImages];
+
+    if (imageList.length === 0) {
+      methods.setError('imageUrls', { message: 'Добавьте хотя бы одно изображение' });
+      return;
+    }
+
     createProduct.mutate({
       ...data,
       price: parseFloat(data.price),
       comparePrice: data.comparePrice ? parseFloat(data.comparePrice) : undefined,
       stock: parseInt(data.stock, 10),
       sku: data.sku || undefined,
-      images: data.images.split(',').map((u) => u.trim()).filter(Boolean),
+      images: imageList,
     }, {
       onSuccess: () => router.push('/admin/products'),
     });
@@ -97,24 +128,43 @@ const NewProductPage = () => {
             selectedTags={selectedTags}
             onToggleTag={handleToggleTag}
           />
-          <ImagesSection />
+          <ImagesSection files={files} onFilesChange={setFiles} />
 
           <CheckboxField
             label="Опубликовать сразу"
+            tooltip={FIELD_TOOLTIPS.isPublished}
             error={errors.isPublished?.message}
             {...register('isPublished')}
           />
 
-          <When condition={createProduct.isError}>
+          <When condition={createProduct.isError || uploadImages.isError}>
             <div className={s.error}>
-              {createProduct.error instanceof Error ? createProduct.error.message : 'Не удалось создать товар'}
+              {(createProduct.error ?? uploadImages.error) instanceof Error
+                ? (createProduct.error ?? uploadImages.error)?.message
+                : 'Не удалось создать товар'}
             </div>
           </When>
 
-          <Button type="submit" disabled={createProduct.isPending} className="w-full">
-            {createProduct.isPending ? 'Создание...' : 'Создать товар'}
-          </Button>
+          <div className={s.buttonsRow}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleOpenPreview}
+              className="flex-1"
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              Предпросмотр
+            </Button>
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
+              {isSubmitting ? 'Создание...' : 'Создать товар'}
+            </Button>
+          </div>
         </form>
+
+        <ProductPreview
+          isOpen={isPreviewOpen}
+          onClose={handleClosePreview}
+        />
       </FormProvider>
     </div>
   );

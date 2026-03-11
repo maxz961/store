@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
+import { FieldTooltip } from '@/components/ui/FieldTooltip';
 import type { TextFieldProps } from './TextField.types';
 import { s } from './TextField.styled';
 
@@ -14,6 +15,7 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({
 
   placeholder,
   hint,
+  tooltip,
   error,
   required,
   disabled,
@@ -26,7 +28,12 @@ export const TextField = forwardRef<HTMLInputElement, TextFieldProps>(({
 }, ref) => {
   return (
     <div className={cn(s.wrapper, className)}>
-      <label className={s.label}>{label}</label>
+      <label className={s.label}>
+        {label}
+        <When condition={!!tooltip}>
+          <FieldTooltip text={tooltip!} />
+        </When>
+      </label>
       <input
         ref={ref}
         type={type}
