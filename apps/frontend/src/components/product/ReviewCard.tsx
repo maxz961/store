@@ -43,6 +43,10 @@ export const ReviewCard = ({
     setReplyText('');
   }, []);
 
+  const handleReplyTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReplyText(e.target.value);
+  }, []);
+
   const handleSubmitReply = useCallback(() => {
     if (!replyText.trim()) return;
     onReply?.(review.id, replyText.trim());
@@ -169,7 +173,7 @@ export const ReviewCard = ({
             rows={2}
             placeholder="Ответ от имени магазина..."
             value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
+            onChange={handleReplyTextChange}
             maxLength={2000}
           />
           <div className={s.replyActions}>
