@@ -16,7 +16,13 @@ interface CatalogPaginationProps {
 export const CatalogPagination = ({ page, totalPages }: CatalogPaginationProps) => {
   const { update } = useProductParams();
 
-  const handleGoTo = useCallback((p: number) => () => update({ page: String(p) }), [update]);
+  const handleGoTo = useCallback(
+    (p: number) => () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      update({ page: String(p) });
+    },
+    [update],
+  );
 
   const pages = useMemo(() => {
     const result: (number | '...')[] = [];
