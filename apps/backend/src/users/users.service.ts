@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { db, GoogleUser } from "@store/shared";
+import { Injectable, ForbiddenException, NotFoundException } from "@nestjs/common";
+import { db, GoogleUser, Role } from "@store/shared";
 
 @Injectable()
 export class UsersService {
@@ -41,5 +41,24 @@ export class UsersService {
     const user = await this.findById(id);
     if (!user) throw new NotFoundException(`User ${id} not found`);
     return user;
+  }
+
+  async updateRole(id: string, role: Role, currentUserId: string) {
+    if (id === currentUserId) {
+      throw new ForbiddenException('Cannot change your own role');
+    }
+    await this.findOrThrow(id);
+    return db.user.update({ where: { id }, data: { role } });
+  }
+
+  async setBanned(id: string, isBanned: boolean, currentUserId: string) {
+    if (id === currentUserId) {
+      throw new ForbiddenException('Cannot ban yourself');
+    }
+    const user = await this.findOrThrow(id);
+    if (user.role === Role.ADMIN) {
+      throw new ForbiddenException('Cannot ban an admin');
+    }
+    return db.user.update({ where: { id }, data: { isBanned } });
   }
 }
