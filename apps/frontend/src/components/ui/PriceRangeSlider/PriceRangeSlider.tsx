@@ -36,12 +36,12 @@ const THUMB_STYLES = `
 `;
 
 export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }: Props) => {
-  const [localMin, setLocalMin] = useState(minVal);
-  const [localMax, setLocalMax] = useState(maxVal);
+  const [localMin, setLocalMin] = useState(Math.round(minVal));
+  const [localMax, setLocalMax] = useState(Math.round(maxVal));
 
   useEffect(() => {
-    setLocalMin(minVal);
-    setLocalMax(maxVal);
+    setLocalMin(Math.round(minVal));
+    setLocalMax(Math.round(maxVal));
   }, [minVal, maxVal]);
 
   const minPercent = useMemo(
