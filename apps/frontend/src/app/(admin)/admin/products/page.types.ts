@@ -17,16 +17,39 @@ export interface ProductsResponse {
   totalPages: number;
 }
 
+export type SortField = 'name' | 'price' | 'stock' | 'createdAt';
+export type SortOrder = 'asc' | 'desc';
+
+export interface SortParams {
+  sortBy: string;
+  sortOrder: SortOrder;
+  search?: string;
+}
+
 export interface ProductsTableProps {
   products: ProductsResponse['items'];
+  sortBy: string;
+  sortOrder: SortOrder;
+  search?: string;
 }
 
 export interface ProductRowProps {
   product: Product;
 }
 
+export interface SortHeaderProps {
+  field: SortField;
+  label: string;
+  align?: 'left' | 'right' | 'center';
+  currentSortBy: string;
+  currentSortOrder: SortOrder;
+  search?: string;
+}
+
 export interface ProductsPaginationProps {
   currentPage: number;
   totalPages: number;
-  total: number;
+  search?: string;
+  sortBy: string;
+  sortOrder: SortOrder;
 }

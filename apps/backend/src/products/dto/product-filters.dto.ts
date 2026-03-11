@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNumber, Min, IsArray } from "class-validator";
+import { IsOptional, IsString, IsNumber, Min, IsArray, IsIn } from "class-validator";
 import { Transform, Type } from "class-transformer";
 
 export class ProductFiltersDto {
@@ -39,4 +39,14 @@ export class ProductFiltersDto {
   @Min(1)
   @Type(() => Number)
   limit?: number = 20;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['name', 'price', 'stock', 'createdAt'])
+  sortBy?: 'name' | 'price' | 'stock' | 'createdAt' = 'createdAt';
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc' = 'desc';
 }

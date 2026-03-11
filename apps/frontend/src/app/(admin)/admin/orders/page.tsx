@@ -1,7 +1,9 @@
 import { api } from '@/lib/api';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { AdminPagination } from '@/components/ui/AdminPagination';
 import { s } from './page.styled';
 import type { OrdersResponse } from './page.types';
+import { breadcrumbs } from './page.constants';
 import { OrderFilterTabs } from './OrderFilterTabs';
 import { OrdersTable } from './OrdersTable';
 
@@ -22,6 +24,9 @@ const AdminOrdersPage = async ({
 
   return (
     <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
+      <h1 className={s.title}>Заказы</h1>
+
       <OrderFilterTabs activeStatus={sp.status ?? ''} />
       <OrdersTable orders={data.items} />
       <AdminPagination

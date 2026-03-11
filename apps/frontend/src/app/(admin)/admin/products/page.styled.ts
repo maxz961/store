@@ -1,8 +1,13 @@
 export const s = {
   page: 'mx-auto max-w-6xl px-4 py-8 sm:px-6',
-  title: 'text-2xl font-semibold text-foreground',
   buttonIcon: 'mr-2 h-4 w-4',
   header: 'mt-6 flex items-center justify-between gap-4',
+
+  // Search
+  searchForm: 'flex-1 max-w-sm',
+  searchWrapper: 'relative flex items-center',
+  searchIcon: 'absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none',
+  searchInput: 'w-full rounded-lg border border-input bg-background py-2 pl-9 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-150',
 
   // Table
   tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
@@ -37,10 +42,19 @@ export const s = {
   stockLow: 'text-sm font-medium text-destructive',
   editLink: 'text-sm text-primary hover:underline',
 
+  // Sort header
+  sortLink: 'inline-flex items-center gap-1 hover:text-foreground transition-colors duration-150',
+  sortIcon: 'h-3 w-3 text-muted-foreground/40',
+  sortIconActive: 'h-3 w-3 text-primary',
+
   // Pagination
-  pagination: 'mt-4 flex items-center justify-between',
-  pageInfo: 'text-sm text-muted-foreground',
-  pageButtons: 'flex gap-2',
+  pagination: 'mt-6 flex items-center justify-between gap-4',
+  paginationArrow: 'flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground shadow-sm transition-colors duration-150 hover:bg-accent',
+  paginationArrowDisabled: 'flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground shadow-sm opacity-40 pointer-events-none',
+  paginationNumbers: 'flex items-center gap-1',
+  paginationNumber: 'flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-sm text-foreground shadow-sm transition-colors duration-150 hover:bg-accent',
+  paginationNumberActive: 'border-primary bg-primary text-primary-foreground hover:bg-primary/90 pointer-events-none',
+  paginationDots: 'flex h-9 w-9 items-center justify-center text-sm text-muted-foreground',
 
   // Empty
   emptyRow: 'px-4 py-12 text-center text-sm text-muted-foreground',

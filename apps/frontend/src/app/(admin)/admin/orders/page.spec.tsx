@@ -3,6 +3,14 @@ import { render, screen } from '@testing-library/react';
 
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+  ChevronLeft: (props: any) => <div data-testid="icon-chevron-left" {...props} />,
+  ChevronDown: (props: any) => <div data-testid="icon-chevron-down" {...props} />,
+  ChevronUp: (props: any) => <div data-testid="icon-chevron-up" {...props} />,
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 let mockApiGet: jest.Mock;

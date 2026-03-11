@@ -107,6 +107,42 @@ describe("UsersService", () => {
     });
   });
 
+  describe("findAll", () => {
+    it("returns first page with skip=0 and take=20", async () => {
+      const users = [mockUser];
+      (mockDb.user.findMany as jest.Mock).mockResolvedValue(users);
+
+      const result = await service.findAll(0, 20);
+
+      expect(result).toEqual(users);
+      expect(mockDb.user.findMany).toHaveBeenCalledWith({
+        orderBy: { createdAt: "desc" },
+        skip: 0,
+        take: 20,
+      });
+    });
+
+    it("returns second page with skip=20", async () => {
+      (mockDb.user.findMany as jest.Mock).mockResolvedValue([mockUser]);
+
+      await service.findAll(20, 20);
+
+      expect(mockDb.user.findMany).toHaveBeenCalledWith({
+        orderBy: { createdAt: "desc" },
+        skip: 20,
+        take: 20,
+      });
+    });
+
+    it("returns empty array when no more users", async () => {
+      (mockDb.user.findMany as jest.Mock).mockResolvedValue([]);
+
+      const result = await service.findAll(100, 20);
+
+      expect(result).toEqual([]);
+    });
+  });
+
   describe("updateRole", () => {
     it("updates user role", async () => {
       const updated = { ...mockUser, role: Role.ADMIN };

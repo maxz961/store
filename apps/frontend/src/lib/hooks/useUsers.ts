@@ -1,6 +1,6 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 
@@ -14,10 +14,16 @@ export interface AdminUser {
   createdAt: string;
 }
 
+const PAGE_SIZE = 20;
+
 export const useUsers = () =>
-  useQuery({
+  useInfiniteQuery({
     queryKey: ['admin', 'users'],
-    queryFn: () => api.get<AdminUser[]>('/users'),
+    queryFn: ({ pageParam }) =>
+      api.get<AdminUser[]>(`/users?skip=${pageParam}&take=${PAGE_SIZE}`),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, _allPages, lastPageParam) =>
+      lastPage.length < PAGE_SIZE ? undefined : lastPageParam + PAGE_SIZE,
     retry: false,
   });
 

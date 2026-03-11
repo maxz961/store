@@ -6,6 +6,7 @@ export const s = {
   navLink: 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground',
   navLinkActive: 'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-primary bg-primary/10',
   navIcon: 'h-4 w-4',
-  navBadge: 'ml-auto flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-medium text-destructive-foreground',
+  navLabelGroup: 'flex items-center gap-1.5',
+  navBadge: 'flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground',
   content: 'flex-1 min-w-0',
 };

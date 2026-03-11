@@ -5,6 +5,10 @@ jest.mock('./SearchInput', () => ({
   SearchInput: () => <input placeholder="Поиск товаров..." />,
 }));
 
+jest.mock('next/navigation', () => ({
+  usePathname: () => '/products',
+}));
+
 jest.mock('lucide-react', () => ({
   ShoppingCart: (props: any) => <div data-testid="icon-cart" {...props} />,
   Sun: (props: any) => <div data-testid="icon-sun" {...props} />,

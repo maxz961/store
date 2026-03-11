@@ -8,17 +8,23 @@ import type { ProductsResponse } from './page.types';
 import { breadcrumbs } from './page.constants';
 import { ProductsTable } from './ProductsTable';
 import { ProductsPagination } from './ProductsPagination';
+import { ProductSearch } from './ProductSearch';
 
 
 const AdminProductsPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; search?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; sortBy?: string; sortOrder?: string }>;
 }) => {
   const sp = await searchParams;
+  const sortBy = sp.sortBy ?? 'createdAt';
+  const sortOrder = (sp.sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc';
+
   const params = new URLSearchParams();
   if (sp.page) params.set('page', sp.page);
   if (sp.search) params.set('search', sp.search);
+  params.set('sortBy', sortBy);
+  params.set('sortOrder', sortOrder);
 
   const data = await api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store', server: true });
   const currentPage = data.page;
@@ -28,6 +34,7 @@ const AdminProductsPage = async ({
       <Breadcrumbs items={breadcrumbs} />
 
       <div className={s.header}>
+        <ProductSearch defaultValue={sp.search} sortBy={sortBy} sortOrder={sortOrder} />
         <Link href="/admin/products/new">
           <Button size="sm">
             <Plus className={s.buttonIcon} />
@@ -36,8 +43,19 @@ const AdminProductsPage = async ({
         </Link>
       </div>
 
-      <ProductsTable products={data.items} />
-      <ProductsPagination currentPage={currentPage} totalPages={data.totalPages} total={data.total} />
+      <ProductsTable
+        products={data.items}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        search={sp.search}
+      />
+      <ProductsPagination
+        currentPage={currentPage}
+        totalPages={data.totalPages}
+        search={sp.search}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+      />
     </div>
   );
 };

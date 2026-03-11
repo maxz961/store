@@ -4,7 +4,16 @@ import { render, screen } from '@testing-library/react';
 jest.mock('lucide-react', () => ({
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   Pencil: (props: any) => <div data-testid="icon-pencil" {...props} />,
-  ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+  ChevronRight: (props: any) => <div data-testid="icon-chevron-right" {...props} />,
+  ChevronLeft: (props: any) => <div data-testid="icon-chevron-left" {...props} />,
+  ArrowUpDown: (props: any) => <div data-testid="icon-sort" {...props} />,
+  ArrowUp: (props: any) => <div data-testid="icon-sort-asc" {...props} />,
+  ArrowDown: (props: any) => <div data-testid="icon-sort-desc" {...props} />,
+  Search: (props: any) => <div data-testid="icon-search" {...props} />,
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn() }),
 }));
 
 let mockApiGet: jest.Mock;
@@ -52,12 +61,6 @@ describe('AdminProductsPage', () => {
     mockApiGet = jest.fn().mockResolvedValue(mockProducts);
   });
 
-  it('renders title', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByRole('heading', { name: 'Товары' })).toBeInTheDocument();
-  });
-
   it('renders add product button', async () => {
     const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
     render(jsx);
@@ -90,12 +93,6 @@ describe('AdminProductsPage', () => {
     expect(screen.getByText('Черновик')).toBeInTheDocument();
   });
 
-  it('renders pagination info', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText(/Всего 2 товаров/)).toBeInTheDocument();
-  });
-
   it('renders breadcrumbs', async () => {
     const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
     render(jsx);
@@ -122,5 +119,42 @@ describe('AdminProductsPage', () => {
     render(jsx);
     const zeroStock = screen.getByText('0');
     expect(zeroStock).toHaveClass('text-destructive');
+  });
+
+  it('renders sortable column headers', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByText('Товар')).toBeInTheDocument();
+    expect(screen.getByText('Цена')).toBeInTheDocument();
+    expect(screen.getByText('Остаток')).toBeInTheDocument();
+  });
+
+  it('renders active sort icon when sortBy matches column', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({ sortBy: 'price', sortOrder: 'asc' }) });
+    render(jsx);
+    expect(screen.getByTestId('icon-sort-asc')).toBeInTheDocument();
+  });
+
+  it('passes sortBy and sortOrder to API', async () => {
+    await AdminProductsPage({ searchParams: Promise.resolve({ sortBy: 'price', sortOrder: 'desc' }) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.stringContaining('sortBy=price'),
+      expect.any(Object),
+    );
+  });
+
+  it('renders search input', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByPlaceholderText('Поиск товаров...')).toBeInTheDocument();
+  });
+
+  it('renders pagination with page numbers', async () => {
+    mockApiGet = jest.fn().mockResolvedValue({ ...mockProducts, page: 1, totalPages: 3 });
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
   });
 });

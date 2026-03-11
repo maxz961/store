@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   Users: (props: any) => <div data-testid="icon-users" {...props} />,
+  Search: (props: any) => <div data-testid="icon-search" {...props} />,
 }));
 
 jest.mock('next/image', () => {
@@ -19,6 +20,12 @@ jest.mock('@/components/ui/Spinner', () => {
   MockSpinner.displayName = 'MockSpinner';
   return { Spinner: MockSpinner };
 });
+
+jest.mock('@/components/ui/Breadcrumbs', () => ({
+  Breadcrumbs: ({ items }: any) => (
+    <nav>{items.map((i: any) => <span key={i.label}>{i.label}</span>)}</nav>
+  ),
+}));
 
 jest.mock('@/components/ui/SelectField', () => {
   const MockSelectField = ({ value, onChange, options, label }: any) => (
@@ -189,5 +196,90 @@ describe('AdminUsersPage', () => {
   it('renders dash for user with no name', async () => {
     renderPage();
     expect(await screen.findByText('—')).toBeInTheDocument();
+  });
+
+  it('renders search input', async () => {
+    renderPage();
+    expect(
+      await screen.findByPlaceholderText('Поиск по имени или email...'),
+    ).toBeInTheDocument();
+  });
+
+  it('filters users by name', async () => {
+    renderPage();
+    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    fireEvent.change(searchInput, { target: { value: 'Admin' } });
+    expect(screen.getByText('Admin User')).toBeInTheDocument();
+    expect(screen.queryByText('Customer User')).not.toBeInTheDocument();
+  });
+
+  it('filters users by email', async () => {
+    renderPage();
+    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    fireEvent.change(searchInput, { target: { value: 'customer@' } });
+    expect(screen.queryByText('Admin User')).not.toBeInTheDocument();
+    expect(screen.getByText('Customer User')).toBeInTheDocument();
+  });
+
+  it('search is case insensitive', async () => {
+    renderPage();
+    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    fireEvent.change(searchInput, { target: { value: 'admin user' } });
+    expect(screen.getByText('Admin User')).toBeInTheDocument();
+  });
+
+  it('shows empty state when search has no matches', async () => {
+    renderPage();
+    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    fireEvent.change(searchInput, { target: { value: 'xyz-not-exists' } });
+    expect(screen.getByText('Пользователи не найдены')).toBeInTheDocument();
+  });
+
+  it('shows all users when search is cleared', async () => {
+    renderPage();
+    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    fireEvent.change(searchInput, { target: { value: 'Admin' } });
+    expect(screen.queryByText('Customer User')).not.toBeInTheDocument();
+    fireEvent.change(searchInput, { target: { value: '' } });
+    expect(screen.getByText('Customer User')).toBeInTheDocument();
+  });
+
+  // Load More pagination
+  const make20Users = () =>
+    Array.from({ length: 20 }, (_, i) => ({
+      id: `u${i + 10}`,
+      email: `user${i}@test.com`,
+      name: `User ${i}`,
+      image: null,
+      role: 'CUSTOMER',
+      isBanned: false,
+      createdAt: '2026-01-01T00:00:00.000Z',
+    }));
+
+  it('hides Load More button when fewer than 20 users', async () => {
+    renderPage();
+    await screen.findByText('Admin User');
+    expect(screen.queryByText('Загрузить ещё')).not.toBeInTheDocument();
+  });
+
+  it('shows Load More button when exactly 20 users are loaded', async () => {
+    mockApiGet = jest.fn().mockResolvedValue(make20Users());
+    renderPage();
+    expect(await screen.findByText('Загрузить ещё')).toBeInTheDocument();
+  });
+
+  it('clicking Load More fetches next page', async () => {
+    mockApiGet = jest.fn()
+      .mockResolvedValueOnce(make20Users())
+      .mockResolvedValueOnce([mockUsers[0]]);
+    renderPage();
+
+    const loadMoreBtn = await screen.findByText('Загрузить ещё');
+    fireEvent.click(loadMoreBtn);
+
+    await waitFor(() => {
+      expect(mockApiGet).toHaveBeenCalledTimes(2);
+      expect(mockApiGet).toHaveBeenLastCalledWith('/users?skip=20&take=20');
+    });
   });
 });

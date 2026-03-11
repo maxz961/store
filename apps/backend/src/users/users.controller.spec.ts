@@ -41,8 +41,8 @@ describe('UsersController (smoke)', () => {
     expect(controller).toBeDefined();
   });
 
-  it('GET /users — returns array of users', async () => {
-    const result = await controller.findAll();
+  it('GET /users — returns paginated users', async () => {
+    const result = await controller.findAll(0, 20);
     expect(Array.isArray(result)).toBe(true);
     expect(result).toHaveLength(2);
   });

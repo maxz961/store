@@ -2,6 +2,7 @@
 
 import { useCallback } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { ShoppingCart, Sun, Moon, Store } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
@@ -18,6 +19,8 @@ import { s } from './Header.styled';
 
 
 export const Header = () => {
+  const pathname = usePathname();
+  const isAdminPage = pathname.startsWith('/admin');
   const { theme, setTheme } = useTheme();
   const { user, isAuthenticated, isAdmin, login, logout } = useAuth();
   const itemCount = useCartStore((state) => state.items.reduce((acc, i) => acc + i.quantity, 0));
@@ -39,7 +42,9 @@ export const Header = () => {
           Store
         </Link>
 
-        <SearchInput />
+        <When condition={!isAdminPage}>
+          <SearchInput />
+        </When>
 
         <div className={s.actions}>
           <Button variant="ghost" size="icon" onClick={handleToggleTheme} aria-label="Переключить тему">

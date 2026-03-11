@@ -1,19 +1,20 @@
 import { When } from 'react-if';
 import { s } from './page.styled';
 import { ProductRow } from './ProductRow';
+import { SortHeader } from './SortHeader';
 import type { ProductsTableProps } from './page.types';
 
 
-export const ProductsTable = ({ products }: ProductsTableProps) => (
+export const ProductsTable = ({ products, sortBy, sortOrder, search }: ProductsTableProps) => (
   <div className={s.tableWrapper}>
     <table className={s.table}>
       <thead className={s.thead}>
         <tr>
-          <th className={s.th}>Товар</th>
+          <SortHeader field="name" label="Товар" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
           <th className={s.th}>Категория</th>
           <th className={s.th}>Теги</th>
-          <th className={s.thRight}>Цена</th>
-          <th className={s.thRight}>Остаток</th>
+          <SortHeader field="price" label="Цена" align="right" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
+          <SortHeader field="stock" label="Остаток" align="right" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
           <th className={s.thCenter}>Статус</th>
           <th className={s.th} />
         </tr>

@@ -11,7 +11,7 @@ import { ProductFiltersDto } from "./dto/product-filters.dto";
 @Injectable()
 export class ProductsService {
   async findAll(filters: ProductFiltersDto, adminMode = false) {
-    const { search, categorySlug, tagSlugs, minPrice, maxPrice, page = 1, limit = 20 } = filters;
+    const { search, categorySlug, tagSlugs, minPrice, maxPrice, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = filters;
 
     const where: Record<string, unknown> = {
       ...(adminMode ? {} : { isPublished: true }),
@@ -39,7 +39,7 @@ export class ProductsService {
         },
         skip: (page - 1) * limit,
         take: limit,
-        orderBy: { createdAt: "desc" },
+        orderBy: { [sortBy]: sortOrder },
       }),
       db.product.count({ where }),
     ]);

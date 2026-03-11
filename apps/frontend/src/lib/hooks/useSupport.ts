@@ -33,6 +33,7 @@ export const useMyMessages = () =>
   useQuery({
     queryKey: ['support', 'messages'],
     queryFn: () => api.get<SupportMessage[]>('/support/messages'),
+    refetchInterval: 10_000,
   });
 
 export const useMyUnreadCount = () =>
@@ -42,11 +43,12 @@ export const useMyUnreadCount = () =>
     refetchInterval: 30_000,
   });
 
-export const useAdminUnreadCount = () =>
+export const useAdminUnreadCount = (enabled = true) =>
   useQuery({
     queryKey: ['support', 'admin', 'unread-count'],
     queryFn: () => api.get<number>('/support/admin/unread-count'),
     refetchInterval: 30_000,
+    enabled,
   });
 
 export const useSendMessage = () => {
@@ -69,6 +71,7 @@ export const useAdminThread = (userId: string) =>
     queryKey: ['support', 'admin', 'thread', userId],
     queryFn: () => api.get<AdminThreadDetail>(`/support/admin/threads/${userId}`),
     enabled: !!userId,
+    refetchInterval: 10_000,
   });
 
 export const useAdminReply = (userId: string) => {

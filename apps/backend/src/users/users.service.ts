@@ -33,8 +33,8 @@ export class UsersService {
     });
   }
 
-  async findAll() {
-    return db.user.findMany({ orderBy: { createdAt: "desc" } });
+  async findAll(skip = 0, take = 20) {
+    return db.user.findMany({ orderBy: { createdAt: "desc" }, skip, take });
   }
 
   async findOrThrow(id: string) {

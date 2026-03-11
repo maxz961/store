@@ -2,6 +2,9 @@ export const s = {
   page: 'mx-auto max-w-6xl px-4 py-8 sm:px-6',
   title: 'text-2xl font-semibold text-foreground',
   header: 'mt-6 flex items-center justify-between gap-4',
+  searchWrapper: 'relative',
+  searchIcon: 'absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50',
+  searchInput: 'h-9 w-64 rounded-lg border border-border bg-background pl-9 pr-4 text-sm placeholder:text-muted-foreground/60 outline-none transition-colors duration-150 focus:border-primary focus:ring-2 focus:ring-primary/20',
 
   // Table
   tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
@@ -40,4 +43,8 @@ export const s = {
 
   // Empty
   emptyRow: 'px-4 py-12 text-center text-sm text-muted-foreground',
+
+  // Load More
+  loadMoreWrapper: 'mt-4 flex justify-center',
+  loadMoreBtn: 'rounded-lg border border-border bg-background px-6 py-2 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50',
 };

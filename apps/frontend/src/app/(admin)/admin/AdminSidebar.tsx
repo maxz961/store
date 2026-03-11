@@ -27,12 +27,14 @@ export const AdminSidebar = () => {
               className={isActive ? s.navLinkActive : s.navLink}
             >
               <Icon className={s.navIcon} />
-              {label}
-              <When condition={isSupport && !!unreadCount && unreadCount > 0}>
-                <span className={s.navBadge} data-testid="support-unread-badge">
-                  {unreadCount}
-                </span>
-              </When>
+              <span className={s.navLabelGroup}>
+                {label}
+                <When condition={isSupport && !!unreadCount && unreadCount > 0}>
+                  <span className={s.navBadge} data-testid="support-unread-badge">
+                    {unreadCount}
+                  </span>
+                </When>
+              </span>
             </Link>
           );
         })}
