@@ -122,7 +122,7 @@ export class ProductsService {
     return db.product.findMany({
       where: {
         isPublished: true,
-        categoryId: product.categoryId,
+        ...(product.categoryId && { categoryId: product.categoryId }),
         id: { not: product.id },
       },
       include: {

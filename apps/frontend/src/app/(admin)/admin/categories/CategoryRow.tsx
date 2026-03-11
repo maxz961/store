@@ -5,7 +5,7 @@ import type { CategoryRowProps } from './page.types';
 
 export const CategoryRow = ({ category, onEdit, onDelete }: CategoryRowProps) => {
   const handleEdit = () => onEdit(category);
-  const handleDelete = () => onDelete(category.id);
+  const handleDelete = () => onDelete(category);
 
   return (
     <tr className={s.tr}>

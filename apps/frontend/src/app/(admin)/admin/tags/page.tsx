@@ -7,7 +7,9 @@ import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/TextField';
 import { Spinner } from '@/components/ui/Spinner';
+import { Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import {
   useTags,
   useCreateTag,
@@ -33,6 +35,12 @@ const TagsPage = () => {
   const deleteTag = useDeleteTag();
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Tag | null>(null);
+
+  const editingTag = useMemo(
+    () => tags.find((t) => t.id === editingId),
+    [tags, editingId],
+  );
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<TagFormValues>({
     resolver: zodResolver(tagFormSchema),
@@ -77,9 +85,18 @@ const TagsPage = () => {
     reset({ name: '', slug: '', color: DEFAULT_TAG_COLOR });
   }, [reset]);
 
-  const handleDelete = useCallback((id: string) => {
-    deleteTag.mutate(id);
-  }, [deleteTag]);
+  const handleDelete = useCallback((tag: Tag) => {
+    setPendingDelete(tag);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!pendingDelete) return;
+    deleteTag.mutate(pendingDelete.id, { onSuccess: () => setPendingDelete(null) });
+  }, [pendingDelete, deleteTag]);
+
+  const handleCancelDelete = useCallback(() => {
+    setPendingDelete(null);
+  }, []);
 
   const onSubmit = handleSubmit(async (data) => {
     if (editingId) {
@@ -123,6 +140,13 @@ const TagsPage = () => {
               <p className={s.colorHint}>Цвет отображается на бейдже тега</p>
             </div>
           </div>
+
+          <When condition={!!editingId && (editingTag?._count?.products ?? 0) > 0}>
+            <div className={s.editWarning}>
+              <Info className={s.editWarningIcon} />
+              Изменения применятся ко всем {editingTag?._count?.products} товарам с этим тегом
+            </div>
+          </When>
 
           <When condition={createTag.isError || updateTag.isError}>
             <div className={s.error}>
@@ -184,6 +208,22 @@ const TagsPage = () => {
           </div>
         </Else>
       </If>
+
+      <ConfirmModal
+        open={!!pendingDelete}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Удалить тег?"
+        isLoading={deleteTag.isPending}
+        description={
+          <>
+            Тег <strong>«{pendingDelete?.name}»</strong> будет удалён.{' '}
+            <When condition={(pendingDelete?._count?.products ?? 0) > 0}>
+              Он будет убран у {pendingDelete?._count?.products} товаров.
+            </When>
+          </>
+        }
+      />
     </div>
   );
 };

@@ -6,7 +6,7 @@ import type { TagRowProps } from './page.types';
 
 export const TagRow = ({ tag, onEdit, onDelete }: TagRowProps) => {
   const handleEdit = () => onEdit(tag);
-  const handleDelete = () => onDelete(tag.id);
+  const handleDelete = () => onDelete(tag);
 
   return (
     <tr className={s.tr}>

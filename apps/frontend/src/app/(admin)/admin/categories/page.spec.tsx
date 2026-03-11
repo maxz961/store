@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
@@ -6,6 +7,8 @@ jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   Pencil: (props: any) => <div data-testid="icon-pencil" {...props} />,
   Trash2: (props: any) => <div data-testid="icon-trash" {...props} />,
+  AlertTriangle: (props: any) => <div data-testid="icon-alert" {...props} />,
+  Info: (props: any) => <div data-testid="icon-info" {...props} />,
 }));
 
 let mockApiGet: jest.Mock;
@@ -91,5 +94,58 @@ describe('CategoriesPage', () => {
     await screen.findByText('Электроника');
     expect(screen.getAllByTestId('icon-pencil')).toHaveLength(2);
     expect(screen.getAllByTestId('icon-trash')).toHaveLength(2);
+  });
+
+  it('clicking delete opens confirm modal with category name', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Электроника');
+
+    const trashButtons = screen.getAllByTestId('icon-trash');
+    await user.click(trashButtons[0].closest('button')!);
+
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText('Удалить категорию?')).toBeInTheDocument();
+    expect(within(dialog).getByText(/Электроника/)).toBeInTheDocument();
+  });
+
+  it('confirming delete calls delete API', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Электроника');
+
+    const trashButtons = screen.getAllByTestId('icon-trash');
+    await user.click(trashButtons[0].closest('button')!);
+    await user.click(screen.getByRole('button', { name: 'Удалить' }));
+
+    await waitFor(() => {
+      expect(mockApiDelete).toHaveBeenCalledWith('/categories/cat-1');
+    });
+  });
+
+  it('cancelling delete modal closes without deleting', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Электроника');
+
+    const trashButtons = screen.getAllByTestId('icon-trash');
+    await user.click(trashButtons[0].closest('button')!);
+    await user.click(screen.getByRole('button', { name: 'Отмена' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(mockApiDelete).not.toHaveBeenCalled();
+  });
+
+  it('shows edit warning when editing category with products', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Электроника');
+
+    const pencilButtons = screen.getAllByTestId('icon-pencil');
+    await user.click(pencilButtons[0].closest('button')!);
+
+    expect(screen.getByText(/Изменения применятся ко всем/)).toBeInTheDocument();
+    expect(screen.getByText(/5 товарам в этой категории/)).toBeInTheDocument();
   });
 });

@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { If, Then, Else, When } from 'react-if';
+import { Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/TextField';
 import { Spinner } from '@/components/ui/Spinner';
+import { ConfirmModal } from '@/components/ui/ConfirmModal';
 import {
   useCategories,
   useCreateCategory,
@@ -26,6 +28,12 @@ const CategoriesPage = () => {
   const deleteCategory = useDeleteCategory();
 
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<Category | null>(null);
+
+  const editingCategory = useMemo(
+    () => categories.find((c) => c.id === editingId),
+    [categories, editingId],
+  );
 
   const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
@@ -52,9 +60,18 @@ const CategoriesPage = () => {
     reset({ name: '', slug: '', description: '' });
   }, [reset]);
 
-  const handleDelete = useCallback((id: string) => {
-    deleteCategory.mutate(id);
-  }, [deleteCategory]);
+  const handleDelete = useCallback((category: Category) => {
+    setPendingDelete(category);
+  }, []);
+
+  const handleConfirmDelete = useCallback(() => {
+    if (!pendingDelete) return;
+    deleteCategory.mutate(pendingDelete.id, { onSuccess: () => setPendingDelete(null) });
+  }, [pendingDelete, deleteCategory]);
+
+  const handleCancelDelete = useCallback(() => {
+    setPendingDelete(null);
+  }, []);
 
   const onSubmit = handleSubmit(async (data) => {
     if (editingId) {
@@ -99,6 +116,13 @@ const CategoriesPage = () => {
             error={errors.description?.message}
             {...register('description')}
           />
+
+          <When condition={!!editingId && (editingCategory?._count?.products ?? 0) > 0}>
+            <div className={s.editWarning}>
+              <Info className={s.editWarningIcon} />
+              Изменения применятся ко всем {editingCategory?._count?.products} товарам в этой категории
+            </div>
+          </When>
 
           <When condition={createCategory.isError || updateCategory.isError}>
             <div className={s.error}>
@@ -160,6 +184,22 @@ const CategoriesPage = () => {
           </div>
         </Else>
       </If>
+
+      <ConfirmModal
+        open={!!pendingDelete}
+        onClose={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        title="Удалить категорию?"
+        isLoading={deleteCategory.isPending}
+        description={
+          <>
+            Категория <strong>«{pendingDelete?.name}»</strong> будет удалена.{' '}
+            <When condition={(pendingDelete?._count?.products ?? 0) > 0}>
+              {pendingDelete?._count?.products} товаров потеряют категорию.
+            </When>
+          </>
+        }
+      />
     </div>
   );
 };

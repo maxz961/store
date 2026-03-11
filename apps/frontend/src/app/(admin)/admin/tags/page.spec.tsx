@@ -1,4 +1,5 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
@@ -6,6 +7,8 @@ jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   Pencil: (props: any) => <div data-testid="icon-pencil" {...props} />,
   Trash2: (props: any) => <div data-testid="icon-trash" {...props} />,
+  AlertTriangle: (props: any) => <div data-testid="icon-alert" {...props} />,
+  Info: (props: any) => <div data-testid="icon-info" {...props} />,
 }));
 
 let mockApiGet: jest.Mock;
@@ -97,5 +100,58 @@ describe('TagsPage', () => {
     renderPage();
     const swatches = document.querySelectorAll('[title="#4361ee"]');
     expect(swatches.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('clicking delete opens confirm modal with tag name', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Новинка');
+
+    const trashButtons = screen.getAllByTestId('icon-trash');
+    await user.click(trashButtons[0].closest('button')!);
+
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toBeInTheDocument();
+    expect(within(dialog).getByText('Удалить тег?')).toBeInTheDocument();
+    expect(within(dialog).getByText(/Новинка/)).toBeInTheDocument();
+  });
+
+  it('confirming delete calls delete API', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Новинка');
+
+    const trashButtons = screen.getAllByTestId('icon-trash');
+    await user.click(trashButtons[0].closest('button')!);
+    await user.click(screen.getByRole('button', { name: 'Удалить' }));
+
+    await waitFor(() => {
+      expect(mockApiDelete).toHaveBeenCalledWith('/tags/tag-1');
+    });
+  });
+
+  it('cancelling delete modal closes without deleting', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Новинка');
+
+    const trashButtons = screen.getAllByTestId('icon-trash');
+    await user.click(trashButtons[0].closest('button')!);
+    await user.click(screen.getByRole('button', { name: 'Отмена' }));
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(mockApiDelete).not.toHaveBeenCalled();
+  });
+
+  it('shows edit warning when editing tag with products', async () => {
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Новинка');
+
+    const pencilButtons = screen.getAllByTestId('icon-pencil');
+    await user.click(pencilButtons[0].closest('button')!);
+
+    expect(screen.getByText(/Изменения применятся ко всем/)).toBeInTheDocument();
+    expect(screen.getByText(/4 товарам с этим тегом/)).toBeInTheDocument();
   });
 });

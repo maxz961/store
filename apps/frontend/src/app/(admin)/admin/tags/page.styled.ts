@@ -45,4 +45,8 @@ export const s = {
 
   // Error
   error: 'rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive',
+
+  // Edit warning
+  editWarning: 'flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2.5 text-sm text-amber-800 dark:border-amber-800/40 dark:bg-amber-950/20 dark:text-amber-400',
+  editWarningIcon: 'h-4 w-4 shrink-0',
 };

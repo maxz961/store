@@ -72,11 +72,11 @@ model Product {
   sku          String?      @unique
   isPublished    Boolean      @default(false)
   hasImageError  Boolean      @default(false)
-  categoryId     String
+  categoryId     String?
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
-  category   Category           @relation(fields: [categoryId], references: [id])
+  category   Category?          @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   tags       ProductTag[]
   orderItems OrderItem[]
   reviews    Review[]
