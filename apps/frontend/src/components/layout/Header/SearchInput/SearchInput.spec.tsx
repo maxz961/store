@@ -21,8 +21,8 @@ jest.mock('@/lib/hooks/useProducts', () => ({
 
 
 const products = [
-  { id: '1', name: 'Apple iPhone 15', slug: 'apple-iphone-15' },
-  { id: '2', name: 'Apple MacBook', slug: 'apple-macbook' },
+  { id: '1', name: 'RTX 5070', slug: 'rtx-5070' },
+  { id: '2', name: 'RTX 5080', slug: 'rtx-5080' },
 ];
 
 describe('SearchInput', () => {
@@ -39,8 +39,8 @@ describe('SearchInput', () => {
   it('hides dropdown when no suggestions', () => {
     render(<SearchInput />);
     const input = screen.getByPlaceholderText('Поиск товаров...');
-    fireEvent.change(input, { target: { value: 'ip' } });
-    expect(screen.queryByText('Apple iPhone 15')).not.toBeInTheDocument();
+    fireEvent.change(input, { target: { value: 'rt' } });
+    expect(screen.queryByText('RTX 5070')).not.toBeInTheDocument();
   });
 
   it('shows dropdown with suggestions on input', () => {
@@ -49,27 +49,40 @@ describe('SearchInput', () => {
     render(<SearchInput />);
     const input = screen.getByPlaceholderText('Поиск товаров...');
     fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'apple' } });
+    fireEvent.change(input, { target: { value: 'rtx' } });
 
-    expect(screen.getByText('Apple iPhone 15')).toBeInTheDocument();
-    expect(screen.getByText('Apple MacBook')).toBeInTheDocument();
+    expect(screen.getByText('RTX 5070')).toBeInTheDocument();
+    expect(screen.getByText('RTX 5080')).toBeInTheDocument();
   });
 
-  it('suggestion items are links to product pages', () => {
+  it('clicking suggestion fills input and applies search', () => {
     mockUseSuggestions.mockReturnValue({ data: { items: products } });
 
     render(<SearchInput />);
     const input = screen.getByPlaceholderText('Поиск товаров...');
     fireEvent.focus(input);
-    fireEvent.change(input, { target: { value: 'apple' } });
+    fireEvent.change(input, { target: { value: 'rtx' } });
 
-    const link = screen.getByText('Apple iPhone 15').closest('a');
-    expect(link).toHaveAttribute('href', '/products/apple-iphone-15');
+    fireEvent.click(screen.getByText('RTX 5070'));
+
+    expect(mockUpdate).toHaveBeenCalledWith({ search: 'RTX 5070' });
+    expect(input).toHaveValue('RTX 5070');
+  });
+
+  it('suggestions are buttons, not links', () => {
+    mockUseSuggestions.mockReturnValue({ data: { items: products } });
+
+    render(<SearchInput />);
+    const input = screen.getByPlaceholderText('Поиск товаров...');
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'rtx' } });
+
+    const btn = screen.getByText('RTX 5070').closest('button');
+    expect(btn).toBeInTheDocument();
+    expect(btn).toHaveAttribute('type', 'button');
   });
 
   it('calls update with trimmed query on form submit', () => {
-    mockUseSuggestions.mockReturnValue({ data: undefined });
-
     render(<SearchInput />);
     const input = screen.getByPlaceholderText('Поиск товаров...');
     fireEvent.change(input, { target: { value: '  laptop  ' } });
@@ -79,8 +92,6 @@ describe('SearchInput', () => {
   });
 
   it('calls update with undefined on empty submit (clears search)', () => {
-    mockUseSuggestions.mockReturnValue({ data: undefined });
-
     render(<SearchInput />);
     const input = screen.getByPlaceholderText('Поиск товаров...');
     fireEvent.change(input, { target: { value: '   ' } });

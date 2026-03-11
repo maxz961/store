@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
-import Link from 'next/link';
 import { Search } from 'lucide-react';
 import { When } from 'react-if';
 import { useSearchSuggestions } from '@/lib/hooks/useProducts';
@@ -39,10 +38,15 @@ export const SearchInput = () => {
     blurTimer.current = setTimeout(() => setIsOpen(false), 150);
   }, []);
 
-  const handleSelectSuggestion = useCallback(() => {
-    if (blurTimer.current) clearTimeout(blurTimer.current);
-    setIsOpen(false);
-  }, []);
+  const handleSelectSuggestion = useCallback(
+    (name: string) => () => {
+      if (blurTimer.current) clearTimeout(blurTimer.current);
+      setQuery(name);
+      setIsOpen(false);
+      update({ search: name });
+    },
+    [update],
+  );
 
   return (
     <form onSubmit={handleSearch} className={s.form}>
@@ -60,14 +64,14 @@ export const SearchInput = () => {
         <When condition={showDropdown}>
           <div className={s.dropdown}>
             {suggestions.map((product) => (
-              <Link
+              <button
                 key={product.id}
-                href={`/products/${product.slug}`}
+                type="button"
                 className={s.item}
-                onClick={handleSelectSuggestion}
+                onClick={handleSelectSuggestion(product.name)}
               >
                 {product.name}
-              </Link>
+              </button>
             ))}
           </div>
         </When>
