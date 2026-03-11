@@ -1,6 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('./SearchInput', () => ({
+  SearchInput: () => <input placeholder="Поиск товаров..." />,
+}));
+
 jest.mock('lucide-react', () => ({
   ShoppingCart: (props: any) => <div data-testid="icon-cart" {...props} />,
   Sun: (props: any) => <div data-testid="icon-sun" {...props} />,
@@ -11,6 +15,7 @@ jest.mock('lucide-react', () => ({
   Package: (props: any) => <div data-testid="icon-package" {...props} />,
   LogOut: (props: any) => <div data-testid="icon-logout" {...props} />,
   LayoutDashboard: (props: any) => <div data-testid="icon-dashboard" {...props} />,
+  Mail: (props: any) => <div data-testid="icon-mail" {...props} />,
 }));
 
 import { Header } from './Header';
@@ -30,9 +35,11 @@ jest.mock('@/lib/hooks/useProductParams', () => ({
 }));
 
 let mockUnreadCount: number;
+let mockAdminUnreadCount: number;
 
 jest.mock('@/lib/hooks/useSupport', () => ({
   useMyUnreadCount: () => ({ data: mockUnreadCount }),
+  useAdminUnreadCount: () => ({ data: mockAdminUnreadCount }),
 }));
 
 let mockAuthState: any;
@@ -65,6 +72,7 @@ describe('Header', () => {
 
     mockCartItems = [{ id: 'p1', quantity: 3 }];
     mockUnreadCount = 0;
+    mockAdminUnreadCount = 0;
   });
 
   it('renders logo text', () => {
@@ -141,22 +149,28 @@ describe('Header', () => {
     expect(mockLogout).toHaveBeenCalledTimes(1);
   });
 
-  it('submits search form with query', () => {
-    render(<Header />);
-    const input = screen.getByPlaceholderText('Поиск товаров...');
-    fireEvent.change(input, { target: { value: 'наушники' } });
-    fireEvent.submit(input.closest('form')!);
-    expect(mockUpdate).toHaveBeenCalledWith({ search: 'наушники' });
-  });
-
-  it('shows unread dot on avatar when there are unread messages', () => {
+  it('shows unread dot on avatar for regular user with unread admin replies', () => {
     mockUnreadCount = 2;
     render(<Header />);
     expect(screen.getByTestId('unread-dot')).toBeInTheDocument();
   });
 
-  it('hides unread dot when no unread messages', () => {
+  it('hides unread dot for regular user with no unread messages', () => {
     mockUnreadCount = 0;
+    render(<Header />);
+    expect(screen.queryByTestId('unread-dot')).not.toBeInTheDocument();
+  });
+
+  it('shows unread dot on avatar for admin with unread user messages', () => {
+    mockAuthState = { ...mockAuthState, isAdmin: true, user: { ...mockAuthState.user, role: 'ADMIN' } };
+    mockAdminUnreadCount = 3;
+    render(<Header />);
+    expect(screen.getByTestId('unread-dot')).toBeInTheDocument();
+  });
+
+  it('hides unread dot for admin with no unread user messages', () => {
+    mockAuthState = { ...mockAuthState, isAdmin: true, user: { ...mockAuthState.user, role: 'ADMIN' } };
+    mockAdminUnreadCount = 0;
     render(<Header />);
     expect(screen.queryByTestId('unread-dot')).not.toBeInTheDocument();
   });

@@ -91,6 +91,14 @@ export const useProducts = (filters: ProductsFilters) => {
   });
 };
 
+export const useSearchSuggestions = (query: string) =>
+  useQuery({
+    queryKey: ['products', 'suggestions', query],
+    queryFn: () => api.get<ProductsResponse>(`/products?search=${encodeURIComponent(query)}&limit=6`),
+    enabled: query.trim().length >= 2,
+    staleTime: 60 * 1000,
+  });
+
 export const useProduct = (slug: string) =>
   useQuery({
     queryKey: ['product', slug],
