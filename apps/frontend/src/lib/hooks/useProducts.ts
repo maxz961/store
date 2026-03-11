@@ -10,8 +10,9 @@ interface Product {
   comparePrice?: number;
   images: string[];
   stock: number;
-  category: { name: string; slug: string };
-  tags: { tag: { name: string; slug: string } }[];
+  isPublished: boolean;
+  category: { id: string; name: string; slug: string };
+  tags: { tag: { id: string; name: string; slug: string } }[];
   reviews: { rating: number }[];
 }
 

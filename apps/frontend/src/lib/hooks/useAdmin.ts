@@ -105,4 +105,20 @@ export const useUploadProductImages = () =>
       api.uploadFiles<{ urls: string[] }>('/products/upload', files),
   });
 
+interface UpdateProductInput extends Partial<CreateProductInput> {
+  id: string;
+}
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, ...data }: UpdateProductInput) =>
+      api.put(`/products/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
 export type { AnalyticsSummary, AdminOrder, CreateProductInput };

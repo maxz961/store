@@ -45,7 +45,7 @@ export const ProductRow = ({ product }: ProductRowProps) => (
       </If>
     </td>
     <td className={s.td}>
-      <Link href={`/admin/products/${product.id}`} className={s.editLink}>
+      <Link href={`/admin/products/${product.slug}`} className={s.editLink}>
         <Pencil className="h-4 w-4" />
       </Link>
     </td>
