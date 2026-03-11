@@ -8,7 +8,7 @@ export const s = {
   discount: 'absolute left-3 top-3 rounded-md bg-red-500 px-2 py-0.5 text-xs font-semibold text-white',
   content: 'flex flex-1 flex-col gap-1.5 p-4 pt-3 border-t border-border',
   tags: 'flex flex-wrap gap-1',
-  tag: 'text-[10px] px-1.5 py-0',
+  tag: 'text-[10px] px-1.5 py-0 border-primary/15 bg-primary/5 text-primary',
   name: 'text-sm leading-snug text-card-foreground transition-colors duration-150 group-hover:text-primary line-clamp-2',
   category: 'text-xs text-muted-foreground',
   rating: 'flex items-center gap-1',

@@ -15,7 +15,7 @@ jest.mock("@store/shared", () => ({
   },
 }));
 
-const mockTag = { id: "tag-1", name: "New", slug: "new" };
+const mockTag = { id: "tag-1", name: "New", slug: "new", color: "#4361ee" };
 
 describe("TagsService", () => {
   let service: TagsService;
@@ -38,9 +38,38 @@ describe("TagsService", () => {
       expect(result).toEqual(mockTag);
     });
 
+    it("creates tag with color", async () => {
+      (mockDb.tag.findUnique as jest.Mock).mockResolvedValue(null);
+      (mockDb.tag.create as jest.Mock).mockResolvedValue(mockTag);
+
+      await service.create({ name: "New", slug: "new", color: "#4361ee" });
+      expect(mockDb.tag.create).toHaveBeenCalledWith({
+        data: { name: "New", slug: "new", color: "#4361ee" },
+      });
+    });
+
     it("throws ConflictException for duplicate slug", async () => {
       (mockDb.tag.findUnique as jest.Mock).mockResolvedValue(mockTag);
       await expect(service.create({ name: "New", slug: "new" })).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe("update", () => {
+    it("updates tag fields", async () => {
+      (mockDb.tag.findUnique as jest.Mock).mockResolvedValue(mockTag);
+      (mockDb.tag.update as jest.Mock).mockResolvedValue({ ...mockTag, color: "#ff0000" });
+
+      const result = await service.update("tag-1", { color: "#ff0000" });
+      expect(mockDb.tag.update).toHaveBeenCalledWith({
+        where: { id: "tag-1" },
+        data: { color: "#ff0000" },
+      });
+      expect(result.color).toBe("#ff0000");
+    });
+
+    it("throws NotFoundException for nonexistent tag", async () => {
+      (mockDb.tag.findUnique as jest.Mock).mockResolvedValue(null);
+      await expect(service.update("nonexistent", { name: "X" })).rejects.toThrow(NotFoundException);
     });
   });
 

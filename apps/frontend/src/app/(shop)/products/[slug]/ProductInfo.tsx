@@ -78,7 +78,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       <When condition={tags.length > 0}>
         <div className={s.tags}>
           {tags.map(({ tag }) => (
-            <Badge key={tag.slug} variant="secondary">{tag.name}</Badge>
+            <Badge key={tag.slug} variant="outline" className={s.tag}>{tag.name}</Badge>
           ))}
         </div>
       </When>

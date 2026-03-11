@@ -70,26 +70,26 @@ async function main() {
   // ── Tags ──
   const newTag = await prisma.tag.upsert({
     where: { slug: "new" },
-    update: { name: "Новинка" },
-    create: { name: "Новинка", slug: "new" },
+    update: { name: "Новинка", color: "#22c55e" },
+    create: { name: "Новинка", slug: "new", color: "#22c55e" },
   });
 
   const saleTag = await prisma.tag.upsert({
     where: { slug: "sale" },
-    update: { name: "Скидка" },
-    create: { name: "Скидка", slug: "sale" },
+    update: { name: "Скидка", color: "#ef4444" },
+    create: { name: "Скидка", slug: "sale", color: "#ef4444" },
   });
 
   const hitTag = await prisma.tag.upsert({
     where: { slug: "hit" },
-    update: {},
-    create: { name: "Хит продаж", slug: "hit" },
+    update: { color: "#f59e0b" },
+    create: { name: "Хит продаж", slug: "hit", color: "#f59e0b" },
   });
 
   const premiumTag = await prisma.tag.upsert({
     where: { slug: "premium" },
-    update: {},
-    create: { name: "Премиум", slug: "premium" },
+    update: { color: "#8b5cf6" },
+    create: { name: "Премиум", slug: "premium", color: "#8b5cf6" },
   });
   console.log("✅ Tags created");
 

@@ -29,6 +29,7 @@ export const s = {
   divider: 'border-t border-border',
   description: 'text-sm leading-relaxed text-muted-foreground',
   tags: 'flex flex-wrap gap-2',
+  tag: 'border-primary/20 bg-primary/10 text-primary',
 
   // Actions
   actions: 'flex items-center gap-3',

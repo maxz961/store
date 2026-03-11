@@ -16,13 +16,13 @@ export class TagsService {
     return tag;
   }
 
-  async create(data: { name: string; slug: string }) {
+  async create(data: { name: string; slug: string; color?: string }) {
     const existing = await db.tag.findUnique({ where: { slug: data.slug } });
     if (existing) throw new ConflictException(`Tag slug "${data.slug}" already exists`);
     return db.tag.create({ data });
   }
 
-  async update(id: string, data: { name?: string; slug?: string }) {
+  async update(id: string, data: { name?: string; slug?: string; color?: string }) {
     const tag = await db.tag.findUnique({ where: { id } });
     if (!tag) throw new NotFoundException(`Tag ${id} not found`);
     return db.tag.update({ where: { id }, data });

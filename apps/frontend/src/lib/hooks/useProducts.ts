@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 
@@ -37,16 +37,36 @@ interface ProductsResponse {
   totalPages: number;
 }
 
-interface Category {
+export interface Category {
   id: string;
   name: string;
   slug: string;
+  description?: string;
+  imageUrl?: string;
+  parentId?: string;
+  _count?: { products: number };
 }
 
-interface Tag {
+export interface Tag {
   id: string;
   name: string;
   slug: string;
+  color?: string | null;
+  _count?: { products: number };
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  slug: string;
+  description?: string;
+  imageUrl?: string;
+  parentId?: string;
+}
+
+export interface CreateTagInput {
+  name: string;
+  slug: string;
+  color?: string;
 }
 
 interface ProductsFilters {
@@ -97,3 +117,57 @@ export const useSimilarProducts = (slug: string) =>
     enabled: !!slug,
     staleTime: 5 * 60 * 1000,
   });
+
+// ─── Category mutations ───
+
+export const useCreateCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateCategoryInput) => api.post<Category>('/categories', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  });
+};
+
+export const useUpdateCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: Partial<CreateCategoryInput> & { id: string }) =>
+      api.put<Category>(`/categories/${id}`, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  });
+};
+
+export const useDeleteCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/categories/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  });
+};
+
+// ─── Tag mutations ───
+
+export const useCreateTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateTagInput) => api.post<Tag>('/tags', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+  });
+};
+
+export const useUpdateTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: Partial<CreateTagInput> & { id: string }) =>
+      api.put<Tag>(`/tags/${id}`, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+  });
+};
+
+export const useDeleteTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/tags/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+  });
+};
