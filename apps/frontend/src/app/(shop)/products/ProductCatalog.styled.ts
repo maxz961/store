@@ -2,7 +2,7 @@ export const s = {
   layout: 'flex flex-col gap-6 lg:flex-row',
   sidebar: 'w-full lg:w-52 shrink-0',
   content: 'flex-1 relative min-h-[200px]',
-  loadingOverlay: 'fixed inset-0 z-50 flex items-center justify-center pointer-events-none',
+  loadingOverlay: 'fixed inset-0 z-50 flex items-center justify-center bg-background/40 backdrop-blur-[1px] pointer-events-none',
   grid: 'grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4',
   empty: 'flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-20 text-center',
   emptyTitle: 'text-base font-medium',
