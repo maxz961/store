@@ -122,6 +122,36 @@ describe("ProductsService", () => {
       expect(result.page).toBe(3);
     });
 
+    it("filters by minPrice only", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ minPrice: 100 }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.price).toEqual({ gte: 100 });
+    });
+
+    it("filters by maxPrice only", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ maxPrice: 5000 }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.price).toEqual({ lte: 5000 });
+    });
+
+    it("filters by both minPrice and maxPrice without losing gte", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ minPrice: 1000, maxPrice: 50000 }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.price).toEqual({ gte: 1000, lte: 50000 });
+    });
+
     it("ignores empty tagSlugs array", async () => {
       (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
       (mockDb.product.count as jest.Mock).mockResolvedValue(0);

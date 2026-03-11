@@ -25,8 +25,12 @@ export class ProductsService {
       ...(tagSlugs?.length && {
         tags: { some: { tag: { slug: { in: tagSlugs } } } },
       }),
-      ...(minPrice !== undefined && { price: { gte: minPrice } }),
-      ...(maxPrice !== undefined && { price: { lte: maxPrice } }),
+      ...((minPrice !== undefined || maxPrice !== undefined) && {
+        price: {
+          ...(minPrice !== undefined && { gte: minPrice }),
+          ...(maxPrice !== undefined && { lte: maxPrice }),
+        },
+      }),
       ...(imageError !== undefined && { hasImageError: imageError }),
     };
 
