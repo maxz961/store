@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useCallback } from 'react';
 import { MessageSquare } from 'lucide-react';
 import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
@@ -7,15 +10,16 @@ import { s } from './page.styled';
 import type { ProductReviewsProps } from './page.types';
 
 
-export const ProductReviews = ({
-  productId,
-  productSlug,
-  reviews,
-  avgRating,
-  showReviewModal,
-  onOpenReviewModal,
-  onCloseReviewModal,
-}: ProductReviewsProps) => {
+export const ProductReviews = ({ productId, productSlug, reviews }: ProductReviewsProps) => {
+  const [showModal, setShowModal] = useState(false);
+
+  const avgRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : 0;
+
+  const handleOpen = useCallback(() => setShowModal(true), []);
+  const handleClose = useCallback(() => setShowModal(false), []);
+
   return (
     <>
       <div className={s.reviewsSection}>
@@ -32,21 +36,18 @@ export const ProductReviews = ({
               </div>
             </When>
           </div>
-          <Button
-            variant="outline"
-            onClick={onOpenReviewModal}
-          >
+          <Button variant="outline" onClick={handleOpen}>
             <MessageSquare className={s.buttonIcon} />
             {reviews.length > 0 ? 'Показать все' : 'Оставить отзыв'}
           </Button>
         </div>
       </div>
 
-      <When condition={showReviewModal}>
+      <When condition={showModal}>
         <ReviewModal
           productId={productId}
           productSlug={productSlug}
-          onClose={onCloseReviewModal}
+          onClose={handleClose}
         />
       </When>
     </>

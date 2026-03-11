@@ -1,8 +1,12 @@
+'use client';
+
+import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Trash2, MessageSquare, Pencil } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { getInitials } from '@/lib/utils';
 import type { ReviewCardProps } from './ReviewCard.types';
 import { s } from './ReviewModal.styled';
@@ -10,34 +14,45 @@ import { s } from './ReviewModal.styled';
 
 export const ReviewCard = ({
   review,
-  isOwn,
-  isAdmin,
-  replyingTo,
-  replyText,
-  onEditReview,
-  onDeleteOwn,
-  onAdminDelete,
-  onStartReply,
-  onSubmitReply,
-  onCancelReply,
-  onDeleteReply,
-  onReplyTextChange,
   onImageClick,
+  onEditReview,
+  onDeleteReview,
+  onReply,
+  onDeleteReply,
 }: ReviewCardProps) => {
+  const { user, isAdmin } = useAuth();
+  const isOwn = user?.id === review.userId;
+
+  const [isReplying, setIsReplying] = useState(false);
+  const [replyText, setReplyText] = useState('');
+
   const initials = getInitials(review.user.name, undefined);
   const date = new Date(review.createdAt).toLocaleDateString('ru-RU');
 
-  const handleDeleteOwn = () => onDeleteOwn(review.id);
+  const handleDelete = useCallback(() => onDeleteReview?.(review.id), [onDeleteReview, review.id]);
+  const handleImageClick = useCallback((url: string) => () => onImageClick(url), [onImageClick]);
+  const handleDeleteReply = useCallback(() => onDeleteReply?.(review.id), [onDeleteReply, review.id]);
 
-  const handleStartReply = () => onStartReply(review.id);
+  const handleStartReply = useCallback(() => {
+    setIsReplying(true);
+    setReplyText('');
+  }, []);
 
-  const handleAdminDelete = () => onAdminDelete(review.id);
+  const handleCancelReply = useCallback(() => {
+    setIsReplying(false);
+    setReplyText('');
+  }, []);
 
-  const handleImageClick = (url: string) => () => onImageClick(url);
+  const handleReplyTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReplyText(e.target.value);
+  }, []);
 
-  const handleDeleteReply = () => onDeleteReply(review.id);
-
-  const handleSubmitReply = () => onSubmitReply(review.id);
+  const handleSubmitReply = useCallback(() => {
+    if (!replyText.trim()) return;
+    onReply?.(review.id, replyText.trim());
+    setIsReplying(false);
+    setReplyText('');
+  }, [onReply, review.id, replyText]);
 
   return (
     <div className={s.card}>
@@ -77,7 +92,7 @@ export const ReviewCard = ({
               variant="ghost"
               size="icon"
               className={s.buttonIconDestructive}
-              onClick={handleDeleteOwn}
+              onClick={handleDelete}
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
@@ -96,7 +111,7 @@ export const ReviewCard = ({
               variant="ghost"
               size="icon"
               className={s.buttonIconDestructive}
-              onClick={handleAdminDelete}
+              onClick={handleDelete}
             >
               <Trash2 className="h-3.5 w-3.5" />
             </Button>
@@ -151,21 +166,21 @@ export const ReviewCard = ({
       </When>
 
       {/* Admin reply form */}
-      <When condition={replyingTo === review.id}>
+      <When condition={isReplying}>
         <div className={s.replyForm}>
           <textarea
             className={s.replyTextarea}
             rows={2}
             placeholder="Ответ от имени магазина..."
             value={replyText}
-            onChange={(e) => onReplyTextChange(e.target.value)}
+            onChange={handleReplyTextChange}
             maxLength={2000}
           />
           <div className={s.replyActions}>
             <Button size="sm" onClick={handleSubmitReply} disabled={!replyText.trim()}>
               Ответить
             </Button>
-            <Button size="sm" variant="ghost" onClick={onCancelReply}>
+            <Button size="sm" variant="ghost" onClick={handleCancelReply}>
               Отмена
             </Button>
           </div>

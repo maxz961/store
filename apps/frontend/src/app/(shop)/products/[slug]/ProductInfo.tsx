@@ -1,22 +1,46 @@
+'use client';
+
+import { useState, useCallback } from 'react';
 import { ShoppingCart, Minus, Plus } from 'lucide-react';
 import { When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
+import { useCartStore } from '@/store/cart';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 import type { ProductInfoProps } from './page.types';
 
 
-export const ProductInfo = ({
-  product,
-  avgRating,
-  discount,
-  quantity,
-  onDecreaseQuantity,
-  onIncreaseQuantity,
-  onAddToCart,
-}: ProductInfoProps) => {
+export const ProductInfo = ({ product }: ProductInfoProps) => {
+  const addItem = useCartStore((state) => state.addItem);
+  const [quantity, setQuantity] = useState(1);
+
+  const avgRating = product.reviews.length > 0
+    ? product.reviews.reduce((sum, r) => sum + r.rating, 0) / product.reviews.length
+    : 0;
+
+  const discount = product.comparePrice
+    ? Math.round((1 - product.price / Number(product.comparePrice)) * 100)
+    : null;
+
+  const handleDecrease = useCallback(() => setQuantity((q) => Math.max(1, q - 1)), []);
+  const handleIncrease = useCallback(() => setQuantity((q) => Math.min(product.stock, q + 1)), [product.stock]);
+
+  const handleAddToCart = useCallback(() => {
+    for (let i = 0; i < quantity; i++) {
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.images[0] ?? '',
+        slug: product.slug,
+        stock: product.stock,
+      });
+    }
+    setQuantity(1);
+  }, [quantity, addItem, product]);
+
   return (
     <div className={s.info}>
       <p className={s.category}>{product.category.name}</p>
@@ -64,7 +88,7 @@ export const ProductInfo = ({
           <div className={s.quantityGroup}>
             <button
               className={s.quantityButton}
-              onClick={onDecreaseQuantity}
+              onClick={handleDecrease}
               disabled={quantity <= 1}
             >
               <Minus className="h-4 w-4" />
@@ -72,13 +96,13 @@ export const ProductInfo = ({
             <span className={s.quantity}>{quantity}</span>
             <button
               className={s.quantityButton}
-              onClick={onIncreaseQuantity}
+              onClick={handleIncrease}
               disabled={quantity >= product.stock}
             >
               <Plus className="h-4 w-4" />
             </button>
           </div>
-          <Button size="lg" className={s.addToCartButton} onClick={onAddToCart}>
+          <Button size="lg" className={s.addToCartButton} onClick={handleAddToCart}>
             <ShoppingCart className={s.buttonIcon} />
             В корзину
           </Button>

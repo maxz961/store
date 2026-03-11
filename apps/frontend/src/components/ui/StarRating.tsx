@@ -30,7 +30,6 @@ export const StarRating = ({ value, onChange, size = 'md' }: StarRatingProps) =>
       {[1, 2, 3, 4, 5].map((star) => (
         <StarIcon
           key={star}
-          star={star}
           isFilled={star <= Math.round(displayValue)}
           isHovering={isInteractive && hoverValue > 0}
           isInteractive={isInteractive}

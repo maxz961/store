@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { ImageOff } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
@@ -6,16 +9,20 @@ import { s } from './page.styled';
 import type { ProductGalleryProps } from './page.types';
 
 
-export const ProductGallery = ({
-  images,
-  name,
-  selectedImage,
-  mainImgLoaded,
-  mainImgError,
-  onSelectImage,
-  onMainImgLoad,
-  onMainImgError,
-}: ProductGalleryProps) => {
+export const ProductGallery = ({ images, name }: ProductGalleryProps) => {
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [mainImgLoaded, setMainImgLoaded] = useState(false);
+  const [mainImgError, setMainImgError] = useState(false);
+
+  const handleSelectImage = useCallback((index: number) => () => {
+    setSelectedImage(index);
+    setMainImgLoaded(false);
+    setMainImgError(false);
+  }, []);
+
+  const handleMainImgLoad = useCallback(() => setMainImgLoaded(true), []);
+  const handleMainImgError = useCallback(() => setMainImgError(true), []);
+
   return (
     <div className={s.gallery}>
       <div className={s.mainImage}>
@@ -31,8 +38,8 @@ export const ProductGallery = ({
               className={s.image}
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
-              onLoad={onMainImgLoad}
-              onError={onMainImgError}
+              onLoad={handleMainImgLoad}
+              onError={handleMainImgError}
             />
           </Then>
           <Else>
@@ -51,7 +58,7 @@ export const ProductGallery = ({
               src={img}
               alt={`${name} ${index + 1}`}
               isActive={index === selectedImage}
-              onClick={onSelectImage(index)}
+              onClick={handleSelectImage(index)}
             />
           ))}
         </div>
