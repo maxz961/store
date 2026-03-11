@@ -5,12 +5,6 @@ export interface Props {
 export interface ProductGalleryProps {
   images: string[];
   name: string;
-  selectedImage: number;
-  mainImgLoaded: boolean;
-  mainImgError: boolean;
-  onSelectImage: (index: number) => () => void;
-  onMainImgLoad: () => void;
-  onMainImgError: () => void;
 }
 
 export interface ProductInfoProps {
@@ -27,20 +21,10 @@ export interface ProductInfoProps {
     description: string;
     id: string;
   };
-  avgRating: number;
-  discount: number | null;
-  quantity: number;
-  onDecreaseQuantity: () => void;
-  onIncreaseQuantity: () => void;
-  onAddToCart: () => void;
 }
 
 export interface ProductReviewsProps {
   productId: string;
   productSlug: string;
   reviews: { rating: number }[];
-  avgRating: number;
-  showReviewModal: boolean;
-  onOpenReviewModal: () => void;
-  onCloseReviewModal: () => void;
 }

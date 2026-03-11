@@ -22,11 +22,9 @@ import { s } from './ReviewModal.styled';
 
 
 export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProps) => {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const [sort, setSort] = useState<ReviewSort>('newest');
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
-  const [replyingTo, setReplyingTo] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState('');
   const [editingReview, setEditingReview] = useState(false);
 
   const { data: reviews = [] } = useProductReviews(productId, sort);
@@ -58,30 +56,18 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
 
   const handleSort = useCallback((value: ReviewSort) => () => setSort(value), []);
 
-  const handleDeleteOwn = useCallback((reviewId: string) => {
-    deleteReview.mutate({ reviewId, productId });
-  }, [deleteReview, productId]);
+  const handleDeleteReview = useCallback((reviewId: string) => {
+    const review = reviews.find((r) => r.id === reviewId);
+    if (review && user?.id === review.userId) {
+      deleteReview.mutate({ reviewId, productId });
+    } else {
+      adminDeleteReview.mutate({ reviewId, productId });
+    }
+  }, [reviews, user, deleteReview, adminDeleteReview, productId]);
 
-  const handleAdminDelete = useCallback((reviewId: string) => {
-    adminDeleteReview.mutate({ reviewId, productId });
-  }, [adminDeleteReview, productId]);
-
-  const handleStartReply = useCallback((reviewId: string) => {
-    setReplyingTo(reviewId);
-    setReplyText('');
-  }, []);
-
-  const handleCancelReply = useCallback(() => {
-    setReplyingTo(null);
-    setReplyText('');
-  }, []);
-
-  const handleSubmitReply = useCallback((reviewId: string) => {
-    if (!replyText.trim()) return;
-    adminReply.mutate({ reviewId, reply: replyText.trim() });
-    setReplyingTo(null);
-    setReplyText('');
-  }, [adminReply, replyText]);
+  const handleReply = useCallback((reviewId: string, text: string) => {
+    adminReply.mutate({ reviewId, reply: text });
+  }, [adminReply]);
 
   const handleDeleteReply = useCallback((reviewId: string) => {
     adminDeleteReply.mutate({ reviewId, productId });
@@ -132,19 +118,11 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
                 <ReviewCard
                   key={review.id}
                   review={review}
-                  isOwn={user?.id === review.userId}
-                  isAdmin={isAdmin}
-                  replyingTo={replyingTo}
-                  replyText={replyText}
-                  onEditReview={handleEditReview}
-                  onDeleteOwn={handleDeleteOwn}
-                  onAdminDelete={handleAdminDelete}
-                  onStartReply={handleStartReply}
-                  onSubmitReply={handleSubmitReply}
-                  onCancelReply={handleCancelReply}
-                  onDeleteReply={handleDeleteReply}
-                  onReplyTextChange={setReplyText}
                   onImageClick={setLightboxUrl}
+                  onEditReview={handleEditReview}
+                  onDeleteReview={handleDeleteReview}
+                  onReply={handleReply}
+                  onDeleteReply={handleDeleteReply}
                 />
               ))}
             </Else>

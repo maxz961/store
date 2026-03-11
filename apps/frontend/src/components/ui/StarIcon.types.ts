@@ -1,5 +1,4 @@
 export interface StarIconProps {
-  star: number;
   isFilled: boolean;
   isHovering: boolean;
   isInteractive: boolean;
