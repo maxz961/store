@@ -42,6 +42,7 @@ jest.mock('@/lib/hooks/useProductParams', () => ({
 let mockUnreadCount: number;
 let mockAdminUnreadCount: number;
 let mockImageErrorCount: number;
+let mockLogsUnread: number;
 
 jest.mock('@/lib/hooks/useSupport', () => ({
   useMyUnreadCount: () => ({ data: mockUnreadCount }),
@@ -50,6 +51,10 @@ jest.mock('@/lib/hooks/useSupport', () => ({
 
 jest.mock('@/lib/hooks/useAdmin', () => ({
   useImageErrorCount: () => ({ data: { count: mockImageErrorCount } }),
+}));
+
+jest.mock('@/lib/hooks/useLogs', () => ({
+  useUnreadLogsCount: () => ({ data: mockLogsUnread }),
 }));
 
 let mockAuthState: any;
@@ -84,6 +89,7 @@ describe('Header', () => {
     mockUnreadCount = 0;
     mockAdminUnreadCount = 0;
     mockImageErrorCount = 0;
+    mockLogsUnread = 0;
   });
 
   it('renders logo text', () => {
@@ -206,5 +212,34 @@ describe('Header', () => {
     mockImageErrorCount = 5;
     render(<Header />);
     expect(screen.queryByTestId('image-error-dot')).not.toBeInTheDocument();
+  });
+
+  it('shows unread-logs dot for admin when unread logs exist', () => {
+    mockAuthState = { ...mockAuthState, isAdmin: true, user: { ...mockAuthState.user, role: 'ADMIN' } };
+    mockLogsUnread = 3;
+    render(<Header />);
+    expect(screen.getByTestId('unread-logs-dot')).toBeInTheDocument();
+  });
+
+  it('hides unread-logs dot when no unread logs', () => {
+    mockAuthState = { ...mockAuthState, isAdmin: true, user: { ...mockAuthState.user, role: 'ADMIN' } };
+    mockLogsUnread = 0;
+    render(<Header />);
+    expect(screen.queryByTestId('unread-logs-dot')).not.toBeInTheDocument();
+  });
+
+  it('unread-logs dot takes priority over image-error dot', () => {
+    mockAuthState = { ...mockAuthState, isAdmin: true, user: { ...mockAuthState.user, role: 'ADMIN' } };
+    mockLogsUnread = 2;
+    mockImageErrorCount = 3;
+    render(<Header />);
+    expect(screen.getByTestId('unread-logs-dot')).toBeInTheDocument();
+    expect(screen.queryByTestId('image-error-dot')).not.toBeInTheDocument();
+  });
+
+  it('does not show unread-logs dot for non-admin users', () => {
+    mockLogsUnread = 5;
+    render(<Header />);
+    expect(screen.queryByTestId('unread-logs-dot')).not.toBeInTheDocument();
   });
 });

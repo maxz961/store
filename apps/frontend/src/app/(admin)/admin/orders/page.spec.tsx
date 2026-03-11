@@ -54,10 +54,10 @@ describe('AdminOrdersPage', () => {
     mockApiGet = jest.fn().mockResolvedValue(mockOrders);
   });
 
-  it('renders title', async () => {
+  it('renders breadcrumb label', async () => {
     const jsx = await AdminOrdersPage({ searchParams: Promise.resolve({}) });
     render(jsx);
-    expect(screen.getByRole('heading', { name: 'Заказы' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
   });
 
   it('renders filter tabs', async () => {

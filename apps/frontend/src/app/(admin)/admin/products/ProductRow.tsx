@@ -3,8 +3,10 @@
 import { useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Pencil } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
+import { Badge } from '@/components/ui/badge';
 import { s } from './page.styled';
 import { formatCurrency } from '@/lib/constants/format';
 import { api } from '@/lib/api';
@@ -12,7 +14,12 @@ import type { ProductRowProps } from './page.types';
 
 
 export const ProductRow = ({ product }: ProductRowProps) => {
+  const router = useRouter();
   const errorReported = useRef(false);
+
+  const handleRowClick = useCallback(() => {
+    router.push(`/products/${product.slug}`);
+  }, [router, product.slug]);
 
   const handleImageError = useCallback(() => {
     if (errorReported.current) return;
@@ -21,7 +28,7 @@ export const ProductRow = ({ product }: ProductRowProps) => {
   }, [product.id]);
 
   return (
-    <tr className={s.tr}>
+    <tr className={s.tr} onClick={handleRowClick}>
       <td className={s.td}>
         <div className={s.productCell}>
           <If condition={product.images.length > 0}>
@@ -49,7 +56,18 @@ export const ProductRow = ({ product }: ProductRowProps) => {
       <td className={s.td}>
         <div className={s.tagsWrapper}>
           {product.tags?.slice(0, 3).map((t) => (
-            <span key={t.tag.slug} className={s.tag}>{t.tag.name}</span>
+            <Badge
+              key={t.tag.slug}
+              variant="outline"
+              className={s.tag}
+              style={t.tag.color ? {
+                borderColor: `${t.tag.color}40`,
+                backgroundColor: `${t.tag.color}12`,
+                color: t.tag.color,
+              } : undefined}
+            >
+              {t.tag.name}
+            </Badge>
           ))}
         </div>
       </td>

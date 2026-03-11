@@ -1,6 +1,6 @@
 export const s = {
   header: 'sticky top-0 z-50 border-b border-border bg-card shadow-sm',
-  container: 'mx-auto flex h-14 max-w-6xl items-center gap-4 px-4 sm:px-6',
+  container: 'flex h-14 w-full items-center gap-4 px-4 sm:px-6',
   logo: 'flex items-center gap-2 text-lg font-semibold text-foreground shrink-0',
   logoIcon: 'h-5 w-5 text-primary',
   actions: 'flex items-center gap-1 shrink-0 ml-auto',
@@ -17,6 +17,7 @@ export const s = {
   unreadDot: 'absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary border-2 border-background text-primary-foreground',
   unreadDotIcon: 'h-3 w-3',
   warningDot: 'absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 border-2 border-background text-white',
+  errorLogDot: 'absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-destructive border-2 border-background text-white text-[10px] font-bold',
   loginButton: 'text-sm',
 
   // Dropdown content

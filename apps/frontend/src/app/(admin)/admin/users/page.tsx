@@ -65,7 +65,6 @@ const AdminUsersPage = () => {
       <Breadcrumbs items={breadcrumbs} />
 
       <div className={s.header}>
-        <h1 className={s.title}>Пользователи</h1>
         <div className={s.searchWrapper}>
           <Search className={s.searchIcon} />
           <input

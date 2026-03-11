@@ -7,6 +7,11 @@ jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
 }));
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+}));
+
 jest.mock('next/image', () => {
   const MockImage = (props: any) => <div data-testid="next-image" {...props} />;
   MockImage.displayName = 'MockImage';

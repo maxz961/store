@@ -8,6 +8,7 @@ export const s = {
   navIcon: 'h-4 w-4',
   navLabelGroup: 'flex items-center gap-1.5',
   navBadge: 'flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground',
+  navBadgeWarning: 'flex h-4 min-w-4 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-medium text-white',
   navWarningIcon: 'h-3.5 w-3.5 text-orange-500',
   content: 'flex-1 min-w-0',
 };

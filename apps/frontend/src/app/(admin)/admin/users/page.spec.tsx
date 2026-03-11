@@ -108,10 +108,10 @@ describe('AdminUsersPage', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
-  it('renders title after data loads', async () => {
+  it('renders search input after data loads', async () => {
     renderPage();
     expect(
-      await screen.findByRole('heading', { name: 'Пользователи' }),
+      await screen.findByPlaceholderText('Поиск по имени или email...'),
     ).toBeInTheDocument();
   });
 

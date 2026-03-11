@@ -3,4 +3,5 @@ export interface UserTriggerProps {
   initials: string;
   hasUnreadMessages?: boolean;
   hasImageErrors?: boolean;
+  hasUnreadLogs?: boolean;
 }

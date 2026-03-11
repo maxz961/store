@@ -2,7 +2,7 @@ export const s = {
   page: 'mx-auto max-w-6xl px-4 py-8 sm:px-6',
   title: 'text-2xl font-semibold text-foreground',
   buttonIcon: 'mr-2 h-4 w-4',
-  header: 'mt-6 flex items-center justify-between gap-4',
+  header: 'mt-6 flex items-center justify-end gap-4',
 
   // Table
   tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
@@ -10,7 +10,7 @@ export const s = {
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',
   thCenter: 'px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground',
-  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0',
+  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0 cursor-pointer',
   td: 'px-4 py-3.5',
   tdCenter: 'px-4 py-3.5 text-center',
 

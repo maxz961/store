@@ -37,10 +37,6 @@ const AdminReviewsPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <div className={s.header}>
-        <h1 className={s.title}>Отзывы</h1>
-      </div>
-
       <div className={s.toolbar}>
         <span className={s.sortLabel}>Сортировка:</span>
         {SORT_OPTIONS.map((opt) => (

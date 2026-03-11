@@ -46,7 +46,7 @@ export const AdminSidebar = () => {
                   <AlertTriangle className={s.navWarningIcon} data-testid="products-image-error-icon" />
                 </When>
                 <When condition={isLogs && !!logsUnread && logsUnread > 0}>
-                  <span className={s.navBadge} data-testid="logs-unread-badge">{logsUnread}</span>
+                  <span className={s.navBadgeWarning} data-testid="logs-unread-badge">{logsUnread}</span>
                 </When>
               </span>
             </Link>

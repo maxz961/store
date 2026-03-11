@@ -129,4 +129,33 @@ export const useImageErrorCount = (enabled = true) =>
     retry: false,
   });
 
+interface AdminProductSuggestion {
+  id: string;
+  name: string;
+  slug: string;
+  images: string[];
+  isPublished: boolean;
+  category: { name: string } | null;
+}
+
+interface AdminProductSuggestionsResponse {
+  items: AdminProductSuggestion[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useAdminProductSuggestions = (query: string) =>
+  useQuery({
+    queryKey: ['admin', 'products', 'suggestions', query],
+    queryFn: () =>
+      api.get<AdminProductSuggestionsResponse>(
+        `/products/admin?search=${encodeURIComponent(query)}&limit=6&sortBy=name&sortOrder=asc`,
+      ),
+    enabled: query.trim().length >= 2,
+    staleTime: 30 * 1000,
+  });
+
+export type { AdminProductSuggestion };
+
 export type { AnalyticsSummary, AdminOrder, CreateProductInput };

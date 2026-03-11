@@ -1,16 +1,27 @@
 export const s = {
   page: 'mx-auto max-w-6xl px-4 py-8 sm:px-6',
   buttonIcon: 'mr-2 h-4 w-4',
-  header: 'mt-6 flex items-center justify-between gap-4',
+  viewRow: 'mt-10 flex items-center gap-4',
 
   // Search
-  searchForm: 'flex-1 max-w-sm',
+  searchForm: 'flex-1 relative',
   searchWrapper: 'relative flex items-center',
   searchIcon: 'absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none',
   searchInput: 'w-full rounded-lg border border-input bg-background py-2 pl-9 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-150',
 
+  // Search dropdown
+  suggestionsDropdown: 'absolute top-full left-0 right-0 z-50 mt-1 overflow-hidden rounded-lg border border-border bg-card shadow-lg',
+  suggestionItem: 'flex w-full items-center gap-3 px-3 py-2.5 text-left text-sm transition-colors duration-150 hover:bg-accent',
+  suggestionItemActive: 'bg-accent',
+  suggestionImage: 'h-8 w-8 flex-shrink-0 rounded-md object-cover border border-border bg-muted',
+  suggestionImageFallback: 'flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-md border border-border bg-muted text-xs text-muted-foreground',
+  suggestionName: 'flex-1 truncate font-medium text-foreground',
+  suggestionMeta: 'flex items-center gap-2 flex-shrink-0',
+  suggestionCategory: 'text-xs text-muted-foreground',
+  suggestionDraftBadge: 'rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground',
+
   // View switch
-  viewSwitch: 'mt-6 flex gap-1 rounded-lg border border-border bg-muted/30 p-1 w-fit',
+  viewSwitch: 'flex gap-1 rounded-lg border border-border bg-muted/30 p-1 w-fit',
   viewTab: 'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150 text-muted-foreground hover:text-foreground',
   viewTabActive: 'bg-card shadow-sm text-foreground',
   viewTabBadge: 'flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-semibold text-white',
@@ -22,7 +33,7 @@ export const s = {
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',
   thRight: 'px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground',
   thCenter: 'px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground',
-  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0',
+  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0 cursor-pointer',
   td: 'px-4 py-3.5',
   tdRight: 'px-4 py-3.5 text-right',
   tdCenter: 'px-4 py-3.5 text-center',

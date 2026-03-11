@@ -40,7 +40,8 @@ const AdminProductsPage = async ({
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <div className={s.header}>
+      <div className={s.viewRow}>
+        <ProductsViewSwitch currentView={view} imageErrorCount={imageErrorData.count} />
         <ProductSearch defaultValue={sp.search} sortBy={sortBy} sortOrder={sortOrder} />
         <Link href="/admin/products/new">
           <Button size="sm">
@@ -49,8 +50,6 @@ const AdminProductsPage = async ({
           </Button>
         </Link>
       </div>
-
-      <ProductsViewSwitch currentView={view} imageErrorCount={imageErrorData.count} />
 
       <ProductsTable
         products={data.items}

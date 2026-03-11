@@ -9,7 +9,6 @@ import {
   HttpStatus,
   Request,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
 import { LogsService } from './logs.service';
 import { CreateLogDto } from './dto/create-log.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -18,7 +17,6 @@ import { Roles } from '../auth/decorators/roles.decorator';
 import { Role } from '@store/shared';
 
 
-@ApiTags('logs')
 @Controller('logs')
 export class LogsController {
   constructor(private readonly logsService: LogsService) {}

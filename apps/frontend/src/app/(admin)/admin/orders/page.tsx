@@ -25,7 +25,6 @@ const AdminOrdersPage = async ({
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
-      <h1 className={s.title}>Заказы</h1>
 
       <OrderFilterTabs activeStatus={sp.status ?? ''} />
       <OrdersTable orders={data.items} />

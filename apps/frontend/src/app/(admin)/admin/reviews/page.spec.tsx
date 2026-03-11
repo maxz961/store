@@ -48,7 +48,7 @@ describe('AdminReviewsPage', () => {
       data: { data: [], total: 0, page: 1, totalPages: 1 },
     });
     render(<AdminReviewsPage />);
-    expect(screen.getByText('Отзывы')).toBeInTheDocument();
+    expect(screen.getByTestId('breadcrumbs')).toBeInTheDocument();
   });
 
   it('shows empty state when no reviews', () => {

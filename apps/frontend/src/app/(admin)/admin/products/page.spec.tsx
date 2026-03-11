@@ -18,6 +18,10 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+jest.mock('@/lib/hooks/useAdmin', () => ({
+  useAdminProductSuggestions: () => ({ data: undefined }),
+}));
+
 let mockApiGet: jest.Mock;
 
 jest.mock('@/lib/api', () => ({
