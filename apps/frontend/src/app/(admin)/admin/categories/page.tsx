@@ -4,7 +4,6 @@ import { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { If, Then, Else, When } from 'react-if';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/TextField';
 import { Spinner } from '@/components/ui/Spinner';
@@ -19,10 +18,6 @@ import { s } from './page.styled';
 import { categoryFormSchema, generateSlug, type CategoryFormValues } from './page.constants';
 import { CategoryRow } from './CategoryRow';
 
-
-const breadcrumbs = [
-  { label: 'Категории' },
-];
 
 const CategoriesPage = () => {
   const { data: categories = [], isLoading } = useCategories();
@@ -75,8 +70,6 @@ const CategoriesPage = () => {
 
   return (
     <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-      <h1 className={s.title}>Категории</h1>
 
       <div className={s.formCard}>
         <h2 className={s.formTitle}>
@@ -87,12 +80,14 @@ const CategoriesPage = () => {
             <TextField
               label="Название"
               placeholder="Электроника"
+              hint="Видимое название категории в каталоге"
               error={errors.name?.message}
               {...register('name')}
             />
             <TextField
               label="Slug"
               placeholder="electronics"
+              hint="URL-идентификатор, генерируется автоматически"
               error={errors.slug?.message}
               {...register('slug')}
             />
@@ -100,6 +95,7 @@ const CategoriesPage = () => {
           <TextField
             label="Описание"
             placeholder="Описание категории (необязательно)"
+            hint="Краткое описание для страницы категории, не обязательно"
             error={errors.description?.message}
             {...register('description')}
           />

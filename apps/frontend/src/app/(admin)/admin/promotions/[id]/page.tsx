@@ -5,13 +5,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { When } from 'react-if';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Spinner } from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { usePromotion, useUpdatePromotion, useDeletePromotion } from '@/lib/hooks/usePromotions';
 import { s } from './page.styled';
-import { makeBreadcrumbs } from './page.constants';
 import {
   createPromotionFormSchema,
   type CreatePromotionFormValues,
@@ -118,8 +116,6 @@ const EditPromotionPage = () => {
     });
   });
 
-  const breadcrumbs = makeBreadcrumbs(promotion?.title ?? 'Редактирование');
-
   if (isLoading) {
     return (
       <div className={s.page}>
@@ -138,10 +134,6 @@ const EditPromotionPage = () => {
 
   return (
     <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-
-      <h1 className={s.pageTitle}>Редактировать акцию</h1>
-
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className={s.form}>
           <BasicInfoSection />

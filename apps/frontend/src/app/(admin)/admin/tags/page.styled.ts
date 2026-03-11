@@ -9,9 +9,14 @@ export const s = {
 
   // Color picker
   colorLabel: 'text-sm font-medium text-foreground',
-  colorWrapper: 'mt-1.5 flex items-center gap-3',
+  colorSection: 'space-y-2',
+  colorWrapper: 'flex items-center gap-3',
   colorInput: 'h-10 w-10 cursor-pointer rounded-lg border border-border p-0.5',
   colorValue: 'text-sm font-mono text-muted-foreground',
+  colorHint: 'mt-1.5 text-xs text-muted-foreground',
+  swatches: 'mt-1.5 flex flex-wrap gap-2',
+  swatch: 'h-6 w-6 rounded-full cursor-pointer border-2 border-transparent transition-all duration-150 hover:scale-110',
+  swatchActive: 'ring-2 ring-offset-2 ring-primary',
 
   // Table
   tableWrapper: 'mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm',
@@ -31,9 +36,9 @@ export const s = {
   count: 'text-sm text-muted-foreground',
 
   // Actions
-  actions: 'flex items-center justify-center gap-2',
-  editBtn: 'text-primary hover:text-primary/80 transition-colors duration-150',
-  deleteBtn: 'text-destructive hover:text-destructive/80 transition-colors duration-150',
+  actions: 'flex items-center justify-center gap-1',
+  editBtn: 'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-primary hover:bg-primary/10 transition-colors duration-150',
+  deleteBtn: 'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium text-destructive hover:bg-destructive/10 transition-colors duration-150',
 
   // Empty
   emptyRow: 'px-4 py-12 text-center text-sm text-muted-foreground',

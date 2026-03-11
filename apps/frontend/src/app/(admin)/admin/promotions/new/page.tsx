@@ -5,13 +5,12 @@ import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { When } from 'react-if';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { useCreatePromotion } from '@/lib/hooks/usePromotions';
 import { s } from './page.styled';
 import {
-  breadcrumbs,
+
   generateSlug,
   createPromotionFormSchema,
   type CreatePromotionFormValues,
@@ -91,10 +90,6 @@ const NewPromotionPage = () => {
 
   return (
     <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-
-      <h1 className={s.pageTitle}>Новая акция</h1>
-
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className={s.form}>
           <BasicInfoSection />

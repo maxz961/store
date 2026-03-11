@@ -4,7 +4,6 @@ import { useCallback } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { StatusBadge } from '@/components/admin/StatusBadge';
 import { useAdminOrder, useUpdateOrderStatus } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
@@ -42,16 +41,8 @@ const AdminOrderDetailPage = () => {
 
   if (!order) return null;
 
-  const breadcrumbs = [
-    { label: 'Админ-панель', href: '/admin/dashboard' },
-    { label: 'Заказы', href: '/admin/orders' },
-    { label: `#${order.id.slice(-8)}` },
-  ];
-
   return (
     <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-
       <Link href="/admin/orders" className={s.backLink}>
         <ArrowLeft className="h-4 w-4" />
         Назад к заказам

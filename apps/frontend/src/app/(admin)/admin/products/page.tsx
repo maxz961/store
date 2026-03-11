@@ -28,7 +28,6 @@ const AdminProductsPage = async ({
       <Breadcrumbs items={breadcrumbs} />
 
       <div className={s.header}>
-        <h1 className={s.title}>Товары</h1>
         <Link href="/admin/products/new">
           <Button size="sm">
             <Plus className={s.buttonIcon} />

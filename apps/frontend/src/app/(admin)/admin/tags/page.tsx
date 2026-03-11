@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { If, Then, Else, When } from 'react-if';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { TextField } from '@/components/ui/TextField';
 import { Spinner } from '@/components/ui/Spinner';
+import { cn } from '@/lib/utils';
 import {
   useTags,
   useCreateTag,
@@ -20,14 +20,11 @@ import {
   tagFormSchema,
   generateSlug,
   DEFAULT_TAG_COLOR,
+  TAG_PRESET_COLORS,
   type TagFormValues,
 } from './page.constants';
 import { TagRow } from './TagRow';
 
-
-const breadcrumbs = [
-  { label: 'Теги' },
-];
 
 const TagsPage = () => {
   const { data: tags = [], isLoading } = useTags();
@@ -50,9 +47,21 @@ const TagsPage = () => {
     }
   });
 
-  const handleColorChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('color', e.target.value);
+  const handleSelectColor = useCallback((color: string) => () => {
+    setValue('color', color);
   }, [setValue]);
+
+  const colorSwatches = useMemo(() =>
+    TAG_PRESET_COLORS.map((color) => (
+      <button
+        key={color}
+        type="button"
+        title={color}
+        className={cn(s.swatch, colorValue === color && s.swatchActive)}
+        style={{ backgroundColor: color }}
+        onClick={handleSelectColor(color)}
+      />
+    )), [colorValue, handleSelectColor]);
 
   const handleEdit = useCallback((tag: Tag) => {
     setEditingId(tag.id);
@@ -86,9 +95,6 @@ const TagsPage = () => {
 
   return (
     <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-      <h1 className={s.title}>Теги</h1>
-
       <div className={s.formCard}>
         <h2 className={s.formTitle}>
           {editingId ? 'Редактировать тег' : 'Новый тег'}
@@ -98,26 +104,23 @@ const TagsPage = () => {
             <TextField
               label="Название"
               placeholder="Новинка"
+              hint="Видимое название тега в каталоге"
               error={errors.name?.message}
               {...register('name')}
             />
             <TextField
               label="Slug"
               placeholder="new-arrival"
+              hint="URL-идентификатор, генерируется автоматически"
               error={errors.slug?.message}
               {...register('slug')}
             />
-            <div>
-              <label className={s.colorLabel}>Цвет</label>
-              <div className={s.colorWrapper}>
-                <input
-                  type="color"
-                  className={s.colorInput}
-                  value={colorValue ?? DEFAULT_TAG_COLOR}
-                  onChange={handleColorChange}
-                />
-                <span className={s.colorValue}>{colorValue}</span>
+            <div className={s.colorSection}>
+              <label className={s.colorLabel}>Цвет тега</label>
+              <div className={s.swatches}>
+                {colorSwatches}
               </div>
+              <p className={s.colorHint}>Цвет отображается на бейдже тега</p>
             </div>
           </div>
 
