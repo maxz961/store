@@ -20,6 +20,18 @@ jest.mock('@/components/ui/Spinner', () => {
   return { Spinner: MockSpinner };
 });
 
+jest.mock('@/components/ui/SelectField', () => {
+  const MockSelectField = ({ value, onChange, options, label }: any) => (
+    <select aria-label={label || 'role-select'} value={value} onChange={onChange}>
+      {options?.map((opt: any) => (
+        <option key={opt.value} value={opt.value}>{opt.label}</option>
+      ))}
+    </select>
+  );
+  MockSelectField.displayName = 'MockSelectField';
+  return { SelectField: MockSelectField };
+});
+
 let mockApiGet: jest.Mock;
 let mockApiPatch: jest.Mock;
 
@@ -39,7 +51,7 @@ const mockUsers = [
     email: 'admin@test.com',
     name: 'Admin User',
     image: 'https://example.com/avatar.jpg',
-    role: 'ADMIN' as const,
+    role: 'ADMIN',
     isBanned: false,
     createdAt: '2026-01-15T00:00:00.000Z',
   },
@@ -48,7 +60,7 @@ const mockUsers = [
     email: 'customer@test.com',
     name: 'Customer User',
     image: null,
-    role: 'CUSTOMER' as const,
+    role: 'CUSTOMER',
     isBanned: false,
     createdAt: '2026-02-20T00:00:00.000Z',
   },
@@ -57,7 +69,7 @@ const mockUsers = [
     email: 'banned@test.com',
     name: null,
     image: null,
-    role: 'CUSTOMER' as const,
+    role: 'CUSTOMER',
     isBanned: true,
     createdAt: '2026-03-01T00:00:00.000Z',
   },
@@ -113,22 +125,19 @@ describe('AdminUsersPage', () => {
     expect(screen.getByText('customer@test.com')).toBeInTheDocument();
   });
 
-  it('renders role badges', async () => {
+  it('renders role dropdowns with correct values', async () => {
     renderPage();
-    expect(await screen.findByText('Админ')).toBeInTheDocument();
-    expect(screen.getAllByText('Покупатель')).toHaveLength(2);
+    const selects = await screen.findAllByRole('combobox');
+    expect(selects).toHaveLength(3);
+    expect(selects[0]).toHaveValue('ADMIN');
+    expect(selects[1]).toHaveValue('CUSTOMER');
+    expect(selects[2]).toHaveValue('CUSTOMER');
   });
 
   it('renders banned status badge', async () => {
     renderPage();
     expect(await screen.findByText('Заблокирован')).toBeInTheDocument();
     expect(screen.getAllByText('Активен')).toHaveLength(2);
-  });
-
-  it('renders role toggle buttons', async () => {
-    renderPage();
-    expect(await screen.findByText('Снять админа')).toBeInTheDocument();
-    expect(screen.getAllByText('Сделать админом')).toHaveLength(2);
   });
 
   it('renders ban/unban buttons for non-admin users', async () => {
@@ -153,12 +162,12 @@ describe('AdminUsersPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('calls patch on role toggle click', async () => {
+  it('calls patch on role dropdown change', async () => {
     mockApiPatch = jest.fn().mockResolvedValue({ ...mockUsers[1], role: 'ADMIN' });
     renderPage();
 
-    const buttons = await screen.findAllByText('Сделать админом');
-    fireEvent.click(buttons[0]);
+    const selects = await screen.findAllByRole('combobox');
+    fireEvent.change(selects[1], { target: { value: 'ADMIN' } });
 
     await waitFor(() => {
       expect(mockApiPatch).toHaveBeenCalledWith('/users/u2/role', { role: 'ADMIN' });

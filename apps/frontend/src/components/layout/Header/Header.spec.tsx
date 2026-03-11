@@ -29,6 +29,12 @@ jest.mock('@/lib/hooks/useProductParams', () => ({
   useProductParams: () => ({ get: () => '', update: mockUpdate }),
 }));
 
+let mockUnreadCount: number;
+
+jest.mock('@/lib/hooks/useSupport', () => ({
+  useMyUnreadCount: () => ({ data: mockUnreadCount }),
+}));
+
 let mockAuthState: any;
 
 jest.mock('@/lib/hooks/useAuth', () => ({
@@ -58,6 +64,7 @@ describe('Header', () => {
     };
 
     mockCartItems = [{ id: 'p1', quantity: 3 }];
+    mockUnreadCount = 0;
   });
 
   it('renders logo text', () => {
@@ -140,5 +147,17 @@ describe('Header', () => {
     fireEvent.change(input, { target: { value: 'наушники' } });
     fireEvent.submit(input.closest('form')!);
     expect(mockUpdate).toHaveBeenCalledWith({ search: 'наушники' });
+  });
+
+  it('shows unread dot on avatar when there are unread messages', () => {
+    mockUnreadCount = 2;
+    render(<Header />);
+    expect(screen.getByTestId('unread-dot')).toBeInTheDocument();
+  });
+
+  it('hides unread dot when no unread messages', () => {
+    mockUnreadCount = 0;
+    render(<Header />);
+    expect(screen.queryByTestId('unread-dot')).not.toBeInTheDocument();
   });
 });

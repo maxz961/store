@@ -209,6 +209,60 @@ async function main() {
   });
   console.log("✅ Promotions created");
 
+  // ── Support messages ──
+  await prisma.supportMessage.deleteMany();
+
+  const customer2 = await prisma.user.upsert({
+    where: { email: "maria@store.com" },
+    update: {},
+    create: { email: "maria@store.com", name: "Мария Соколова", role: Role.CUSTOMER },
+  });
+
+  await prisma.supportMessage.createMany({
+    data: [
+      // Иван Петров — отвеченный диалог
+      {
+        userId: customer.id,
+        content: "Здравствуйте! Я оформил заказ два дня назад, но статус всё ещё «В обработке». Когда ждать обновления?",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-10T09:00:00Z"),
+      },
+      {
+        userId: customer.id,
+        content: "Здравствуйте, Иван! Ваш заказ передан в службу доставки сегодня утром. Трек-номер придёт на email в течение часа.",
+        fromAdmin: true,
+        createdAt: new Date("2026-03-10T10:30:00Z"),
+      },
+      {
+        userId: customer.id,
+        content: "Спасибо! Письмо получил, всё понятно.",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-10T10:45:00Z"),
+      },
+      {
+        userId: customer.id,
+        content: "Пожалуйста! Если возникнут вопросы — пишите. Хорошего дня 😊",
+        fromAdmin: true,
+        createdAt: new Date("2026-03-10T10:50:00Z"),
+      },
+
+      // Мария Соколова — новое необработанное обращение
+      {
+        userId: customer2.id,
+        content: "Добрый день! Хочу вернуть товар — наушники оказались не того цвета. Как оформить возврат?",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-11T14:00:00Z"),
+      },
+      {
+        userId: customer2.id,
+        content: "Можете также уточнить сроки? Заказ был сделан 5 дней назад.",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-11T14:02:00Z"),
+      },
+    ],
+  });
+  console.log("✅ Support messages created");
+
   console.log("🎉 Seeding complete!");
 }
 

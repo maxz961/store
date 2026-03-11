@@ -19,7 +19,7 @@ export const s = {
   swatchActive: 'ring-2 ring-offset-2 ring-primary',
 
   // Table
-  tableWrapper: 'mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm',
+  tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
   table: 'w-full text-sm',
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',

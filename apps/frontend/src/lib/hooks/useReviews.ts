@@ -37,11 +37,42 @@ interface UpdateReviewInput {
 
 export type ReviewSort = 'newest' | 'oldest' | 'highest' | 'lowest';
 
-export const useProductReviews = (productId: string, sort: ReviewSort = 'newest') =>
+export interface PaginatedReviews {
+  data: Review[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+interface ReviewProduct {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface AdminReview extends Review {
+  product: ReviewProduct;
+}
+
+export interface PaginatedAdminReviews {
+  data: AdminReview[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useProductReviews = (productId: string, sort: ReviewSort = 'newest', page: number = 1) =>
   useQuery({
-    queryKey: ['reviews', productId, sort],
-    queryFn: () => api.get<Review[]>(`/reviews/product/${productId}?sort=${sort}`),
+    queryKey: ['reviews', productId, sort, page],
+    queryFn: () => api.get<PaginatedReviews>(`/reviews/product/${productId}?sort=${sort}&page=${page}&limit=5`),
     enabled: !!productId,
+  });
+
+export const useAdminAllReviews = (sort: ReviewSort = 'newest', page: number = 1) =>
+  useQuery({
+    queryKey: ['admin', 'reviews', sort, page],
+    queryFn: () => api.get<PaginatedAdminReviews>(`/reviews/admin/all?sort=${sort}&page=${page}&limit=20`),
+    retry: false,
   });
 
 export const useMyReview = (productId: string, enabled: boolean) =>
@@ -102,7 +133,8 @@ export const useAdminDeleteReview = (productSlug: string) => {
       api.delete(`/reviews/admin/${reviewId}`),
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['reviews', variables.productId] });
-      queryClient.invalidateQueries({ queryKey: ['product', productSlug] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'reviews'] });
+      if (productSlug) queryClient.invalidateQueries({ queryKey: ['product', productSlug] });
     },
   });
 };

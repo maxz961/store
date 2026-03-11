@@ -2,6 +2,12 @@ import { Suspense } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 
 
+jest.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams(),
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
+  usePathname: () => '/products/test-product',
+}));
+
 jest.mock('lucide-react', () => ({
   ImageOff: (props: any) => <div data-testid="icon-imageoff" {...props} />,
   Star: (props: any) => <div data-testid="icon-star" {...props} />,

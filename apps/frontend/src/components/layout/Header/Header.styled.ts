@@ -14,9 +14,11 @@ export const s = {
   cartBadge: 'absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground',
 
   // User menu
-  userButton: 'relative h-8 w-8 rounded-full overflow-hidden border border-border transition-colors duration-150 hover:border-primary cursor-pointer',
+  userWrapper: 'relative cursor-pointer',
+  userButton: 'h-8 w-8 rounded-full overflow-hidden border border-border transition-colors duration-150 hover:border-primary',
   userAvatar: 'h-full w-full object-cover',
   userFallback: 'flex h-full w-full items-center justify-center bg-primary/10 text-xs font-medium text-primary',
+  unreadDot: 'absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-destructive border-2 border-background',
   loginButton: 'text-sm',
 
   // Dropdown content

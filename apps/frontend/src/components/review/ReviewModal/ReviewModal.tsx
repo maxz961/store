@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { ReviewForm } from '@/components/review/ReviewForm';
 import { ReviewCard } from '@/components/review/ReviewCard';
@@ -24,10 +24,16 @@ import { s } from './ReviewModal.styled';
 export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProps) => {
   const { user } = useAuth();
   const [sort, setSort] = useState<ReviewSort>('newest');
+  const [page, setPage] = useState(1);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
   const [editingReview, setEditingReview] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
-  const { data: reviews = [] } = useProductReviews(productId, sort);
+  const { data: reviewsData } = useProductReviews(productId, sort, page);
+  const reviews = useMemo(() => reviewsData?.data ?? [], [reviewsData]);
+  const total = reviewsData?.total ?? 0;
+  const totalPages = reviewsData?.totalPages ?? 1;
+
   const { data: myReview } = useMyReview(productId, !!user);
   const deleteReview = useDeleteReview(productSlug);
   const adminDeleteReview = useAdminDeleteReview(productSlug);
@@ -54,7 +60,13 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
     if (e.target === e.currentTarget) onClose();
   }, [onClose]);
 
-  const handleSort = useCallback((value: ReviewSort) => () => setSort(value), []);
+  const handleSort = useCallback((value: ReviewSort) => () => {
+    setSort(value);
+    setPage(1);
+  }, []);
+
+  const handlePrevPage = useCallback(() => setPage((p) => Math.max(1, p - 1)), []);
+  const handleNextPage = useCallback(() => setPage((p) => Math.min(totalPages, p + 1)), [totalPages]);
 
   const handleDeleteReview = useCallback((reviewId: string) => {
     const review = reviews.find((r) => r.id === reviewId);
@@ -73,8 +85,13 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
     adminDeleteReply.mutate({ reviewId, productId });
   }, [adminDeleteReply, productId]);
 
+  const handleShowForm = useCallback(() => setShowForm(true), []);
+  const handleCancelForm = useCallback(() => setShowForm(false), []);
   const handleEditReview = useCallback(() => setEditingReview(true), []);
-  const handleFormSuccess = useCallback(() => setEditingReview(false), []);
+  const handleFormSuccess = useCallback(() => {
+    setEditingReview(false);
+    setShowForm(false);
+  }, []);
 
   const closeLightbox = useCallback(() => setLightboxUrl(null), []);
 
@@ -83,14 +100,14 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
       <div className={s.modal}>
         {/* Header */}
         <div className={s.header}>
-          <h2 className={s.title}>Отзывы ({reviews.length})</h2>
+          <h2 className={s.title}>Отзывы ({total})</h2>
           <button className={s.closeButton} onClick={onClose}>
             <X className="h-4 w-4" />
           </button>
         </div>
 
         {/* Sort toolbar */}
-        <When condition={reviews.length > 1}>
+        <When condition={total > 1}>
           <div className={s.toolbar}>
             <div className={s.sortGroup}>
               <span className={s.sortLabel}>Сортировка:</span>
@@ -129,16 +146,54 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
           </If>
         </div>
 
-        {/* Review form at the bottom */}
+        {/* Pagination */}
+        <When condition={totalPages > 1}>
+          <div className={s.pagination}>
+            <button
+              className={s.pageButton}
+              onClick={handlePrevPage}
+              disabled={page === 1}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <span className={s.pageInfo}>{page} / {totalPages}</span>
+            <button
+              className={s.pageButton}
+              onClick={handleNextPage}
+              disabled={page === totalPages}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+        </When>
+
+        {/* Review form / CTA at the bottom */}
         <div className={s.formSection}>
-          <When condition={!myReview || editingReview}>
-            <ReviewForm
-              productId={productId}
-              productSlug={productSlug}
-              existingReview={editingReview ? myReview : undefined}
-              onSuccess={handleFormSuccess}
-            />
-          </When>
+          <If condition={editingReview || (showForm && !myReview)}>
+            <Then>
+              <div className={s.formHeader}>
+                <span className={s.formTitle}>Оставить отзыв</span>
+                <When condition={!editingReview}>
+                  <button type="button" className={s.formCloseBtn} onClick={handleCancelForm}>
+                    <X className="h-4 w-4" />
+                  </button>
+                </When>
+              </div>
+              <ReviewForm
+                productId={productId}
+                productSlug={productSlug}
+                existingReview={editingReview ? myReview : undefined}
+                onSuccess={handleFormSuccess}
+              />
+            </Then>
+            <Else>
+              <When condition={!myReview}>
+                <button type="button" className={s.writeReviewBtn} onClick={handleShowForm}>
+                  Оставить отзыв
+                </button>
+              </When>
+            </Else>
+          </If>
         </div>
       </div>
 

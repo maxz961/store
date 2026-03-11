@@ -72,6 +72,17 @@ export class ReviewsController {
     return this.reviewsService.remove(user.id, id);
   }
 
+  @Get('admin/all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  findAll(
+    @Query('sort') sort?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    return this.reviewsService.findAll(sort, page ? Number(page) : 1, limit ? Number(limit) : 20);
+  }
+
   @Delete('admin/:id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)
@@ -99,8 +110,10 @@ export class ReviewsController {
   findByProduct(
     @Param('productId') productId: string,
     @Query('sort') sort?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
   ) {
-    return this.reviewsService.findByProductId(productId, sort);
+    return this.reviewsService.findByProductId(productId, sort, page ? Number(page) : 1, limit ? Number(limit) : 5);
   }
 
   @Get('my/:productId')

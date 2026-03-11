@@ -4,7 +4,7 @@ export const s = {
   header: 'mt-6 flex items-center justify-between gap-4',
 
   // Table
-  tableWrapper: 'mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm',
+  tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
   table: 'w-full text-sm',
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',

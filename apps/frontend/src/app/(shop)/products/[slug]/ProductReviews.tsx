@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { MessageSquare } from 'lucide-react';
 import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
@@ -11,7 +12,8 @@ import type { ProductReviewsProps } from './page.types';
 
 
 export const ProductReviews = ({ productId, productSlug, reviews }: ProductReviewsProps) => {
-  const [showModal, setShowModal] = useState(false);
+  const searchParams = useSearchParams();
+  const [showModal, setShowModal] = useState(() => searchParams.get('reviews') === 'open');
 
   const avgRating = reviews.length > 0
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length

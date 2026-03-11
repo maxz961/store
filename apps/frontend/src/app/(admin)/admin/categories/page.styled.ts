@@ -8,7 +8,7 @@ export const s = {
   formRow: 'grid grid-cols-1 gap-4 sm:grid-cols-2',
 
   // Table
-  tableWrapper: 'mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm',
+  tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
   table: 'w-full text-sm',
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',

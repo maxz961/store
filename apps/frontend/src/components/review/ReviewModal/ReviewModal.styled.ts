@@ -1,6 +1,6 @@
 export const s = {
-  overlay: 'fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4',
-  modal: 'relative flex max-h-[90vh] w-full max-w-2xl flex-col rounded-2xl border border-border bg-card shadow-xl',
+  overlay: 'fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-2',
+  modal: 'relative flex h-[90vh] w-full max-w-4xl flex-col rounded-2xl border border-border bg-card shadow-xl',
 
   // Header
   header: 'flex items-center justify-between border-b border-border px-6 py-4',
@@ -36,10 +36,10 @@ export const s = {
   imageThumb: 'h-16 w-16 shrink-0 cursor-pointer rounded-lg object-cover border border-border transition-opacity duration-150 hover:opacity-80',
 
   // Admin reply
-  adminReply: 'ml-4 rounded-lg border-l-2 border-primary/30 bg-primary/5 p-3 space-y-1',
+  adminReply: 'ml-4 rounded-r-lg border-l-4 border-primary/60 bg-white p-3 space-y-1 dark:bg-slate-800/70',
   adminReplyHeader: 'flex items-center justify-between',
-  adminReplyLabel: 'text-xs font-medium text-primary',
-  adminReplyText: 'text-sm text-muted-foreground',
+  adminReplyLabel: 'text-xs font-medium text-slate-500 dark:text-slate-400',
+  adminReplyText: 'text-sm text-foreground/80',
   adminReplyDate: 'text-xs text-muted-foreground',
 
   // Admin reply form
@@ -60,6 +60,15 @@ export const s = {
   lightboxClose: 'absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-colors duration-150 hover:bg-black/70',
   lightboxImage: 'max-h-[85vh] max-w-[90vw] rounded-lg object-contain',
 
+  // Pagination
+  pagination: 'flex items-center justify-center gap-3 border-t border-border px-6 py-3',
+  pageButton: 'flex h-8 w-8 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground disabled:pointer-events-none disabled:opacity-40',
+  pageInfo: 'text-sm text-muted-foreground tabular-nums',
+
   // Form section
   formSection: 'border-t border-border px-6 py-4',
+  formHeader: 'flex items-center justify-between mb-3',
+  formTitle: 'text-sm font-medium text-foreground',
+  formCloseBtn: 'flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground',
+  writeReviewBtn: 'w-full rounded-lg bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors duration-150 hover:bg-primary/90',
 };
