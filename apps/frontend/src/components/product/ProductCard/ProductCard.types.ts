@@ -7,7 +7,7 @@ export interface Product {
   images: string[];
   stock: number;
   category: { name: string; slug: string };
-  tags?: { tag: { name: string; slug: string } }[];
+  tags?: { tag: { name: string; slug: string; color?: string } }[];
   reviews?: { rating: number }[];
 }
 

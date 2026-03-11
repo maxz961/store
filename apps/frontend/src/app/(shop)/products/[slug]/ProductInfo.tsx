@@ -78,7 +78,18 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       <When condition={tags.length > 0}>
         <div className={s.tags}>
           {tags.map(({ tag }) => (
-            <Badge key={tag.slug} variant="outline" className={s.tag}>{tag.name}</Badge>
+            <Badge
+              key={tag.slug}
+              variant="outline"
+              className={s.tag}
+              style={tag.color ? {
+                borderColor: `${tag.color}40`,
+                backgroundColor: `${tag.color}12`,
+                color: tag.color,
+              } : undefined}
+            >
+              {tag.name}
+            </Badge>
           ))}
         </div>
       </When>

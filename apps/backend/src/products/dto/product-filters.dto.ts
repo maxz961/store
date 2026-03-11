@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsNumber, Min, IsArray, IsIn } from "class-validator";
+import { IsOptional, IsString, IsNumber, Min, IsArray, IsIn, IsBoolean } from "class-validator";
 import { Transform, Type } from "class-transformer";
 
 export class ProductFiltersDto {
@@ -49,4 +49,9 @@ export class ProductFiltersDto {
   @IsString()
   @IsIn(['asc', 'desc'])
   sortOrder?: 'asc' | 'desc' = 'desc';
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  imageError?: boolean;
 }

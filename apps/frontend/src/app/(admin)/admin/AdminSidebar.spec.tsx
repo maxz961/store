@@ -20,12 +20,23 @@ jest.mock('lucide-react', () => ({
   Users: () => <div />,
   MessageSquare: () => <div />,
   Headset: () => <div />,
+  AlertTriangle: (props: any) => <div data-testid="icon-alert" {...props} />,
 }));
 
 let mockUnreadCount: number;
+let mockImageErrorCount: number;
+let mockLogsUnread: number;
 
 jest.mock('@/lib/hooks/useSupport', () => ({
   useAdminUnreadCount: () => ({ data: mockUnreadCount }),
+}));
+
+jest.mock('@/lib/hooks/useAdmin', () => ({
+  useImageErrorCount: () => ({ data: { count: mockImageErrorCount } }),
+}));
+
+jest.mock('@/lib/hooks/useLogs', () => ({
+  useUnreadLogsCount: () => ({ data: mockLogsUnread }),
 }));
 
 import { AdminSidebar } from './AdminSidebar';
@@ -34,6 +45,8 @@ import { AdminSidebar } from './AdminSidebar';
 describe('AdminSidebar', () => {
   beforeEach(() => {
     mockUnreadCount = 0;
+    mockImageErrorCount = 0;
+    mockLogsUnread = 0;
   });
 
   it('renders all nav items', () => {
@@ -42,6 +55,7 @@ describe('AdminSidebar', () => {
     expect(screen.getByText('Товары')).toBeInTheDocument();
     expect(screen.getByText('Категории')).toBeInTheDocument();
     expect(screen.getByText('Поддержка')).toBeInTheDocument();
+    expect(screen.getByText('Логи')).toBeInTheDocument();
   });
 
   it('shows unread badge on Поддержка when count > 0', () => {
@@ -67,5 +81,36 @@ describe('AdminSidebar', () => {
     mockUnreadCount = 99;
     render(<AdminSidebar />);
     expect(screen.getByTestId('support-unread-badge')).toHaveTextContent('99');
+  });
+
+  it('shows image-error icon next to Товары when image errors exist', () => {
+    mockImageErrorCount = 3;
+    render(<AdminSidebar />);
+    expect(screen.getByTestId('products-image-error-icon')).toBeInTheDocument();
+  });
+
+  it('hides image-error icon when no image errors', () => {
+    mockImageErrorCount = 0;
+    render(<AdminSidebar />);
+    expect(screen.queryByTestId('products-image-error-icon')).not.toBeInTheDocument();
+  });
+
+  it('shows unread badge on Логи when logsUnread > 0', () => {
+    mockLogsUnread = 3;
+    render(<AdminSidebar />);
+    expect(screen.getByTestId('logs-unread-badge')).toBeInTheDocument();
+    expect(screen.getByTestId('logs-unread-badge')).toHaveTextContent('3');
+  });
+
+  it('hides logs badge when logsUnread is 0', () => {
+    mockLogsUnread = 0;
+    render(<AdminSidebar />);
+    expect(screen.queryByTestId('logs-unread-badge')).not.toBeInTheDocument();
+  });
+
+  it('hides logs badge when logsUnread is undefined', () => {
+    mockLogsUnread = undefined as unknown as number;
+    render(<AdminSidebar />);
+    expect(screen.queryByTestId('logs-unread-badge')).not.toBeInTheDocument();
   });
 });

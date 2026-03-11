@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Param,
   Body,
@@ -43,6 +44,20 @@ export class ProductsController {
   @Roles(Role.ADMIN)
   findAllAdmin(@Query() filters: ProductFiltersDto) {
     return this.productsService.findAll(filters, true);
+  }
+
+  @Get("admin/image-error-count")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN)
+  getImageErrorCount() {
+    return this.productsService.getImageErrorCount();
+  }
+
+  @Patch(":id/image-error")
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  reportImageError(@Param("id") id: string) {
+    return this.productsService.reportImageError(id);
   }
 
   @Get(":slug/similar")

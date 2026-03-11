@@ -5,6 +5,7 @@ export interface Product {
   price: number;
   stock: number;
   isPublished: boolean;
+  hasImageError?: boolean;
   images: string[];
   category: { name: string } | null;
   tags: { tag: { slug: string; name: string } }[];
@@ -52,4 +53,10 @@ export interface ProductsPaginationProps {
   search?: string;
   sortBy: string;
   sortOrder: SortOrder;
+  view?: string;
+}
+
+export interface ProductsViewSwitchProps {
+  currentView: 'all' | 'broken';
+  imageErrorCount: number;
 }

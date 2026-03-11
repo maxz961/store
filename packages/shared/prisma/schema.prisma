@@ -70,8 +70,9 @@ model Product {
   images       String[]
   stock        Int          @default(0)
   sku          String?      @unique
-  isPublished  Boolean      @default(false)
-  categoryId   String
+  isPublished    Boolean      @default(false)
+  hasImageError  Boolean      @default(false)
+  categoryId     String
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 
@@ -203,6 +204,22 @@ model PromotionProduct {
 
   @@id([promotionId, productId])
   @@map("promotion_products")
+}
+
+// ─────────────────────────────────────────────
+// Error Logs
+// ─────────────────────────────────────────────
+
+model ErrorLog {
+  id        String   @id @default(cuid())
+  message   String
+  stack     String?  @db.Text
+  url       String?
+  userId    String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("error_logs")
 }
 
 // ─────────────────────────────────────────────

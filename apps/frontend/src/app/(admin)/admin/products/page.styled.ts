@@ -9,6 +9,12 @@ export const s = {
   searchIcon: 'absolute left-3 h-4 w-4 text-muted-foreground pointer-events-none',
   searchInput: 'w-full rounded-lg border border-input bg-background py-2 pl-9 pr-4 text-sm outline-none placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary transition-colors duration-150',
 
+  // View switch
+  viewSwitch: 'mt-6 flex gap-1 rounded-lg border border-border bg-muted/30 p-1 w-fit',
+  viewTab: 'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors duration-150 text-muted-foreground hover:text-foreground',
+  viewTabActive: 'bg-card shadow-sm text-foreground',
+  viewTabBadge: 'flex h-5 min-w-5 items-center justify-center rounded-full bg-orange-500 px-1 text-[10px] font-semibold text-white',
+
   // Table
   tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
   table: 'w-full text-sm',

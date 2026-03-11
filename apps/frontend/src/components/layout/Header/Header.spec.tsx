@@ -20,6 +20,7 @@ jest.mock('lucide-react', () => ({
   LogOut: (props: any) => <div data-testid="icon-logout" {...props} />,
   LayoutDashboard: (props: any) => <div data-testid="icon-dashboard" {...props} />,
   Mail: (props: any) => <div data-testid="icon-mail" {...props} />,
+  AlertTriangle: (props: any) => <div data-testid="icon-alert" {...props} />,
 }));
 
 import { Header } from './Header';
@@ -40,10 +41,15 @@ jest.mock('@/lib/hooks/useProductParams', () => ({
 
 let mockUnreadCount: number;
 let mockAdminUnreadCount: number;
+let mockImageErrorCount: number;
 
 jest.mock('@/lib/hooks/useSupport', () => ({
   useMyUnreadCount: () => ({ data: mockUnreadCount }),
   useAdminUnreadCount: () => ({ data: mockAdminUnreadCount }),
+}));
+
+jest.mock('@/lib/hooks/useAdmin', () => ({
+  useImageErrorCount: () => ({ data: { count: mockImageErrorCount } }),
 }));
 
 let mockAuthState: any;
@@ -77,6 +83,7 @@ describe('Header', () => {
     mockCartItems = [{ id: 'p1', quantity: 3 }];
     mockUnreadCount = 0;
     mockAdminUnreadCount = 0;
+    mockImageErrorCount = 0;
   });
 
   it('renders logo text', () => {
@@ -177,5 +184,27 @@ describe('Header', () => {
     mockAdminUnreadCount = 0;
     render(<Header />);
     expect(screen.queryByTestId('unread-dot')).not.toBeInTheDocument();
+  });
+
+  it('shows image-error dot for admin when image errors exist', () => {
+    mockAuthState = { ...mockAuthState, isAdmin: true, user: { ...mockAuthState.user, role: 'ADMIN' } };
+    mockImageErrorCount = 2;
+    render(<Header />);
+    expect(screen.getByTestId('image-error-dot')).toBeInTheDocument();
+  });
+
+  it('image error dot takes priority over unread dot for admin', () => {
+    mockAuthState = { ...mockAuthState, isAdmin: true, user: { ...mockAuthState.user, role: 'ADMIN' } };
+    mockImageErrorCount = 2;
+    mockAdminUnreadCount = 3;
+    render(<Header />);
+    expect(screen.getByTestId('image-error-dot')).toBeInTheDocument();
+    expect(screen.queryByTestId('unread-dot')).not.toBeInTheDocument();
+  });
+
+  it('does not show image-error dot for non-admin users', () => {
+    mockImageErrorCount = 5;
+    render(<Header />);
+    expect(screen.queryByTestId('image-error-dot')).not.toBeInTheDocument();
   });
 });

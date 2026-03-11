@@ -11,6 +11,7 @@ import { Dropdown } from '@/components/ui/Dropdown';
 import { useCartStore } from '@/store/cart';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyUnreadCount, useAdminUnreadCount } from '@/lib/hooks/useSupport';
+import { useImageErrorCount } from '@/lib/hooks/useAdmin';
 import { getInitials } from '@/lib/utils';
 import { UserTrigger } from './UserTrigger/UserTrigger';
 import { UserMenu } from './UserMenu/UserMenu';
@@ -26,9 +27,11 @@ export const Header = () => {
   const itemCount = useCartStore((state) => state.items.reduce((acc, i) => acc + i.quantity, 0));
   const { data: myUnreadCount } = useMyUnreadCount();
   const { data: adminUnreadCount } = useAdminUnreadCount(isAdmin);
+  const { data: imageErrorData } = useImageErrorCount(isAdmin);
   const hasUnread = isAdmin
     ? (!!adminUnreadCount && adminUnreadCount > 0)
     : (!!myUnreadCount && myUnreadCount > 0);
+  const hasImageErrors = isAdmin && !!imageErrorData?.count && imageErrorData.count > 0;
 
   const handleToggleTheme = useCallback(() => setTheme(theme === 'dark' ? 'light' : 'dark'), [theme, setTheme]);
 
@@ -63,7 +66,7 @@ export const Header = () => {
 
           <If condition={isAuthenticated && !!user}>
             <Then>
-              <Dropdown className="relative" trigger={<UserTrigger image={user?.image} initials={initials} hasUnreadMessages={hasUnread} />}>
+              <Dropdown className="relative" trigger={<UserTrigger image={user?.image} initials={initials} hasUnreadMessages={hasUnread} hasImageErrors={hasImageErrors} />}>
                 <UserMenu user={user!} isAdmin={isAdmin} logout={logout} />
               </Dropdown>
             </Then>

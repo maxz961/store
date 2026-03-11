@@ -5,11 +5,12 @@ import { s } from './page.styled';
 import type { ProductsPaginationProps, SortOrder } from './page.types';
 
 
-const buildPageUrl = (page: number, search?: string, sortBy?: string, sortOrder?: SortOrder): string => {
+const buildPageUrl = (page: number, search?: string, sortBy?: string, sortOrder?: SortOrder, view?: string): string => {
   const params = new URLSearchParams({ page: String(page) });
   if (search) params.set('search', search);
   if (sortBy) params.set('sortBy', sortBy);
   if (sortOrder) params.set('sortOrder', sortOrder);
+  if (view === 'broken') params.set('view', 'broken');
   return `/admin/products?${params.toString()}`;
 };
 
@@ -28,7 +29,7 @@ const buildPages = (currentPage: number, totalPages: number): (number | '...')[]
 };
 
 
-export const ProductsPagination = ({ currentPage, totalPages, search, sortBy, sortOrder }: ProductsPaginationProps) => {
+export const ProductsPagination = ({ currentPage, totalPages, search, sortBy, sortOrder, view }: ProductsPaginationProps) => {
   const pages = buildPages(currentPage, totalPages);
 
   return (
@@ -39,7 +40,7 @@ export const ProductsPagination = ({ currentPage, totalPages, search, sortBy, so
           <span>Назад</span>
         </span>
       ) : (
-        <Link href={buildPageUrl(currentPage - 1, search, sortBy, sortOrder)} className={s.paginationArrow}>
+        <Link href={buildPageUrl(currentPage - 1, search, sortBy, sortOrder, view)} className={s.paginationArrow}>
           <ChevronLeft className="h-4 w-4" />
           <span>Назад</span>
         </Link>
@@ -52,7 +53,7 @@ export const ProductsPagination = ({ currentPage, totalPages, search, sortBy, so
           ) : (
             <Link
               key={p}
-              href={buildPageUrl(p, search, sortBy, sortOrder)}
+              href={buildPageUrl(p, search, sortBy, sortOrder, view)}
               className={cn(s.paginationNumber, p === currentPage && s.paginationNumberActive)}
               aria-current={p === currentPage ? 'page' : undefined}
             >
@@ -68,7 +69,7 @@ export const ProductsPagination = ({ currentPage, totalPages, search, sortBy, so
           <ChevronRight className="h-4 w-4" />
         </span>
       ) : (
-        <Link href={buildPageUrl(currentPage + 1, search, sortBy, sortOrder)} className={s.paginationArrow}>
+        <Link href={buildPageUrl(currentPage + 1, search, sortBy, sortOrder, view)} className={s.paginationArrow}>
           <span>Вперёд</span>
           <ChevronRight className="h-4 w-4" />
         </Link>

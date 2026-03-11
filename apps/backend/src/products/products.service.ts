@@ -11,7 +11,7 @@ import { ProductFiltersDto } from "./dto/product-filters.dto";
 @Injectable()
 export class ProductsService {
   async findAll(filters: ProductFiltersDto, adminMode = false) {
-    const { search, categorySlug, tagSlugs, minPrice, maxPrice, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc' } = filters;
+    const { search, categorySlug, tagSlugs, minPrice, maxPrice, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc', imageError } = filters;
 
     const where: Record<string, unknown> = {
       ...(adminMode ? {} : { isPublished: true }),
@@ -27,6 +27,7 @@ export class ProductsService {
       }),
       ...(minPrice !== undefined && { price: { gte: minPrice } }),
       ...(maxPrice !== undefined && { price: { lte: maxPrice } }),
+      ...(imageError !== undefined && { hasImageError: imageError }),
     };
 
     const [items, total] = await Promise.all([
@@ -137,5 +138,17 @@ export class ProductsService {
   async remove(id: string) {
     await this.findById(id);
     return db.product.delete({ where: { id } });
+  }
+
+  async reportImageError(id: string) {
+    const product = await db.product.findUnique({ where: { id }, select: { id: true } });
+    if (!product) throw new NotFoundException(`Product ${id} not found`);
+
+    return db.product.update({ where: { id }, data: { hasImageError: true } });
+  }
+
+  async getImageErrorCount() {
+    const count = await db.product.count({ where: { hasImageError: true } });
+    return { count };
   }
 }

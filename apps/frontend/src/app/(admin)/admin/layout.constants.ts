@@ -1,4 +1,4 @@
-import { LayoutDashboard, Package, ShoppingCart, Megaphone, FolderTree, Tags, Users, MessageSquare, Headset } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Megaphone, FolderTree, Tags, Users, MessageSquare, Headset, AlertTriangle } from 'lucide-react';
 
 
 export const NAV_ITEMS = [
@@ -11,4 +11,5 @@ export const NAV_ITEMS = [
   { href: '/admin/users', label: 'Пользователи', icon: Users },
   { href: '/admin/reviews', label: 'Отзывы', icon: MessageSquare },
   { href: '/admin/support', label: 'Поддержка', icon: Headset },
+  { href: '/admin/logs', label: 'Логи', icon: AlertTriangle },
 ] as const;

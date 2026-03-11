@@ -89,7 +89,16 @@ export const ProductCard = ({ product }: Props) => {
         <When condition={tags.length > 0}>
           <div className={s.tags}>
             {tags.slice(0, 3).map(({ tag }) => (
-              <Badge key={tag.slug} variant="outline" className={s.tag}>
+              <Badge
+                key={tag.slug}
+                variant="outline"
+                className={s.tag}
+                style={tag.color ? {
+                  borderColor: `${tag.color}40`,
+                  backgroundColor: `${tag.color}12`,
+                  color: tag.color,
+                } : undefined}
+              >
                 {tag.name}
               </Badge>
             ))}

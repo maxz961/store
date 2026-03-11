@@ -256,6 +256,45 @@ describe("ProductsService", () => {
     });
   });
 
+  describe("reportImageError", () => {
+    it("sets hasImageError to true on existing product", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue({ id: "product-1" });
+      (mockDb.product.update as jest.Mock).mockResolvedValue({ ...mockProduct, hasImageError: true });
+
+      await service.reportImageError("product-1");
+
+      expect(mockDb.product.update).toHaveBeenCalledWith({
+        where: { id: "product-1" },
+        data: { hasImageError: true },
+      });
+    });
+
+    it("throws NotFoundException for nonexistent product", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.reportImageError("nonexistent")).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe("getImageErrorCount", () => {
+    it("returns count of products with hasImageError true", async () => {
+      (mockDb.product.count as jest.Mock).mockResolvedValue(3);
+
+      const result = await service.getImageErrorCount();
+
+      expect(result).toEqual({ count: 3 });
+      expect(mockDb.product.count).toHaveBeenCalledWith({ where: { hasImageError: true } });
+    });
+
+    it("returns zero when no broken products", async () => {
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      const result = await service.getImageErrorCount();
+
+      expect(result).toEqual({ count: 0 });
+    });
+  });
+
   describe("remove", () => {
     it("deletes existing product", async () => {
       (mockDb.product.findUnique as jest.Mock).mockResolvedValue(mockProduct);

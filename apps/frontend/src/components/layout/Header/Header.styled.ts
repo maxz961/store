@@ -16,6 +16,7 @@ export const s = {
   userFallback: 'flex h-full w-full items-center justify-center bg-primary/10 text-xs font-medium text-primary',
   unreadDot: 'absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary border-2 border-background text-primary-foreground',
   unreadDotIcon: 'h-3 w-3',
+  warningDot: 'absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-orange-500 border-2 border-background text-white',
   loginButton: 'text-sm',
 
   // Dropdown content

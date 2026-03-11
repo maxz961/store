@@ -9,24 +9,31 @@ import { breadcrumbs } from './page.constants';
 import { ProductsTable } from './ProductsTable';
 import { ProductsPagination } from './ProductsPagination';
 import { ProductSearch } from './ProductSearch';
+import { ProductsViewSwitch } from './ProductsViewSwitch';
 
 
 const AdminProductsPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; search?: string; sortBy?: string; sortOrder?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; sortBy?: string; sortOrder?: string; view?: string }>;
 }) => {
   const sp = await searchParams;
   const sortBy = sp.sortBy ?? 'createdAt';
   const sortOrder = (sp.sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc';
+  const view = sp.view === 'broken' ? 'broken' : 'all';
 
   const params = new URLSearchParams();
   if (sp.page) params.set('page', sp.page);
   if (sp.search) params.set('search', sp.search);
   params.set('sortBy', sortBy);
   params.set('sortOrder', sortOrder);
+  if (view === 'broken') params.set('imageError', 'true');
 
-  const data = await api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store', server: true });
+  const [data, imageErrorData] = await Promise.all([
+    api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store', server: true }),
+    api.get<{ count: number }>('/products/admin/image-error-count', { cache: 'no-store', server: true }).catch(() => ({ count: 0 })),
+  ]);
+
   const currentPage = data.page;
 
   return (
@@ -43,6 +50,8 @@ const AdminProductsPage = async ({
         </Link>
       </div>
 
+      <ProductsViewSwitch currentView={view} imageErrorCount={imageErrorData.count} />
+
       <ProductsTable
         products={data.items}
         sortBy={sortBy}
@@ -55,6 +64,7 @@ const AdminProductsPage = async ({
         search={sp.search}
         sortBy={sortBy}
         sortOrder={sortOrder}
+        view={view}
       />
     </div>
   );

@@ -5,6 +5,7 @@ import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { NavigationProgress } from '@/components/providers/NavigationProgress';
 import { Header } from '@/components/layout/Header';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import './globals.css';
 
 
@@ -30,7 +31,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Suspense>
               <Header />
             </Suspense>
-            <main>{children}</main>
+            <main>
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
+            </main>
           </ThemeProvider>
         </QueryProvider>
       </body>

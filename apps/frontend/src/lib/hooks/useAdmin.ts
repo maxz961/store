@@ -121,4 +121,12 @@ export const useUpdateProduct = () => {
   });
 };
 
+export const useImageErrorCount = (enabled = true) =>
+  useQuery({
+    queryKey: ['admin', 'products', 'image-error-count'],
+    queryFn: () => api.get<{ count: number }>('/products/admin/image-error-count'),
+    enabled,
+    retry: false,
+  });
+
 export type { AnalyticsSummary, AdminOrder, CreateProductInput };

@@ -10,10 +10,12 @@ jest.mock('lucide-react', () => ({
   ArrowUp: (props: any) => <div data-testid="icon-sort-asc" {...props} />,
   ArrowDown: (props: any) => <div data-testid="icon-sort-desc" {...props} />,
   Search: (props: any) => <div data-testid="icon-search" {...props} />,
+  AlertTriangle: (props: any) => <div data-testid="icon-alert" {...props} />,
 }));
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 let mockApiGet: jest.Mock;
@@ -31,6 +33,7 @@ const mockProducts = {
   items: [
     {
       id: 'prod-1',
+      slug: 'sony-headphones',
       name: 'Наушники Sony WH-1000XM5',
       price: 9999,
       stock: 25,
@@ -41,6 +44,7 @@ const mockProducts = {
     },
     {
       id: 'prod-2',
+      slug: 'draft-product',
       name: 'Черновик товара',
       price: 500,
       stock: 0,
@@ -58,7 +62,9 @@ const mockProducts = {
 
 describe('AdminProductsPage', () => {
   beforeEach(() => {
-    mockApiGet = jest.fn().mockResolvedValue(mockProducts);
+    mockApiGet = jest.fn()
+      .mockResolvedValueOnce(mockProducts)
+      .mockResolvedValueOnce({ count: 0 });
   });
 
   it('renders add product button', async () => {
@@ -108,7 +114,9 @@ describe('AdminProductsPage', () => {
   });
 
   it('shows empty message when no products', async () => {
-    mockApiGet = jest.fn().mockResolvedValue({ items: [], total: 0, page: 1, totalPages: 1 });
+    mockApiGet = jest.fn()
+      .mockResolvedValueOnce({ items: [], total: 0, page: 1, totalPages: 1 })
+      .mockResolvedValueOnce({ count: 0 });
     const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
     render(jsx);
     expect(screen.getByText('Товары не найдены')).toBeInTheDocument();
@@ -150,11 +158,28 @@ describe('AdminProductsPage', () => {
   });
 
   it('renders pagination with page numbers', async () => {
-    mockApiGet = jest.fn().mockResolvedValue({ ...mockProducts, page: 1, totalPages: 3 });
+    mockApiGet = jest.fn()
+      .mockResolvedValueOnce({ ...mockProducts, page: 1, totalPages: 3 })
+      .mockResolvedValueOnce({ count: 0 });
     const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
     render(jsx);
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
+  });
+
+  it('renders view switch tabs', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByText('Все')).toBeInTheDocument();
+    expect(screen.getByText('Проблемные')).toBeInTheDocument();
+  });
+
+  it('passes imageError=true to API when view=broken', async () => {
+    await AdminProductsPage({ searchParams: Promise.resolve({ view: 'broken' }) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.stringContaining('imageError=true'),
+      expect.any(Object),
+    );
   });
 });
