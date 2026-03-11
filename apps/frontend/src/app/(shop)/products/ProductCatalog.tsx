@@ -3,6 +3,7 @@
 import { If, Then, Else, When } from 'react-if';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ProductFilters } from './ProductFilters';
+import { CatalogPagination } from './CatalogPagination';
 import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { Spinner } from '@/components/ui/Spinner';
@@ -64,6 +65,13 @@ export const ProductCatalog = () => {
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
+                <When condition={(data?.totalPages ?? 1) > 1}>
+                  <CatalogPagination
+                    page={data?.page ?? 1}
+                    totalPages={data?.totalPages ?? 1}
+                    total={data?.total ?? 0}
+                  />
+                </When>
               </Else>
             </If>
           </Else>

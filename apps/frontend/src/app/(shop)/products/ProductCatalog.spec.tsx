@@ -2,6 +2,11 @@ import { render, screen } from '@testing-library/react';
 import { ProductCatalog } from './ProductCatalog';
 
 
+jest.mock('lucide-react', () => ({
+  ChevronLeft: () => <svg data-testid="chevron-left" />,
+  ChevronRight: () => <svg data-testid="chevron-right" />,
+}));
+
 const mockGet = jest.fn().mockReturnValue(undefined);
 
 jest.mock('@/lib/hooks/useProductParams', () => ({
@@ -171,5 +176,36 @@ describe('ProductCatalog', () => {
       tagSlugs: undefined,
       page: undefined,
     });
+  });
+
+  it('shows pagination when totalPages > 1', () => {
+    mockUseProducts.mockReturnValue({
+      data: {
+        items: [mockProduct],
+        total: 35,
+        page: 1,
+        totalPages: 3,
+      },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+    expect(screen.getByText('Назад')).toBeInTheDocument();
+    expect(screen.getByText('Вперёд')).toBeInTheDocument();
+  });
+
+  it('hides pagination when totalPages <= 1', () => {
+    mockUseProducts.mockReturnValue({
+      data: { items: [mockProduct], total: 1, page: 1, totalPages: 1 },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+    expect(screen.queryByText('Назад')).not.toBeInTheDocument();
+    expect(screen.queryByText('Вперёд')).not.toBeInTheDocument();
   });
 });
