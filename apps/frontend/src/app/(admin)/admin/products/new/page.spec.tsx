@@ -86,11 +86,6 @@ describe('NewProductPage', () => {
     mockApiUploadFiles = jest.fn().mockResolvedValue({ urls: ['https://uploaded.jpg'] });
   });
 
-  it('renders title', () => {
-    renderPage();
-    expect(screen.getByRole('heading', { name: 'Новый товар' })).toBeInTheDocument();
-  });
-
   it('renders form sections', () => {
     renderPage();
     expect(screen.getByText('Основная информация')).toBeInTheDocument();

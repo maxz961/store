@@ -51,17 +51,11 @@ describe('TagsPage', () => {
     mockApiDelete = jest.fn().mockResolvedValue(undefined);
   });
 
-  it('renders page title', () => {
-    renderPage();
-    expect(screen.getByRole('heading', { name: 'Теги' })).toBeInTheDocument();
-  });
-
-  it('renders form with color picker', () => {
+  it('renders form with color swatches', () => {
     renderPage();
     expect(screen.getByText('Новый тег')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('Новинка')).toBeInTheDocument();
-    expect(screen.getByText('Цвет')).toBeInTheDocument();
-    expect(document.querySelector('input[type="color"]')).toBeInTheDocument();
+    expect(screen.getByText('Цвет тега')).toBeInTheDocument();
   });
 
   it('loads and displays tags with color dots', async () => {
@@ -99,9 +93,9 @@ describe('TagsPage', () => {
     expect(screen.getAllByTestId('icon-trash')).toHaveLength(2);
   });
 
-  it('displays default color in form', () => {
+  it('displays default color swatch as active', () => {
     renderPage();
-    const colorInput = document.querySelector('input[type="color"]') as HTMLInputElement;
-    expect(colorInput.value).toBe('#4361ee');
+    const swatches = document.querySelectorAll('[title="#4361ee"]');
+    expect(swatches.length).toBeGreaterThanOrEqual(1);
   });
 });

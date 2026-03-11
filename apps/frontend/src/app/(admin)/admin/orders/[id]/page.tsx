@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/StatusBadge';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAdminOrder, useUpdateOrderStatus } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
 import { formatDate } from '@/lib/constants/format';
@@ -12,6 +13,11 @@ import { StatusSection } from './StatusSection';
 import { DeliveryCard } from './DeliveryCard';
 import { AddressCard } from './AddressCard';
 import { OrderItemsList } from './OrderItemsList';
+
+
+const breadcrumbs = [
+  { label: 'Заказы', href: '/admin/orders' },
+];
 
 
 const AdminOrderDetailPage = () => {
@@ -43,6 +49,7 @@ const AdminOrderDetailPage = () => {
 
   return (
     <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
       <Link href="/admin/orders" className={s.backLink}>
         <ArrowLeft className="h-4 w-4" />
         Назад к заказам

@@ -109,11 +109,6 @@ describe('DashboardPage', () => {
     mockApiGet = jest.fn().mockResolvedValue(mockSummary);
   });
 
-  it('renders title', async () => {
-    renderPage();
-    expect(screen.getByText('Аналитика')).toBeInTheDocument();
-  });
-
   it('renders stats cards after loading', async () => {
     renderPage();
     expect(await screen.findByText('Общая выручка')).toBeInTheDocument();

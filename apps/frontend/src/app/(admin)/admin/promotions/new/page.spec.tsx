@@ -76,11 +76,6 @@ describe('NewPromotionPage', () => {
     mockApiPost = jest.fn().mockResolvedValue({ id: 'new-promo' });
   });
 
-  it('renders title "Новая акция"', () => {
-    renderPage();
-    expect(screen.getByRole('heading', { name: 'Новая акция' })).toBeInTheDocument();
-  });
-
   it('renders all form sections', () => {
     renderPage();
     expect(screen.getByText('Основная информация')).toBeInTheDocument();

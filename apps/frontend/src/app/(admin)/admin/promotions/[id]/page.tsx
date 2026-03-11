@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { When } from 'react-if';
 import { Spinner } from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { usePromotion, useUpdatePromotion, useDeletePromotion } from '@/lib/hooks/usePromotions';
 import { s } from './page.styled';
@@ -132,8 +133,14 @@ const EditPromotionPage = () => {
     );
   }
 
+  const pageBreadcrumbs = [
+    { label: 'Акции', href: '/admin/promotions' },
+    { label: promotion?.title ?? '' },
+  ];
+
   return (
     <div className={s.page}>
+      <Breadcrumbs items={pageBreadcrumbs} />
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className={s.form}>
           <BasicInfoSection />

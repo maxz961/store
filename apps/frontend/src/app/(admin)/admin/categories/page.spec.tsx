@@ -51,11 +51,6 @@ describe('CategoriesPage', () => {
     mockApiDelete = jest.fn().mockResolvedValue(undefined);
   });
 
-  it('renders page title', () => {
-    renderPage();
-    expect(screen.getByRole('heading', { name: 'Категории' })).toBeInTheDocument();
-  });
-
   it('renders form for creating category', () => {
     renderPage();
     expect(screen.getByText('Новая категория')).toBeInTheDocument();

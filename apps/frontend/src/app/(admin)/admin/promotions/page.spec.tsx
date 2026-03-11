@@ -63,12 +63,6 @@ describe('AdminPromotionsPage', () => {
     mockApiGet = jest.fn().mockResolvedValue(mockPromotions);
   });
 
-  it('renders title', async () => {
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
-    expect(screen.getByRole('heading', { name: 'Акции' })).toBeInTheDocument();
-  });
-
   it('renders add promotion button', async () => {
     const jsx = await AdminPromotionsPage();
     render(jsx);

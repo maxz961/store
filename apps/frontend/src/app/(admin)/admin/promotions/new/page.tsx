@@ -6,11 +6,12 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { When } from 'react-if';
 import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useProducts } from '@/lib/hooks/useProducts';
 import { useCreatePromotion } from '@/lib/hooks/usePromotions';
 import { s } from './page.styled';
 import {
-
+  breadcrumbs,
   generateSlug,
   createPromotionFormSchema,
   type CreatePromotionFormValues,
@@ -90,6 +91,7 @@ const NewPromotionPage = () => {
 
   return (
     <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className={s.form}>
           <BasicInfoSection />

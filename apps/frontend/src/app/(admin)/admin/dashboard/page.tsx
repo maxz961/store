@@ -2,7 +2,9 @@
 
 import { useMemo } from 'react';
 import { useAnalyticsSummary } from '@/lib/hooks/useAdmin';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { s } from './page.styled';
+import { breadcrumbs } from './page.constants';
 import { STATUS_LABELS, PIE_COLORS, DELIVERY_LABELS } from '@/lib/constants/order';
 import { StatsSection } from './StatsSection';
 import { OrdersByStatusCard } from './OrdersByStatusCard';
@@ -58,7 +60,7 @@ const DashboardPage = () => {
   if (error) {
     return (
       <div className={s.page}>
-
+        <Breadcrumbs items={breadcrumbs} />
         <p className={s.errorText}>{error}</p>
       </div>
     );
@@ -67,8 +69,7 @@ const DashboardPage = () => {
   if (isLoading || !summary) {
     return (
       <div className={s.page}>
-
-  
+        <Breadcrumbs items={breadcrumbs} />
         <div className={s.statsGrid}>
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className={s.statsSkeleton} />
@@ -84,6 +85,7 @@ const DashboardPage = () => {
 
   return (
     <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
       <StatsSection summary={summary} />
 
       <div className={s.chartsGrid}>

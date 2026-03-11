@@ -109,11 +109,9 @@ describe('EditPromotionPage', () => {
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
   });
 
-  it('renders title after data loads', async () => {
+  it('renders save button after data loads', async () => {
     renderPage();
-    expect(
-      await screen.findByRole('heading', { name: 'Редактировать акцию' }),
-    ).toBeInTheDocument();
+    expect(await screen.findByText('Сохранить изменения')).toBeInTheDocument();
   });
 
   it('renders all form sections', async () => {
@@ -133,7 +131,6 @@ describe('EditPromotionPage', () => {
 
   it('prefills form fields with promotion data', async () => {
     renderPage();
-    await screen.findByRole('heading', { name: 'Редактировать акцию' });
 
     await waitFor(() => {
       expect(screen.getByDisplayValue('Весенняя распродажа')).toBeInTheDocument();

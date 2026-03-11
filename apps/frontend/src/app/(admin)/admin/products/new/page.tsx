@@ -9,10 +9,12 @@ import { Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { CheckboxField } from '@/components/ui/CheckboxField';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useCreateProduct, useUploadProductImages } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
 import {
+  breadcrumbs,
   generateSlug,
   createProductFormSchema,
   FIELD_TOOLTIPS,
@@ -113,6 +115,7 @@ const NewProductPage = () => {
 
   return (
     <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className={s.form}>
           <BasicInfoSection />

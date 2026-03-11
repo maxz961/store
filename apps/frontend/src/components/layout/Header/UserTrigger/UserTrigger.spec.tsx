@@ -3,7 +3,12 @@ import { render, screen } from '@testing-library/react';
 
 jest.mock('next/image', () => ({
   __esModule: true,
+  // eslint-disable-next-line @next/next/no-img-element
   default: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
+}));
+
+jest.mock('lucide-react', () => ({
+  Mail: (props: any) => <div data-testid="icon-mail" {...props} />,
 }));
 
 import { UserTrigger } from './UserTrigger';
