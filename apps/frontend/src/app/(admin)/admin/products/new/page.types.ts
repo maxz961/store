@@ -1,4 +1,4 @@
-import type { SelectOption } from '@/components/ui/SelectField.types';
+import type { SelectOption } from '@/components/ui/SelectField';
 
 
 export interface CategoryTagsSectionProps {

@@ -5,12 +5,12 @@ import { SelectField } from '@/components/ui/SelectField';
 import { s } from './page.styled';
 import { ROLE_OPTIONS } from './page.constants';
 import { getInitials } from '@/lib/utils';
-import type { UserRowProps } from './page.types';
+import type { UserRowProps, UserRole } from './page.types';
 
 
 export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
   const handleRoleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    onUpdateRole(user.id, e.target.value);
+    onUpdateRole(user.id, e.target.value as UserRole);
   };
 
   const handleToggleBan = () => {
