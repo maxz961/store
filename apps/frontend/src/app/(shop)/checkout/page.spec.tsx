@@ -11,6 +11,18 @@ jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
 }));
 
+// Mock Stripe before importing the page
+jest.mock('@stripe/stripe-js', () => ({
+  loadStripe: jest.fn().mockResolvedValue(null),
+}));
+
+jest.mock('@stripe/react-stripe-js', () => ({
+  Elements: ({ children }: { children: React.ReactNode }) => <div data-testid="stripe-elements">{children}</div>,
+  PaymentElement: () => <div data-testid="payment-element" />,
+  useStripe: () => null,
+  useElements: () => null,
+}));
+
 import CheckoutPage from './page';
 
 
@@ -55,7 +67,6 @@ jest.mock('@/lib/api', () => ({
   },
 }));
 
-// Mock Next.js Image
 jest.mock('next/image', () => ({
   __esModule: true,
   // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
@@ -75,19 +86,27 @@ const createWrapper = () => {
 
 const renderPage = () => render(<CheckoutPage />, { wrapper: createWrapper() });
 
+const fillForm = () => {
+  fireEvent.change(screen.getByPlaceholderText('Иван Петров'), { target: { value: 'Тест Юзер' } });
+  fireEvent.change(screen.getByPlaceholderText('ул. Шевченко, 10, кв. 5'), { target: { value: 'ул. Тестовая, 1' } });
+  fireEvent.change(screen.getByPlaceholderText('Киев'), { target: { value: 'Киев' } });
+  fireEvent.change(screen.getByPlaceholderText('Киевская обл.'), { target: { value: 'Киевская' } });
+  fireEvent.change(screen.getByPlaceholderText('01001'), { target: { value: '01001' } });
+};
+
 describe('CheckoutPage', () => {
   beforeEach(() => {
     mockReplace.mockClear();
     mockPush.mockClear();
     mockLogin.mockClear();
     mockClearCart.mockClear();
-    mockApiPost = jest.fn().mockResolvedValue({ id: 'order-123' });
+    mockApiPost = jest.fn().mockImplementation((url: string) => {
+      if (url === '/payments/create-intent') return Promise.resolve({ clientSecret: 'pi_test_secret_cs' });
+      if (url === '/orders') return Promise.resolve({ id: 'order-123' });
+      return Promise.resolve({});
+    });
 
-    mockAuthState = {
-      isAuthenticated: true,
-      isLoading: false,
-      login: mockLogin,
-    };
+    mockAuthState = { isAuthenticated: true, isLoading: false, login: mockLogin };
 
     mockCartState = {
       items: [
@@ -125,12 +144,19 @@ describe('CheckoutPage', () => {
     expect(mockReplace).toHaveBeenCalledWith('/cart');
   });
 
-  it('renders delivery method options', () => {
+  it('renders step 1 (info) by default with delivery options', () => {
     renderPage();
 
     expect(screen.getByText('Курьер')).toBeInTheDocument();
     expect(screen.getByText('Самовывоз')).toBeInTheDocument();
     expect(screen.getByText('Почта')).toBeInTheDocument();
+  });
+
+  it('renders step indicator showing both steps', () => {
+    renderPage();
+
+    expect(screen.getByText('Доставка')).toBeInTheDocument();
+    expect(screen.getByText('Оплата')).toBeInTheDocument();
   });
 
   it('renders address form fields', () => {
@@ -157,50 +183,32 @@ describe('CheckoutPage', () => {
     expect(screen.getByText('399,98 ₴')).toBeInTheDocument();
   });
 
-  it('submits order successfully', async () => {
+  it('proceeds to step 2 after submitting valid delivery form', async () => {
     renderPage();
 
-    // Fill required fields
-    fireEvent.change(screen.getByPlaceholderText('Иван Петров'), { target: { value: 'Тест Юзер' } });
-    fireEvent.change(screen.getByPlaceholderText('ул. Шевченко, 10, кв. 5'), { target: { value: 'ул. Тестовая, 1' } });
-    fireEvent.change(screen.getByPlaceholderText('Киев'), { target: { value: 'Киев' } });
-    fireEvent.change(screen.getByPlaceholderText('Киевская обл.'), { target: { value: 'Киевская' } });
-    fireEvent.change(screen.getByPlaceholderText('01001'), { target: { value: '01001' } });
-
-    fireEvent.click(screen.getByText('Оформить заказ'));
+    fillForm();
+    fireEvent.click(screen.getByText('Перейти к оплате →'));
 
     await waitFor(() => {
-      expect(mockApiPost).toHaveBeenCalledWith('/orders', {
-        deliveryMethod: 'COURIER',
-        shippingAddress: expect.objectContaining({ fullName: 'Тест Юзер', city: 'Киев' }),
-        items: [{ productId: 'p1', quantity: 2 }],
-      });
+      expect(mockApiPost).toHaveBeenCalledWith('/payments/create-intent', { amount: 399.98 });
     });
 
     await waitFor(() => {
-      expect(mockClearCart).toHaveBeenCalled();
-      expect(mockPush).toHaveBeenCalledWith('/account/orders/order-123');
+      expect(screen.getByTestId('stripe-elements')).toBeInTheDocument();
     });
   });
 
-  it('shows error when order fails', async () => {
-    mockApiPost = jest.fn().mockRejectedValue(new Error('Недостаточно товара'));
+  it('shows error when create-intent fails', async () => {
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Network error'));
 
     renderPage();
 
-    fireEvent.change(screen.getByPlaceholderText('Иван Петров'), { target: { value: 'Тест' } });
-    fireEvent.change(screen.getByPlaceholderText('ул. Шевченко, 10, кв. 5'), { target: { value: 'Адрес' } });
-    fireEvent.change(screen.getByPlaceholderText('Киев'), { target: { value: 'Киев' } });
-    fireEvent.change(screen.getByPlaceholderText('Киевская обл.'), { target: { value: 'Обл' } });
-    fireEvent.change(screen.getByPlaceholderText('01001'), { target: { value: '01001' } });
-
-    fireEvent.click(screen.getByText('Оформить заказ'));
+    fillForm();
+    fireEvent.click(screen.getByText('Перейти к оплате →'));
 
     await waitFor(() => {
-      expect(screen.getByText('Недостаточно товара')).toBeInTheDocument();
+      expect(screen.getByText('Не удалось создать платёж. Попробуйте ещё раз.')).toBeInTheDocument();
     });
-
-    expect(mockClearCart).not.toHaveBeenCalled();
   });
 
   it('switches delivery method', () => {
@@ -208,7 +216,6 @@ describe('CheckoutPage', () => {
 
     fireEvent.click(screen.getByText('Самовывоз'));
 
-    // Самовывоз should now be selected (active border)
     const pickupButton = screen.getByText('Самовывоз').closest('button');
     expect(pickupButton?.className).toContain('border-primary');
   });

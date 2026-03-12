@@ -7,7 +7,7 @@ import { s } from './page.styled';
 import type { OrderSummaryProps } from './page.types';
 
 
-export const OrderSummary = ({ items, totalPrice, error, isPending }: OrderSummaryProps) => (
+export const OrderSummary = ({ items, totalPrice, step, error, isPending }: OrderSummaryProps) => (
   <div className={s.sidebar}>
     <div className={s.summaryCard}>
       <h2 className={s.summaryTitle}>Ваш заказ</h2>
@@ -25,18 +25,20 @@ export const OrderSummary = ({ items, totalPrice, error, isPending }: OrderSumma
         <span className={s.summaryTotalPrice}>{formatCurrency(totalPrice)}</span>
       </div>
 
-      <When condition={!!error}>
+      <When condition={!!error && step === 'info'}>
         <p className={s.error}>
-          {error instanceof Error ? error.message : 'Не удалось оформить заказ'}
+          {error instanceof Error ? error.message : 'Ошибка. Попробуйте снова.'}
         </p>
       </When>
 
-      <Button type="submit" size="lg" className={s.submitButton} disabled={isPending}>
-        <If condition={isPending}>
-          <Then><Spinner size="sm" /><span className="ml-2">Оформляем...</span></Then>
-          <Else>Оформить заказ</Else>
-        </If>
-      </Button>
+      <When condition={step === 'info'}>
+        <Button type="submit" size="lg" className={s.submitButton} disabled={isPending}>
+          <If condition={isPending}>
+            <Then><Spinner size="sm" /><span className="ml-2">Загрузка...</span></Then>
+            <Else>Перейти к оплате →</Else>
+          </If>
+        </Button>
+      </When>
     </div>
   </div>
 );

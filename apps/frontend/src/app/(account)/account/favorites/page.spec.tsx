@@ -90,9 +90,9 @@ describe('FavoritesPage', () => {
     mockApiDelete = jest.fn().mockResolvedValue(undefined);
   });
 
-  it('renders page title', () => {
+  it('renders page with breadcrumbs', () => {
     renderPage();
-    expect(screen.getByText('Избранное')).toBeInTheDocument();
+    expect(screen.getByTestId('breadcrumbs')).toBeInTheDocument();
   });
 
   it('shows skeleton while loading', () => {

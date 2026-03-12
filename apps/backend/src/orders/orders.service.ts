@@ -36,6 +36,7 @@ export class OrdersService {
           totalAmount,
           deliveryMethod: dto.deliveryMethod,
           shippingAddress: dto.shippingAddress as unknown as Prisma.InputJsonValue,
+          paymentIntentId: dto.paymentIntentId ?? null,
           orderItems: {
             create: dto.items.map((item) => {
               const product = products.find((p) => p.id === item.productId)!;

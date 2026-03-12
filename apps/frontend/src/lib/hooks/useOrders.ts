@@ -61,6 +61,7 @@ interface CreateOrderInput {
     country: string;
   };
   items: { productId: string; quantity: number }[];
+  paymentIntentId?: string;
 }
 
 export const useCreateOrder = () =>
