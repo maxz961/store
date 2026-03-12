@@ -52,6 +52,7 @@ export const createPromotionFormSchema = z.object({
 export type CreatePromotionFormValues = z.infer<typeof createPromotionFormSchema>;
 
 export const FIELD_TOOLTIPS = {
+  banner: 'Баннер отображается в карусели на главной странице каталога. Рекомендуемый размер изображения: 1200×400 px.',
   title: 'Название акции — отображается на баннере в каталоге и в списке админ-панели.',
   slug: 'Уникальный идентификатор акции в URL. Генерируется автоматически из названия.',
   description: 'Краткое описание акции — отображается на баннере под заголовком.',

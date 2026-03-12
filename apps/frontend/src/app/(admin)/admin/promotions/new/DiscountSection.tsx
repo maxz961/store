@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TextField } from '@/components/ui/TextField';
 import { SelectField } from '@/components/ui/SelectField';
@@ -7,7 +8,15 @@ import type { CreatePromotionFormValues } from './page.constants';
 
 
 export const DiscountSection = () => {
-  const { register, formState: { errors } } = useFormContext<CreatePromotionFormValues>();
+  const { register, watch, setValue, formState: { errors } } = useFormContext<CreatePromotionFormValues>();
+  const discountType = watch('discountType');
+
+  const handleDiscountTypeChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      setValue('discountType', e.target.value as 'PERCENTAGE' | 'FIXED', { shouldValidate: true });
+    },
+    [setValue],
+  );
 
   return (
     <div className={s.card}>
@@ -18,8 +27,9 @@ export const DiscountSection = () => {
           label="Тип скидки"
           tooltip={FIELD_TOOLTIPS.discountType}
           options={DISCOUNT_TYPE_OPTIONS}
+          value={discountType}
+          onChange={handleDiscountTypeChange}
           error={errors.discountType?.message}
-          {...register('discountType')}
         />
 
         <TextField

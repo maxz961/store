@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { When } from 'react-if';
+import { X } from 'lucide-react';
+import Image from 'next/image';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { TextField } from '@/components/ui/TextField';
 import { FieldTooltip } from '@/components/ui/FieldTooltip';
@@ -17,11 +19,22 @@ type UploadMode = 'file' | 'url';
 
 export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
   const [mode, setMode] = useState<UploadMode>('file');
-  const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { register, watch, setValue, formState: { errors } } = useFormContext<CreateProductFormValues>();
+
+  const imageUrlsValue = watch('imageUrls');
+  const existingImages = useMemo(
+    () => (imageUrlsValue ? imageUrlsValue.split(',').map((u) => u.trim()).filter(Boolean) : []),
+    [imageUrlsValue],
+  );
 
   const handleSetFileMode = useCallback(() => setMode('file'), []);
 
   const handleSetUrlMode = useCallback(() => setMode('url'), []);
+
+  const handleRemoveExisting = useCallback((url: string) => () => {
+    const updated = existingImages.filter((u) => u !== url);
+    setValue('imageUrls', updated.join(', '));
+  }, [existingImages, setValue]);
 
   return (
     <div className={s.card}>
@@ -48,11 +61,33 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
       </div>
 
       <When condition={mode === 'file'}>
-        <ImageUpload
-          files={files}
-          onChange={onFilesChange}
-          maxFiles={6}
-        />
+        <div className="space-y-3">
+          <ImageUpload
+            files={files}
+            onChange={onFilesChange}
+            maxFiles={6}
+          />
+
+          <When condition={existingImages.length > 0}>
+            <div>
+              <p className="mb-2 text-xs text-muted-foreground">Текущие изображения</p>
+              <div className={s.existingThumbs}>
+                {existingImages.map((url) => (
+                  <div key={url} className={s.existingThumb}>
+                    <Image src={url} alt="" fill className="object-cover" unoptimized />
+                    <button
+                      type="button"
+                      className={s.existingThumbRemove}
+                      onClick={handleRemoveExisting(url)}
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </When>
+        </div>
       </When>
 
       <When condition={mode === 'url'}>
