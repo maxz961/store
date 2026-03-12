@@ -11,6 +11,7 @@ jest.mock('lucide-react', () => ({
 jest.mock('next/image', () => {
   const MockImage = (props: Record<string, unknown>) => {
     const { src, alt, fill, ...rest } = props;
+    // eslint-disable-next-line @next/next/no-img-element
     return <img data-testid="mock-image" src={src as string} alt={alt as string} data-fill={fill ? 'true' : undefined} {...rest} />;
   };
   MockImage.displayName = 'MockImage';
