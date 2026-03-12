@@ -75,6 +75,7 @@ export const useCartStore = create<CartStore>()(
     }),
     {
       name: "store-cart",
+      partialize: (state) => ({ items: state.items }),
       onRehydrateStorage: () => () => {
         useCartStore.setState({ hydrated: true });
       },
