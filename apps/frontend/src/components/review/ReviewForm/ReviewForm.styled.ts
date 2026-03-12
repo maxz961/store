@@ -15,7 +15,7 @@ export const s = {
   imagesLabel: 'text-sm text-muted-foreground mb-2',
 
   // Actions
-  actions: 'flex items-center gap-3',
+  actions: 'flex items-center justify-end gap-3',
   submitButton: '',
 
   // Error

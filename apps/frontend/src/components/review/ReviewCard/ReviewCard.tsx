@@ -180,7 +180,7 @@ export const ReviewCard = ({
             <Button size="sm" onClick={handleSubmitReply} disabled={!replyText.trim()}>
               Ответить
             </Button>
-            <Button size="sm" variant="ghost" onClick={handleCancelReply}>
+            <Button size="sm" variant="outline" onClick={handleCancelReply}>
               Отмена
             </Button>
           </div>
