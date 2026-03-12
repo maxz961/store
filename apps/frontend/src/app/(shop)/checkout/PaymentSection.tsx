@@ -25,6 +25,9 @@ export const PaymentSection = ({ amount, isCreatingOrder, onSuccess, onBack }: P
       const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
         elements,
         redirect: 'if_required',
+        confirmParams: {
+          return_url: `${window.location.origin}/checkout`,
+        },
       });
 
       if (stripeError) {
@@ -37,6 +40,8 @@ export const PaymentSection = ({ amount, isCreatingOrder, onSuccess, onBack }: P
       } else {
         setError('Оплата не завершена. Попробуйте ещё раз.');
       }
+    } catch {
+      setError('Ошибка оплаты. Попробуйте ещё раз.');
     } finally {
       setIsPending(false);
     }

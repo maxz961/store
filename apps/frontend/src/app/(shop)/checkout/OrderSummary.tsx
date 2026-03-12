@@ -25,7 +25,7 @@ export const OrderSummary = ({ items, totalPrice, step, error, isPending }: Orde
         <span className={s.summaryTotalPrice}>{formatCurrency(totalPrice)}</span>
       </div>
 
-      <When condition={!!error && step === 'info'}>
+      <When condition={!!error}>
         <p className={s.error}>
           {error instanceof Error ? error.message : 'Ошибка. Попробуйте снова.'}
         </p>

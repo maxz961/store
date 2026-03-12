@@ -57,6 +57,7 @@ const CheckoutPage = () => {
   const [formSnapshot, setFormSnapshot] = useState<CheckoutFormValues | null>(null);
   const [isCreatingIntent, setIsCreatingIntent] = useState(false);
   const [intentError, setIntentError] = useState<string | null>(null);
+  const [orderSubmitted, setOrderSubmitted] = useState(false);
 
   const methods = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutFormSchema),
@@ -110,6 +111,7 @@ const CheckoutPage = () => {
       },
       {
         onSuccess: (order) => {
+          setOrderSubmitted(true);
           clearCart();
           router.push(`/account/orders/${order.id}`);
         },
@@ -127,7 +129,7 @@ const CheckoutPage = () => {
     );
   }
 
-  if (hydrated && items.length === 0 && !createOrder.isPending) {
+  if (hydrated && items.length === 0 && !createOrder.isPending && !orderSubmitted) {
     router.replace('/cart');
     return null;
   }
