@@ -8,7 +8,7 @@ export interface Product {
   hasImageError?: boolean;
   images: string[];
   category: { name: string } | null;
-  tags: { tag: { slug: string; name: string } }[];
+  tags: { tag: { slug: string; name: string; color?: string | null } }[];
 }
 
 export interface ProductsResponse {

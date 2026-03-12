@@ -29,4 +29,9 @@ export const s = {
 
   // Empty
   emptyRow: 'px-4 py-12 text-center text-sm text-muted-foreground',
+
+  // Pagination
+  pagination: 'mt-6 flex items-center justify-between text-sm text-muted-foreground',
+  pageInfo: 'text-sm text-muted-foreground',
+  pageButtons: 'flex gap-2',
 };

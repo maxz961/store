@@ -48,7 +48,7 @@ export const useAddFavorite = () => {
   const queryClient = useQueryClient();
 
   return useMutation<{ ids: string[] }, unknown, string>({
-    mutationFn: (productId: string) => api.post(`/favorites/${productId}`),
+    mutationFn: (productId: string) => api.post(`/favorites/${productId}`, {}),
     onMutate: async (productId: string) => {
       await queryClient.cancelQueries({ queryKey: IDS_QUERY_KEY });
       const previousIds = queryClient.getQueryData<string[]>(IDS_QUERY_KEY);
