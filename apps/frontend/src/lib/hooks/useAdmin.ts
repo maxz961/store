@@ -64,6 +64,7 @@ export const useUpdateOrderStatus = (orderId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    meta: { suppressGlobalError: true },
     mutationFn: (status: string) =>
       api.put<AdminOrder>(`/orders/${orderId}/status`, { status }),
     onSuccess: (updatedOrder) => {
@@ -93,6 +94,7 @@ export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    meta: { suppressGlobalError: true },
     mutationFn: (data: CreateProductInput) =>
       api.post('/products', data),
     onSuccess: () => {
@@ -116,6 +118,7 @@ export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    meta: { suppressGlobalError: true },
     mutationFn: ({ id, ...data }: UpdateProductInput) =>
       api.put(`/products/${id}`, data),
     onSuccess: () => {
@@ -158,6 +161,7 @@ export const useAdminProductSuggestions = (query: string) =>
       ),
     enabled: query.trim().length >= 2,
     staleTime: 30 * 1000,
+    meta: { suppressGlobalError: true },
   });
 
 interface AdminProductsParams {

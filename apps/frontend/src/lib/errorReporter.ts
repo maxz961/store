@@ -3,8 +3,9 @@ import { api } from '@/lib/api';
 
 
 /**
- * Показывает toast об ошибке и записывает в лог.
- * Использовать в onError всех admin-мутаций.
+ * Используется в onError admin-мутаций — показывает конкретный контекст.
+ * Мутации с этим обработчиком должны иметь meta: { suppressGlobalError: true }
+ * чтобы глобальный QueryCache не показал второй toast.
  */
 export const reportAdminError = (error: unknown, context: string): void => {
   const message = error instanceof Error ? error.message : 'Неизвестная ошибка';
@@ -12,6 +13,20 @@ export const reportAdminError = (error: unknown, context: string): void => {
 
   void api.post('/logs', {
     message: `[Admin] ${context}: ${message}`,
+    url: typeof window !== 'undefined' ? window.location.href : undefined,
+  }).catch(() => {});
+};
+
+/**
+ * Вызывается глобальным QueryCache/MutationCache для всех остальных ошибок
+ * (shop-запросы, shop-мутации). Показывает общее сообщение и пишет в лог.
+ */
+export const reportShopError = (error: unknown, context: string): void => {
+  toast.error('Что-то пошло не так — мы уже отловили эту ошибку, скоро исправим');
+
+  const message = error instanceof Error ? error.message : 'Неизвестная ошибка';
+  void api.post('/logs', {
+    message: `[Shop] ${context}: ${message}`,
     url: typeof window !== 'undefined' ? window.location.href : undefined,
   }).catch(() => {});
 };
