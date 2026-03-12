@@ -60,7 +60,6 @@ const ProfilePage = () => {
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
-      <h1 className={s.pageTitle}>Профиль</h1>
 
       <UserCard
         name={user.name}

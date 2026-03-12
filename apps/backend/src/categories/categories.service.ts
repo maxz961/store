@@ -1,13 +1,8 @@
 import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
 import { db } from "@store/shared";
+import { CreateCategoryDto } from "./dto/create-category.dto";
 
-export class CreateCategoryDto {
-  name: string;
-  slug: string;
-  description?: string;
-  imageUrl?: string;
-  parentId?: string;
-}
+export { CreateCategoryDto };
 
 @Injectable()
 export class CategoriesService {

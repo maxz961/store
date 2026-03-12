@@ -1,8 +1,8 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useTheme } from 'next-themes';
 import { ShoppingCart, Sun, Moon, Store } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
@@ -21,6 +21,7 @@ import { s } from './Header.styled';
 
 
 export const Header = () => {
+  const router = useRouter();
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
   const { theme, setTheme } = useTheme();
@@ -35,6 +36,15 @@ export const Header = () => {
     : (!!myUnreadCount && myUnreadCount > 0);
   const hasImageErrors = isAdmin && !!imageErrorData?.count && imageErrorData.count > 0;
   const hasUnreadLogs = isAdmin && !!logsUnread && logsUnread > 0;
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    router.prefetch('/account/profile');
+    router.prefetch('/account/orders');
+    router.prefetch('/account/support');
+    router.prefetch('/cart');
+    if (isAdmin) router.prefetch('/admin/dashboard');
+  }, [router, isAuthenticated, isAdmin]);
 
   const handleToggleTheme = useCallback(() => setTheme(theme === 'dark' ? 'light' : 'dark'), [theme, setTheme]);
 

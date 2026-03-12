@@ -48,7 +48,7 @@ export const ReviewRow = ({ review, onDelete }: ReviewRowProps) => {
         </div>
       </td>
       <td className={s.td}>
-        <Link href={`/products/${review.product.slug}?reviews=open`} className={s.productLink}>
+        <Link href={`/products/${review.product.slug}?reviews=open`} className={s.productLink} prefetch={false}>
           {review.product.name}
         </Link>
       </td>

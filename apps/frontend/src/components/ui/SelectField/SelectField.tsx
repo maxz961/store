@@ -67,6 +67,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(({
         required={required}
         aria-hidden="true"
         tabIndex={-1}
+        hidden
         className={s.hiddenSelect}
         {...rest}
       >

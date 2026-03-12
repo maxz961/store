@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback, KeyboardEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/Spinner';
@@ -23,9 +24,16 @@ const formatTime = (iso: string) =>
 
 
 const SupportPage = () => {
+  const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: messages = [], isLoading } = useMyMessages();
   const sendMessage = useSendMessage();
+
+  useEffect(() => {
+    router.prefetch('/account/profile');
+    router.prefetch('/account/orders');
+    router.prefetch('/account/favorites');
+  }, [router]);
 
   const [text, setText] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -80,7 +88,6 @@ const SupportPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
       <div className={s.header}>
-        <h1 className={s.pageTitle}>Колл-центр</h1>
         <p className={s.pageSubtitle}>Напишите нам — мы ответим как можно скорее</p>
       </div>
 
@@ -125,7 +132,7 @@ const SupportPage = () => {
               onKeyDown={handleKeyDown}
               rows={1}
             />
-            <Button onClick={handleSend} disabled={!text.trim() || sendMessage.isPending}>
+            <Button className={s.sendButton} onClick={handleSend} disabled={!text.trim() || sendMessage.isPending}>
               {sendMessage.isPending ? <Spinner /> : 'Отправить'}
             </Button>
           </div>

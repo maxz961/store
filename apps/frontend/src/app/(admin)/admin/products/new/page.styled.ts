@@ -26,6 +26,11 @@ export const s = {
   imageTab: 'flex-1 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
   imageTabActive: 'bg-white text-foreground shadow-sm ring-1 ring-border/50 dark:bg-slate-800',
 
+  // Existing image thumbnails (edit page)
+  existingThumbs: 'flex flex-wrap gap-2',
+  existingThumb: 'relative h-20 w-20 overflow-hidden rounded-lg border border-border',
+  existingThumbRemove: 'absolute right-0.5 top-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-black/60 text-white transition-colors hover:bg-destructive',
+
   // Buttons row
   buttonsRow: 'flex gap-3',
   previewBtn: 'border-border bg-card hover:bg-accent',

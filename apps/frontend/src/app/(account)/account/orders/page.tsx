@@ -23,7 +23,6 @@ const OrdersPage = () => {
     return (
       <div className={s.page}>
         <Breadcrumbs items={breadcrumbs} />
-        <h1 className={s.pageTitle}>Мои заказы</h1>
         <div className={s.list}>
           {Array.from({ length: 3 }).map((_, i) => (
             <OrderSkeleton key={i} />
@@ -51,8 +50,6 @@ const OrdersPage = () => {
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
-
-      <h1 className={s.pageTitle}>Мои заказы</h1>
 
       <If condition={!orders || orders.length === 0}>
         <Then>

@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { reportAdminError } from '@/lib/errorReporter';
 
 
 interface AnalyticsSummary {
@@ -63,6 +64,7 @@ export const useUpdateOrderStatus = (orderId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    meta: { suppressGlobalError: true },
     mutationFn: (status: string) =>
       api.put<AdminOrder>(`/orders/${orderId}/status`, { status }),
     onSuccess: (updatedOrder) => {
@@ -70,6 +72,7 @@ export const useUpdateOrderStatus = (orderId: string) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'analytics'] });
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
+    onError: (err) => reportAdminError(err, 'Обновление статуса заказа'),
   });
 };
 
@@ -91,11 +94,13 @@ export const useCreateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    meta: { suppressGlobalError: true },
     mutationFn: (data: CreateProductInput) =>
       api.post('/products', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
+    onError: (err) => reportAdminError(err, 'Создание товара'),
   });
 };
 
@@ -113,11 +118,13 @@ export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    meta: { suppressGlobalError: true },
     mutationFn: ({ id, ...data }: UpdateProductInput) =>
       api.put(`/products/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
+    onError: (err) => reportAdminError(err, 'Обновление товара'),
   });
 };
 
@@ -127,6 +134,7 @@ export const useImageErrorCount = (enabled = true) =>
     queryFn: () => api.get<{ count: number }>('/products/admin/image-error-count'),
     enabled,
     retry: false,
+    meta: { suppressGlobalError: true },
   });
 
 interface AdminProductSuggestion {
@@ -154,6 +162,83 @@ export const useAdminProductSuggestions = (query: string) =>
       ),
     enabled: query.trim().length >= 2,
     staleTime: 30 * 1000,
+    meta: { suppressGlobalError: true },
+  });
+
+interface AdminProductsParams {
+  page?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  imageError?: boolean;
+}
+
+interface AdminProductsResponse {
+  items: {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    stock: number;
+    isPublished: boolean;
+    hasImageError?: boolean;
+    images: string[];
+    category: { name: string } | null;
+    tags: { tag: { slug: string; name: string } }[];
+  }[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useAdminProducts = (params: AdminProductsParams) =>
+  useQuery({
+    queryKey: ['admin', 'products', 'list', params],
+    queryFn: () => {
+      const sp = new URLSearchParams();
+      if (params.page) sp.set('page', params.page);
+      if (params.search) sp.set('search', params.search);
+      sp.set('sortBy', params.sortBy ?? 'createdAt');
+      sp.set('sortOrder', params.sortOrder ?? 'desc');
+      if (params.imageError) sp.set('imageError', 'true');
+      return api.get<AdminProductsResponse>(`/products/admin?${sp.toString()}`);
+    },
+    retry: false,
+  });
+
+interface AdminOrdersParams {
+  status?: string;
+  page?: string;
+  sortBy?: string;
+  sortOrder?: string;
+}
+
+interface AdminOrdersResponse {
+  items: {
+    id: string;
+    status: string;
+    deliveryMethod: string;
+    totalAmount: number;
+    createdAt: string;
+    user: { name: string | null; email: string } | null;
+  }[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useAdminOrders = (params: AdminOrdersParams) =>
+  useQuery({
+    queryKey: ['admin', 'orders', 'list', params],
+    queryFn: () => {
+      const sp = new URLSearchParams();
+      if (params.status) sp.set('status', params.status);
+      if (params.page) sp.set('page', params.page);
+      if (params.sortBy) sp.set('sortBy', params.sortBy);
+      if (params.sortOrder) sp.set('sortOrder', params.sortOrder);
+      return api.get<AdminOrdersResponse>(`/orders/admin?${sp.toString()}`);
+    },
+    retry: false,
   });
 
 export type { AdminProductSuggestion };

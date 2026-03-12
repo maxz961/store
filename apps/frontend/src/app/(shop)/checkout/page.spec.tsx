@@ -45,6 +45,7 @@ let mockCartState = {
   totalPrice: () => 399.98,
   clearCart: mockClearCart,
   hydrated: true,
+  setHydrated: jest.fn(),
 };
 
 jest.mock('next/navigation', () => ({
@@ -115,6 +116,7 @@ describe('CheckoutPage', () => {
       totalPrice: () => 399.98,
       clearCart: mockClearCart,
       hydrated: true,
+      setHydrated: jest.fn(),
     };
   });
 

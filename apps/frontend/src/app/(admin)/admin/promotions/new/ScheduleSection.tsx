@@ -18,6 +18,7 @@ export const ScheduleSection = () => {
           label="Дата начала"
           tooltip={FIELD_TOOLTIPS.startDate}
           type="datetime-local"
+          inputClassName="!block"
           error={errors.startDate?.message}
           {...register('startDate')}
         />
@@ -26,6 +27,7 @@ export const ScheduleSection = () => {
           label="Дата окончания"
           tooltip={FIELD_TOOLTIPS.endDate}
           type="datetime-local"
+          inputClassName="!block"
           error={errors.endDate?.message}
           {...register('endDate')}
         />

@@ -1,16 +1,35 @@
+'use client';
+
+import { useEffect, Suspense } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Plus } from 'lucide-react';
-import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { Spinner } from '@/components/ui/Spinner';
+import { usePromotions } from '@/lib/hooks/usePromotions';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 import { PromotionsTable } from './PromotionsTable';
-import type { Promotion } from './page.types';
 
 
-const AdminPromotionsPage = async () => {
-  const promotions = await api.get<Promotion[]>('/promotions', { cache: 'no-store', server: true });
+const AdminPromotionsContent = () => {
+  const { data: promotions = [], isLoading } = usePromotions();
+
+  if (isLoading) {
+    return <div className="flex justify-center py-24"><Spinner /></div>;
+  }
+
+  return <PromotionsTable promotions={promotions} />;
+};
+
+
+const AdminPromotionsPage = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch('/admin/promotions/new');
+  }, [router]);
 
   return (
     <div className={s.page}>
@@ -24,7 +43,9 @@ const AdminPromotionsPage = async () => {
         </Link>
       </div>
 
-      <PromotionsTable promotions={promotions} />
+      <Suspense fallback={<div className="flex justify-center py-24"><Spinner /></div>}>
+        <AdminPromotionsContent />
+      </Suspense>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { User, Package, LogOut, LayoutDashboard } from 'lucide-react';
 import { When } from 'react-if';

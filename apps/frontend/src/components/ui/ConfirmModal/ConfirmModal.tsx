@@ -1,9 +1,10 @@
 'use client';
 
 import { useCallback } from 'react';
-import { When } from 'react-if';
+import { If, Then, Else, When } from 'react-if';
 import { AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
 import type { ConfirmModalProps } from './ConfirmModal.types';
 import { s } from './ConfirmModal.styled';
 
@@ -43,7 +44,10 @@ export const ConfirmModal = ({
               Отмена
             </Button>
             <Button variant="destructive" onClick={onConfirm} disabled={isLoading}>
-              {confirmLabel}
+              <If condition={isLoading}>
+                <Then><Spinner size="sm" /></Then>
+                <Else>{confirmLabel}</Else>
+              </If>
             </Button>
           </div>
         </div>
