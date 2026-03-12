@@ -69,7 +69,7 @@ export const Header = () => {
 
           <If condition={isAuthenticated && !!user}>
             <Then>
-              <Dropdown className="relative" trigger={<UserTrigger image={user?.image} initials={initials} hasUnreadMessages={hasUnread} hasImageErrors={hasImageErrors} hasUnreadLogs={hasUnreadLogs} />}>
+              <Dropdown className={s.userDropdown} trigger={<UserTrigger image={user?.image} initials={initials} hasUnreadMessages={hasUnread} hasImageErrors={hasImageErrors} hasUnreadLogs={hasUnreadLogs} />}>
                 <UserMenu user={user!} isAdmin={isAdmin} logout={logout} />
               </Dropdown>
             </Then>

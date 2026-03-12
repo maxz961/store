@@ -1,15 +1,16 @@
 export const s = {
   header: 'sticky top-0 z-50 border-b border-border bg-card shadow-sm',
-  container: 'flex h-14 w-full items-center gap-4 px-4 sm:px-6',
-  logo: 'flex items-center gap-2 text-lg font-semibold text-foreground shrink-0',
+  container: 'grid h-14 w-full grid-cols-[1fr_2fr_1fr] items-center px-4 sm:px-6',
+  logo: 'flex items-center gap-2 text-lg font-semibold text-foreground',
   logoIcon: 'h-5 w-5 text-primary',
-  actions: 'flex items-center gap-1 shrink-0 ml-auto',
+  actions: 'flex items-center gap-1 justify-end',
   sunIcon: 'h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0',
   moonIcon: 'absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100',
   cartIcon: 'h-4 w-4',
   cartBadge: 'absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-medium text-primary-foreground',
 
   // User menu
+  userDropdown: 'relative ml-2',
   userWrapper: 'relative inline-block cursor-pointer',
   userButton: 'h-8 w-8 rounded-full overflow-hidden border border-border transition-colors duration-150 hover:border-primary',
   userAvatar: 'h-full w-full object-cover',
