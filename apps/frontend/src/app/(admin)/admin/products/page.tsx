@@ -1,10 +1,15 @@
+'use client';
+
+import { Suspense } from 'react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
-import { api } from '@/lib/api';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
+import { useAdminProducts, useImageErrorCount } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
-import type { ProductsResponse } from './page.types';
+import type { SortOrder } from './page.types';
 import { breadcrumbs } from './page.constants';
 import { ProductsTable } from './ProductsTable';
 import { ProductsPagination } from './ProductsPagination';
@@ -12,37 +17,32 @@ import { ProductSearch } from './ProductSearch';
 import { ProductsViewSwitch } from './ProductsViewSwitch';
 
 
-const AdminProductsPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ page?: string; search?: string; sortBy?: string; sortOrder?: string; view?: string }>;
-}) => {
-  const sp = await searchParams;
-  const sortBy = sp.sortBy ?? 'createdAt';
-  const sortOrder = (sp.sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc';
-  const view = sp.view === 'broken' ? 'broken' : 'all';
+const AdminProductsContent = () => {
+  const searchParams = useSearchParams();
+  const sortBy = searchParams.get('sortBy') ?? 'createdAt';
+  const sortOrder = (searchParams.get('sortOrder') === 'asc' ? 'asc' : 'desc') as SortOrder;
+  const view = searchParams.get('view') === 'broken' ? 'broken' : 'all';
+  const page = searchParams.get('page') ?? undefined;
+  const search = searchParams.get('search') ?? undefined;
 
-  const params = new URLSearchParams();
-  if (sp.page) params.set('page', sp.page);
-  if (sp.search) params.set('search', sp.search);
-  params.set('sortBy', sortBy);
-  params.set('sortOrder', sortOrder);
-  if (view === 'broken') params.set('imageError', 'true');
+  const { data, isLoading } = useAdminProducts({
+    page,
+    search,
+    sortBy,
+    sortOrder,
+    imageError: view === 'broken',
+  });
+  const { data: imageErrorData } = useImageErrorCount();
 
-  const [data, imageErrorData] = await Promise.all([
-    api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store', server: true }),
-    api.get<{ count: number }>('/products/admin/image-error-count', { cache: 'no-store', server: true }).catch(() => ({ count: 0 })),
-  ]);
-
-  const currentPage = data.page;
+  if (isLoading) {
+    return <div className="flex justify-center py-24"><Spinner /></div>;
+  }
 
   return (
-    <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-
+    <>
       <div className={s.viewRow}>
-        <ProductsViewSwitch currentView={view} imageErrorCount={imageErrorData.count} />
-        <ProductSearch defaultValue={sp.search} sortBy={sortBy} sortOrder={sortOrder} />
+        <ProductsViewSwitch currentView={view} imageErrorCount={imageErrorData?.count ?? 0} />
+        <ProductSearch defaultValue={search} sortBy={sortBy} sortOrder={sortOrder} />
         <Link href="/admin/products/new">
           <Button size="sm">
             <Plus className={s.buttonIcon} />
@@ -52,21 +52,31 @@ const AdminProductsPage = async ({
       </div>
 
       <ProductsTable
-        products={data.items}
+        products={data?.items ?? []}
         sortBy={sortBy}
         sortOrder={sortOrder}
-        search={sp.search}
+        search={search}
       />
       <ProductsPagination
-        currentPage={currentPage}
-        totalPages={data.totalPages}
-        search={sp.search}
+        currentPage={data?.page ?? 1}
+        totalPages={data?.totalPages ?? 1}
+        search={search}
         sortBy={sortBy}
         sortOrder={sortOrder}
         view={view}
       />
-    </div>
+    </>
   );
 };
+
+
+const AdminProductsPage = () => (
+  <div className={s.page}>
+    <Breadcrumbs items={breadcrumbs} />
+    <Suspense fallback={<div className="flex justify-center py-24"><Spinner /></div>}>
+      <AdminProductsContent />
+    </Suspense>
+  </div>
+);
 
 export default AdminProductsPage;

@@ -156,6 +156,82 @@ export const useAdminProductSuggestions = (query: string) =>
     staleTime: 30 * 1000,
   });
 
+interface AdminProductsParams {
+  page?: string;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: string;
+  imageError?: boolean;
+}
+
+interface AdminProductsResponse {
+  items: {
+    id: string;
+    name: string;
+    slug: string;
+    price: number;
+    stock: number;
+    isPublished: boolean;
+    hasImageError?: boolean;
+    images: string[];
+    category: { name: string } | null;
+    tags: { tag: { slug: string; name: string } }[];
+  }[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useAdminProducts = (params: AdminProductsParams) =>
+  useQuery({
+    queryKey: ['admin', 'products', 'list', params],
+    queryFn: () => {
+      const sp = new URLSearchParams();
+      if (params.page) sp.set('page', params.page);
+      if (params.search) sp.set('search', params.search);
+      sp.set('sortBy', params.sortBy ?? 'createdAt');
+      sp.set('sortOrder', params.sortOrder ?? 'desc');
+      if (params.imageError) sp.set('imageError', 'true');
+      return api.get<AdminProductsResponse>(`/products/admin?${sp.toString()}`);
+    },
+    retry: false,
+  });
+
+interface AdminOrdersParams {
+  status?: string;
+  page?: string;
+  sortBy?: string;
+  sortOrder?: string;
+}
+
+interface AdminOrdersResponse {
+  items: {
+    id: string;
+    status: string;
+    deliveryMethod: string;
+    totalAmount: number;
+    createdAt: string;
+    user: { name: string | null; email: string } | null;
+  }[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useAdminOrders = (params: AdminOrdersParams) =>
+  useQuery({
+    queryKey: ['admin', 'orders', 'list', params],
+    queryFn: () => {
+      const sp = new URLSearchParams();
+      if (params.status) sp.set('status', params.status);
+      if (params.page) sp.set('page', params.page);
+      if (params.sortBy) sp.set('sortBy', params.sortBy);
+      if (params.sortOrder) sp.set('sortOrder', params.sortOrder);
+      return api.get<AdminOrdersResponse>(`/orders/admin?${sp.toString()}`);
+    },
+    retry: false,
+  });
+
 export type { AdminProductSuggestion };
 
 export type { AnalyticsSummary, AdminOrder, CreateProductInput };

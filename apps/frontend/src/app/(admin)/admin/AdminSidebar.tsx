@@ -1,7 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { AlertTriangle } from 'lucide-react';
 import { When } from 'react-if';
 import { s } from './layout.styled';
@@ -12,7 +13,12 @@ import { useUnreadLogsCount } from '@/lib/hooks/useLogs';
 
 
 export const AdminSidebar = () => {
+  const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    NAV_ITEMS.forEach(({ href }) => router.prefetch(href));
+  }, [router]);
   const { data: unreadCount } = useAdminUnreadCount();
   const { data: imageErrorData } = useImageErrorCount();
   const { data: logsUnread } = useUnreadLogsCount();
