@@ -5,7 +5,7 @@
     "buildCommand": "pnpm install --frozen-lockfile && pnpm --filter @store/shared prisma:generate:ci && pnpm --filter shared build && pnpm --filter backend build:prod"
   },
   "deploy": {
-    "startCommand": "node apps/backend/dist/main",
+    "startCommand": "node apps/backend/dist/apps/backend/src/main",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 3
   }
