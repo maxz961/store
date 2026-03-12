@@ -1,5 +1,5 @@
 {
-  "buildCommand": "pnpm exec prisma generate --schema=packages/shared/prisma/schema.prisma && pnpm --filter @store/frontend build",
+  "buildCommand": "pnpm --filter @store/shared prisma:generate:ci && pnpm --filter @store/frontend build",
   "outputDirectory": "apps/frontend/.next",
   "installCommand": "pnpm install",
   "framework": "nextjs"
