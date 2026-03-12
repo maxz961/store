@@ -15,6 +15,16 @@ jest.mock('@/store/cart', () => ({
     selector({ addItem: mockAddItem }),
 }));
 
+jest.mock('@/lib/hooks/useAuth', () => ({
+  useAuth: () => ({ isAuthenticated: false, isLoading: false }),
+}));
+
+jest.mock('@/lib/hooks/useFavorites', () => ({
+  useFavoriteIds: () => ({ data: [] }),
+  useAddFavorite: () => ({ mutate: jest.fn() }),
+  useRemoveFavorite: () => ({ mutate: jest.fn() }),
+}));
+
 jest.mock('lucide-react', () => ({
   ChevronLeft: (props: Record<string, unknown>) => <div data-testid="chevron-left" {...props} />,
   ChevronRight: (props: Record<string, unknown>) => <div data-testid="chevron-right" {...props} />,

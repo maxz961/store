@@ -13,6 +13,7 @@ jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   UserCircle: (props: any) => <div data-testid="icon-user" {...props} />,
   Headset: (props: any) => <div data-testid="icon-headset" {...props} />,
+  Heart: (props: any) => <div data-testid="icon-heart" {...props} />,
 }));
 
 import ProfilePage from './page';

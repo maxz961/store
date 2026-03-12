@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Package, ChevronRight, Headset } from 'lucide-react';
+import { Package, ChevronRight, Headset, Heart } from 'lucide-react';
 import { s } from './page.styled';
 
 
@@ -15,6 +15,17 @@ export const QuickLinks = () => {
           <div className={s.linkInfo}>
             <p className={s.linkTitle}>Мои заказы</p>
             <p className={s.linkDescription}>История покупок и статусы доставки</p>
+          </div>
+          <ChevronRight className={s.linkArrow} />
+        </Link>
+
+        <Link href="/account/favorites" className={s.linkCard}>
+          <div className={s.linkIcon}>
+            <Heart className="h-5 w-5" />
+          </div>
+          <div className={s.linkInfo}>
+            <p className={s.linkTitle}>Избранное</p>
+            <p className={s.linkDescription}>Сохранённые товары для быстрого доступа</p>
           </div>
           <ChevronRight className={s.linkArrow} />
         </Link>

@@ -6,6 +6,7 @@ import { QueryProvider } from '@/components/providers/QueryProvider';
 import { NavigationProgress } from '@/components/providers/NavigationProgress';
 import { Header } from '@/components/layout/Header';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 
@@ -37,6 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </ErrorBoundary>
             </main>
           </ThemeProvider>
+        <Toaster position="top-right" richColors />
         </QueryProvider>
       </body>
     </html>
