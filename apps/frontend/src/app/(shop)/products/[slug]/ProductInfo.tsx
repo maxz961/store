@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { ShoppingCart, Minus, Plus } from 'lucide-react';
-import { When } from 'react-if';
+import { ShoppingCart, Minus, Plus, Heart } from 'lucide-react';
+import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
 import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useAddFavorite, useFavoriteIds, useRemoveFavorite } from '@/lib/hooks/useFavorites';
 import { cn } from '@/lib/utils';
 import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
@@ -15,7 +18,14 @@ import type { ProductInfoProps } from './page.types';
 
 export const ProductInfo = ({ product }: ProductInfoProps) => {
   const addItem = useCartStore((state) => state.addItem);
+  const { isAuthenticated } = useAuth();
+  const { data: favoriteIds } = useFavoriteIds();
+  const addFavorite = useAddFavorite();
+  const removeFavorite = useRemoveFavorite();
   const [quantity, setQuantity] = useState(1);
+
+  const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
+  const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
 
   const reviews = product.reviews ?? [];
   const tags = product.tags ?? [];
@@ -29,6 +39,15 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
 
   const handleDecrease = useCallback(() => setQuantity((q) => Math.max(1, q - 1)), []);
   const handleIncrease = useCallback(() => setQuantity((q) => Math.min(product.stock, q + 1)), [product.stock]);
+
+  const handleToggleFavorite = useCallback(() => {
+    if (!isAuthenticated) return;
+    if (isFavorite) {
+      removeFavorite.mutate(product.id);
+    } else {
+      addFavorite.mutate(product.id);
+    }
+  }, [isAuthenticated, isFavorite, product.id, addFavorite, removeFavorite]);
 
   const handleAddToCart = useCallback(() => {
     for (let i = 0; i < quantity; i++) {
@@ -120,6 +139,19 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
             <ShoppingCart className={s.buttonIcon} />
             В корзину
           </Button>
+          <When condition={isAuthenticated}>
+            <button
+              className={cn(s.favoriteButton, isFavorite && s.favoriteButtonActive)}
+              onClick={handleToggleFavorite}
+              disabled={isFavoritePending}
+              aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+            >
+              <If condition={isFavoritePending}>
+                <Then><Spinner size="sm" /></Then>
+                <Else><Heart className={cn(s.favoriteIcon, isFavorite ? s.favoriteIconActive : s.favoriteIconInactive)} /></Else>
+              </If>
+            </button>
+          </When>
         </div>
       </When>
     </div>

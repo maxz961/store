@@ -5,6 +5,17 @@ import type { Product } from './ProductCard.types';
 jest.mock('lucide-react', () => ({
   ShoppingCart: (props: Record<string, unknown>) => <div data-testid="icon-cart" {...props} />,
   ImageOff: (props: Record<string, unknown>) => <div data-testid="icon-image-off" {...props} />,
+  Heart: (props: Record<string, unknown>) => <div data-testid="icon-heart" {...props} />,
+}));
+
+jest.mock('@/lib/hooks/useAuth', () => ({
+  useAuth: () => ({ isAuthenticated: false, isLoading: false }),
+}));
+
+jest.mock('@/lib/hooks/useFavorites', () => ({
+  useFavoriteIds: () => ({ data: [] }),
+  useAddFavorite: () => ({ mutate: jest.fn() }),
+  useRemoveFavorite: () => ({ mutate: jest.fn() }),
 }));
 
 const mockAddItem = jest.fn();

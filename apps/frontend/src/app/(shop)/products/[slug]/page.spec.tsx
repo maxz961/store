@@ -16,6 +16,17 @@ jest.mock('lucide-react', () => ({
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   MessageSquare: (props: any) => <div data-testid="icon-message" {...props} />,
+  Heart: (props: any) => <div data-testid="icon-heart" {...props} />,
+}));
+
+jest.mock('@/lib/hooks/useAuth', () => ({
+  useAuth: () => ({ isAuthenticated: false, isLoading: false }),
+}));
+
+jest.mock('@/lib/hooks/useFavorites', () => ({
+  useFavoriteIds: () => ({ data: [] }),
+  useAddFavorite: () => ({ mutate: jest.fn() }),
+  useRemoveFavorite: () => ({ mutate: jest.fn() }),
 }));
 
 import ProductPage from './page';

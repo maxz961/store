@@ -26,6 +26,7 @@ model User {
   orders          Order[]
   reviews         Review[]
   supportMessages SupportMessage[]
+  favorites       Favorite[]
 
   @@map("users")
 }
@@ -81,6 +82,7 @@ model Product {
   orderItems OrderItem[]
   reviews    Review[]
   promotions PromotionProduct[]
+  favorites  Favorite[]
 
   @@map("products")
 }
@@ -204,6 +206,23 @@ model PromotionProduct {
 
   @@id([promotionId, productId])
   @@map("promotion_products")
+}
+
+// ─────────────────────────────────────────────
+// Favorites
+// ─────────────────────────────────────────────
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, productId])
+  @@map("favorites")
 }
 
 // ─────────────────────────────────────────────

@@ -4,10 +4,11 @@ import { useState, useMemo, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { When } from 'react-if';
+import { If, Then, Else, When } from 'react-if';
 import { Eye } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
 import { CheckboxField } from '@/components/ui/CheckboxField';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useCategories, useTags } from '@/lib/hooks/useProducts';
@@ -164,7 +165,10 @@ const NewProductPage = () => {
               Предпросмотр
             </Button>
             <Button type="submit" disabled={isSubmitting} className="flex-1">
-              {isSubmitting ? 'Создание...' : 'Создать товар'}
+              <If condition={isSubmitting}>
+                <Then><Spinner size="sm" /><span className="ml-2">Создание...</span></Then>
+                <Else>Создать товар</Else>
+              </If>
             </Button>
           </div>
         </form>

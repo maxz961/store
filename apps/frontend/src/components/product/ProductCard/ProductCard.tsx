@@ -3,21 +3,32 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, ImageOff } from 'lucide-react';
+import { ShoppingCart, ImageOff, Heart } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
 import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
+import { useAddFavorite, useFavoriteIds, useRemoveFavorite } from '@/lib/hooks/useFavorites';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { formatCurrency } from '@/lib/constants/format';
+import { cn } from '@/lib/utils';
 import type { Props } from './ProductCard.types';
 import { s } from './ProductCard.styled';
 
 
 export const ProductCard = ({ product }: Props) => {
   const addItem = useCartStore((state) => state.addItem);
+  const { isAuthenticated } = useAuth();
+  const { data: favoriteIds } = useFavoriteIds();
+  const addFavorite = useAddFavorite();
+  const removeFavorite = useRemoveFavorite();
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+
+  const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
+  const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
 
   const discount = product.comparePrice
     ? Math.round((1 - product.price / product.comparePrice) * 100)
@@ -32,6 +43,17 @@ export const ProductCard = ({ product }: Props) => {
   const handleImgLoad = () => setImgLoaded(true);
 
   const handleImgError = () => setImgError(true);
+
+  const handleToggleFavorite = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isAuthenticated) return;
+    if (isFavorite) {
+      removeFavorite.mutate(product.id);
+    } else {
+      addFavorite.mutate(product.id);
+    }
+  };
 
   const handleAddToCart = () => {
     addItem({
@@ -71,6 +93,19 @@ export const ProductCard = ({ product }: Props) => {
         </If>
         <When condition={!!discount}>
           <span className={s.discount}>-{discount}%</span>
+        </When>
+        <When condition={isAuthenticated}>
+          <button
+            className={s.favoriteButton}
+            onClick={handleToggleFavorite}
+            disabled={isFavoritePending}
+            aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+          >
+            <If condition={isFavoritePending}>
+              <Then><Spinner size="sm" /></Then>
+              <Else><Heart className={cn(s.favoriteIcon, isFavorite ? s.favoriteIconActive : s.favoriteIconInactive)} /></Else>
+            </If>
+          </button>
         </When>
       </Link>
 

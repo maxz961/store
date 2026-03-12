@@ -135,7 +135,10 @@ const CategoriesPage = () => {
 
           <div className="flex gap-3">
             <Button type="submit" disabled={isSubmitting}>
-              {editingId ? 'Сохранить' : 'Создать'}
+              <If condition={isSubmitting}>
+                <Then><Spinner size="sm" /><span className="ml-2">{editingId ? 'Сохраняем...' : 'Создаём...'}</span></Then>
+                <Else>{editingId ? 'Сохранить' : 'Создать'}</Else>
+              </If>
             </Button>
             <When condition={!!editingId}>
               <Button type="button" variant="outline" onClick={handleCancelEdit}>

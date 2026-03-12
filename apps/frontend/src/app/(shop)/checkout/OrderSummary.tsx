@@ -1,5 +1,6 @@
-import { When } from 'react-if';
+import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
 import { CheckoutSummaryItem } from './CheckoutSummaryItem';
 import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
@@ -31,7 +32,10 @@ export const OrderSummary = ({ items, totalPrice, error, isPending }: OrderSumma
       </When>
 
       <Button type="submit" size="lg" className={s.submitButton} disabled={isPending}>
-        {isPending ? 'Оформляем...' : 'Оформить заказ'}
+        <If condition={isPending}>
+          <Then><Spinner size="sm" /><span className="ml-2">Оформляем...</span></Then>
+          <Else>Оформить заказ</Else>
+        </If>
       </Button>
     </div>
   </div>

@@ -12,6 +12,7 @@ import { UploadModule } from "./upload/upload.module";
 import { PromotionsModule } from "./promotions/promotions.module";
 import { SupportModule } from "./support/support.module";
 import { LogsModule } from "./logs/logs.module";
+import { FavoritesModule } from "./favorites/favorites.module";
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { LogsModule } from "./logs/logs.module";
     PromotionsModule,
     SupportModule,
     LogsModule,
+    FavoritesModule,
   ],
 })
 export class AppModule {}
