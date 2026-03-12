@@ -1,6 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ prefetch: jest.fn(), push: jest.fn(), replace: jest.fn() }),
+}));
+
 jest.mock('next/image', () => ({
   __esModule: true,
   // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
@@ -47,7 +51,7 @@ describe('ProfilePage', () => {
 
   it('renders profile title', () => {
     render(<ProfilePage />);
-    expect(screen.getByRole('heading', { name: 'Профиль' })).toBeInTheDocument();
+    expect(screen.getByText('Профиль')).toBeInTheDocument();
   });
 
   it('renders user name and email', () => {

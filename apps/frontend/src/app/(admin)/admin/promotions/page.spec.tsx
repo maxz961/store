@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 jest.mock('lucide-react', () => ({
@@ -8,7 +9,7 @@ jest.mock('lucide-react', () => ({
 }));
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: jest.fn() }),
+  useRouter: () => ({ push: jest.fn(), prefetch: jest.fn() }),
   useSearchParams: () => new URLSearchParams(),
 }));
 
@@ -18,12 +19,14 @@ jest.mock('next/image', () => {
   return { __esModule: true, default: MockImage };
 });
 
-let mockApiGet: jest.Mock;
+let mockPromotionsData: any[];
+let mockIsLoading: boolean;
 
-jest.mock('@/lib/api', () => ({
-  api: {
-    get: (...args: any[]) => mockApiGet(...args),
-  },
+jest.mock('@/lib/hooks/usePromotions', () => ({
+  usePromotions: () => ({
+    data: mockPromotionsData,
+    isLoading: mockIsLoading,
+  }),
 }));
 
 import AdminPromotionsPage from './page';
@@ -63,63 +66,70 @@ const mockPromotions = [
 ];
 
 
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
+};
+
+const renderPage = () => render(<AdminPromotionsPage />, { wrapper: createWrapper() });
+
+
 describe('AdminPromotionsPage', () => {
   beforeEach(() => {
-    mockApiGet = jest.fn().mockResolvedValue(mockPromotions);
+    mockPromotionsData = mockPromotions;
+    mockIsLoading = false;
   });
 
-  it('renders add promotion button', async () => {
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
+  it('renders add promotion button', () => {
+    renderPage();
     expect(screen.getByText('Добавить акцию')).toBeInTheDocument();
   });
 
-  it('renders promotion titles from mock data', async () => {
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
+  it('renders promotion titles from mock data', () => {
+    renderPage();
     expect(screen.getByText('Летняя распродажа')).toBeInTheDocument();
     expect(screen.getByText('Чёрная пятница')).toBeInTheDocument();
   });
 
-  it('renders discount values', async () => {
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
+  it('renders discount values', () => {
+    renderPage();
     expect(screen.getByText('20%')).toBeInTheDocument();
     expect(screen.getByText('500$')).toBeInTheDocument();
   });
 
-  it('renders active/inactive status badges', async () => {
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
+  it('renders active/inactive status badges', () => {
+    renderPage();
     expect(screen.getByText('Активна')).toBeInTheDocument();
     expect(screen.getByText('Неактивна')).toBeInTheDocument();
   });
 
-  it('renders breadcrumbs', async () => {
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
+  it('renders breadcrumbs', () => {
+    renderPage();
     expect(screen.getByText('Админ-панель')).toBeInTheDocument();
   });
 
-  it('passes server: true for cookie forwarding', async () => {
-    await AdminPromotionsPage();
-    expect(mockApiGet).toHaveBeenCalledWith(
-      '/promotions',
-      expect.objectContaining({ server: true }),
-    );
-  });
-
-  it('shows empty message when no promotions', async () => {
-    mockApiGet = jest.fn().mockResolvedValue([]);
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
+  it('shows empty message when no promotions', () => {
+    mockPromotionsData = [];
+    renderPage();
     expect(screen.getByText('Акции не найдены')).toBeInTheDocument();
   });
 
-  it('renders date period', async () => {
-    const jsx = await AdminPromotionsPage();
-    render(jsx);
+  it('renders date period', () => {
+    renderPage();
     const periodCells = screen.getAllByText(/—/);
     expect(periodCells.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('shows loading spinner when fetching', () => {
+    mockIsLoading = true;
+    mockPromotionsData = [];
+    renderPage();
+    expect(screen.queryByText('Летняя распродажа')).not.toBeInTheDocument();
   });
 });

@@ -62,8 +62,12 @@ describe('ConfirmModal', () => {
   it('disables both buttons when isLoading=true', () => {
     render(<ConfirmModal {...defaultProps} isLoading={true} />);
 
-    expect(screen.getByRole('button', { name: 'Удалить' })).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Отмена' })).toBeDisabled();
+    // Confirm button shows Spinner when loading — query by role without name
+    const buttons = screen.getAllByRole('button');
+    const cancelButton = buttons.find((btn) => btn.textContent === 'Отмена')!;
+    expect(cancelButton).toBeDisabled();
+    // All buttons should be disabled when loading
+    buttons.forEach((btn) => expect(btn).toBeDisabled());
   });
 
   it('shows custom confirmLabel', () => {

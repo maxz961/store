@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   ChevronDown: (props: any) => <div data-testid="icon-chevron-down" {...props} />,
+  Eye: (props: any) => <div data-testid="icon-eye" {...props} />,
+  X: (props: any) => <div data-testid="icon-x" {...props} />,
+  ImagePlus: (props: any) => <div data-testid="icon-image-plus" {...props} />,
+  Info: (props: any) => <div data-testid="icon-info" {...props} />,
+  HelpCircle: (props: any) => <div data-testid="icon-help" {...props} />,
 }));
 
 jest.mock('next/image', () => {
@@ -18,6 +23,15 @@ const mockPush = jest.fn();
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: mockPush }),
+}));
+
+jest.mock('@/lib/hooks/useAdmin', () => ({
+  useUploadProductImages: () => ({
+    mutateAsync: jest.fn().mockResolvedValue({ urls: ['https://example.com/uploaded.jpg'] }),
+    isPending: false,
+    isError: false,
+    error: null,
+  }),
 }));
 
 let mockApiGet: jest.Mock;
@@ -117,6 +131,9 @@ describe('NewPromotionPage', () => {
     const { container } = renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Например: Весенняя распродажа'), { target: { value: 'Spring Sale' } });
+
+    // Switch banner section to URL mode so the URL input is visible
+    fireEvent.click(screen.getByText('По ссылке'));
     fireEvent.change(screen.getByPlaceholderText('https://images.unsplash.com/...'), { target: { value: 'https://img.jpg' } });
 
     const startDateInput = container.querySelector('input[name="startDate"]')!;
@@ -148,6 +165,9 @@ describe('NewPromotionPage', () => {
     const { container } = renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Например: Весенняя распродажа'), { target: { value: 'Test' } });
+
+    // Switch banner section to URL mode so the URL input is visible
+    fireEvent.click(screen.getByText('По ссылке'));
     fireEvent.change(screen.getByPlaceholderText('https://images.unsplash.com/...'), { target: { value: 'https://img.jpg' } });
 
     const startDateInput = container.querySelector('input[name="startDate"]')!;

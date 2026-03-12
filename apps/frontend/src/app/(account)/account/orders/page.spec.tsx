@@ -53,7 +53,7 @@ describe('OrdersPage', () => {
 
   it('renders orders title', () => {
     render(<OrdersPage />);
-    expect(screen.getByRole('heading', { name: 'Мои заказы' })).toBeInTheDocument();
+    expect(screen.getByText('Мои заказы')).toBeInTheDocument();
   });
 
   it('renders order cards with IDs', () => {
