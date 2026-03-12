@@ -30,9 +30,11 @@ export class OrdersController {
   findAll(
     @Query("page") page?: number,
     @Query("limit") limit?: number,
-    @Query("status") status?: OrderStatus
+    @Query("status") status?: OrderStatus,
+    @Query("sortBy") sortBy?: 'createdAt' | 'totalAmount',
+    @Query("sortOrder") sortOrder?: 'asc' | 'desc',
   ) {
-    return this.ordersService.findAll(page, limit, status);
+    return this.ordersService.findAll(page, limit, status, sortBy, sortOrder);
   }
 
   @Get(":id")

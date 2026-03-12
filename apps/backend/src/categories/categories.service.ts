@@ -1,13 +1,8 @@
 import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
 import { db } from "@store/shared";
+import { CreateCategoryDto } from "./dto/create-category.dto";
 
-export class CreateCategoryDto {
-  name: string;
-  slug: string;
-  description?: string;
-  imageUrl?: string;
-  parentId?: string;
-}
+export { CreateCategoryDto };
 
 @Injectable()
 export class CategoriesService {
@@ -29,13 +24,27 @@ export class CategoriesService {
   }
 
   async create(dto: CreateCategoryDto) {
-    const existing = await db.category.findUnique({ where: { slug: dto.slug } });
-    if (existing) throw new ConflictException(`Category slug "${dto.slug}" already exists`);
+    const [existingSlug, existingName] = await Promise.all([
+      db.category.findFirst({ where: { slug: dto.slug } }),
+      db.category.findFirst({ where: { name: dto.name } }),
+    ]);
+    if (existingSlug) throw new ConflictException('Slug уже занят, выберите другой');
+    if (existingName) throw new ConflictException('Название уже занято, введите другое');
     return db.category.create({ data: dto });
   }
 
   async update(id: string, dto: Partial<CreateCategoryDto>) {
     await this.findById(id);
+
+    if (dto.slug) {
+      const existingSlug = await db.category.findFirst({ where: { slug: dto.slug, NOT: { id } } });
+      if (existingSlug) throw new ConflictException('Slug уже занят, выберите другой');
+    }
+    if (dto.name) {
+      const existingName = await db.category.findFirst({ where: { name: dto.name, NOT: { id } } });
+      if (existingName) throw new ConflictException('Название уже занято, введите другое');
+    }
+
     return db.category.update({ where: { id }, data: dto });
   }
 

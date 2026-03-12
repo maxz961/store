@@ -1,0 +1,16 @@
+export const s = {
+  wrapper: 'space-y-1.5',
+  hiddenSelect: 'sr-only',
+  label: 'block text-sm font-medium text-foreground',
+  dropdownWrapper: 'relative',
+  trigger: 'flex h-10 w-full items-center justify-between rounded-lg border border-input bg-background pl-3 pr-3 text-sm text-foreground ring-offset-background transition-colors duration-150 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+  triggerError: 'border-destructive focus-visible:ring-destructive',
+  triggerOpen: 'border-ring ring-2 ring-ring',
+  triggerPlaceholder: 'text-muted-foreground',
+  chevron: 'h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200',
+  chevronOpen: 'rotate-180',
+  panel: 'absolute left-0 right-0 top-[calc(100%+4px)] z-50 rounded-lg border border-border bg-card shadow-lg py-1 overflow-hidden',
+  option: 'flex cursor-pointer items-center px-3 py-2 text-sm text-foreground transition-colors duration-100 hover:bg-accent',
+  optionActive: 'text-primary font-medium bg-primary/5',
+  error: 'text-xs text-destructive',
+};
