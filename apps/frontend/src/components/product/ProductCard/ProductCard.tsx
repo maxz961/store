@@ -21,7 +21,7 @@ import { s } from './ProductCard.styled';
 export const ProductCard = ({ product }: Props) => {
   const addItem = useCartStore((state) => state.addItem);
   const { isAuthenticated } = useAuth();
-  const { data: favoriteIds } = useFavoriteIds();
+  const { data: favoriteIds } = useFavoriteIds(isAuthenticated);
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const [imgError, setImgError] = useState(false);

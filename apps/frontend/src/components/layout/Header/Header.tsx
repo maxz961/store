@@ -27,10 +27,10 @@ export const Header = () => {
   const { theme, setTheme } = useTheme();
   const { user, isAuthenticated, isAdmin, login, logout } = useAuth();
   const itemCount = useCartStore((state) => state.items.reduce((acc, i) => acc + i.quantity, 0));
-  const { data: myUnreadCount } = useMyUnreadCount();
+  const { data: myUnreadCount } = useMyUnreadCount(isAuthenticated && !isAdmin);
   const { data: adminUnreadCount } = useAdminUnreadCount(isAdmin);
   const { data: imageErrorData } = useImageErrorCount(isAdmin);
-  const { data: logsUnread } = useUnreadLogsCount();
+  const { data: logsUnread } = useUnreadLogsCount(isAdmin);
   const hasUnread = isAdmin
     ? (!!adminUnreadCount && adminUnreadCount > 0)
     : (!!myUnreadCount && myUnreadCount > 0);

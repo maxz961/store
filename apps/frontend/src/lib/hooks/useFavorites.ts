@@ -36,11 +36,12 @@ export const useFavorites = () => {
   });
 };
 
-export const useFavoriteIds = () => {
+export const useFavoriteIds = (enabled = true) => {
   return useQuery<string[]>({
     queryKey: IDS_QUERY_KEY,
     queryFn: () => api.get('/favorites/ids'),
     staleTime: 1000 * 60,
+    enabled,
   });
 };
 
