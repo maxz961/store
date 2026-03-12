@@ -80,7 +80,6 @@ const SupportPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
       <div className={s.header}>
-        <h1 className={s.pageTitle}>Колл-центр</h1>
         <p className={s.pageSubtitle}>Напишите нам — мы ответим как можно скорее</p>
       </div>
 
@@ -125,7 +124,7 @@ const SupportPage = () => {
               onKeyDown={handleKeyDown}
               rows={1}
             />
-            <Button onClick={handleSend} disabled={!text.trim() || sendMessage.isPending}>
+            <Button className={s.sendButton} onClick={handleSend} disabled={!text.trim() || sendMessage.isPending}>
               {sendMessage.isPending ? <Spinner /> : 'Отправить'}
             </Button>
           </div>

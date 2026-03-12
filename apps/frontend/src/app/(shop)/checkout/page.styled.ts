@@ -35,10 +35,10 @@ export const s = {
   summaryItemInfo: 'flex-1 min-w-0',
   summaryItemName: 'text-sm font-medium truncate',
   summaryItemQty: 'text-xs text-muted-foreground',
-  summaryDivider: 'border-t border-border',
+  summaryDivider: 'border-t border-border my-4',
   summaryRow: 'flex items-center justify-between text-sm',
   summaryRowLabel: 'text-muted-foreground',
-  summaryTotal: 'flex items-center justify-between',
+  summaryTotal: 'flex items-center justify-between mb-4',
   summaryTotalLabel: 'text-base font-medium',
   summaryTotalPrice: 'text-xl font-bold text-primary',
 

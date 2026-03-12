@@ -27,6 +27,7 @@ export const s = {
   inputArea: 'border-t border-border p-4',
   inputRow: 'flex items-end gap-3',
   textarea: 'flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[44px] max-h-[160px]',
+  sendButton: 'h-[44px] shrink-0',
 
   // Status
   notAuth: 'flex min-h-[400px] flex-col items-center justify-center gap-4 text-center',
