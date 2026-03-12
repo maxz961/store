@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Heart, UserCircle } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
@@ -24,8 +26,15 @@ const FavoriteSkeleton = () => (
 
 
 const FavoritesPage = () => {
+  const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: favorites, isLoading: favoritesLoading } = useFavorites();
+
+  useEffect(() => {
+    router.prefetch('/account/profile');
+    router.prefetch('/account/orders');
+    router.prefetch('/account/support');
+  }, [router]);
 
   const isLoading = authLoading || favoritesLoading;
 

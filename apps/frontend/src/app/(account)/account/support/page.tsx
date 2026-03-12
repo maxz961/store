@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState, useCallback, KeyboardEvent } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/Spinner';
@@ -23,9 +24,16 @@ const formatTime = (iso: string) =>
 
 
 const SupportPage = () => {
+  const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: messages = [], isLoading } = useMyMessages();
   const sendMessage = useSendMessage();
+
+  useEffect(() => {
+    router.prefetch('/account/profile');
+    router.prefetch('/account/orders');
+    router.prefetch('/account/favorites');
+  }, [router]);
 
   const [text, setText] = useState('');
   const bottomRef = useRef<HTMLDivElement>(null);

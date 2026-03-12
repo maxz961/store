@@ -124,7 +124,10 @@ const CheckoutPage = () => {
   if (!hydrated || authLoading) {
     return (
       <div className={s.page}>
-        <Spinner />
+        <Breadcrumbs items={breadcrumbs} />
+        <div className="flex min-h-[400px] items-center justify-center">
+          <Spinner />
+        </div>
       </div>
     );
   }

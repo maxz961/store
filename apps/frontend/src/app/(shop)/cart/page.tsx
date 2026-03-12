@@ -5,6 +5,7 @@ import { ShoppingBag } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { Spinner } from '@/components/ui/Spinner';
 import { useCartStore } from '@/store/cart';
 import { formatCurrency } from '@/lib/constants/format';
 import { CartItem } from './CartItem';
@@ -13,7 +14,18 @@ import { breadcrumbs } from './page.constants';
 
 
 const CartPage = () => {
-  const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart } = useCartStore();
+  const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart, hydrated } = useCartStore();
+
+  if (!hydrated) {
+    return (
+      <div className={s.page}>
+        <Breadcrumbs items={breadcrumbs} />
+        <div className="flex min-h-[400px] items-center justify-center">
+          <Spinner />
+        </div>
+      </div>
+    );
+  }
 
   const handleDecrease = (id: string, qty: number) => () => updateQuantity(id, qty - 1);
 

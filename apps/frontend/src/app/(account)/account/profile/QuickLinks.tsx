@@ -1,9 +1,21 @@
+'use client';
+
+import { useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Package, ChevronRight, Headset, Heart } from 'lucide-react';
 import { s } from './page.styled';
 
 
 export const QuickLinks = () => {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.prefetch('/account/orders');
+    router.prefetch('/account/favorites');
+    router.prefetch('/account/support');
+  }, [router]);
+
   return (
     <div className={s.section}>
       <h2 className={s.sectionTitle}>Быстрые ссылки</h2>
