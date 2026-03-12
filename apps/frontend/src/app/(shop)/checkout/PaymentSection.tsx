@@ -21,19 +21,24 @@ export const PaymentSection = ({ amount, isCreatingOrder, onSuccess, onBack }: P
     setError(null);
     setIsPending(true);
 
-    const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
-      elements,
-      redirect: 'if_required',
-    });
+    try {
+      const { error: stripeError, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        redirect: 'if_required',
+      });
 
-    if (stripeError) {
-      setError(stripeError.message ?? 'Ошибка оплаты. Попробуйте ещё раз.');
+      if (stripeError) {
+        setError(stripeError.message ?? 'Ошибка оплаты. Попробуйте ещё раз.');
+        return;
+      }
+
+      if (paymentIntent?.status === 'succeeded') {
+        onSuccess(paymentIntent.id);
+      } else {
+        setError('Оплата не завершена. Попробуйте ещё раз.');
+      }
+    } finally {
       setIsPending(false);
-      return;
-    }
-
-    if (paymentIntent?.status === 'succeeded') {
-      onSuccess(paymentIntent.id);
     }
   }, [stripe, elements, onSuccess]);
 
