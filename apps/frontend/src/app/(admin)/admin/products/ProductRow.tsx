@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useCallback } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -16,12 +16,18 @@ import type { ProductRowProps } from './page.types';
 export const ProductRow = ({ product }: ProductRowProps) => {
   const router = useRouter();
   const errorReported = useRef(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleRowClick = useCallback(() => {
     router.push(`/products/${product.slug}`);
   }, [router, product.slug]);
 
+  const handleEditClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+  }, []);
+
   const handleImageError = useCallback(() => {
+    setImgError(true);
     if (errorReported.current) return;
     errorReported.current = true;
     api.patch(`/products/${product.id}/image-error`).catch(() => undefined);
@@ -31,7 +37,7 @@ export const ProductRow = ({ product }: ProductRowProps) => {
     <tr className={s.tr} onClick={handleRowClick}>
       <td className={s.td}>
         <div className={s.productCell}>
-          <If condition={product.images.length > 0}>
+          <If condition={product.images.length > 0 && !imgError}>
             <Then>
               <Image
                 src={product.images[0]}
@@ -84,7 +90,7 @@ export const ProductRow = ({ product }: ProductRowProps) => {
         </If>
       </td>
       <td className={s.td}>
-        <Link href={`/admin/products/${product.slug}`} className={s.editLink}>
+        <Link href={`/admin/products/${product.slug}`} className={s.editLink} onClick={handleEditClick}>
           <Pencil className="h-4 w-4" />
         </Link>
       </td>

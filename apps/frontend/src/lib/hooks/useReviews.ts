@@ -66,6 +66,7 @@ export const useProductReviews = (productId: string, sort: ReviewSort = 'newest'
     queryKey: ['reviews', productId, sort, page],
     queryFn: () => api.get<PaginatedReviews>(`/reviews/product/${productId}?sort=${sort}&page=${page}&limit=5`),
     enabled: !!productId,
+    meta: { suppressGlobalError: true },
   });
 
 export const useAdminAllReviews = (sort: ReviewSort = 'newest', page: number = 1) =>
@@ -73,6 +74,7 @@ export const useAdminAllReviews = (sort: ReviewSort = 'newest', page: number = 1
     queryKey: ['admin', 'reviews', sort, page],
     queryFn: () => api.get<PaginatedAdminReviews>(`/reviews/admin/all?sort=${sort}&page=${page}&limit=20`),
     retry: false,
+    meta: { suppressGlobalError: true },
   });
 
 export const useMyReview = (productId: string, enabled: boolean) =>
@@ -81,6 +83,7 @@ export const useMyReview = (productId: string, enabled: boolean) =>
     queryFn: () => api.get<Review | null>(`/reviews/my/${productId}`),
     enabled: enabled && !!productId,
     retry: false,
+    meta: { suppressGlobalError: true },
   });
 
 export const useCreateReview = (productSlug: string) => {

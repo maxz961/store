@@ -134,6 +134,7 @@ export const useImageErrorCount = (enabled = true) =>
     queryFn: () => api.get<{ count: number }>('/products/admin/image-error-count'),
     enabled,
     retry: false,
+    meta: { suppressGlobalError: true },
   });
 
 interface AdminProductSuggestion {
