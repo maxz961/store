@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react';
 
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(() => '/admin/dashboard'),
+  useRouter: () => ({ prefetch: jest.fn(), push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
 }));
 
 jest.mock('next/link', () => ({
