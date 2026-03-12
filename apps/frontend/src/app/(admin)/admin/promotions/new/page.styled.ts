@@ -13,8 +13,14 @@ export const s = {
   // Grid
   grid2: 'grid grid-cols-2 gap-4',
 
-  // Color preview
-  colorPreview: 'h-8 w-8 rounded-lg border border-border shrink-0',
+  // Color picker
+  colorSection: 'space-y-2',
+  colorLabel: 'text-sm font-medium text-foreground',
+  colorHint: 'text-xs text-muted-foreground',
+  swatches: 'flex flex-wrap gap-2',
+  swatch: 'h-7 w-7 rounded-lg cursor-pointer border-2 border-border transition-all duration-150 hover:scale-110',
+  swatchActive: 'border-primary ring-2 ring-primary ring-offset-2',
+  colorPreview: 'h-7 w-7 rounded-lg border border-border shrink-0',
   colorRow: 'flex items-end gap-3',
 
   // Products

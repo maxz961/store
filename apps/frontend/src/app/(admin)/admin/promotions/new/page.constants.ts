@@ -10,6 +10,21 @@ export const breadcrumbs = [
 export const generateSlug = (name: string) =>
   name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
+export const DEFAULT_BANNER_BG_COLOR = '#e8f5e9';
+
+export const BANNER_BG_PRESET_COLORS = [
+  '#e8f5e9', // soft green
+  '#e3f2fd', // soft blue
+  '#f3e5f5', // soft purple
+  '#fce4ec', // soft pink
+  '#fff8e1', // soft amber
+  '#e0f2f1', // soft teal
+  '#f1f5f9', // light gray
+  '#fef3c7', // soft yellow
+  '#4361ee', // primary indigo
+  '#1e293b', // dark slate
+];
+
 export const DISCOUNT_TYPE_OPTIONS = [
   { value: 'PERCENTAGE', label: 'Процент (%)' },
   { value: 'FIXED', label: 'Фиксированная ($)' },
