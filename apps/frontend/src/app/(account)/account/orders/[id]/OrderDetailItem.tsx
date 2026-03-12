@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { If, Then, Else } from 'react-if';
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { OrderDetailItemProps } from './page.types';
 
@@ -32,10 +33,10 @@ export const OrderDetailItem = ({ item }: OrderDetailItemProps) => (
       >
         {item.product.name}
       </Link>
-      <p className={s.itemQuantity}>{item.quantity} шт. × ${Number(item.price).toFixed(2)}</p>
+      <p className={s.itemQuantity}>{item.quantity} шт. × {formatCurrency(Number(item.price))}</p>
     </div>
     <span className={s.itemPrice}>
-      ${(Number(item.price) * item.quantity).toFixed(2)}
+      {formatCurrency(Number(item.price) * item.quantity)}
     </span>
   </div>
 );

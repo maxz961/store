@@ -2,6 +2,12 @@ import { Suspense } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 
 
+jest.mock('next/navigation', () => ({
+  useSearchParams: () => new URLSearchParams(),
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn() }),
+  usePathname: () => '/products/test-product',
+}));
+
 jest.mock('lucide-react', () => ({
   ImageOff: (props: any) => <div data-testid="icon-imageoff" {...props} />,
   Star: (props: any) => <div data-testid="icon-star" {...props} />,
@@ -10,6 +16,17 @@ jest.mock('lucide-react', () => ({
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   MessageSquare: (props: any) => <div data-testid="icon-message" {...props} />,
+  Heart: (props: any) => <div data-testid="icon-heart" {...props} />,
+}));
+
+jest.mock('@/lib/hooks/useAuth', () => ({
+  useAuth: () => ({ isAuthenticated: false, isLoading: false }),
+}));
+
+jest.mock('@/lib/hooks/useFavorites', () => ({
+  useFavoriteIds: () => ({ data: [] }),
+  useAddFavorite: () => ({ mutate: jest.fn() }),
+  useRemoveFavorite: () => ({ mutate: jest.fn() }),
 }));
 
 import ProductPage from './page';
@@ -38,7 +55,7 @@ jest.mock('@/lib/hooks/useProducts', () => ({
   useProduct: () => mockProductHook,
 }));
 
-jest.mock('@/components/product/ReviewModal', () => ({
+jest.mock('@/components/review/ReviewModal', () => ({
   ReviewModal: ({ productId, onClose }: any) => (
 
 
@@ -47,6 +64,18 @@ jest.mock('@/components/product/ReviewModal', () => ({
       <button onClick={onClose}>Close</button>
     </div>
   ),
+}));
+
+jest.mock('./SimilarProducts', () => ({
+  SimilarProducts: () => <div data-testid="similar-products">Similar</div>,
+}));
+
+jest.mock('./RecentlyViewed', () => ({
+  RecentlyViewed: () => <div data-testid="recently-viewed">Recent</div>,
+}));
+
+jest.mock('./useTrackProductView', () => ({
+  useTrackProductView: jest.fn(),
 }));
 
 jest.mock('@/store/cart', () => ({
@@ -83,7 +112,7 @@ describe('ProductPage', () => {
   it('renders product name and price', async () => {
     await renderPage();
     expect(screen.getByRole('heading', { name: 'Тестовый товар' })).toBeInTheDocument();
-    expect(screen.getByText('$199.99')).toBeInTheDocument();
+    expect(screen.getByText('199,99 ₴')).toBeInTheDocument();
   });
 
   it('renders category name', async () => {
@@ -164,7 +193,7 @@ describe('ProductPage', () => {
       data: { ...baseProduct, comparePrice: 299.99 },
     };
     await renderPage();
-    expect(screen.getByText('$299.99')).toBeInTheDocument();
+    expect(screen.getByText('299,99 ₴')).toBeInTheDocument();
     expect(screen.getByText('-33%')).toBeInTheDocument();
   });
 });

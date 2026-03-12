@@ -9,7 +9,11 @@
 - Какие тесты напишу или обновлю
 - Ждать подтверждения перед началом
 
-**ОБЯЗАТЕЛЬНО после написания/редактирования каждого файла** — прогнать через чеклист аудита (раздел "Frontend") перед тем как считать задачу завершённой. Не пропускать ни одного пункта. Не полагаться на "я и так помню правила" — проверять явно.
+**ОБЯЗАТЕЛЬНО после написания/редактирования каждого файла** — прогнать через чеклист аудита (MEMORY.md) перед тем как считать задачу завершённой. Не пропускать ни одного пункта. Не полагаться на "я и так помню правила" — проверять явно.
+
+**При добавлении нового правила в этот файл** — СРАЗУ добавить соответствующий пункт в чеклист аудита (MEMORY.md). Правило без пункта в чеклисте = правило которое будет забыто.
+
+**ПЕРЕД написанием нового файла** — прочитать самый похожий существующий файл, проверить какие компоненты/хуки/утилиты уже есть. Не изобретать — переиспользовать.
 
 ### 2. Ветки и коммиты
 - Каждый новый функционал — новая ветка, checkout от `develop`
@@ -31,8 +35,29 @@
 - Именование: camelCase для переменных, PascalCase для классов/типов
 - Async/await вместо .then()/.catch()
 - Не использовать `any` без крайней необходимости
+- **Типы должны отражать реальность, без костылей**:
+  - Если поле может быть `undefined` (API не всегда возвращает) — тип `?` (опциональный), не обязательный
+  - ЗАПРЕЩЕНО `as unknown as Type`, `as any`, `// @ts-ignore` для обхода типов — это скрывает баги
+  - Если TypeScript ругается — значит есть реальная проблема, нужно её исправить, а не замолчать
+  - Defensive coding: `data.field ?? []` / `data.field ?? {}` для опциональных полей из API
+  - Типы пишутся один раз правильно — потом TypeScript сам ловит ошибки во всех местах использования
 
-### 5. Качество кода — уровень Senior
+### 5. Безопасность — приоритет
+- **Код должен быть невозможно взломать** — думать как атакующий при каждом решении
+- **Валидация на КАЖДОМ уровне**: frontend (Zod), backend (class-validator), база (Prisma constraints)
+- **Никогда не доверять данным от клиента**: всегда валидировать, санитизировать, проверять типы
+- **SQL injection**: только Prisma ORM, никаких raw SQL без параметризации
+- **XSS**: не использовать `dangerouslySetInnerHTML`, экранировать пользовательский ввод
+- **CSRF/CORS**: строгая настройка CORS (только разрешённые origins), httpOnly cookies
+- **Авторизация**: КАЖДЫЙ endpoint проверяет права доступа (JWT guard + Roles guard). Никогда не полагаться только на frontend-проверки — backend ВСЕГДА проверяет повторно
+- **ID пользователя**: брать ТОЛЬКО из JWT токена (`req.user`), НИКОГДА из тела запроса или query параметров
+- **Rate limiting**: защита от brute-force и DDoS на критичных эндпоинтах (auth, orders, reviews)
+- **Загрузка файлов**: проверять тип, размер, содержимое. Не доверять расширению файла
+- **Секреты**: никогда не логировать токены, пароли, ключи. Не коммитить `.env`
+- **Ошибки**: не раскрывать внутреннюю информацию (stack traces, SQL ошибки) пользователю — только generic messages
+- **Зависимости**: не устанавливать пакеты без необходимости, проверять что пакет популярный и поддерживаемый
+
+### 6. Качество кода — уровень Senior
 - **Писать код как Senior-разработчик, думать как архитектор высшего класса**
 - Код должен выглядеть так, будто его писал опытный инженер из топовой компании — чистый, продуманный, масштабируемый
 - Никаких "костылей", обходных решений ради скорости, или "потом поправим"
@@ -41,7 +66,28 @@
 - Код должен быть самодокументируемым: понятные имена, логичная структура, очевидный flow
 - Думать о масштабируемости, производительности и поддерживаемости при каждом решении
 
-### 6. Тесты
+### 7. Валидация форм — обязательно глубоко продумывать
+- **Перед реализацией любой формы** — явно ответить: какие поля обязательны? Есть ли ограничения длины? Должны ли значения быть уникальными? Какие форматы допустимы?
+- **Уникальность**: если поле должно быть уникальным (slug, name, email) — проверять на КАЖДОМ уровне:
+  - Zod: формат (regex, maxLength)
+  - Backend: `ConflictException` с ключевым словом в сообщении (`'Slug'` или `'Название'`)
+  - Frontend: `setError('fieldName', { message: '...' })` — ошибка инлайн под полем
+- **Ошибки — инлайн под конкретным полем** через `setError()`, НЕ в общем блоке `<div className={s.error}>`
+- **Zod схема** — не только `.min(1)`, но и `.max()`, `.regex()` где применимо
+- **Backend update()** — проверять уникальность исключая текущую запись: `findFirst({ where: { slug, NOT: { id } } })`
+- **Паттерн обработки конфликтов на фронтенде**: `mutateAsync` + `try/catch` → детект по keyword в `error.message` → `setError`
+
+### 8. Состояние загрузки кнопок — ОБЯЗАТЕЛЬНО
+- **Любая кнопка, которая ждёт ответа сервера** — ОБЯЗАНА показывать спиннер пока идёт запрос
+- Компонент: `<Spinner size="sm" />` из `@/components/ui/Spinner` (маленький, для инлайн-использования)
+- **Кнопка с текстом**: заменять текст на `<Spinner size="sm" /><span className="ml-2">Текст...</span>`
+- **Кнопка-иконка**: заменять иконку на `<Spinner size="sm" />`
+- Паттерн через react-if: `<If condition={isPending}><Then>спиннер</Then><Else>обычное содержимое</Else></If>`
+- Кнопка при этом должна быть `disabled={isPending}` — предотвращать двойной клик
+- Примеры: кнопка избранного (сердечко), оформить заказ, создать/сохранить категорию/тег/товар, сменить статус заказа
+- **НЕ** применять к кнопкам без сетевых запросов (Zustand, localStorage и т.д.)
+
+### 9. Тесты
 - Перед написанием тестов подумать: покрывает ли тест реальное поведение?
 - Тестировать happy path, ошибки (404, 403, 409) и граничные случаи
 - Не писать тесты "для галочки" — каждый тест должен ловить реальный баг
@@ -51,7 +97,17 @@
   - Ключевой контент виден (заголовки, кнопки, labels)
   - Состояния: загрузка, ошибка, пустое, авторизация/не авторизован
   - Основные действия работают (клик кнопок вызывает нужные функции)
-- **Smoke-тесты для компонентов**: переиспользуемые компоненты (Header, Breadcrumbs и т.д.) тоже покрываются `*.spec.tsx`
+- **Тесты для КАЖДОГО компонента — ОБЯЗАТЕЛЬНО**:
+  - Каждый новый/изменённый компонент в `components/` ОБЯЗАН иметь `ComponentName.spec.tsx` рядом
+  - Нет теста = компонент не готов. Не переходить к следующей задаче без тестов
+  - Минимальный набор: рендер без краша, ключевой контент, клик-действия, граничные случаи (undefined/пустые данные)
+  - **Defensive-тесты**: если компонент принимает данные из API — обязательно тест с `undefined`/пустыми полями
+  - Урок: ProductCard без тестов крашил страницу на `undefined reviews` — тест бы поймал это сразу
+- **Тесты на каждый фикс бага — ОБЯЗАТЕЛЬНО**:
+  - Исправил баг → СРАЗУ пишешь тест, который ловит именно этот баг
+  - Тест должен падать БЕЗ фикса и проходить С фиксом
+  - Без теста баг может вернуться — регрессия
+  - Урок: фикс `server: true` в api.ts без теста = никто не заметит если `server: true` уберут
 
 ## Команды
 
@@ -84,36 +140,64 @@ store/                          ← монорепо корень
 
 ## Структура Frontend (apps/frontend/src/)
 
+### Принцип: folder-per-component
+- Каждый компонент — своя папка: `ComponentName/ComponentName.tsx` + `.styled.ts` + `.types.ts` + `index.ts`
+- `index.ts` — barrel export: `export { ComponentName } from './ComponentName'`
+- Под-компоненты (используются ТОЛЬКО родителем) — подпапки внутри родителя
+- shadcn/ui компоненты (`button.tsx`, `badge.tsx`) — плоские файлы, без папок
+- **`components/`** = переиспользуемые (нужны на 2+ страницах)
+- **`app/.../page-folder/`** = привязаны к одной странице (co-located)
+
 ```
 app/
-  (auth)/login/          ← страница входа, кнопка Google OAuth
-  (auth)/register/       ← регистрация (редирект на Google)
-  (shop)/products/       ← каталог с фильтрами по тегам/категориям
-  (shop)/products/[slug]/← страница товара + отзывы
-  (shop)/cart/           ← корзина (Zustand, localStorage)
-  (shop)/checkout/       ← форма доставки (COURIER|PICKUP|POST)
-  (account)/profile/     ← профиль пользователя
-  (account)/orders/[id]/ ← детали заказа
-  (admin)/dashboard/     ← аналитика (Recharts графики)
-  (admin)/products/      ← таблица товаров
-  (admin)/products/new/  ← добавить товар + теги
-  (admin)/products/[id]/ ← редактировать товар
-  (admin)/orders/        ← все заказы с фильтрами
-  (admin)/orders/[id]/   ← детали + смена статуса
+  (auth)/login/            ← страница входа, кнопка Google OAuth
+  (shop)/products/         ← каталог + co-located: ProductCatalog, ProductFilters, CategoryButton, TagButton
+  (shop)/products/[slug]/  ← страница товара + co-located: ProductGallery, ProductInfo, ProductReviews
+  (shop)/cart/             ← корзина (Zustand, localStorage)
+  (shop)/checkout/         ← форма доставки (COURIER|PICKUP|POST)
+  (account)/account/profile/    ← профиль пользователя
+  (account)/account/orders/     ← мои заказы
+  (account)/account/orders/[id]/← детали заказа
+  (admin)/admin/dashboard/ ← аналитика (Recharts графики)
+  (admin)/admin/products/  ← таблица товаров
+  (admin)/admin/products/new/  ← добавить товар + теги
+  (admin)/admin/products/[id]/ ← редактировать товар
+  (admin)/admin/orders/    ← все заказы с фильтрами
+  (admin)/admin/orders/[id]/← детали + смена статуса
 components/
-  ui/                    ← shadcn/ui (не редактировать вручную)
-  layout/                ← Header, Footer
-  product/               ← ProductCard, ProductGrid, ProductFilters
-  cart/                  ← CartDrawer, CartItem
-  checkout/              ← DeliveryMethodSelect, AddressForm
-  admin/                 ← StatsCard, RevenueChart, OrderStatusPie
+  ui/                      ← shadcn (плоские) + кастомные (folder-per-component)
+    Breadcrumbs/           ← Breadcrumbs.tsx + styled + types + index.ts
+    Spinner/
+    Dropdown/
+    StarRating/            ← + StarIcon (под-компонент)
+    ImageUpload/           ← + ImageThumb (под-компонент)
+    TextField/
+    TextareaField/
+    SelectField/
+    CheckboxField/
+    button.tsx, badge.tsx, input.tsx, textarea.tsx  ← shadcn (не трогать)
+  layout/
+    Header/                ← Header.tsx + styled + spec + index.ts
+      UserMenu/            ← под-компонент хедера
+      UserTrigger/         ← под-компонент хедера
+  providers/               ← QueryProvider/, ThemeProvider/ (инфраструктура)
+  product/
+    ProductCard/           ← переиспользуемая карточка товара
+  review/
+    ReviewCard/
+    ReviewForm/
+    ReviewList/            ← + ReviewListItem (под-компонент)
+    ReviewModal/
+  admin/
+    StatsCard/
+    StatusBadge/
 lib/
-  api.ts                 ← fetch-клиент к backend (:3001)
-  hooks/                 ← React Query хуки (useProducts, useOrders, useAdmin, useReviews, useAuth)
-  constants/             ← общие константы (order.ts, format.ts)
-  validations/           ← Zod схемы (импортировать из packages/shared)
+  api.ts                   ← fetch-клиент к backend (:3001)
+  hooks/                   ← React Query хуки (useProducts, useOrders, useAdmin, useReviews, useAuth)
+  constants/               ← общие константы (order.ts, format.ts)
+  validations/             ← Zod схемы (импортировать из packages/shared)
 store/
-  cart.ts                ← Zustand + persist middleware
+  cart.ts                  ← Zustand + persist middleware
 ```
 
 ## Структура Backend (apps/backend/src/)
@@ -273,6 +357,13 @@ analytics/
 - Один модуль = один домен (products, orders, users, auth, tags, categories, analytics)
 - Каждый `*.service.ts` ОБЯЗАТЕЛЬНО имеет `*.service.spec.ts` рядом
 - `@Roles(Role.ADMIN)` guard на всех admin-эндпоинтах
+- **"Return the resource" — мутации ВСЕГДА возвращают актуальные данные**:
+  - `POST` / `PUT` / `DELETE` — возвращать обновлённое состояние ресурса, а не просто `void` или созданный объект
+  - Цель: frontend обновляет кэш из ответа мутации без лишнего GET-запроса
+  - Пример: `DELETE /favorites/:id` → `{ ids: string[] }` (актуальный список после удаления)
+  - Пример: `PUT /orders/:id/status` → возвращать обновлённый заказ
+  - Пример: `POST /categories` → возвращать созданную категорию с полями которые генерирует сервер (id, createdAt)
+  - **Исключение**: операции где "актуальное состояние" — очень большой объём данных (списки с пагинацией) — там invalidateQueries
 
 ### Тесты (NestJS)
 - Мокировать Prisma через `jest-mock-extended`: `mockDeep<PrismaClient>()`
@@ -319,6 +410,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 - `env.ts` в backend загружает `.env` с `override: true` ДО инициализации Prisma — не убирать
 - Перед запуском `pnpm dev` убить старые процессы: `pkill -f "nest.js start"; pkill -f "next dev"`
 - Никогда не запускать `pnpm dev` дважды — накапливаются зомби-процессы на портах 3000/3001
+- **После каждой миграции** (`prisma:migrate`) — запускать `pnpm --filter shared prisma:seed` чтобы тестовые данные были актуальны. Пустая БД = фичи работают но ничего не показывают
 
 ## Next.js 15 — важные изменения
 

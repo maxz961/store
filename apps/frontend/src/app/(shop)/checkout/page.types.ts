@@ -3,6 +3,7 @@ import type { CartItem } from '@/store/cart';
 
 
 export type DeliveryMethod = 'COURIER' | 'PICKUP' | 'POST';
+export type CheckoutStep = 'info' | 'payment';
 
 export interface DeliveryOption {
   value: DeliveryMethod;
@@ -29,6 +30,14 @@ export interface DeliveryMethodSectionProps {
 export interface OrderSummaryProps {
   items: CartItem[];
   totalPrice: number;
+  step: CheckoutStep;
   error: Error | null;
   isPending: boolean;
+}
+
+export interface PaymentSectionProps {
+  amount: number;
+  isCreatingOrder: boolean;
+  onSuccess: (paymentIntentId: string) => void;
+  onBack: () => void;
 }

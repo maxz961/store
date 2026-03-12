@@ -4,7 +4,22 @@ import { render, screen } from '@testing-library/react';
 jest.mock('lucide-react', () => ({
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   Pencil: (props: any) => <div data-testid="icon-pencil" {...props} />,
-  ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+  ChevronRight: (props: any) => <div data-testid="icon-chevron-right" {...props} />,
+  ChevronLeft: (props: any) => <div data-testid="icon-chevron-left" {...props} />,
+  ArrowUpDown: (props: any) => <div data-testid="icon-sort" {...props} />,
+  ArrowUp: (props: any) => <div data-testid="icon-sort-asc" {...props} />,
+  ArrowDown: (props: any) => <div data-testid="icon-sort-desc" {...props} />,
+  Search: (props: any) => <div data-testid="icon-search" {...props} />,
+  AlertTriangle: (props: any) => <div data-testid="icon-alert" {...props} />,
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  useSearchParams: () => new URLSearchParams(),
+}));
+
+jest.mock('@/lib/hooks/useAdmin', () => ({
+  useAdminProductSuggestions: () => ({ data: undefined }),
 }));
 
 let mockApiGet: jest.Mock;
@@ -22,6 +37,7 @@ const mockProducts = {
   items: [
     {
       id: 'prod-1',
+      slug: 'sony-headphones',
       name: 'Наушники Sony WH-1000XM5',
       price: 9999,
       stock: 25,
@@ -32,6 +48,7 @@ const mockProducts = {
     },
     {
       id: 'prod-2',
+      slug: 'draft-product',
       name: 'Черновик товара',
       price: 500,
       stock: 0,
@@ -49,13 +66,9 @@ const mockProducts = {
 
 describe('AdminProductsPage', () => {
   beforeEach(() => {
-    mockApiGet = jest.fn().mockResolvedValue(mockProducts);
-  });
-
-  it('renders title', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByRole('heading', { name: 'Товары' })).toBeInTheDocument();
+    mockApiGet = jest.fn()
+      .mockResolvedValueOnce(mockProducts)
+      .mockResolvedValueOnce({ count: 0 });
   });
 
   it('renders add product button', async () => {
@@ -90,20 +103,24 @@ describe('AdminProductsPage', () => {
     expect(screen.getByText('Черновик')).toBeInTheDocument();
   });
 
-  it('renders pagination info', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText(/Всего 2 товаров/)).toBeInTheDocument();
-  });
-
   it('renders breadcrumbs', async () => {
     const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
     render(jsx);
     expect(screen.getByText('Админ-панель')).toBeInTheDocument();
   });
 
+  it('passes server: true for cookie forwarding', async () => {
+    await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ server: true }),
+    );
+  });
+
   it('shows empty message when no products', async () => {
-    mockApiGet = jest.fn().mockResolvedValue({ items: [], total: 0, page: 1, totalPages: 1 });
+    mockApiGet = jest.fn()
+      .mockResolvedValueOnce({ items: [], total: 0, page: 1, totalPages: 1 })
+      .mockResolvedValueOnce({ count: 0 });
     const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
     render(jsx);
     expect(screen.getByText('Товары не найдены')).toBeInTheDocument();
@@ -114,5 +131,59 @@ describe('AdminProductsPage', () => {
     render(jsx);
     const zeroStock = screen.getByText('0');
     expect(zeroStock).toHaveClass('text-destructive');
+  });
+
+  it('renders sortable column headers', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByText('Товар')).toBeInTheDocument();
+    expect(screen.getByText('Цена')).toBeInTheDocument();
+    expect(screen.getByText('Остаток')).toBeInTheDocument();
+  });
+
+  it('renders active sort icon when sortBy matches column', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({ sortBy: 'price', sortOrder: 'asc' }) });
+    render(jsx);
+    expect(screen.getByTestId('icon-sort-asc')).toBeInTheDocument();
+  });
+
+  it('passes sortBy and sortOrder to API', async () => {
+    await AdminProductsPage({ searchParams: Promise.resolve({ sortBy: 'price', sortOrder: 'desc' }) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.stringContaining('sortBy=price'),
+      expect.any(Object),
+    );
+  });
+
+  it('renders search input', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByPlaceholderText('Поиск товаров...')).toBeInTheDocument();
+  });
+
+  it('renders pagination with page numbers', async () => {
+    mockApiGet = jest.fn()
+      .mockResolvedValueOnce({ ...mockProducts, page: 1, totalPages: 3 })
+      .mockResolvedValueOnce({ count: 0 });
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+    expect(screen.getByText('3')).toBeInTheDocument();
+  });
+
+  it('renders view switch tabs', async () => {
+    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
+    render(jsx);
+    expect(screen.getByText('Все')).toBeInTheDocument();
+    expect(screen.getByText('Проблемные')).toBeInTheDocument();
+  });
+
+  it('passes imageError=true to API when view=broken', async () => {
+    await AdminProductsPage({ searchParams: Promise.resolve({ view: 'broken' }) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.stringContaining('imageError=true'),
+      expect.any(Object),
+    );
   });
 });

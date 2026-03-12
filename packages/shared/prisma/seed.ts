@@ -1,11 +1,20 @@
 import { PrismaClient, Role } from "@prisma/client";
 
+// Ensure pgbouncer=true for Supabase transaction pooler (port 6543)
+const dbUrl = process.env.DATABASE_URL;
+if (dbUrl && !dbUrl.includes('pgbouncer=true')) {
+  const sep = dbUrl.includes('?') ? '&' : '?';
+  process.env.DATABASE_URL = `${dbUrl}${sep}pgbouncer=true`;
+}
+
 const prisma = new PrismaClient();
 
 async function main() {
   console.log("🌱 Seeding database...");
 
   // Cleanup to avoid unique constraint issues on re-seed
+  await prisma.promotionProduct.deleteMany();
+  await prisma.promotion.deleteMany();
   await prisma.review.deleteMany();
   await prisma.productTag.deleteMany();
   await prisma.orderItem.deleteMany();
@@ -61,26 +70,26 @@ async function main() {
   // ── Tags ──
   const newTag = await prisma.tag.upsert({
     where: { slug: "new" },
-    update: { name: "Новинка" },
-    create: { name: "Новинка", slug: "new" },
+    update: { name: "Новинка", color: "#22c55e" },
+    create: { name: "Новинка", slug: "new", color: "#22c55e" },
   });
 
   const saleTag = await prisma.tag.upsert({
     where: { slug: "sale" },
-    update: { name: "Скидка" },
-    create: { name: "Скидка", slug: "sale" },
+    update: { name: "Скидка", color: "#ef4444" },
+    create: { name: "Скидка", slug: "sale", color: "#ef4444" },
   });
 
   const hitTag = await prisma.tag.upsert({
     where: { slug: "hit" },
-    update: {},
-    create: { name: "Хит продаж", slug: "hit" },
+    update: { color: "#f59e0b" },
+    create: { name: "Хит продаж", slug: "hit", color: "#f59e0b" },
   });
 
   const premiumTag = await prisma.tag.upsert({
     where: { slug: "premium" },
-    update: {},
-    create: { name: "Премиум", slug: "premium" },
+    update: { color: "#8b5cf6" },
+    create: { name: "Премиум", slug: "premium", color: "#8b5cf6" },
   });
   console.log("✅ Tags created");
 
@@ -126,6 +135,133 @@ async function main() {
     ],
   });
   console.log("✅ Reviews created");
+
+  // ── Promotions ──
+  await prisma.promotion.create({
+    data: {
+      title: "Весенняя распродажа",
+      slug: "spring-sale",
+      description: "Скидки до 25% на электронику и аксессуары",
+      bannerImageUrl: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&h=300&fit=crop",
+      bannerBgColor: "#b2dfdb",
+      startDate: new Date("2026-03-01"),
+      endDate: new Date("2027-03-01"),
+      discountType: "PERCENTAGE",
+      discountValue: 25,
+      isActive: true,
+      position: 0,
+      link: "/products?tagSlugs=sale",
+      products: {
+        create: [
+          { productId: products[0].id },
+          { productId: products[2].id },
+          { productId: products[4].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.promotion.create({
+    data: {
+      title: "Новинки сезона",
+      slug: "new-arrivals",
+      description: "Топовые новинки уже в каталоге",
+      bannerImageUrl: "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&h=300&fit=crop",
+      bannerBgColor: "#d1c4e9",
+      startDate: new Date("2026-03-01"),
+      endDate: new Date("2027-03-01"),
+      discountType: "PERCENTAGE",
+      discountValue: 10,
+      isActive: true,
+      position: 1,
+      link: "/products?tagSlugs=new",
+      products: {
+        create: [
+          { productId: products[1].id },
+          { productId: products[5].id },
+          { productId: products[7].id },
+        ],
+      },
+    },
+  });
+
+  await prisma.promotion.create({
+    data: {
+      title: "Спорт со скидкой",
+      slug: "sport-discount",
+      description: "Товары для спорта по специальной цене",
+      bannerImageUrl: "https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600&h=300&fit=crop",
+      bannerBgColor: "#ffccbc",
+      startDate: new Date("2026-03-01"),
+      endDate: new Date("2027-03-01"),
+      discountType: "FIXED",
+      discountValue: 50,
+      isActive: true,
+      position: 2,
+      link: "/products?categorySlug=sports",
+      products: {
+        create: [
+          { productId: products[10].id },
+          { productId: products[11].id },
+        ],
+      },
+    },
+  });
+  console.log("✅ Promotions created");
+
+  // ── Support messages ──
+  await prisma.supportMessage.deleteMany();
+
+  const customer2 = await prisma.user.upsert({
+    where: { email: "maria@store.com" },
+    update: {},
+    create: { email: "maria@store.com", name: "Мария Соколова", role: Role.CUSTOMER },
+  });
+
+  await prisma.supportMessage.createMany({
+    data: [
+      // Иван Петров — отвеченный диалог
+      {
+        userId: customer.id,
+        content: "Здравствуйте! Я оформил заказ два дня назад, но статус всё ещё «В обработке». Когда ждать обновления?",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-10T09:00:00Z"),
+      },
+      {
+        userId: customer.id,
+        content: "Здравствуйте, Иван! Ваш заказ передан в службу доставки сегодня утром. Трек-номер придёт на email в течение часа.",
+        fromAdmin: true,
+        createdAt: new Date("2026-03-10T10:30:00Z"),
+      },
+      {
+        userId: customer.id,
+        content: "Спасибо! Письмо получил, всё понятно.",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-10T10:45:00Z"),
+      },
+      {
+        userId: customer.id,
+        content: "Пожалуйста! Если возникнут вопросы — пишите. Хорошего дня 😊",
+        fromAdmin: true,
+        createdAt: new Date("2026-03-10T10:50:00Z"),
+      },
+
+      // Мария Соколова — новое необработанное обращение
+      {
+        userId: customer2.id,
+        content: "Добрый день! Хочу вернуть товар — наушники оказались не того цвета. Как оформить возврат?",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-11T14:00:00Z"),
+      },
+      {
+        userId: customer2.id,
+        content: "Можете также уточнить сроки? Заказ был сделан 5 дней назад.",
+        fromAdmin: false,
+        createdAt: new Date("2026-03-11T14:02:00Z"),
+      },
+    ],
+  });
+  console.log("✅ Support messages created");
 
   console.log("🎉 Seeding complete!");
 }

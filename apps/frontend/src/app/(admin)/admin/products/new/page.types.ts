@@ -13,3 +13,14 @@ export interface TagToggleButtonProps {
   isActive: boolean;
   onClick: () => void;
 }
+
+export interface ImagesSectionProps {
+  files: File[];
+  onFilesChange: (files: File[]) => void;
+}
+
+export interface ProductPreviewProps {
+  isOpen: boolean;
+  onClose: () => void;
+  files: File[];
+}

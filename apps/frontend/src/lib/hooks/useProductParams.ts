@@ -30,13 +30,13 @@ export const useProductParams = () => {
         }
       }
 
-      router.push(`/products?${params.toString()}`);
+      router.push(`/products?${params.toString()}`, { scroll: false });
     },
     [router, searchParams],
   );
 
   const reset = useCallback(() => {
-    router.push('/products');
+    router.push('/products', { scroll: false });
   }, [router]);
 
   return { get, update, reset, searchParams };

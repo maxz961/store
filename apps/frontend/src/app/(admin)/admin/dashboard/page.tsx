@@ -1,15 +1,20 @@
 'use client';
 
 import { useMemo } from 'react';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAnalyticsSummary } from '@/lib/hooks/useAdmin';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { s } from './page.styled';
-import { STATUS_LABELS, PIE_COLORS } from '@/lib/constants/order';
 import { breadcrumbs } from './page.constants';
+import { STATUS_LABELS, PIE_COLORS, DELIVERY_LABELS } from '@/lib/constants/order';
 import { StatsSection } from './StatsSection';
 import { OrdersByStatusCard } from './OrdersByStatusCard';
 import { TopProductsCard } from './TopProductsCard';
 import { RevenueChart } from './RevenueChart';
+import { RevenueByCategoryCard } from './RevenueByCategoryCard';
+import { DeliveryMethodCard } from './DeliveryMethodCard';
+import { RatingDistributionCard } from './RatingDistributionCard';
+import { AovTrendChart } from './AovTrendChart';
+import { LowStockCard } from './LowStockCard';
 
 
 const DashboardPage = () => {
@@ -35,6 +40,23 @@ const DashboardPage = () => {
       }));
   }, [summary]);
 
+  const aovChartData = useMemo(() => {
+    if (!summary) return [];
+    return summary.aovByDay.map(({ date, aov }) => ({
+      date: new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+      aov,
+    }));
+  }, [summary]);
+
+  const deliveryData = useMemo(() => {
+    if (!summary) return [];
+    return summary.deliveryMethodDistribution.map(({ method, count }) => ({
+      method,
+      label: DELIVERY_LABELS[method] ?? method,
+      count,
+    }));
+  }, [summary]);
+
   if (error) {
     return (
       <div className={s.page}>
@@ -48,11 +70,14 @@ const DashboardPage = () => {
     return (
       <div className={s.page}>
         <Breadcrumbs items={breadcrumbs} />
-        <h1 className={s.pageTitle}>Аналитика</h1>
         <div className={s.statsGrid}>
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className={s.statsSkeleton} />
           ))}
+        </div>
+        <div className={s.chartsGrid}>
+          <div className={s.chartSkeleton} />
+          <div className={s.chartSkeleton} />
         </div>
       </div>
     );
@@ -61,8 +86,6 @@ const DashboardPage = () => {
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
-      <h1 className={s.pageTitle}>Аналитика</h1>
-
       <StatsSection summary={summary} />
 
       <div className={s.chartsGrid}>
@@ -70,7 +93,17 @@ const DashboardPage = () => {
         <TopProductsCard topProducts={summary.topProducts} />
       </div>
 
+      <div className={s.chartsRow2}>
+        <RevenueByCategoryCard revenueByCategory={summary.revenueByCategory} />
+        <div className={s.miniChartsStack}>
+          <DeliveryMethodCard data={deliveryData} />
+          <RatingDistributionCard data={summary.ratingDistribution} />
+        </div>
+      </div>
+
       <RevenueChart chartData={revenueChartData} />
+      <AovTrendChart chartData={aovChartData} />
+      <LowStockCard products={summary.lowStockProducts} />
     </div>
   );
 };

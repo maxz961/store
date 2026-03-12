@@ -10,12 +10,15 @@ export const s = {
   filterTabInactive: 'border border-border text-muted-foreground hover:bg-accent hover:text-foreground',
 
   // Table
-  tableWrapper: 'mt-6 overflow-hidden rounded-xl border border-border bg-card shadow-sm',
+  tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
   table: 'w-full text-sm',
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',
   thRight: 'px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground',
-  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0',
+  thSortable: 'px-0 py-0',
+  sortButton: 'flex w-full items-center gap-1 px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground transition-colors duration-150 hover:text-foreground',
+  sortButtonActive: 'text-foreground',
+  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0 cursor-pointer',
   td: 'px-4 py-3.5',
   tdRight: 'px-4 py-3.5 text-right',
   orderId: 'font-mono text-sm text-primary hover:underline',
@@ -23,11 +26,6 @@ export const s = {
   delivery: 'text-sm text-muted-foreground',
   date: 'text-sm text-muted-foreground',
   amount: 'text-sm font-medium text-foreground',
-
-  // Pagination
-  pagination: 'mt-4 flex items-center justify-between',
-  pageInfo: 'text-sm text-muted-foreground',
-  pageButtons: 'flex gap-2',
 
   // Empty
   emptyRow: 'px-4 py-12 text-center text-sm text-muted-foreground',

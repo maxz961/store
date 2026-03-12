@@ -33,34 +33,34 @@ describe('useProductParams', () => {
     it('sets a string param', () => {
       const { result } = renderHook(() => useProductParams());
       act(() => result.current.update({ search: 'phone' }));
-      expect(mockPush).toHaveBeenCalledWith('/products?search=phone');
+      expect(mockPush).toHaveBeenCalledWith('/products?search=phone', { scroll: false });
     });
 
     it('removes param when value is undefined', () => {
       mockSearchParams = new URLSearchParams('search=laptop&categorySlug=electronics');
       const { result } = renderHook(() => useProductParams());
       act(() => result.current.update({ search: undefined }));
-      expect(mockPush).toHaveBeenCalledWith('/products?categorySlug=electronics');
+      expect(mockPush).toHaveBeenCalledWith('/products?categorySlug=electronics', { scroll: false });
     });
 
     it('joins array values with comma', () => {
       const { result } = renderHook(() => useProductParams());
       act(() => result.current.update({ tagSlugs: ['new', 'sale'] }));
-      expect(mockPush).toHaveBeenCalledWith('/products?tagSlugs=new%2Csale');
+      expect(mockPush).toHaveBeenCalledWith('/products?tagSlugs=new%2Csale', { scroll: false });
     });
 
     it('removes param for empty array', () => {
       mockSearchParams = new URLSearchParams('tagSlugs=new');
       const { result } = renderHook(() => useProductParams());
       act(() => result.current.update({ tagSlugs: [] }));
-      expect(mockPush).toHaveBeenCalledWith('/products?');
+      expect(mockPush).toHaveBeenCalledWith('/products?', { scroll: false });
     });
 
     it('always resets page param', () => {
       mockSearchParams = new URLSearchParams('page=3&categorySlug=electronics');
       const { result } = renderHook(() => useProductParams());
       act(() => result.current.update({ search: 'test' }));
-      expect(mockPush).toHaveBeenCalledWith('/products?categorySlug=electronics&search=test');
+      expect(mockPush).toHaveBeenCalledWith('/products?categorySlug=electronics&search=test', { scroll: false });
     });
   });
 
@@ -69,7 +69,7 @@ describe('useProductParams', () => {
       mockSearchParams = new URLSearchParams('search=laptop&categorySlug=electronics&tagSlugs=new');
       const { result } = renderHook(() => useProductParams());
       act(() => result.current.reset());
-      expect(mockPush).toHaveBeenCalledWith('/products');
+      expect(mockPush).toHaveBeenCalledWith('/products', { scroll: false });
     });
   });
 });

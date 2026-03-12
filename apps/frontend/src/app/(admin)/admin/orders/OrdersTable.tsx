@@ -1,6 +1,7 @@
 import { When } from 'react-if';
 import { s } from './page.styled';
 import { OrderRow } from './OrderRow';
+import { SortHeader } from './SortHeader';
 import type { OrdersTableProps } from './page.types';
 
 
@@ -13,8 +14,8 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => (
           <th className={s.th}>Покупатель</th>
           <th className={s.th}>Статус</th>
           <th className={s.th}>Доставка</th>
-          <th className={s.thRight}>Сумма</th>
-          <th className={s.th}>Дата</th>
+          <SortHeader field="totalAmount" label="Сумма" className={s.thSortable} />
+          <SortHeader field="createdAt" label="Дата" className={s.thSortable} />
         </tr>
       </thead>
       <tbody>

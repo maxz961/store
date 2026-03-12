@@ -6,19 +6,31 @@ type RequestOptions = {
   headers?: Record<string, string>;
   cache?: RequestCache;
   tags?: string[];
+  server?: boolean;
 };
 
 async function request<T>(
   path: string,
   options: RequestOptions = {}
 ): Promise<T> {
-  const { method = "GET", body, headers = {}, cache, tags } = options;
+  const { method = "GET", body, headers = {}, cache, tags, server } = options;
+
+  const cookieHeader: Record<string, string> = {};
+  if (server) {
+    const { cookies } = await import('next/headers');
+    const cookieStore = await cookies();
+    const cookieValue = cookieStore.toString();
+    if (cookieValue) {
+      cookieHeader['Cookie'] = cookieValue;
+    }
+  }
 
   const res = await fetch(`${API_URL}/api${path}`, {
     method,
     credentials: "include",
     headers: {
       ...(body ? { "Content-Type": "application/json" } : {}),
+      ...cookieHeader,
       ...headers,
     },
     body: body ? JSON.stringify(body) : undefined,
@@ -44,6 +56,9 @@ export const api = {
 
   put: <T>(path: string, body: unknown, opts?: Omit<RequestOptions, "method">) =>
     request<T>(path, { ...opts, method: "PUT", body }),
+
+  patch: <T>(path: string, body?: unknown, opts?: Omit<RequestOptions, "method">) =>
+    request<T>(path, { ...opts, method: "PATCH", body }),
 
   delete: <T>(path: string, opts?: Omit<RequestOptions, "method" | "body">) =>
     request<T>(path, { ...opts, method: "DELETE" }),

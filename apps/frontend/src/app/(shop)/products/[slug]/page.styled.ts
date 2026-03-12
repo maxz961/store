@@ -1,5 +1,5 @@
 export const s = {
-  page: 'mx-auto max-w-6xl px-4 py-8 sm:px-6',
+  page: 'mx-auto max-w-screen-2xl px-4 py-8 sm:px-6',
   layout: 'grid grid-cols-1 gap-8 lg:grid-cols-2',
 
   // Gallery
@@ -29,9 +29,15 @@ export const s = {
   divider: 'border-t border-border',
   description: 'text-sm leading-relaxed text-muted-foreground',
   tags: 'flex flex-wrap gap-2',
+  tag: 'border-primary/20 bg-primary/10 text-primary',
 
   // Actions
   actions: 'flex items-center gap-3',
+  favoriteButton: 'flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-border transition-all duration-150 hover:border-muted-foreground/30 hover:bg-muted',
+  favoriteButtonActive: 'border-red-300 bg-red-50 dark:bg-red-950/20',
+  favoriteIcon: 'h-5 w-5 transition-colors duration-150',
+  favoriteIconActive: 'fill-red-500 text-red-500',
+  favoriteIconInactive: 'text-muted-foreground',
   quantityGroup: 'flex items-center gap-0 rounded-lg border border-border',
   quantityButton: 'flex h-10 w-10 items-center justify-center text-lg transition-colors duration-150 hover:bg-accent',
   quantity: 'flex h-10 w-10 items-center justify-center text-sm font-medium',

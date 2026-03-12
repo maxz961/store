@@ -1,9 +1,12 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { Inter } from 'next/font/google';
-import { ThemeProvider } from '@/components/layout/ThemeProvider';
-import { QueryProvider } from '@/components/layout/QueryProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { QueryProvider } from '@/components/providers/QueryProvider';
+import { NavigationProgress } from '@/components/providers/NavigationProgress';
 import { Header } from '@/components/layout/Header';
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { Toaster } from 'sonner';
 import './globals.css';
 
 
@@ -24,10 +27,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <ThemeProvider>
             <Suspense>
+              <NavigationProgress />
+            </Suspense>
+            <Suspense>
               <Header />
             </Suspense>
-            <main>{children}</main>
+            <main>
+              <ErrorBoundary>
+                {children}
+              </ErrorBoundary>
+            </main>
           </ThemeProvider>
+        <Toaster position="top-right" richColors />
         </QueryProvider>
       </body>
     </html>

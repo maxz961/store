@@ -6,6 +6,9 @@ import { Spinner } from '@/components/ui/Spinner';
 import { ProductGallery } from './ProductGallery';
 import { ProductInfo } from './ProductInfo';
 import { ProductReviews } from './ProductReviews';
+import { SimilarProducts } from './SimilarProducts';
+import { RecentlyViewed } from './RecentlyViewed';
+import { useTrackProductView } from './useTrackProductView';
 import { useProduct } from '@/lib/hooks/useProducts';
 import { s } from './page.styled';
 import type { Props } from './page.types';
@@ -14,6 +17,7 @@ import type { Props } from './page.types';
 const ProductPage = (props: Props) => {
   const { slug } = use(props.params);
   const { data: product, isLoading, isError } = useProduct(slug);
+  useTrackProductView(product);
 
   if (isLoading) {
     return (
@@ -54,6 +58,9 @@ const ProductPage = (props: Props) => {
         productSlug={slug}
         reviews={product.reviews}
       />
+
+      <SimilarProducts slug={slug} />
+      <RecentlyViewed currentProductId={product.id} />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 
 
@@ -10,8 +10,9 @@ interface Product {
   comparePrice?: number;
   images: string[];
   stock: number;
-  category: { name: string; slug: string };
-  tags: { tag: { name: string; slug: string } }[];
+  isPublished: boolean;
+  category: { id: string; name: string; slug: string };
+  tags: { tag: { id: string; name: string; slug: string } }[];
   reviews: { rating: number }[];
 }
 
@@ -37,16 +38,36 @@ interface ProductsResponse {
   totalPages: number;
 }
 
-interface Category {
+export interface Category {
   id: string;
   name: string;
   slug: string;
+  description?: string;
+  imageUrl?: string;
+  parentId?: string;
+  _count?: { products: number };
 }
 
-interface Tag {
+export interface Tag {
   id: string;
   name: string;
   slug: string;
+  color?: string | null;
+  _count?: { products: number };
+}
+
+export interface CreateCategoryInput {
+  name: string;
+  slug: string;
+  description?: string;
+  imageUrl?: string;
+  parentId?: string;
+}
+
+export interface CreateTagInput {
+  name: string;
+  slug: string;
+  color?: string;
 }
 
 interface ProductsFilters {
@@ -54,6 +75,10 @@ interface ProductsFilters {
   categorySlug?: string;
   tagSlugs?: string;
   page?: string;
+  minPrice?: string;
+  maxPrice?: string;
+  sortBy?: string;
+  sortOrder?: string;
 }
 
 export const useProducts = (filters: ProductsFilters) => {
@@ -62,12 +87,25 @@ export const useProducts = (filters: ProductsFilters) => {
   if (filters.categorySlug) params.set('categorySlug', filters.categorySlug);
   if (filters.tagSlugs) params.set('tagSlugs', filters.tagSlugs);
   if (filters.page) params.set('page', filters.page);
+  if (filters.minPrice) params.set('minPrice', filters.minPrice);
+  if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
+  if (filters.sortBy) params.set('sortBy', filters.sortBy);
+  if (filters.sortOrder) params.set('sortOrder', filters.sortOrder);
 
   return useQuery({
     queryKey: ['products', filters],
     queryFn: () => api.get<ProductsResponse>(`/products?${params.toString()}`),
+    placeholderData: keepPreviousData,
   });
 };
+
+export const useSearchSuggestions = (query: string) =>
+  useQuery({
+    queryKey: ['products', 'suggestions', query],
+    queryFn: () => api.get<ProductsResponse>(`/products?search=${encodeURIComponent(query)}&limit=6`),
+    enabled: query.trim().length >= 2,
+    staleTime: 60 * 1000,
+  });
 
 export const useProduct = (slug: string) =>
   useQuery({
@@ -89,3 +127,72 @@ export const useTags = () =>
     queryFn: () => api.get<Tag[]>('/tags'),
     staleTime: 5 * 60 * 1000,
   });
+
+export const useSimilarProducts = (slug: string) =>
+  useQuery({
+    queryKey: ['products', 'similar', slug],
+    queryFn: () => api.get<Product[]>(`/products/${slug}/similar`),
+    enabled: !!slug,
+    staleTime: 5 * 60 * 1000,
+  });
+
+export const usePriceRange = () =>
+  useQuery({
+    queryKey: ['products', 'price-range'],
+    queryFn: () => api.get<{ min: number; max: number }>('/products/price-range'),
+    staleTime: 1000 * 60 * 10,
+  });
+
+// ─── Category mutations ───
+
+export const useCreateCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateCategoryInput) => api.post<Category>('/categories', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  });
+};
+
+export const useUpdateCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: Partial<CreateCategoryInput> & { id: string }) =>
+      api.put<Category>(`/categories/${id}`, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  });
+};
+
+export const useDeleteCategory = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/categories/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+  });
+};
+
+// ─── Tag mutations ───
+
+export const useCreateTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: CreateTagInput) => api.post<Tag>('/tags', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+  });
+};
+
+export const useUpdateTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, ...data }: Partial<CreateTagInput> & { id: string }) =>
+      api.put<Tag>(`/tags/${id}`, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+  });
+};
+
+export const useDeleteTag = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => api.delete(`/tags/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+  });
+};

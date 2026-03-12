@@ -4,7 +4,23 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+  ChevronDown: (props: any) => <div data-testid="icon-chevron-down" {...props} />,
+  ImagePlus: (props: any) => <div data-testid="icon-image-plus" {...props} />,
+  X: (props: any) => <div data-testid="icon-x" {...props} />,
+  Eye: (props: any) => <div data-testid="icon-eye" {...props} />,
+  ImageIcon: (props: any) => <div data-testid="icon-image" {...props} />,
+  ImageOff: (props: any) => <div data-testid="icon-image-off" {...props} />,
+  ShoppingCart: (props: any) => <div data-testid="icon-cart" {...props} />,
+  Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
+  Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
 }));
+
+jest.mock('next/image', () => {
+  // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
+  const MockImage = (props: any) => <img {...props} />;
+  MockImage.displayName = 'MockImage';
+  return { __esModule: true, default: MockImage };
+});
 
 const mockPush = jest.fn();
 
@@ -14,11 +30,13 @@ jest.mock('next/navigation', () => ({
 
 let mockApiGet: jest.Mock;
 let mockApiPost: jest.Mock;
+let mockApiUploadFiles: jest.Mock;
 
 jest.mock('@/lib/api', () => ({
   api: {
     get: (...args: any[]) => mockApiGet(...args),
     post: (...args: any[]) => mockApiPost(...args),
+    uploadFiles: (...args: any[]) => mockApiUploadFiles(...args),
   },
 }));
 
@@ -39,8 +57,8 @@ const createWrapper = () => {
 const renderPage = () => render(<NewProductPage />, { wrapper: createWrapper() });
 
 const mockCategories = [
-  { id: 'cat-1', name: 'Электроника' },
-  { id: 'cat-2', name: 'Одежда' },
+  { id: 'cat-1', name: 'Электроника', slug: 'electronics' },
+  { id: 'cat-2', name: 'Одежда', slug: 'clothes' },
 ];
 
 const mockTags = [
@@ -49,8 +67,15 @@ const mockTags = [
 ];
 
 
+let blobCounter = 0;
+
 describe('NewProductPage', () => {
   beforeEach(() => {
+    blobCounter = 0;
+    global.URL.createObjectURL = jest.fn(
+      () => `blob:http://localhost/${++blobCounter}`,
+    );
+    global.URL.revokeObjectURL = jest.fn();
     mockPush.mockClear();
     mockApiGet = jest.fn().mockImplementation((path: string) => {
       if (path === '/categories') return Promise.resolve(mockCategories);
@@ -58,11 +83,7 @@ describe('NewProductPage', () => {
       return Promise.resolve([]);
     });
     mockApiPost = jest.fn().mockResolvedValue({ id: 'new-prod' });
-  });
-
-  it('renders title', () => {
-    renderPage();
-    expect(screen.getByRole('heading', { name: 'Новый товар' })).toBeInTheDocument();
+    mockApiUploadFiles = jest.fn().mockResolvedValue({ urls: ['https://uploaded.jpg'] });
   });
 
   it('renders form sections', () => {
@@ -75,6 +96,34 @@ describe('NewProductPage', () => {
   it('renders breadcrumbs', () => {
     renderPage();
     expect(screen.getByText('Товары')).toBeInTheDocument();
+  });
+
+  it('renders image upload tabs', () => {
+    renderPage();
+    expect(screen.getByText('Загрузить файл')).toBeInTheDocument();
+    expect(screen.getByText('По ссылке')).toBeInTheDocument();
+  });
+
+  it('switches between file and url tabs', () => {
+    renderPage();
+    const urlTab = screen.getByText('По ссылке');
+    fireEvent.click(urlTab);
+    expect(screen.getByPlaceholderText(/example.com/)).toBeInTheDocument();
+  });
+
+  it('renders preview button', () => {
+    renderPage();
+    expect(screen.getByText('Предпросмотр')).toBeInTheDocument();
+  });
+
+  it('opens and closes preview modal', () => {
+    renderPage();
+    fireEvent.click(screen.getByText('Предпросмотр'));
+    expect(screen.getByText('Нет в наличии')).toBeInTheDocument();
+    expect(screen.getByText('0 ₴')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId('icon-x'));
+    expect(screen.queryByText('Нет в наличии')).not.toBeInTheDocument();
   });
 
   it('loads categories', async () => {
@@ -106,15 +155,18 @@ describe('NewProductPage', () => {
     expect(tagBtn).not.toHaveClass('bg-primary');
   });
 
-  it('submits form and redirects', async () => {
+  it('submits form with url images and redirects', async () => {
     renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
-    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Desc' } });
+    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Описание тестового товара' } });
     fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
 
     await screen.findByText('Электроника');
     fireEvent.change(screen.getByDisplayValue('Выберите категорию'), { target: { value: 'cat-1' } });
+
+    // Switch to URL tab and enter image URL
+    fireEvent.click(screen.getByText('По ссылке'));
     fireEvent.change(screen.getByPlaceholderText(/example.com/), { target: { value: 'https://img.jpg' } });
 
     fireEvent.submit(screen.getByText('Создать товар').closest('form')!);
@@ -128,13 +180,14 @@ describe('NewProductPage', () => {
     mockApiPost = jest.fn().mockRejectedValue(new Error('Ошибка валидации'));
     renderPage();
 
-    // Fill all required fields to pass Zod validation
     fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
-    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Desc' } });
+    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Описание тестового товара' } });
     fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
 
     await screen.findByText('Электроника');
     fireEvent.change(screen.getByDisplayValue('Выберите категорию'), { target: { value: 'cat-1' } });
+
+    fireEvent.click(screen.getByText('По ссылке'));
     fireEvent.change(screen.getByPlaceholderText(/example.com/), { target: { value: 'https://img.jpg' } });
 
     fireEvent.submit(screen.getByText('Создать товар').closest('form')!);
@@ -145,5 +198,24 @@ describe('NewProductPage', () => {
   it('renders publish checkbox', () => {
     renderPage();
     expect(screen.getByText('Опубликовать сразу')).toBeInTheDocument();
+  });
+
+  it('displays thumbnail after file selection', () => {
+    renderPage();
+
+    const input = document.querySelector('input[type="file"]')!;
+    const file = new File(['image-data'], 'photo.png', { type: 'image/png' });
+
+    fireEvent.change(input, { target: { files: [file] } });
+
+    const thumbnail = document.querySelector('img[src^="blob:"]');
+    expect(thumbnail).toBeInTheDocument();
+    expect(thumbnail).toHaveAttribute('src', 'blob:http://localhost/1');
+  });
+
+  it('file tab is active by default', () => {
+    renderPage();
+    const fileTab = screen.getByText('Загрузить файл');
+    expect(fileTab).toHaveClass('bg-white');
   });
 });

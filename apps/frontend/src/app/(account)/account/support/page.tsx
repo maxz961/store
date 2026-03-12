@@ -1,0 +1,138 @@
+'use client';
+
+import { useRef, useEffect, useState, useCallback, KeyboardEvent } from 'react';
+import Link from 'next/link';
+import { MessageCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useMyMessages, useSendMessage } from '@/lib/hooks/useSupport';
+import { s } from './page.styled';
+
+
+const breadcrumbs = [
+  { label: 'Главная', href: '/' },
+  { label: 'Профиль', href: '/account/profile' },
+  { label: 'Колл-центр' },
+];
+
+
+const formatTime = (iso: string) =>
+  new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+
+
+const SupportPage = () => {
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { data: messages = [], isLoading } = useMyMessages();
+  const sendMessage = useSendMessage();
+
+  const [text, setText] = useState('');
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = useCallback(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, scrollToBottom]);
+
+  const handleSend = useCallback(() => {
+    const trimmed = text.trim();
+    if (!trimmed || sendMessage.isPending) return;
+    sendMessage.mutate(trimmed, { onSuccess: () => setText('') });
+  }, [text, sendMessage]);
+
+  const handleKeyDown = useCallback((e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  }, [handleSend]);
+
+  const handleTextChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
+  }, []);
+
+  if (authLoading) {
+    return (
+      <div className={s.page}>
+        <div className="flex justify-center py-16"><Spinner /></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className={s.page}>
+        <div className={s.notAuth}>
+          <MessageCircle className="h-12 w-12 text-muted-foreground" />
+          <p className={s.notAuthTitle}>Вы не авторизованы</p>
+          <p className={s.notAuthText}>Войдите, чтобы написать в поддержку</p>
+          <Link href="/login"><Button>Войти</Button></Link>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
+      <div className={s.header}>
+        <h1 className={s.pageTitle}>Колл-центр</h1>
+        <p className={s.pageSubtitle}>Напишите нам — мы ответим как можно скорее</p>
+      </div>
+
+      <div className={s.chatCard}>
+        <div className={s.chatMessages}>
+          {isLoading && (
+            <div className="flex justify-center py-8"><Spinner /></div>
+          )}
+
+          {!isLoading && messages.length === 0 && (
+            <div className={s.emptyState}>
+              <MessageCircle className={s.emptyIcon} />
+              <p className={s.emptyTitle}>Нет сообщений</p>
+              <p className={s.emptyText}>Напишите ваш вопрос — мы ответим в ближайшее время</p>
+            </div>
+          )}
+
+          {messages.map((msg) => (
+            <div key={msg.id} className={msg.fromAdmin ? s.messageRowAdmin : s.messageRowUser}>
+              <div>
+                {msg.fromAdmin && <p className={s.adminLabel}>Поддержка</p>}
+                <div className={msg.fromAdmin ? s.bubbleAdmin : s.bubbleUser}>
+                  {msg.content}
+                </div>
+                <p className={msg.fromAdmin ? s.messageTime : s.messageTimeUser}>
+                  {formatTime(msg.createdAt)}
+                </p>
+              </div>
+            </div>
+          ))}
+
+          <div ref={bottomRef} />
+        </div>
+
+        <div className={s.inputArea}>
+          <div className={s.inputRow}>
+            <textarea
+              className={s.textarea}
+              placeholder="Напишите сообщение... (Enter — отправить, Shift+Enter — перенос)"
+              value={text}
+              onChange={handleTextChange}
+              onKeyDown={handleKeyDown}
+              rows={1}
+            />
+            <Button onClick={handleSend} disabled={!text.trim() || sendMessage.isPending}>
+              {sendMessage.isPending ? <Spinner /> : 'Отправить'}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SupportPage;

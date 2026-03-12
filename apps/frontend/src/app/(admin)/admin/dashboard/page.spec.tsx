@@ -8,12 +8,18 @@ jest.mock('lucide-react', () => ({
   TrendingUp: (props: any) => <div data-testid="icon-trend" {...props} />,
   Users: (props: any) => <div data-testid="icon-users" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+  AlertTriangle: (props: any) => <div data-testid="icon-alert" {...props} />,
+  CheckCircle2: (props: any) => <div data-testid="icon-check" {...props} />,
 }));
 
 jest.mock('recharts', () => ({
   ResponsiveContainer: ({ children }: any) => <div data-testid="responsive-container">{children}</div>,
   AreaChart: ({ children }: any) => <div data-testid="area-chart">{children}</div>,
   Area: () => <div data-testid="area" />,
+  BarChart: ({ children }: any) => <div data-testid="bar-chart">{children}</div>,
+  Bar: ({ children }: any) => <div data-testid="bar">{children}</div>,
+  LineChart: ({ children }: any) => <div data-testid="line-chart">{children}</div>,
+  Line: () => <div data-testid="line" />,
   XAxis: () => null,
   YAxis: () => null,
   CartesianGrid: () => null,
@@ -22,6 +28,12 @@ jest.mock('recharts', () => ({
   Pie: ({ children }: any) => <div data-testid="pie">{children}</div>,
   Cell: () => null,
 }));
+
+jest.mock('next/image', () => {
+  const MockImage = (props: any) => <div data-testid="next-image" {...props} />;
+  MockImage.displayName = 'MockImage';
+  return { __esModule: true, default: MockImage };
+});
 
 let mockApiGet: jest.Mock;
 
@@ -66,17 +78,35 @@ const mockSummary = {
     { date: '2026-03-01', revenue: 3000 },
     { date: '2026-03-02', revenue: 5000 },
   ],
+  revenueByCategory: [
+    { categoryName: 'Электроника', revenue: 30000 },
+    { categoryName: 'Одежда', revenue: 15000 },
+  ],
+  aovByDay: [
+    { date: '2026-03-01', aov: 850 },
+    { date: '2026-03-02', aov: 920 },
+  ],
+  averageOrderValue: 416.67,
+  deliveryMethodDistribution: [
+    { method: 'COURIER', count: 60 },
+    { method: 'PICKUP', count: 40 },
+    { method: 'POST', count: 20 },
+  ],
+  ratingDistribution: [
+    { rating: 5, count: 15 },
+    { rating: 4, count: 8 },
+    { rating: 3, count: 3 },
+  ],
+  lowStockProducts: [
+    { id: 'p1', name: 'USB-кабель', slug: 'usb-cable', stock: 2, image: 'img.jpg' },
+    { id: 'p2', name: 'Чехол для телефона', slug: 'phone-case', stock: 0, image: null },
+  ],
 };
 
 
 describe('DashboardPage', () => {
   beforeEach(() => {
     mockApiGet = jest.fn().mockResolvedValue(mockSummary);
-  });
-
-  it('renders title', async () => {
-    renderPage();
-    expect(screen.getByText('Аналитика')).toBeInTheDocument();
   });
 
   it('renders stats cards after loading', async () => {
@@ -103,6 +133,45 @@ describe('DashboardPage', () => {
     expect(await screen.findByText('Заказы по статусам')).toBeInTheDocument();
   });
 
+  it('renders revenue by category section', async () => {
+    renderPage();
+    expect(await screen.findByText('Выручка по категориям')).toBeInTheDocument();
+  });
+
+  it('renders delivery method section', async () => {
+    renderPage();
+    expect(await screen.findByText('Способы доставки')).toBeInTheDocument();
+  });
+
+  it('renders rating distribution section', async () => {
+    renderPage();
+    expect(await screen.findByText('Распределение оценок')).toBeInTheDocument();
+  });
+
+  it('renders AOV trend chart', async () => {
+    renderPage();
+    expect(await screen.findByText('Средний чек за 30 дней')).toBeInTheDocument();
+  });
+
+  it('renders low stock warning', async () => {
+    renderPage();
+    expect(await screen.findByText('Товары с низким остатком')).toBeInTheDocument();
+    expect(screen.getByText('USB-кабель')).toBeInTheDocument();
+    expect(screen.getByText('Чехол для телефона')).toBeInTheDocument();
+  });
+
+  it('shows stock badge for low stock products', async () => {
+    renderPage();
+    expect(await screen.findByText('2 шт.')).toBeInTheDocument();
+    expect(screen.getByText('Нет в наличии')).toBeInTheDocument();
+  });
+
+  it('shows "all in stock" message when no low stock products', async () => {
+    mockApiGet = jest.fn().mockResolvedValue({ ...mockSummary, lowStockProducts: [] });
+    renderPage();
+    expect(await screen.findByText('Все товары в наличии')).toBeInTheDocument();
+  });
+
   it('renders error state', async () => {
     mockApiGet = jest.fn().mockRejectedValue(new Error('Forbidden'));
     renderPage();
@@ -112,5 +181,12 @@ describe('DashboardPage', () => {
   it('renders breadcrumbs', () => {
     renderPage();
     expect(screen.getByText('Админ-панель')).toBeInTheDocument();
+  });
+
+  it('renders loading skeletons', () => {
+    mockApiGet = jest.fn().mockReturnValue(new Promise(() => {}));
+    renderPage();
+    const skeletons = document.querySelectorAll('[class*="animate-pulse"]');
+    expect(skeletons.length).toBeGreaterThanOrEqual(4);
   });
 });

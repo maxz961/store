@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { ImageOff } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { CheckoutSummaryItemProps } from './page.types';
 
@@ -26,7 +27,7 @@ export const CheckoutSummaryItem = ({ item }: CheckoutSummaryItemProps) => {
       </div>
       <div className={s.summaryItemInfo}>
         <p className={s.summaryItemName}>{item.name}</p>
-        <p className={s.summaryItemQty}>{item.quantity} шт. × ${Number(item.price).toFixed(2)}</p>
+        <p className={s.summaryItemQty}>{item.quantity} шт. × {formatCurrency(Number(item.price))}</p>
       </div>
     </div>
   );

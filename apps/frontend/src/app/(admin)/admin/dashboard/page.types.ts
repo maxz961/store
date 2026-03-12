@@ -28,3 +28,30 @@ export interface TopProductRowProps {
   productName: string;
   soldCount: number;
 }
+
+export interface RevenueByCategoryCardProps {
+  revenueByCategory: { categoryName: string; revenue: number }[];
+}
+
+export interface AovTrendChartProps {
+  chartData: { date: string; aov: number }[];
+}
+
+export interface DeliveryMethodCardProps {
+  data: { method: string; label: string; count: number }[];
+}
+
+export interface RatingDistributionCardProps {
+  data: { rating: number; count: number }[];
+}
+
+export interface LowStockCardProps {
+  products: { id: string; name: string; slug: string; stock: number; image: string | null }[];
+}
+
+export interface LowStockRowProps {
+  name: string;
+  slug: string;
+  stock: number;
+  image: string | null;
+}

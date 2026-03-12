@@ -12,6 +12,11 @@ const REVIEW_INCLUDE = {
   user: { select: { id: true, name: true, image: true } },
 };
 
+const ADMIN_REVIEW_INCLUDE = {
+  user: { select: { id: true, name: true, image: true } },
+  product: { select: { id: true, name: true, slug: true } },
+};
+
 type SortOption = 'newest' | 'oldest' | 'highest' | 'lowest';
 
 const SORT_MAP: Record<SortOption, object> = {
@@ -115,14 +120,44 @@ export class ReviewsService {
     });
   }
 
-  async findByProductId(productId: string, sort: string = 'newest') {
+  async findByProductId(
+    productId: string,
+    sort: string = 'newest',
+    page: number = 1,
+    limit: number = 5,
+  ) {
     const orderBy = SORT_MAP[sort as SortOption] ?? SORT_MAP.newest;
+    const skip = (page - 1) * limit;
 
-    return db.review.findMany({
-      where: { productId },
-      include: REVIEW_INCLUDE,
-      orderBy,
-    });
+    const [data, total] = await Promise.all([
+      db.review.findMany({
+        where: { productId },
+        include: REVIEW_INCLUDE,
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      db.review.count({ where: { productId } }),
+    ]);
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
+  }
+
+  async findAll(sort: string = 'newest', page: number = 1, limit: number = 20) {
+    const orderBy = SORT_MAP[sort as SortOption] ?? SORT_MAP.newest;
+    const skip = (page - 1) * limit;
+
+    const [data, total] = await Promise.all([
+      db.review.findMany({
+        include: ADMIN_REVIEW_INCLUDE,
+        orderBy,
+        skip,
+        take: limit,
+      }),
+      db.review.count(),
+    ]);
+
+    return { data, total, page, totalPages: Math.ceil(total / limit) };
   }
 
   async getUserReview(userId: string, productId: string) {

@@ -3,6 +3,7 @@ import { ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { STATUS_LABELS } from '@/lib/constants/order';
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import { STATUS_STYLES } from './page.constants';
 import type { OrderCardProps } from './page.types';
@@ -26,7 +27,7 @@ export const OrderCard = ({ order }: OrderCardProps) => {
         <p className={s.orderDate}>{date}</p>
       </div>
       <div className={s.orderRight}>
-        <p className={s.orderAmount}>${Number(order.totalAmount).toFixed(2)}</p>
+        <p className={s.orderAmount}>{formatCurrency(Number(order.totalAmount))}</p>
         <p className={s.orderItems}>{itemCount} {itemCount === 1 ? 'товар' : itemCount < 5 ? 'товара' : 'товаров'}</p>
       </div>
       <Badge className={cn(STATUS_STYLES[order.status])}>

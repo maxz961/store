@@ -1,11 +1,13 @@
-import { When } from 'react-if';
+import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/Spinner';
 import { CheckoutSummaryItem } from './CheckoutSummaryItem';
+import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { OrderSummaryProps } from './page.types';
 
 
-export const OrderSummary = ({ items, totalPrice, error, isPending }: OrderSummaryProps) => (
+export const OrderSummary = ({ items, totalPrice, step, error, isPending }: OrderSummaryProps) => (
   <div className={s.sidebar}>
     <div className={s.summaryCard}>
       <h2 className={s.summaryTitle}>Ваш заказ</h2>
@@ -20,18 +22,23 @@ export const OrderSummary = ({ items, totalPrice, error, isPending }: OrderSumma
 
       <div className={s.summaryTotal}>
         <span className={s.summaryTotalLabel}>Итого</span>
-        <span className={s.summaryTotalPrice}>${totalPrice.toFixed(2)}</span>
+        <span className={s.summaryTotalPrice}>{formatCurrency(totalPrice)}</span>
       </div>
 
       <When condition={!!error}>
         <p className={s.error}>
-          {error instanceof Error ? error.message : 'Не удалось оформить заказ'}
+          {error instanceof Error ? error.message : 'Ошибка. Попробуйте снова.'}
         </p>
       </When>
 
-      <Button type="submit" size="lg" className={s.submitButton} disabled={isPending}>
-        {isPending ? 'Оформляем...' : 'Оформить заказ'}
-      </Button>
+      <When condition={step === 'info'}>
+        <Button type="submit" size="lg" className={s.submitButton} disabled={isPending}>
+          <If condition={isPending}>
+            <Then><Spinner size="sm" /><span className="ml-2">Загрузка...</span></Then>
+            <Else>Перейти к оплате →</Else>
+          </If>
+        </Button>
+      </When>
     </div>
   </div>
 );

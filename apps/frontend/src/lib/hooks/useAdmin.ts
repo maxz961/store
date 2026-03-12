@@ -13,6 +13,12 @@ interface AnalyticsSummary {
   topProducts: { product: { name: string; price: number } | undefined; soldCount: number }[];
   newUsersThisMonth: number;
   revenueByDay: { date: string; revenue: number }[];
+  revenueByCategory: { categoryName: string; revenue: number }[];
+  aovByDay: { date: string; aov: number }[];
+  averageOrderValue: number;
+  deliveryMethodDistribution: { method: string; count: number }[];
+  ratingDistribution: { rating: number; count: number }[];
+  lowStockProducts: { id: string; name: string; slug: string; stock: number; image: string | null }[];
 }
 
 interface AdminOrder {
@@ -92,5 +98,64 @@ export const useCreateProduct = () => {
     },
   });
 };
+
+export const useUploadProductImages = () =>
+  useMutation({
+    mutationFn: (files: File[]) =>
+      api.uploadFiles<{ urls: string[] }>('/products/upload', files),
+  });
+
+interface UpdateProductInput extends Partial<CreateProductInput> {
+  id: string;
+}
+
+export const useUpdateProduct = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, ...data }: UpdateProductInput) =>
+      api.put(`/products/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['products'] });
+    },
+  });
+};
+
+export const useImageErrorCount = (enabled = true) =>
+  useQuery({
+    queryKey: ['admin', 'products', 'image-error-count'],
+    queryFn: () => api.get<{ count: number }>('/products/admin/image-error-count'),
+    enabled,
+    retry: false,
+  });
+
+interface AdminProductSuggestion {
+  id: string;
+  name: string;
+  slug: string;
+  images: string[];
+  isPublished: boolean;
+  category: { name: string } | null;
+}
+
+interface AdminProductSuggestionsResponse {
+  items: AdminProductSuggestion[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export const useAdminProductSuggestions = (query: string) =>
+  useQuery({
+    queryKey: ['admin', 'products', 'suggestions', query],
+    queryFn: () =>
+      api.get<AdminProductSuggestionsResponse>(
+        `/products/admin?search=${encodeURIComponent(query)}&limit=6&sortBy=name&sortOrder=asc`,
+      ),
+    enabled: query.trim().length >= 2,
+    staleTime: 30 * 1000,
+  });
+
+export type { AdminProductSuggestion };
 
 export type { AnalyticsSummary, AdminOrder, CreateProductInput };

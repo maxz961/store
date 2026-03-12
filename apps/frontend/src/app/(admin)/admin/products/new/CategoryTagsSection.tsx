@@ -1,8 +1,10 @@
 import { useFormContext } from 'react-hook-form';
 import { When } from 'react-if';
 import { SelectField } from '@/components/ui/SelectField';
+import { FieldTooltip } from '@/components/ui/FieldTooltip';
 import { TagToggleButton } from './TagToggleButton';
 import { s } from './page.styled';
+import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 import type { CategoryTagsSectionProps } from './page.types';
 
@@ -21,6 +23,7 @@ export const CategoryTagsSection = ({
 
       <SelectField
         label="Категория"
+        tooltip={FIELD_TOOLTIPS.categoryId}
         placeholder="Выберите категорию"
         options={categoryOptions}
         error={errors.categoryId?.message}
@@ -29,7 +32,10 @@ export const CategoryTagsSection = ({
 
       <When condition={tags.length > 0}>
         <div>
-          <p className={s.tagsTitle}>Теги</p>
+          <p className={s.tagsTitle}>
+            Теги
+            <FieldTooltip text={FIELD_TOOLTIPS.tags} />
+          </p>
           <div className={s.tagsWrapper}>
             {tags.map((tag) => (
               <TagToggleButton

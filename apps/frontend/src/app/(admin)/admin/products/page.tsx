@@ -8,27 +8,41 @@ import type { ProductsResponse } from './page.types';
 import { breadcrumbs } from './page.constants';
 import { ProductsTable } from './ProductsTable';
 import { ProductsPagination } from './ProductsPagination';
+import { ProductSearch } from './ProductSearch';
+import { ProductsViewSwitch } from './ProductsViewSwitch';
 
 
 const AdminProductsPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; search?: string }>;
+  searchParams: Promise<{ page?: string; search?: string; sortBy?: string; sortOrder?: string; view?: string }>;
 }) => {
   const sp = await searchParams;
+  const sortBy = sp.sortBy ?? 'createdAt';
+  const sortOrder = (sp.sortOrder === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc';
+  const view = sp.view === 'broken' ? 'broken' : 'all';
+
   const params = new URLSearchParams();
   if (sp.page) params.set('page', sp.page);
   if (sp.search) params.set('search', sp.search);
+  params.set('sortBy', sortBy);
+  params.set('sortOrder', sortOrder);
+  if (view === 'broken') params.set('imageError', 'true');
 
-  const data = await api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store' });
+  const [data, imageErrorData] = await Promise.all([
+    api.get<ProductsResponse>(`/products/admin?${params.toString()}`, { cache: 'no-store', server: true }),
+    api.get<{ count: number }>('/products/admin/image-error-count', { cache: 'no-store', server: true }).catch(() => ({ count: 0 })),
+  ]);
+
   const currentPage = data.page;
 
   return (
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
 
-      <div className={s.header}>
-        <h1 className={s.title}>Товары</h1>
+      <div className={s.viewRow}>
+        <ProductsViewSwitch currentView={view} imageErrorCount={imageErrorData.count} />
+        <ProductSearch defaultValue={sp.search} sortBy={sortBy} sortOrder={sortOrder} />
         <Link href="/admin/products/new">
           <Button size="sm">
             <Plus className={s.buttonIcon} />
@@ -37,8 +51,20 @@ const AdminProductsPage = async ({
         </Link>
       </div>
 
-      <ProductsTable products={data.items} />
-      <ProductsPagination currentPage={currentPage} totalPages={data.totalPages} total={data.total} />
+      <ProductsTable
+        products={data.items}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        search={sp.search}
+      />
+      <ProductsPagination
+        currentPage={currentPage}
+        totalPages={data.totalPages}
+        search={sp.search}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
+        view={view}
+      />
     </div>
   );
 };

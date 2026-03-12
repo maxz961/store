@@ -15,6 +15,7 @@ jest.mock('@store/shared', () => ({
     review: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
+      count: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -212,21 +213,28 @@ describe('ReviewsService', () => {
   });
 
   describe('findByProductId', () => {
-    it('should return reviews for a product sorted by newest', async () => {
+    it('should return paginated reviews for a product sorted by newest', async () => {
       (db.review.findMany as jest.Mock).mockResolvedValue([mockReview]);
+      (db.review.count as jest.Mock).mockResolvedValue(1);
 
       const result = await service.findByProductId('product-1');
-      expect(result).toHaveLength(1);
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.page).toBe(1);
+      expect(result.totalPages).toBe(1);
       expect(db.review.findMany).toHaveBeenCalledWith(
         expect.objectContaining({
           where: { productId: 'product-1' },
           orderBy: { createdAt: 'desc' },
+          skip: 0,
+          take: 5,
         }),
       );
     });
 
     it('should sort by highest rating', async () => {
       (db.review.findMany as jest.Mock).mockResolvedValue([mockReview]);
+      (db.review.count as jest.Mock).mockResolvedValue(1);
 
       await service.findByProductId('product-1', 'highest');
       expect(db.review.findMany).toHaveBeenCalledWith(
@@ -236,6 +244,7 @@ describe('ReviewsService', () => {
 
     it('should sort by lowest rating', async () => {
       (db.review.findMany as jest.Mock).mockResolvedValue([mockReview]);
+      (db.review.count as jest.Mock).mockResolvedValue(1);
 
       await service.findByProductId('product-1', 'lowest');
       expect(db.review.findMany).toHaveBeenCalledWith(
@@ -245,11 +254,58 @@ describe('ReviewsService', () => {
 
     it('should fallback to newest for invalid sort', async () => {
       (db.review.findMany as jest.Mock).mockResolvedValue([mockReview]);
+      (db.review.count as jest.Mock).mockResolvedValue(1);
 
       await service.findByProductId('product-1', 'invalid');
       expect(db.review.findMany).toHaveBeenCalledWith(
         expect.objectContaining({ orderBy: { createdAt: 'desc' } }),
       );
+    });
+
+    it('should apply correct skip for page 2', async () => {
+      (db.review.findMany as jest.Mock).mockResolvedValue([]);
+      (db.review.count as jest.Mock).mockResolvedValue(6);
+
+      const result = await service.findByProductId('product-1', 'newest', 2, 5);
+      expect(result.page).toBe(2);
+      expect(result.totalPages).toBe(2);
+      expect(db.review.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 5, take: 5 }),
+      );
+    });
+  });
+
+  describe('findAll', () => {
+    it('should return paginated reviews across all products', async () => {
+      (db.review.findMany as jest.Mock).mockResolvedValue([mockReview]);
+      (db.review.count as jest.Mock).mockResolvedValue(1);
+
+      const result = await service.findAll();
+      expect(result.data).toHaveLength(1);
+      expect(result.total).toBe(1);
+      expect(result.page).toBe(1);
+      expect(result.totalPages).toBe(1);
+      expect(db.review.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 0, take: 20, orderBy: { createdAt: 'desc' } }),
+      );
+    });
+
+    it('should sort all reviews by highest rating', async () => {
+      (db.review.findMany as jest.Mock).mockResolvedValue([mockReview]);
+      (db.review.count as jest.Mock).mockResolvedValue(1);
+
+      await service.findAll('highest');
+      expect(db.review.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { rating: 'desc' } }),
+      );
+    });
+
+    it('should calculate totalPages correctly', async () => {
+      (db.review.findMany as jest.Mock).mockResolvedValue([]);
+      (db.review.count as jest.Mock).mockResolvedValue(45);
+
+      const result = await service.findAll('newest', 1, 20);
+      expect(result.totalPages).toBe(3);
     });
   });
 

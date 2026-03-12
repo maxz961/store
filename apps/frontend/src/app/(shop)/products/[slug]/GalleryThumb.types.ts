@@ -3,4 +3,5 @@ export interface GalleryThumbProps {
   alt: string;
   isActive: boolean;
   onClick: () => void;
+  unoptimized?: boolean;
 }

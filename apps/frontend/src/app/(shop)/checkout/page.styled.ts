@@ -51,4 +51,22 @@ export const s = {
   authIcon: 'h-12 w-12 text-muted-foreground/40',
   authTitle: 'text-lg font-medium',
   authText: 'text-sm text-muted-foreground',
+
+  // Step indicator
+  stepBar: 'flex items-center gap-2 mb-8',
+  stepItem: 'flex items-center gap-2 text-sm',
+  stepDot: 'flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-colors',
+  stepDotActive: 'bg-primary text-primary-foreground',
+  stepDotDone: 'bg-primary/20 text-primary',
+  stepDotInactive: 'bg-muted text-muted-foreground',
+  stepLabelActive: 'font-medium text-foreground',
+  stepLabelInactive: 'text-muted-foreground',
+  stepLine: 'h-px flex-1 bg-border',
+
+  // Payment section
+  paymentSection: 'rounded-xl border border-border bg-card p-6',
+  paymentTitle: 'text-lg font-medium mb-4',
+  paymentError: 'mt-3 rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive',
+  payButton: 'w-full mt-4',
+  backLink: 'mt-3 block w-full text-center text-sm text-muted-foreground transition-colors hover:text-foreground disabled:opacity-50',
 };

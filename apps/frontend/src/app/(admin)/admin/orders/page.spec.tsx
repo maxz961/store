@@ -3,6 +3,14 @@ import { render, screen } from '@testing-library/react';
 
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
+  ChevronLeft: (props: any) => <div data-testid="icon-chevron-left" {...props} />,
+  ChevronDown: (props: any) => <div data-testid="icon-chevron-down" {...props} />,
+  ChevronUp: (props: any) => <div data-testid="icon-chevron-up" {...props} />,
+}));
+
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  useSearchParams: () => new URLSearchParams(),
 }));
 
 let mockApiGet: jest.Mock;
@@ -46,10 +54,10 @@ describe('AdminOrdersPage', () => {
     mockApiGet = jest.fn().mockResolvedValue(mockOrders);
   });
 
-  it('renders title', async () => {
+  it('renders breadcrumb label', async () => {
     const jsx = await AdminOrdersPage({ searchParams: Promise.resolve({}) });
     render(jsx);
-    expect(screen.getByRole('heading', { name: 'Заказы' })).toBeInTheDocument();
+    expect(screen.getByRole('navigation', { name: 'Breadcrumb' })).toBeInTheDocument();
   });
 
   it('renders filter tabs', async () => {
@@ -99,6 +107,14 @@ describe('AdminOrdersPage', () => {
     const jsx = await AdminOrdersPage({ searchParams: Promise.resolve({}) });
     render(jsx);
     expect(screen.getByText('Админ-панель')).toBeInTheDocument();
+  });
+
+  it('passes server: true for cookie forwarding', async () => {
+    await AdminOrdersPage({ searchParams: Promise.resolve({}) });
+    expect(mockApiGet).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({ server: true }),
+    );
   });
 
   it('passes status filter to API call', async () => {

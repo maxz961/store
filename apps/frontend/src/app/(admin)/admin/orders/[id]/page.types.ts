@@ -39,6 +39,7 @@ export interface StatusButtonProps {
   status: string;
   label: string;
   isActive: boolean;
+  isLoading: boolean;
   disabled: boolean;
   onClick: () => void;
 }

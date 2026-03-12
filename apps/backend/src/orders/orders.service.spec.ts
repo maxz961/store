@@ -111,4 +111,75 @@ describe("OrdersService", () => {
       ).rejects.toThrow(NotFoundException);
     });
   });
+
+  describe("findAll", () => {
+    const mockItems = [{ id: "order-1", status: "PENDING" }];
+
+    beforeEach(() => {
+      (mockDb.order.findMany as jest.Mock).mockResolvedValue(mockItems);
+      (mockDb.order.count as jest.Mock).mockResolvedValue(1);
+    });
+
+    it("returns paginated orders", async () => {
+      const result = await service.findAll(1, 20);
+      expect(result).toEqual({
+        items: mockItems,
+        total: 1,
+        page: 1,
+        limit: 20,
+        totalPages: 1,
+      });
+    });
+
+    it("handles string page/limit from query params", async () => {
+      const result = await service.findAll("2" as unknown as number, "10" as unknown as number);
+      expect(result.page).toBe(2);
+      expect(result.limit).toBe(10);
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 10, take: 10 }),
+      );
+    });
+
+    it("defaults to page 1 limit 20 when undefined", async () => {
+      const result = await service.findAll(undefined, undefined);
+      expect(result.page).toBe(1);
+      expect(result.limit).toBe(20);
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ skip: 0, take: 20 }),
+      );
+    });
+
+    it("filters by status", async () => {
+      await service.findAll(1, 20, OrderStatus.PENDING);
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ where: { status: "PENDING" } }),
+      );
+    });
+
+    it("clamps invalid page to 1", async () => {
+      const result = await service.findAll(-5, 20);
+      expect(result.page).toBe(1);
+    });
+
+    it("sorts by createdAt desc by default", async () => {
+      await service.findAll(1, 20);
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { createdAt: "desc" } }),
+      );
+    });
+
+    it("sorts by totalAmount asc when specified", async () => {
+      await service.findAll(1, 20, undefined, "totalAmount", "asc");
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { totalAmount: "asc" } }),
+      );
+    });
+
+    it("sorts by createdAt asc when specified", async () => {
+      await service.findAll(1, 20, undefined, "createdAt", "asc");
+      expect(mockDb.order.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ orderBy: { createdAt: "asc" } }),
+      );
+    });
+  });
 });

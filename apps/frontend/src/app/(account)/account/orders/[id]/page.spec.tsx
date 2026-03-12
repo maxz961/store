@@ -85,12 +85,12 @@ describe('OrderDetailPage', () => {
   it('renders order item name and quantity', async () => {
     await renderPage();
     expect(screen.getByText('Наушники')).toBeInTheDocument();
-    expect(screen.getByText('2 шт. × $199.99')).toBeInTheDocument();
+    expect(screen.getByText('2 шт. × 199,99 ₴')).toBeInTheDocument();
   });
 
   it('renders total amount', async () => {
     await renderPage();
-    expect(screen.getAllByText('$399.98').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('399,98 ₴').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders shipping address for non-pickup orders', async () => {

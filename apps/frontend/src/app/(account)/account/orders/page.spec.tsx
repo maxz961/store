@@ -64,8 +64,8 @@ describe('OrdersPage', () => {
 
   it('renders order amounts', () => {
     render(<OrdersPage />);
-    expect(screen.getByText('$399.98')).toBeInTheDocument();
-    expect(screen.getByText('$149.99')).toBeInTheDocument();
+    expect(screen.getByText('399,98 ₴')).toBeInTheDocument();
+    expect(screen.getByText('149,99 ₴')).toBeInTheDocument();
   });
 
   it('renders status badges', () => {
