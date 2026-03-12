@@ -17,6 +17,7 @@ export interface CartItem {
 interface CartStore {
   items: CartItem[];
   hydrated: boolean;
+  setHydrated: () => void;
   addItem: (item: Omit<CartItem, "quantity">) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -30,6 +31,8 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       hydrated: false,
+
+      setHydrated: () => set({ hydrated: true }),
 
       addItem: (item) => {
         const existing = get().items.find((i) => i.id === item.id);
@@ -76,8 +79,8 @@ export const useCartStore = create<CartStore>()(
     {
       name: "store-cart",
       partialize: (state) => ({ items: state.items }),
-      onRehydrateStorage: () => () => {
-        useCartStore.setState({ hydrated: true });
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated();
       },
     }
   )
