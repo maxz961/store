@@ -8,6 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "dev": "tsc -p tsconfig.json --watch",
     "prisma:generate": "dotenv -e ../../.env -- prisma generate",
+    "prisma:generate:ci": "prisma generate",
     "prisma:migrate": "dotenv -e ../../.env -- prisma migrate dev",
     "prisma:studio": "dotenv -e ../../.env -- prisma studio",
     "prisma:seed": "dotenv -e ../../.env -- ts-node --project tsconfig.seed.json prisma/seed.ts",
