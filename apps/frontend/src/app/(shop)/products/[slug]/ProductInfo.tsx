@@ -19,7 +19,7 @@ import type { ProductInfoProps } from './page.types';
 export const ProductInfo = ({ product }: ProductInfoProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const { isAuthenticated } = useAuth();
-  const { data: favoriteIds } = useFavoriteIds();
+  const { data: favoriteIds } = useFavoriteIds(isAuthenticated);
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const [quantity, setQuantity] = useState(1);

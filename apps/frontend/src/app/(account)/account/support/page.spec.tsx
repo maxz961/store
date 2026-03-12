@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
-jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }));
+jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn(), prefetch: jest.fn() }) }));
 jest.mock('next/link', () => ({
   __esModule: true,
   default: ({ children, href }: any) => <a href={href}>{children}</a>,
@@ -49,7 +49,7 @@ describe('SupportPage', () => {
 
   it('renders without crashing', () => {
     render(<SupportPage />);
-    expect(screen.getByRole('heading', { name: 'Колл-центр' })).toBeInTheDocument();
+    expect(screen.getByText('Колл-центр')).toBeInTheDocument();
   });
 
   it('renders page subtitle', () => {

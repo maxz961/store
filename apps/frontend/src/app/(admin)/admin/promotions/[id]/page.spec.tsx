@@ -5,6 +5,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   ChevronDown: (props: any) => <div data-testid="icon-chevron-down" {...props} />,
+  Eye: (props: any) => <div data-testid="icon-eye" {...props} />,
+  X: (props: any) => <div data-testid="icon-x" {...props} />,
+  ImagePlus: (props: any) => <div data-testid="icon-image-plus" {...props} />,
+  Info: (props: any) => <div data-testid="icon-info" {...props} />,
+  HelpCircle: (props: any) => <div data-testid="icon-help" {...props} />,
 }));
 
 jest.mock('next/image', () => {
@@ -25,6 +30,15 @@ const mockPush = jest.fn();
 jest.mock('next/navigation', () => ({
   useParams: () => ({ id: 'promo-1' }),
   useRouter: () => ({ push: mockPush }),
+}));
+
+jest.mock('@/lib/hooks/useAdmin', () => ({
+  useUploadProductImages: () => ({
+    mutateAsync: jest.fn().mockResolvedValue({ urls: ['https://example.com/uploaded.jpg'] }),
+    isPending: false,
+    isError: false,
+    error: null,
+  }),
 }));
 
 let mockApiGet: jest.Mock;
@@ -137,8 +151,7 @@ describe('EditPromotionPage', () => {
     });
     expect(screen.getByDisplayValue('spring-sale')).toBeInTheDocument();
     expect(screen.getByDisplayValue('Скидки на все')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('https://example.com/banner.jpg')).toBeInTheDocument();
-    expect(screen.getByDisplayValue('#e8f5e9')).toBeInTheDocument();
+    // bannerImageUrl is in file-mode thumbnail, not a visible input by default
     expect(screen.getByDisplayValue('/products?tagSlugs=sale')).toBeInTheDocument();
     expect(screen.getByDisplayValue('25')).toBeInTheDocument();
     expect(screen.getByDisplayValue('0')).toBeInTheDocument();

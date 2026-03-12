@@ -7,6 +7,7 @@ jest.mock('./SearchInput', () => ({
 
 jest.mock('next/navigation', () => ({
   usePathname: () => '/products',
+  useRouter: () => ({ prefetch: jest.fn() }),
 }));
 
 jest.mock('lucide-react', () => ({

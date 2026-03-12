@@ -43,6 +43,7 @@ describe('CartPage', () => {
       totalPrice: () => 449.97,
       totalItems: () => 3,
       clearCart: mockClearCart,
+      hydrated: true,
     };
   });
 

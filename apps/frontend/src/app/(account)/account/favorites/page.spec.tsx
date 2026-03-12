@@ -3,6 +3,10 @@ import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ prefetch: jest.fn(), push: jest.fn(), replace: jest.fn() }),
+}));
+
 jest.mock('lucide-react', () => ({
   Heart: (props: any) => <div data-testid="icon-heart" {...props} />,
   UserCircle: (props: any) => <div data-testid="icon-user" {...props} />,
