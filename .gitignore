@@ -50,8 +50,6 @@ Thumbs.db
 # Test coverage
 coverage
 
-# pnpm
-pnpm-lock.yaml
 
 # TypeScript build info
 *.tsbuildinfo
