@@ -2,6 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { reportAdminError } from '@/lib/errorReporter';
 
 
 interface AnalyticsSummary {
@@ -70,6 +71,7 @@ export const useUpdateOrderStatus = (orderId: string) => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'analytics'] });
       queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
+    onError: (err) => reportAdminError(err, 'Обновление статуса заказа'),
   });
 };
 
@@ -96,6 +98,7 @@ export const useCreateProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
+    onError: (err) => reportAdminError(err, 'Создание товара'),
   });
 };
 
@@ -118,6 +121,7 @@ export const useUpdateProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
     },
+    onError: (err) => reportAdminError(err, 'Обновление товара'),
   });
 };
 

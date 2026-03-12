@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '@/lib/api';
+import { reportAdminError } from '@/lib/errorReporter';
 
 
 interface Product {
@@ -150,6 +151,7 @@ export const useCreateCategory = () => {
   return useMutation({
     mutationFn: (data: CreateCategoryInput) => api.post<Category>('/categories', data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+    onError: (err) => reportAdminError(err, 'Создание категории'),
   });
 };
 
@@ -159,6 +161,7 @@ export const useUpdateCategory = () => {
     mutationFn: ({ id, ...data }: Partial<CreateCategoryInput> & { id: string }) =>
       api.put<Category>(`/categories/${id}`, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+    onError: (err) => reportAdminError(err, 'Редактирование категории'),
   });
 };
 
@@ -167,6 +170,7 @@ export const useDeleteCategory = () => {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/categories/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['categories'] }),
+    onError: (err) => reportAdminError(err, 'Удаление категории'),
   });
 };
 
@@ -177,6 +181,7 @@ export const useCreateTag = () => {
   return useMutation({
     mutationFn: (data: CreateTagInput) => api.post<Tag>('/tags', data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+    onError: (err) => reportAdminError(err, 'Создание тега'),
   });
 };
 
@@ -186,6 +191,7 @@ export const useUpdateTag = () => {
     mutationFn: ({ id, ...data }: Partial<CreateTagInput> & { id: string }) =>
       api.put<Tag>(`/tags/${id}`, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+    onError: (err) => reportAdminError(err, 'Редактирование тега'),
   });
 };
 
@@ -194,5 +200,6 @@ export const useDeleteTag = () => {
   return useMutation({
     mutationFn: (id: string) => api.delete(`/tags/${id}`),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tags'] }),
+    onError: (err) => reportAdminError(err, 'Удаление тега'),
   });
 };
