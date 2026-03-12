@@ -32,6 +32,9 @@ build
 npm-debug.log*
 pnpm-debug.log*
 
+# Design references (screenshots for Claude)
+.design-references
+
 # OS
 .DS_Store
 Thumbs.db
@@ -47,8 +50,6 @@ Thumbs.db
 # Test coverage
 coverage
 
-# pnpm
-pnpm-lock.yaml
 
 # TypeScript build info
 *.tsbuildinfo

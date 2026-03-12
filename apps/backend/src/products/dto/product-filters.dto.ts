@@ -1,5 +1,5 @@
-import { IsOptional, IsString, IsNumber, Min, IsArray } from "class-validator";
-import { Type } from "class-transformer";
+import { IsOptional, IsString, IsNumber, Min, IsArray, IsIn, IsBoolean } from "class-validator";
+import { Transform, Type } from "class-transformer";
 
 export class ProductFiltersDto {
   @IsOptional()
@@ -13,6 +13,7 @@ export class ProductFiltersDto {
   @IsOptional()
   @IsArray()
   @IsString({ each: true })
+  @Transform(({ value }) => (typeof value === 'string' ? value.split(',').filter(Boolean) : value))
   tagSlugs?: string[];
 
   @IsOptional()
@@ -38,4 +39,19 @@ export class ProductFiltersDto {
   @Min(1)
   @Type(() => Number)
   limit?: number = 20;
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['name', 'price', 'stock', 'createdAt'])
+  sortBy?: 'name' | 'price' | 'stock' | 'createdAt' = 'createdAt';
+
+  @IsOptional()
+  @IsString()
+  @IsIn(['asc', 'desc'])
+  sortOrder?: 'asc' | 'desc' = 'desc';
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  imageError?: boolean;
 }

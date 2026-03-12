@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+
 export interface CartItem {
   id: string;
   name: string;
@@ -15,6 +16,8 @@ export interface CartItem {
 
 interface CartStore {
   items: CartItem[];
+  hydrated: boolean;
+  setHydrated: () => void;
   addItem: (item: Omit<CartItem, "quantity">) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -27,6 +30,9 @@ export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => ({
       items: [],
+      hydrated: false,
+
+      setHydrated: () => set({ hydrated: true }),
 
       addItem: (item) => {
         const existing = get().items.find((i) => i.id === item.id);
@@ -70,6 +76,12 @@ export const useCartStore = create<CartStore>()(
       totalPrice: () =>
         get().items.reduce((sum, i) => sum + i.price * i.quantity, 0),
     }),
-    { name: "store-cart" }
+    {
+      name: "store-cart",
+      partialize: (state) => ({ items: state.items }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHydrated();
+      },
+    }
   )
 );

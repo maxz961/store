@@ -1,6 +1,7 @@
 import { api } from "./api";
 import type { User } from "@store/shared";
 
+
 export async function getMe(): Promise<User | null> {
   try {
     return await api.get<User>("/auth/me");
