@@ -101,16 +101,26 @@ const NewProductPage = () => {
       return;
     }
 
-    createProduct.mutate({
-      ...data,
-      price: parseFloat(data.price),
-      comparePrice: data.comparePrice ? parseFloat(data.comparePrice) : undefined,
-      stock: parseInt(data.stock, 10),
-      sku: data.sku || undefined,
-      images: imageList,
-    }, {
-      onSuccess: () => router.push('/admin/products'),
-    });
+    try {
+      await createProduct.mutateAsync({
+        ...data,
+        price: parseFloat(data.price),
+        comparePrice: data.comparePrice ? parseFloat(data.comparePrice) : undefined,
+        stock: parseInt(data.stock, 10),
+        sku: data.sku || undefined,
+        images: imageList,
+      });
+      router.push('/admin/products');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '';
+      if (message.includes('Slug')) {
+        methods.setError('slug', { message: 'Этот slug уже занят' });
+      } else if (message.includes('Название')) {
+        methods.setError('name', { message: 'Это название уже занято' });
+      } else {
+        methods.setError('root', { message: message || 'Не удалось создать товар' });
+      }
+    }
   });
 
   return (
@@ -135,11 +145,11 @@ const NewProductPage = () => {
             {...register('isPublished')}
           />
 
-          <When condition={createProduct.isError || uploadImages.isError}>
+          <When condition={uploadImages.isError || !!errors.root}>
             <div className={s.error}>
-              {(createProduct.error ?? uploadImages.error) instanceof Error
-                ? (createProduct.error ?? uploadImages.error)?.message
-                : 'Не удалось создать товар'}
+              {uploadImages.isError
+                ? (uploadImages.error instanceof Error ? uploadImages.error.message : 'Не удалось загрузить изображения')
+                : errors.root?.message}
             </div>
           </When>
 

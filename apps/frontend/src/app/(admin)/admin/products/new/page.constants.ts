@@ -11,9 +11,9 @@ export const generateSlug = (name: string) =>
   name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
 export const createProductFormSchema = z.object({
-  name: z.string().min(1, 'Название обязательно'),
-  slug: z.string().min(1, 'Slug обязателен').regex(/^[a-z0-9-]+$/, 'Только строчные буквы, цифры и дефисы'),
-  description: z.string().min(1, 'Описание обязательно'),
+  name: z.string().min(1, 'Название обязательно').max(200, 'Максимум 200 символов'),
+  slug: z.string().min(1, 'Slug обязателен').max(200, 'Максимум 200 символов').regex(/^[a-z0-9-]+$/, 'Только строчные буквы, цифры и дефисы'),
+  description: z.string().min(10, 'Минимум 10 символов'),
   price: z.string().min(1, 'Укажите цену').refine((v) => !isNaN(Number(v)) && Number(v) > 0, 'Цена должна быть больше 0'),
   comparePrice: z.string(),
   stock: z.string().refine((v) => !isNaN(Number(v)) && Number(v) >= 0, 'Остаток не может быть отрицательным'),

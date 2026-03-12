@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 
 export const categoryFormSchema = z.object({
-  name: z.string().min(1, 'Введите название'),
-  slug: z.string().min(1, 'Введите slug').regex(/^[a-z0-9-]+$/, 'Только латиница, цифры и дефис'),
+  name: z.string().min(1, 'Введите название').max(100, 'Максимум 100 символов'),
+  slug: z.string().min(1, 'Введите slug').max(100, 'Максимум 100 символов').regex(/^[a-z0-9-]+$/, 'Только латиница, цифры и дефис'),
   description: z.string().optional(),
 });
 

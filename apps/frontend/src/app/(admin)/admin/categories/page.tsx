@@ -35,7 +35,7 @@ const CategoriesPage = () => {
     [categories, editingId],
   );
 
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<CategoryFormValues>({
+  const { register, handleSubmit, reset, setValue, watch, setError, formState: { errors } } = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: { name: '', slug: '', description: '' },
   });
@@ -74,13 +74,22 @@ const CategoriesPage = () => {
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
-    if (editingId) {
-      await updateCategory.mutateAsync({ id: editingId, ...data });
-      setEditingId(null);
-    } else {
-      await createCategory.mutateAsync(data);
+    try {
+      if (editingId) {
+        await updateCategory.mutateAsync({ id: editingId, ...data });
+        setEditingId(null);
+      } else {
+        await createCategory.mutateAsync(data);
+      }
+      reset({ name: '', slug: '', description: '' });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '';
+      if (message.includes('Slug')) {
+        setError('slug', { message: 'Этот slug уже занят' });
+      } else if (message.includes('Название')) {
+        setError('name', { message: 'Это название уже занято' });
+      }
     }
-    reset({ name: '', slug: '', description: '' });
   });
 
   const isSubmitting = createCategory.isPending || updateCategory.isPending;
@@ -121,12 +130,6 @@ const CategoriesPage = () => {
             <div className={s.editWarning}>
               <Info className={s.editWarningIcon} />
               Изменения применятся ко всем {editingCategory?._count?.products} товарам в этой категории
-            </div>
-          </When>
-
-          <When condition={createCategory.isError || updateCategory.isError}>
-            <div className={s.error}>
-              {(createCategory.error ?? updateCategory.error)?.message}
             </div>
           </When>
 

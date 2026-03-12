@@ -137,6 +137,49 @@ describe('CategoriesPage', () => {
     expect(mockApiDelete).not.toHaveBeenCalled();
   });
 
+  it('shows slug error inline when create returns Slug conflict', async () => {
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
+    renderPage();
+    await screen.findByText('Электроника');
+
+    fireEvent.change(screen.getByPlaceholderText('Электроника'), { target: { value: 'Новая' } });
+    fireEvent.change(screen.getByPlaceholderText('electronics'), { target: { value: 'electronics' } });
+    fireEvent.submit(screen.getByText('Создать').closest('form')!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Этот slug уже занят')).toBeInTheDocument();
+    });
+  });
+
+  it('shows name error inline when create returns Название conflict', async () => {
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Название уже занято, введите другое'));
+    renderPage();
+    await screen.findByText('Электроника');
+
+    fireEvent.change(screen.getByPlaceholderText('Электроника'), { target: { value: 'Электроника' } });
+    fireEvent.change(screen.getByPlaceholderText('electronics'), { target: { value: 'electronics-2' } });
+    fireEvent.submit(screen.getByText('Создать').closest('form')!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Это название уже занято')).toBeInTheDocument();
+    });
+  });
+
+  it('shows slug error inline when update returns Slug conflict', async () => {
+    mockApiPut = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Электроника');
+
+    const pencilButtons = screen.getAllByTestId('icon-pencil');
+    await user.click(pencilButtons[0].closest('button')!);
+    fireEvent.submit(screen.getByText('Сохранить').closest('form')!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Этот slug уже занят')).toBeInTheDocument();
+    });
+  });
+
   it('shows edit warning when editing category with products', async () => {
     const user = userEvent.setup();
     renderPage();

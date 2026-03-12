@@ -42,7 +42,7 @@ const TagsPage = () => {
     [tags, editingId],
   );
 
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<TagFormValues>({
+  const { register, handleSubmit, reset, setValue, watch, setError, formState: { errors } } = useForm<TagFormValues>({
     resolver: zodResolver(tagFormSchema),
     defaultValues: { name: '', slug: '', color: DEFAULT_TAG_COLOR },
   });
@@ -99,13 +99,22 @@ const TagsPage = () => {
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
-    if (editingId) {
-      await updateTag.mutateAsync({ id: editingId, ...data });
-      setEditingId(null);
-    } else {
-      await createTag.mutateAsync(data);
+    try {
+      if (editingId) {
+        await updateTag.mutateAsync({ id: editingId, ...data });
+        setEditingId(null);
+      } else {
+        await createTag.mutateAsync(data);
+      }
+      reset({ name: '', slug: '', color: DEFAULT_TAG_COLOR });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : '';
+      if (message.includes('Slug')) {
+        setError('slug', { message: 'Этот slug уже занят' });
+      } else if (message.includes('Название')) {
+        setError('name', { message: 'Это название уже занято' });
+      }
     }
-    reset({ name: '', slug: '', color: DEFAULT_TAG_COLOR });
   });
 
   const isSubmitting = createTag.isPending || updateTag.isPending;
@@ -145,12 +154,6 @@ const TagsPage = () => {
             <div className={s.editWarning}>
               <Info className={s.editWarningIcon} />
               Изменения применятся ко всем {editingTag?._count?.products} товарам с этим тегом
-            </div>
-          </When>
-
-          <When condition={createTag.isError || updateTag.isError}>
-            <div className={s.error}>
-              {(createTag.error ?? updateTag.error)?.message}
             </div>
           </When>
 

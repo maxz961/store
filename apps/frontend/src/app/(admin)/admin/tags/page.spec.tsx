@@ -143,6 +143,49 @@ describe('TagsPage', () => {
     expect(mockApiDelete).not.toHaveBeenCalled();
   });
 
+  it('shows slug error inline when create returns Slug conflict', async () => {
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
+    renderPage();
+    await screen.findByText('Новинка');
+
+    fireEvent.change(screen.getByPlaceholderText('Новинка'), { target: { value: 'Новый' } });
+    fireEvent.change(screen.getByPlaceholderText('new-arrival'), { target: { value: 'new' } });
+    fireEvent.submit(screen.getByText('Создать').closest('form')!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Этот slug уже занят')).toBeInTheDocument();
+    });
+  });
+
+  it('shows name error inline when create returns Название conflict', async () => {
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Название уже занято, введите другое'));
+    renderPage();
+    await screen.findByText('Новинка');
+
+    fireEvent.change(screen.getByPlaceholderText('Новинка'), { target: { value: 'Новинка' } });
+    fireEvent.change(screen.getByPlaceholderText('new-arrival'), { target: { value: 'new-2' } });
+    fireEvent.submit(screen.getByText('Создать').closest('form')!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Это название уже занято')).toBeInTheDocument();
+    });
+  });
+
+  it('shows slug error inline when update returns Slug conflict', async () => {
+    mockApiPut = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
+    const user = userEvent.setup();
+    renderPage();
+    await screen.findByText('Новинка');
+
+    const pencilButtons = screen.getAllByTestId('icon-pencil');
+    await user.click(pencilButtons[0].closest('button')!);
+    fireEvent.submit(screen.getByText('Сохранить').closest('form')!);
+
+    await waitFor(() => {
+      expect(screen.getByText('Этот slug уже занят')).toBeInTheDocument();
+    });
+  });
+
   it('shows edit warning when editing tag with products', async () => {
     const user = userEvent.setup();
     renderPage();

@@ -8,6 +8,7 @@ jest.mock("@store/shared", () => ({
     product: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -182,7 +183,7 @@ describe("ProductsService", () => {
 
   describe("create", () => {
     it("creates product with valid data", async () => {
-      (mockDb.product.findUnique as jest.Mock).mockResolvedValue(null);
+      (mockDb.product.findFirst as jest.Mock).mockResolvedValue(null);
       (mockDb.product.create as jest.Mock).mockResolvedValue(mockProduct);
 
       const result = await service.create({
@@ -201,7 +202,9 @@ describe("ProductsService", () => {
     });
 
     it("throws ConflictException when slug already exists", async () => {
-      (mockDb.product.findUnique as jest.Mock).mockResolvedValue(mockProduct);
+      (mockDb.product.findFirst as jest.Mock)
+        .mockResolvedValueOnce(mockProduct)
+        .mockResolvedValueOnce(null);
 
       await expect(
         service.create({
@@ -214,6 +217,53 @@ describe("ProductsService", () => {
           images: ["https://example.com/img.jpg"],
         })
       ).rejects.toThrow(ConflictException);
+    });
+
+    it("throws ConflictException when name already exists", async () => {
+      (mockDb.product.findFirst as jest.Mock)
+        .mockResolvedValueOnce(null)
+        .mockResolvedValueOnce(mockProduct);
+
+      await expect(
+        service.create({
+          name: "Test Product",
+          slug: "test-product-2",
+          description: "Desc",
+          price: 99.99,
+          stock: 10,
+          categoryId: "cat-1",
+          images: ["https://example.com/img.jpg"],
+        })
+      ).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe("update", () => {
+    it("throws ConflictException when slug is taken by another product", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue(mockProduct);
+      (mockDb.product.findFirst as jest.Mock).mockResolvedValue({ id: "product-2", slug: "test-product" });
+
+      await expect(service.update("product-1", { slug: "test-product" })).rejects.toThrow(
+        ConflictException
+      );
+    });
+
+    it("does not throw when slug belongs to itself", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue(mockProduct);
+      (mockDb.product.findFirst as jest.Mock).mockResolvedValue(null);
+      (mockDb.product.update as jest.Mock).mockResolvedValue(mockProduct);
+
+      await expect(service.update("product-1", { slug: "test-product" })).resolves.not.toThrow();
+    });
+
+    it("throws ConflictException when name is taken by another product", async () => {
+      (mockDb.product.findUnique as jest.Mock).mockResolvedValue(mockProduct);
+      // Only name is in dto (no slug), so findFirst is called once — for name
+      (mockDb.product.findFirst as jest.Mock).mockResolvedValueOnce({ id: "product-2", name: "Test Product" });
+
+      await expect(service.update("product-1", { name: "Test Product" })).rejects.toThrow(
+        ConflictException
+      );
     });
   });
 

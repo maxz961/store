@@ -159,7 +159,7 @@ describe('NewProductPage', () => {
     renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
-    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Desc' } });
+    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Описание тестового товара' } });
     fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
 
     await screen.findByText('Электроника');
@@ -181,7 +181,7 @@ describe('NewProductPage', () => {
     renderPage();
 
     fireEvent.change(screen.getByPlaceholderText('Например: Беспроводные наушники'), { target: { value: 'Test' } });
-    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Desc' } });
+    fireEvent.change(screen.getByPlaceholderText('Подробное описание товара...'), { target: { value: 'Описание тестового товара' } });
     fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
 
     await screen.findByText('Электроника');

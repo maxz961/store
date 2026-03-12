@@ -77,10 +77,12 @@ export class ProductsService {
   }
 
   async create(dto: CreateProductDto) {
-    const existing = await db.product.findUnique({ where: { slug: dto.slug } });
-    if (existing) {
-      throw new ConflictException(`Product with slug "${dto.slug}" already exists`);
-    }
+    const [existingSlug, existingName] = await Promise.all([
+      db.product.findFirst({ where: { slug: dto.slug } }),
+      db.product.findFirst({ where: { name: dto.name } }),
+    ]);
+    if (existingSlug) throw new ConflictException('Slug уже занят, выберите другой');
+    if (existingName) throw new ConflictException('Название уже занято, введите другое');
 
     const { tagIds = [], ...data } = dto;
 
@@ -97,6 +99,15 @@ export class ProductsService {
 
   async update(id: string, dto: UpdateProductDto) {
     await this.findById(id);
+
+    if (dto.slug) {
+      const existingSlug = await db.product.findFirst({ where: { slug: dto.slug, NOT: { id } } });
+      if (existingSlug) throw new ConflictException('Slug уже занят, выберите другой');
+    }
+    if (dto.name) {
+      const existingName = await db.product.findFirst({ where: { name: dto.name, NOT: { id } } });
+      if (existingName) throw new ConflictException('Название уже занято, введите другое');
+    }
 
     const { tagIds, ...data } = dto;
 
