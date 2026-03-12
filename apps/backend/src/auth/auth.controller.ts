@@ -58,7 +58,12 @@ export class AuthController {
   @Get("logout")
   @UseGuards(JwtAuthGuard)
   logout(@Res() res: Response) {
-    res.clearCookie("access_token");
+    const isProduction = process.env.NODE_ENV === "production";
+    res.clearCookie("access_token", {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: isProduction ? "none" : "lax",
+    });
     const frontendUrl =
       this.configService.get("NEXT_PUBLIC_APP_URL") ?? "http://localhost:3000";
     res.redirect(frontendUrl);
