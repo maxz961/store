@@ -1,6 +1,22 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'nav.home': 'Home',
+        'nav.login': 'Log in',
+        'nav.logout': 'Log out',
+        'cart.title': 'Cart',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('./SearchInput', () => ({
   SearchInput: () => <input placeholder="Поиск товаров..." />,
 }));
@@ -122,13 +138,13 @@ describe('Header', () => {
   it('shows login button when not authenticated', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false, user: null };
     render(<Header />);
-    expect(screen.getByText('Войти')).toBeInTheDocument();
+    expect(screen.getByText('Log in')).toBeInTheDocument();
   });
 
   it('calls login on login button click', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false, user: null };
     render(<Header />);
-    fireEvent.click(screen.getByText('Войти'));
+    fireEvent.click(screen.getByText('Log in'));
     expect(mockLogin).toHaveBeenCalledTimes(1);
   });
 

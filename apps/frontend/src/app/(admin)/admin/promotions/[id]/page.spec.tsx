@@ -125,12 +125,12 @@ describe('EditPromotionPage', () => {
 
   it('renders save button after data loads', async () => {
     renderPage();
-    expect(await screen.findByText('Сохранить изменения')).toBeInTheDocument();
+    expect(await screen.findByText('Save changes')).toBeInTheDocument();
   });
 
   it('renders all form sections', async () => {
     renderPage();
-    expect(await screen.findByText('Основная информация')).toBeInTheDocument();
+    expect(await screen.findByText('Basic information')).toBeInTheDocument();
     expect(screen.getByText('Расписание')).toBeInTheDocument();
     expect(screen.getByText('Скидка')).toBeInTheDocument();
     expect(screen.getByText('Баннер')).toBeInTheDocument();
@@ -159,12 +159,12 @@ describe('EditPromotionPage', () => {
 
   it('renders delete button', async () => {
     renderPage();
-    expect(await screen.findByText('Удалить акцию')).toBeInTheDocument();
+    expect(await screen.findByText('Delete promotion')).toBeInTheDocument();
   });
 
   it('renders submit button', async () => {
     renderPage();
-    expect(await screen.findByText('Сохранить изменения')).toBeInTheDocument();
+    expect(await screen.findByText('Save changes')).toBeInTheDocument();
   });
 
   it('shows error message when fetch fails', async () => {
@@ -174,15 +174,15 @@ describe('EditPromotionPage', () => {
       return Promise.resolve(null);
     });
     renderPage();
-    expect(await screen.findByText('Не удалось загрузить акцию')).toBeInTheDocument();
+    expect(await screen.findByText('Failed to load promotion')).toBeInTheDocument();
   });
 
   it('renders danger zone section', async () => {
     renderPage();
-    expect(await screen.findByText('Опасная зона')).toBeInTheDocument();
+    expect(await screen.findByText('Danger zone')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Удаление акции необратимо. Баннер исчезнет из каталога, а привязка к товарам будет удалена.',
+        'Deleting a promotion is irreversible. The banner will disappear from the catalog and product links will be removed.',
       ),
     ).toBeInTheDocument();
   });
@@ -196,7 +196,7 @@ describe('EditPromotionPage', () => {
 
   it('calls delete mutation and redirects on success', async () => {
     renderPage();
-    const deleteBtn = await screen.findByText('Удалить акцию');
+    const deleteBtn = await screen.findByText('Delete promotion');
     fireEvent.click(deleteBtn);
 
     await waitFor(() => {

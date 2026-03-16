@@ -52,11 +52,11 @@ describe('AdminSidebar', () => {
 
   it('renders all nav items', () => {
     render(<AdminSidebar />);
-    expect(screen.getByText('Аналитика')).toBeInTheDocument();
-    expect(screen.getByText('Товары')).toBeInTheDocument();
-    expect(screen.getByText('Категории')).toBeInTheDocument();
-    expect(screen.getByText('Поддержка')).toBeInTheDocument();
-    expect(screen.getByText('Логи')).toBeInTheDocument();
+    expect(screen.getByText('Analytics')).toBeInTheDocument();
+    expect(screen.getByText('Products')).toBeInTheDocument();
+    expect(screen.getByText('Categories')).toBeInTheDocument();
+    expect(screen.getByText('Support')).toBeInTheDocument();
+    expect(screen.getByText('Logs')).toBeInTheDocument();
   });
 
   it('shows unread badge on Поддержка when count > 0', () => {
@@ -74,7 +74,7 @@ describe('AdminSidebar', () => {
 
   it('shows active style for current route', () => {
     render(<AdminSidebar />);
-    const dashboardLink = screen.getByText('Аналитика').closest('a');
+    const dashboardLink = screen.getByText('Analytics').closest('a');
     expect(dashboardLink?.className).toContain('text-primary');
   });
 

@@ -84,9 +84,9 @@ describe('AdminOrderDetailPage', () => {
     expect(names.length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders delivery method in Russian', async () => {
+  it('renders delivery method', async () => {
     renderPage();
-    expect(await screen.findByText('Курьер')).toBeInTheDocument();
+    expect(await screen.findByText('Courier')).toBeInTheDocument();
   });
 
   it('renders shipping address', async () => {
@@ -103,16 +103,16 @@ describe('AdminOrderDetailPage', () => {
 
   it('renders status buttons', async () => {
     renderPage();
-    // "Ожидает" appears in StatusBadge + status button — check both exist
-    const pending = await screen.findAllByText('Ожидает');
+    // "Pending" appears in StatusBadge + status button — check both exist
+    const pending = await screen.findAllByText('Pending');
     expect(pending.length).toBeGreaterThanOrEqual(2);
-    expect(screen.getByText('Обрабатывается')).toBeInTheDocument();
-    expect(screen.getByText('Отправлен')).toBeInTheDocument();
+    expect(screen.getByText('Processing')).toBeInTheDocument();
+    expect(screen.getByText('Shipped')).toBeInTheDocument();
   });
 
   it('calls API to update status on button click', async () => {
     renderPage();
-    const processingBtn = await screen.findByText('Обрабатывается');
+    const processingBtn = await screen.findByText('Processing');
     fireEvent.click(processingBtn);
     await waitFor(() => {
       expect(mockApiPut).toHaveBeenCalledWith('/orders/order-abc12345/status', { status: 'PROCESSING' });
@@ -121,7 +121,7 @@ describe('AdminOrderDetailPage', () => {
 
   it('renders breadcrumbs', async () => {
     renderPage();
-    expect(await screen.findByText('Заказы')).toBeInTheDocument();
+    expect(await screen.findByText('Orders')).toBeInTheDocument();
   });
 
   it('redirects to orders on fetch error', async () => {

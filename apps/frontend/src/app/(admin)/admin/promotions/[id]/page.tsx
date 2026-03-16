@@ -45,8 +45,10 @@ const EditPromotionPage = () => {
     resolver: zodResolver(createPromotionFormSchema),
     defaultValues: {
       title: '',
+      titleEn: '',
       slug: '',
       description: '',
+      descriptionEn: '',
       bannerImageUrl: '',
       bannerBgColor: '',
       startDate: '',
@@ -67,8 +69,10 @@ const EditPromotionPage = () => {
 
     reset({
       title: promotion.title,
+      titleEn: promotion.titleEn ?? '',
       slug: promotion.slug,
       description: promotion.description ?? '',
+      descriptionEn: promotion.descriptionEn ?? '',
       bannerImageUrl: promotion.bannerImageUrl,
       bannerBgColor: promotion.bannerBgColor ?? '',
       startDate: formatDateForInput(promotion.startDate),
@@ -100,8 +104,10 @@ const EditPromotionPage = () => {
   const onSubmit = handleSubmit((data) => {
     updatePromotion.mutate({
       title: data.title,
+      titleEn: data.titleEn,
       slug: data.slug,
       description: data.description || undefined,
+      descriptionEn: data.descriptionEn || undefined,
       bannerImageUrl: data.bannerImageUrl,
       bannerBgColor: data.bannerBgColor || undefined,
       startDate: new Date(data.startDate).toISOString(),
@@ -128,7 +134,7 @@ const EditPromotionPage = () => {
   if (isError) {
     return (
       <div className={s.page}>
-        <div className={s.error}>Не удалось загрузить акцию</div>
+        <div className={s.error}>Failed to load promotion</div>
       </div>
     );
   }
@@ -157,20 +163,20 @@ const EditPromotionPage = () => {
             <div className={s.error}>
               {updatePromotion.error instanceof Error
                 ? updatePromotion.error.message
-                : 'Не удалось обновить акцию'}
+                : 'Failed to update promotion'}
             </div>
           </When>
 
           <Button type="submit" disabled={updatePromotion.isPending} className="w-full">
-            {updatePromotion.isPending ? 'Сохранение...' : 'Сохранить изменения'}
+            {updatePromotion.isPending ? 'Saving...' : 'Save changes'}
           </Button>
         </form>
       </FormProvider>
 
       <div className={s.dangerZone}>
-        <h2 className={s.dangerTitle}>Опасная зона</h2>
+        <h2 className={s.dangerTitle}>Danger zone</h2>
         <p className={s.dangerText}>
-          Удаление акции необратимо. Баннер исчезнет из каталога, а привязка к товарам будет удалена.
+          Deleting a promotion is irreversible. The banner will disappear from the catalog and product links will be removed.
         </p>
         <div className={s.dangerActions}>
           <Button
@@ -179,7 +185,7 @@ const EditPromotionPage = () => {
             disabled={deletePromotion.isPending}
             onClick={handleDelete}
           >
-            {deletePromotion.isPending ? 'Удаление...' : 'Удалить акцию'}
+            {deletePromotion.isPending ? 'Deleting...' : 'Delete promotion'}
           </Button>
         </div>
       </div>

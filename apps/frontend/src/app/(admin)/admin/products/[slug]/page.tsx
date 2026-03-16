@@ -47,8 +47,10 @@ const EditProductPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     resolver: zodResolver(createProductFormSchema),
     defaultValues: {
       name: '',
+      nameEn: '',
       slug: '',
       description: '',
+      descriptionEn: '',
       price: '',
       comparePrice: '',
       stock: '0',
@@ -66,8 +68,10 @@ const EditProductPage = ({ params }: { params: Promise<{ slug: string }> }) => {
     if (!product) return;
     reset({
       name: product.name,
+      nameEn: product.nameEn ?? '',
       slug: product.slug,
       description: product.description,
+      descriptionEn: product.descriptionEn ?? '',
       price: String(product.price),
       comparePrice: product.comparePrice ? String(product.comparePrice) : '',
       stock: String(product.stock),

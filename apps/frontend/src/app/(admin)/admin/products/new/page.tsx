@@ -47,8 +47,10 @@ const NewProductPage = () => {
     resolver: zodResolver(createProductFormSchema),
     defaultValues: {
       name: '',
+      nameEn: '',
       slug: '',
       description: '',
+      descriptionEn: '',
       price: '',
       comparePrice: '',
       stock: '0',

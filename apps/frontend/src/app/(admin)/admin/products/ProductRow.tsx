@@ -85,8 +85,8 @@ export const ProductRow = ({ product }: ProductRowProps) => {
       </td>
       <td className={s.tdCenter}>
         <If condition={product.isPublished}>
-          <Then><span className={s.statusPublished}>Опубликован</span></Then>
-          <Else><span className={s.statusDraft}>Черновик</span></Else>
+          <Then><span className={s.statusPublished}>Published</span></Then>
+          <Else><span className={s.statusDraft}>Draft</span></Else>
         </If>
       </td>
       <td className={s.td}>

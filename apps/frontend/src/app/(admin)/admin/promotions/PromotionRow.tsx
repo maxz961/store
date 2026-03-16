@@ -12,7 +12,7 @@ import type { PromotionRowProps } from './page.types';
 
 
 const formatDate = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+  new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 
 
 export const PromotionRow = ({ promotion }: PromotionRowProps) => {
@@ -53,8 +53,8 @@ export const PromotionRow = ({ promotion }: PromotionRowProps) => {
       </td>
       <td className={s.tdCenter}>
         <If condition={promotion.isActive}>
-          <Then><span className={s.statusActive}>Активна</span></Then>
-          <Else><span className={s.statusInactive}>Неактивна</span></Else>
+          <Then><span className={s.statusActive}>Active</span></Then>
+          <Else><span className={s.statusInactive}>Inactive</span></Else>
         </If>
       </td>
       <td className={s.tdCenter}>

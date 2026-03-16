@@ -37,8 +37,10 @@ const NewPromotionPage = () => {
     resolver: zodResolver(createPromotionFormSchema),
     defaultValues: {
       title: '',
+      titleEn: '',
       slug: '',
       description: '',
+      descriptionEn: '',
       bannerImageUrl: '',
       bannerBgColor: '#e8f5e9',
       startDate: '',
@@ -72,8 +74,10 @@ const NewPromotionPage = () => {
   const onSubmit = handleSubmit((data) => {
     createPromotion.mutate({
       title: data.title,
+      titleEn: data.titleEn,
       slug: data.slug,
       description: data.description || undefined,
+      descriptionEn: data.descriptionEn || undefined,
       bannerImageUrl: data.bannerImageUrl,
       bannerBgColor: data.bannerBgColor || undefined,
       startDate: new Date(data.startDate).toISOString(),
@@ -108,12 +112,12 @@ const NewPromotionPage = () => {
             <div className={s.error}>
               {createPromotion.error instanceof Error
                 ? createPromotion.error.message
-                : 'Не удалось создать акцию'}
+                : 'Failed to create promotion'}
             </div>
           </When>
 
           <Button type="submit" disabled={createPromotion.isPending} className="w-full">
-            {createPromotion.isPending ? 'Создание...' : 'Создать акцию'}
+            {createPromotion.isPending ? 'Creating...' : 'Create promotion'}
           </Button>
         </form>
       </FormProvider>

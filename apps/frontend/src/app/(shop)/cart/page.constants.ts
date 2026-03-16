@@ -1,5 +1,5 @@
 export const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Каталог', href: '/products' },
-  { label: 'Корзина' },
+  { label: 'Home', href: '/' },
+  { label: 'Catalog', href: '/products' },
+  { label: 'Cart' },
 ];

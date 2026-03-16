@@ -1,6 +1,21 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'profile.notAuth': 'You are not signed in',
+        'profile.notAuthText': 'Sign in to view your profile',
+        'profile.login': 'Sign in',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('next/navigation', () => ({
   useRouter: () => ({ prefetch: jest.fn(), push: jest.fn(), replace: jest.fn() }),
 }));
@@ -51,7 +66,7 @@ describe('ProfilePage', () => {
 
   it('renders profile title', () => {
     render(<ProfilePage />);
-    expect(screen.getByText('Профиль')).toBeInTheDocument();
+    expect(screen.getByText('Profile')).toBeInTheDocument();
   });
 
   it('renders user name and email', () => {
@@ -89,9 +104,9 @@ describe('ProfilePage', () => {
   it('shows not authenticated state', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false, user: null };
     render(<ProfilePage />);
-    expect(screen.getByText('Вы не авторизованы')).toBeInTheDocument();
-    expect(screen.getByText('Войдите, чтобы увидеть свой профиль')).toBeInTheDocument();
-    expect(screen.getByText('Войти')).toBeInTheDocument();
+    expect(screen.getByText('You are not signed in')).toBeInTheDocument();
+    expect(screen.getByText('Sign in to view your profile')).toBeInTheDocument();
+    expect(screen.getByText('Sign in')).toBeInTheDocument();
   });
 
   it('renders quick links section', () => {
@@ -110,6 +125,6 @@ describe('ProfilePage', () => {
 
   it('renders breadcrumbs', () => {
     render(<ProfilePage />);
-    expect(screen.getByText('Главная')).toBeInTheDocument();
+    expect(screen.getByText('Home')).toBeInTheDocument();
   });
 });

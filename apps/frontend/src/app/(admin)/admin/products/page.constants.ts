@@ -1,4 +1,4 @@
 export const breadcrumbs = [
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Товары' },
+  { label: 'Admin', href: '/admin/dashboard' },
+  { label: 'Products' },
 ];

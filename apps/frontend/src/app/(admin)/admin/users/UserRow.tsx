@@ -17,7 +17,7 @@ export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
     onToggleBan(user.id, !user.isBanned);
   };
 
-  const dateStr = new Date(user.createdAt).toLocaleDateString('ru-RU');
+  const dateStr = new Date(user.createdAt).toLocaleDateString('en-US');
 
   const avatar = (
     <If condition={!!user.image}>
@@ -62,10 +62,10 @@ export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
       <td className={s.tdCenter}>
         <If condition={user.isBanned}>
           <Then>
-            <span className={s.bannedBadge}>Заблокирован</span>
+            <span className={s.bannedBadge}>Banned</span>
           </Then>
           <Else>
-            <span className={s.activeBadge}>Активен</span>
+            <span className={s.activeBadge}>Active</span>
           </Else>
         </If>
       </td>
@@ -79,7 +79,7 @@ export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
             className={user.isBanned ? s.unbanBtn : s.banBtn}
             onClick={handleToggleBan}
           >
-            {user.isBanned ? 'Разблокировать' : 'Заблокировать'}
+            {user.isBanned ? 'Unban' : 'Ban'}
           </button>
         </When>
       </td>

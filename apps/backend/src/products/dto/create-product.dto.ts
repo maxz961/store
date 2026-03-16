@@ -16,6 +16,9 @@ export class CreateProductDto {
   name: string;
 
   @IsString()
+  nameEn: string;
+
+  @IsString()
   @Matches(/^[a-z0-9-]+$/, {
     message: "Slug must contain only lowercase letters, numbers, and hyphens",
   })
@@ -23,6 +26,9 @@ export class CreateProductDto {
 
   @IsString()
   description: string;
+
+  @IsString()
+  descriptionEn: string;
 
   @IsNumber()
   @IsPositive()

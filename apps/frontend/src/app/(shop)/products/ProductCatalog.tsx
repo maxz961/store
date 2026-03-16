@@ -10,11 +10,13 @@ import { CatalogPagination } from './CatalogPagination';
 import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { Spinner } from '@/components/ui/Spinner';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './ProductCatalog.styled';
 
 
 export const ProductCatalog = () => {
   const { get } = useProductParams();
+  const { t } = useLanguage();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const filters = {
@@ -48,9 +50,9 @@ export const ProductCatalog = () => {
 
   return (
     <div className={s.layout}>
-      <button className={s.mobileFilterBtn} onClick={handleOpenFilters} aria-label="Открыть фильтры">
+      <button className={s.mobileFilterBtn} onClick={handleOpenFilters} aria-label="Open filters">
         <SlidersHorizontal className="h-4 w-4" />
-        Фильтры
+        Filters
       </button>
 
       <aside className={s.sidebar}>
@@ -71,8 +73,8 @@ export const ProductCatalog = () => {
         <If condition={isError}>
           <Then>
             <div className={s.error}>
-              <p className={s.errorTitle}>Ошибка загрузки</p>
-              <p className={s.errorText}>Не удалось загрузить товары</p>
+              <p className={s.errorTitle}>{t('common.error')}</p>
+              <p className={s.errorText}>{t('catalog.loading')}</p>
             </div>
           </Then>
           <Else>
@@ -80,8 +82,8 @@ export const ProductCatalog = () => {
               <Then>
                 <When condition={!isLoading}>
                   <div className={s.empty}>
-                    <p className={s.emptyTitle}>Товары не найдены</p>
-                    <p className={s.emptyText}>Попробуйте изменить фильтры</p>
+                    <p className={s.emptyTitle}>{t('catalog.noResults')}</p>
+                    <p className={s.emptyText}>{t('catalog.noResultsText')}</p>
                   </div>
                 </When>
               </Then>

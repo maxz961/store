@@ -72,15 +72,15 @@ export const AdminSidebar = ({ isOpen = false, onClose }: Props) => {
       <aside className={cn(isOpen ? s.sidebarMobileOpen : s.sidebar)}>
         <When condition={isOpen}>
           <div className={s.drawerHeader}>
-            <p className={s.sidebarTitle} style={{ margin: 0 }}>Администрирование</p>
-            <button onClick={onClose} className={s.drawerClose} aria-label="Закрыть меню">
+            <p className={s.sidebarTitle} style={{ margin: 0 }}>Administration</p>
+            <button onClick={onClose} className={s.drawerClose} aria-label="Close menu">
               <X className="h-5 w-5" />
             </button>
           </div>
         </When>
         <nav className={s.sidebarInner}>
           <When condition={!isOpen}>
-            <p className={s.sidebarTitle}>Администрирование</p>
+            <p className={s.sidebarTitle}>Administration</p>
           </When>
           {navItems}
         </nav>

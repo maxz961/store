@@ -29,8 +29,8 @@ import CategoriesPage from './page';
 
 
 const mockCategories = [
-  { id: 'cat-1', name: 'Электроника', slug: 'electronics', _count: { products: 5 } },
-  { id: 'cat-2', name: 'Одежда', slug: 'clothes', _count: { products: 3 } },
+  { id: 'cat-1', name: 'Электроника', nameEn: 'Electronics', slug: 'electronics', _count: { products: 5 } },
+  { id: 'cat-2', name: 'Одежда', nameEn: 'Clothing', slug: 'clothes', _count: { products: 3 } },
 ];
 
 const createWrapper = () => {
@@ -56,8 +56,8 @@ describe('CategoriesPage', () => {
 
   it('renders form for creating category', () => {
     renderPage();
-    expect(screen.getByText('Новая категория')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Электроника')).toBeInTheDocument();
+    expect(screen.getByText('New category')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Electronics')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('electronics')).toBeInTheDocument();
   });
 
@@ -71,15 +71,23 @@ describe('CategoriesPage', () => {
   it('shows empty state when no categories', async () => {
     mockApiGet = jest.fn().mockResolvedValue([]);
     renderPage();
-    expect(await screen.findByText('Категорий пока нет')).toBeInTheDocument();
+    expect(await screen.findByText('No categories yet')).toBeInTheDocument();
   });
 
   it('submits create form', async () => {
     renderPage();
 
-    fireEvent.change(screen.getByPlaceholderText('Электроника'), { target: { value: 'Книги' } });
+    fireEvent.change(screen.getByPlaceholderText('Electronics'), { target: { value: 'Книги' } });
     fireEvent.change(screen.getByPlaceholderText('electronics'), { target: { value: 'books' } });
-    fireEvent.submit(screen.getByText('Создать').closest('form')!);
+
+    // Switch to EN tab to fill required nameEn field
+    fireEvent.click(screen.getByText('🇬🇧 EN'));
+    await waitFor(() => {
+      expect(document.querySelector('input[name="nameEn"]')).toBeInTheDocument();
+    });
+    fireEvent.change(document.querySelector('input[name="nameEn"]')!, { target: { value: 'Books' } });
+
+    fireEvent.submit(screen.getByText('Create').closest('form')!);
 
     await waitFor(() => {
       expect(mockApiPost).toHaveBeenCalledWith(
@@ -106,7 +114,7 @@ describe('CategoriesPage', () => {
 
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
-    expect(within(dialog).getByText('Удалить категорию?')).toBeInTheDocument();
+    expect(within(dialog).getByText('Delete category?')).toBeInTheDocument();
     expect(within(dialog).getByText(/Электроника/)).toBeInTheDocument();
   });
 
@@ -142,26 +150,48 @@ describe('CategoriesPage', () => {
     renderPage();
     await screen.findByText('Электроника');
 
-    fireEvent.change(screen.getByPlaceholderText('Электроника'), { target: { value: 'Новая' } });
+    fireEvent.change(screen.getByPlaceholderText('Electronics'), { target: { value: 'Новая' } });
     fireEvent.change(screen.getByPlaceholderText('electronics'), { target: { value: 'electronics' } });
-    fireEvent.submit(screen.getByText('Создать').closest('form')!);
+    // Switch to EN tab, fill required nameEn, then switch back to UK tab
+    fireEvent.click(screen.getByText('🇬🇧 EN'));
+    await waitFor(() => {
+      expect(document.querySelector('input[name="nameEn"]')).toBeInTheDocument();
+    });
+    fireEvent.change(document.querySelector('input[name="nameEn"]')!, { target: { value: 'New' } });
+    // Switch back to UK tab to submit and see slug error
+    fireEvent.click(screen.getByText('🇺🇦 UK'));
+    await waitFor(() => {
+      expect(document.querySelector('input[name="slug"]')).toBeInTheDocument();
+    });
+    fireEvent.submit(screen.getByText('Create').closest('form')!);
 
     await waitFor(() => {
-      expect(screen.getByText('Этот slug уже занят')).toBeInTheDocument();
+      expect(screen.getByText('This slug is already taken')).toBeInTheDocument();
     });
   });
 
-  it('shows name error inline when create returns Название conflict', async () => {
-    mockApiPost = jest.fn().mockRejectedValue(new Error('Название уже занято, введите другое'));
+  it('shows name error inline when create returns name conflict', async () => {
+    mockApiPost = jest.fn().mockRejectedValue(new Error('name is already taken'));
     renderPage();
     await screen.findByText('Электроника');
 
-    fireEvent.change(screen.getByPlaceholderText('Электроника'), { target: { value: 'Электроника' } });
+    fireEvent.change(screen.getByPlaceholderText('Electronics'), { target: { value: 'Электроника' } });
     fireEvent.change(screen.getByPlaceholderText('electronics'), { target: { value: 'electronics-2' } });
-    fireEvent.submit(screen.getByText('Создать').closest('form')!);
+    // Switch to EN tab, fill required nameEn, then switch back to UK tab
+    fireEvent.click(screen.getByText('🇬🇧 EN'));
+    await waitFor(() => {
+      expect(document.querySelector('input[name="nameEn"]')).toBeInTheDocument();
+    });
+    fireEvent.change(document.querySelector('input[name="nameEn"]')!, { target: { value: 'Electronics' } });
+    // Switch back to UK tab to submit and see name error
+    fireEvent.click(screen.getByText('🇺🇦 UK'));
+    await waitFor(() => {
+      expect(document.querySelector('input[name="name"]')).toBeInTheDocument();
+    });
+    fireEvent.submit(screen.getByText('Create').closest('form')!);
 
     await waitFor(() => {
-      expect(screen.getByText('Это название уже занято')).toBeInTheDocument();
+      expect(screen.getByText('This name is already taken')).toBeInTheDocument();
     });
   });
 
@@ -173,10 +203,10 @@ describe('CategoriesPage', () => {
 
     const pencilButtons = screen.getAllByTestId('icon-pencil');
     await user.click(pencilButtons[0].closest('button')!);
-    fireEvent.submit(screen.getByText('Сохранить').closest('form')!);
+    fireEvent.submit(screen.getByText('Save').closest('form')!);
 
     await waitFor(() => {
-      expect(screen.getByText('Этот slug уже занят')).toBeInTheDocument();
+      expect(screen.getByText('This slug is already taken')).toBeInTheDocument();
     });
   });
 
@@ -188,7 +218,7 @@ describe('CategoriesPage', () => {
     const pencilButtons = screen.getAllByTestId('icon-pencil');
     await user.click(pencilButtons[0].closest('button')!);
 
-    expect(screen.getByText(/Изменения применятся ко всем/)).toBeInTheDocument();
-    expect(screen.getByText(/5 товарам в этой категории/)).toBeInTheDocument();
+    expect(screen.getByText(/Changes will apply to all/)).toBeInTheDocument();
+    expect(screen.getByText(/5 products in this category/)).toBeInTheDocument();
   });
 });

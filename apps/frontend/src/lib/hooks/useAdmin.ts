@@ -78,8 +78,10 @@ export const useUpdateOrderStatus = (orderId: string) => {
 
 interface CreateProductInput {
   name: string;
+  nameEn: string;
   slug: string;
   description: string;
+  descriptionEn: string;
   price: number;
   comparePrice?: number;
   stock: number;

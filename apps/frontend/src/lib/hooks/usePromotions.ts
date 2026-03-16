@@ -18,8 +18,10 @@ interface PromotionProduct {
 export interface Promotion {
   id: string;
   title: string;
+  titleEn?: string | null;
   slug: string;
   description: string | null;
+  descriptionEn?: string | null;
   bannerImageUrl: string;
   bannerBgColor: string | null;
   startDate: string;
@@ -37,8 +39,10 @@ export interface Promotion {
 export interface ActivePromotion {
   id: string;
   title: string;
+  titleEn?: string | null;
   slug: string;
   description: string | null;
+  descriptionEn?: string | null;
   bannerImageUrl: string;
   bannerBgColor: string | null;
   discountType: 'PERCENTAGE' | 'FIXED';
@@ -48,8 +52,10 @@ export interface ActivePromotion {
 
 interface CreatePromotionInput {
   title: string;
+  titleEn: string;
   slug: string;
   description?: string;
+  descriptionEn?: string;
   bannerImageUrl: string;
   bannerBgColor?: string;
   startDate: string;
@@ -82,22 +88,25 @@ export const usePromotion = (id: string) =>
 export interface PublicPromotionProduct {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   price: number;
   comparePrice: number | null;
   images: string[];
   stock: number;
   isPublished: boolean;
-  category: { id: string; name: string; slug: string };
-  tags: { tag: { id: string; name: string; slug: string; color?: string | null } }[];
+  category: { id: string; name: string; nameEn?: string | null; slug: string };
+  tags: { tag: { id: string; name: string; nameEn?: string | null; slug: string; color?: string | null } }[];
   reviews: { rating: number }[];
 }
 
 export interface PublicPromotion {
   id: string;
   title: string;
+  titleEn?: string | null;
   slug: string;
   description: string | null;
+  descriptionEn?: string | null;
   discountType: 'PERCENTAGE' | 'FIXED';
   discountValue: number;
   bannerBgColor: string | null;

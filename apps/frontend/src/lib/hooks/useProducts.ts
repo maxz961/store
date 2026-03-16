@@ -6,14 +6,15 @@ import { reportAdminError } from '@/lib/errorReporter';
 interface Product {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   price: number;
   comparePrice?: number;
   images: string[];
   stock: number;
   isPublished: boolean;
-  category: { id: string; name: string; slug: string };
-  tags: { tag: { id: string; name: string; slug: string } }[];
+  category: { id: string; name: string; nameEn?: string | null; slug: string };
+  tags: { tag: { id: string; name: string; nameEn?: string | null; slug: string } }[];
   reviews: { rating: number }[];
 }
 
@@ -28,6 +29,7 @@ interface Review {
 
 interface ProductDetail extends Product {
   description: string;
+  descriptionEn?: string | null;
   sku: string | null;
   reviews: Review[];
 }
@@ -42,8 +44,10 @@ interface ProductsResponse {
 export interface Category {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   description?: string;
+  descriptionEn?: string | null;
   imageUrl?: string;
   parentId?: string;
   _count?: { products: number };
@@ -52,6 +56,7 @@ export interface Category {
 export interface Tag {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   color?: string | null;
   _count?: { products: number };
@@ -59,14 +64,17 @@ export interface Tag {
 
 export interface CreateCategoryInput {
   name: string;
+  nameEn: string;
   slug: string;
   description?: string;
+  descriptionEn?: string;
   imageUrl?: string;
   parentId?: string;
 }
 
 export interface CreateTagInput {
   name: string;
+  nameEn: string;
   slug: string;
   color?: string;
 }

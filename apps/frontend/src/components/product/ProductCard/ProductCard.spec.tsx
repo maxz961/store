@@ -2,6 +2,24 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import type { Product } from './ProductCard.types';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'product.addToCart': 'Add to cart',
+        'product.inCart': 'In cart',
+        'product.outOfStock': 'Out of stock',
+        'product.noPhoto': 'No photo',
+        'favorites.title': 'Favorites',
+        'favorites.empty': 'No favorites yet',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('lucide-react', () => ({
   ShoppingCart: (props: Record<string, unknown>) => <div data-testid="icon-cart" {...props} />,
   ImageOff: (props: Record<string, unknown>) => <div data-testid="icon-image-off" {...props} />,
@@ -148,18 +166,18 @@ describe('ProductCard', () => {
   it('shows out of stock when stock is 0', () => {
     const product = { ...baseProduct, stock: 0 };
     render(<ProductCard product={product} />);
-    expect(screen.getByText('Нет в наличии')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Добавить в корзину')).not.toBeInTheDocument();
+    expect(screen.getByText('Out of stock')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Add to cart')).not.toBeInTheDocument();
   });
 
   it('shows cart button when in stock', () => {
     render(<ProductCard product={baseProduct} />);
-    expect(screen.getByLabelText('Добавить в корзину')).toBeInTheDocument();
+    expect(screen.getByLabelText('Add to cart')).toBeInTheDocument();
   });
 
   it('calls addItem when cart button is clicked', () => {
     render(<ProductCard product={baseProduct} />);
-    fireEvent.click(screen.getByLabelText('Добавить в корзину'));
+    fireEvent.click(screen.getByLabelText('Add to cart'));
     expect(mockAddItem).toHaveBeenCalledWith({
       id: '1',
       name: 'Тестовый товар',
@@ -173,7 +191,7 @@ describe('ProductCard', () => {
   it('shows spinner while loading after clicking cart button', () => {
     jest.useFakeTimers();
     render(<ProductCard product={baseProduct} />);
-    fireEvent.click(screen.getByLabelText('Добавить в корзину'));
+    fireEvent.click(screen.getByLabelText('Add to cart'));
     expect(screen.getByTestId('spinner')).toBeInTheDocument();
     expect(screen.queryByTestId('icon-cart')).not.toBeInTheDocument();
     jest.useRealTimers();
@@ -182,11 +200,11 @@ describe('ProductCard', () => {
   it('shows success state after add to cart animation completes', () => {
     jest.useFakeTimers();
     render(<ProductCard product={baseProduct} />);
-    fireEvent.click(screen.getByLabelText('Добавить в корзину'));
+    fireEvent.click(screen.getByLabelText('Add to cart'));
     act(() => jest.advanceTimersByTime(700));
-    expect(screen.getByLabelText('В корзине')).toBeInTheDocument();
+    expect(screen.getByLabelText('In cart')).toBeInTheDocument();
     expect(screen.getByTestId('icon-check')).toBeInTheDocument();
-    expect(screen.getByText('В корзине')).toBeInTheDocument();
+    expect(screen.getByText('In cart')).toBeInTheDocument();
     expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
     jest.useRealTimers();
   });
@@ -194,7 +212,7 @@ describe('ProductCard', () => {
   it('shows placeholder when images array is empty', () => {
     const product = { ...baseProduct, images: [] };
     render(<ProductCard product={product} />);
-    expect(screen.getByText('Нет фото')).toBeInTheDocument();
+    expect(screen.getByText('No photo')).toBeInTheDocument();
   });
 
   it('limits tags to 3', () => {

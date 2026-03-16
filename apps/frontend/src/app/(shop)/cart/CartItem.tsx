@@ -1,13 +1,18 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { formatCurrency } from '@/lib/constants/format';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import type { CartItemProps } from './page.types';
 
 
 export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemProps) => {
+  const { t } = useLanguage();
+
   return (
     <div className={s.item}>
       <Link href={`/products/${item.slug}`} className={s.itemImageLink}>
@@ -17,7 +22,7 @@ export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemPro
           </Then>
           <Else>
             <div className={s.itemImageFallback}>
-              Нет фото
+              {t('product.noPhoto')}
             </div>
           </Else>
         </If>
@@ -51,7 +56,7 @@ export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemPro
 
       <div className={s.itemRight}>
         <span className={s.itemTotal}>{formatCurrency(item.price * item.quantity)}</span>
-        <button className={s.removeIconButton} onClick={onRemove} aria-label="Удалить товар">
+        <button className={s.removeIconButton} onClick={onRemove} aria-label={t('cart.remove')}>
           <Trash2 className={s.removeIcon} />
         </button>
       </div>

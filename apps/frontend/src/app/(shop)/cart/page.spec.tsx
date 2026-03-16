@@ -1,6 +1,30 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'cart.title': 'Cart',
+        'cart.empty': 'Your cart is empty',
+        'cart.emptyText': 'Add something from the catalog',
+        'cart.browseCatalog': 'Go to catalog',
+        'cart.total': 'Total',
+        'cart.subtotal': 'Subtotal',
+        'cart.items': 'items',
+        'cart.checkout': 'Checkout',
+        'cart.clear': 'Clear cart',
+        'cart.remove': 'Remove item',
+        'product.noPhoto': 'No photo',
+        'product.pieces': 'pcs.',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('lucide-react', () => ({
   Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
@@ -50,7 +74,7 @@ describe('CartPage', () => {
 
   it('renders cart title', () => {
     render(<CartPage />);
-    expect(screen.getByRole('heading', { name: 'Корзина' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Cart' })).toBeInTheDocument();
   });
 
   it('renders cart item name and unit price', () => {
@@ -61,43 +85,43 @@ describe('CartPage', () => {
 
   it('renders summary total and item count', () => {
     render(<CartPage />);
-    expect(screen.getByText('Итого')).toBeInTheDocument();
-    expect(screen.getByText('3 шт.')).toBeInTheDocument();
+    expect(screen.getByText('Total')).toBeInTheDocument();
+    expect(screen.getByText('3 pcs.')).toBeInTheDocument();
   });
 
   it('shows empty state when cart is empty', () => {
     mockCartState = { ...mockCartState, items: [] };
     render(<CartPage />);
-    expect(screen.getByText('Корзина пуста')).toBeInTheDocument();
-    expect(screen.getByText('Добавьте товары из каталога')).toBeInTheDocument();
-    expect(screen.getByText('Перейти в каталог')).toBeInTheDocument();
+    expect(screen.getByText('Your cart is empty')).toBeInTheDocument();
+    expect(screen.getByText('Add something from the catalog')).toBeInTheDocument();
+    expect(screen.getByText('Go to catalog')).toBeInTheDocument();
   });
 
   it('calls removeItem on remove button click', () => {
     render(<CartPage />);
-    fireEvent.click(screen.getByLabelText('Удалить товар'));
+    fireEvent.click(screen.getByLabelText('Remove item'));
     expect(mockRemoveItem).toHaveBeenCalledWith('p1');
   });
 
   it('calls clearCart on clear button click', () => {
     render(<CartPage />);
-    fireEvent.click(screen.getByText('Очистить корзину'));
+    fireEvent.click(screen.getByText('Clear cart'));
     expect(mockClearCart).toHaveBeenCalledTimes(1);
   });
 
   it('renders checkout button', () => {
     render(<CartPage />);
-    expect(screen.getByText('Оформить заказ')).toBeInTheDocument();
+    expect(screen.getByText('Checkout')).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', () => {
     render(<CartPage />);
-    expect(screen.getByText('Каталог')).toBeInTheDocument();
+    expect(screen.getByText('Catalog')).toBeInTheDocument();
   });
 
-  it('renders Сумма with total price', () => {
+  it('renders Subtotal with total price', () => {
     render(<CartPage />);
-    expect(screen.getByText('Сумма')).toBeInTheDocument();
+    expect(screen.getByText('Subtotal')).toBeInTheDocument();
     expect(screen.getAllByText('449,97 ₴').length).toBeGreaterThanOrEqual(1);
   });
 });

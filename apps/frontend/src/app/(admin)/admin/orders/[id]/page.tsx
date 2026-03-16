@@ -16,7 +16,7 @@ import { OrderItemsList } from './OrderItemsList';
 
 
 const breadcrumbs = [
-  { label: 'Заказы', href: '/admin/orders' },
+  { label: 'Orders', href: '/admin/orders' },
 ];
 
 
@@ -52,11 +52,11 @@ const AdminOrderDetailPage = () => {
       <Breadcrumbs items={breadcrumbs} />
       <Link href="/admin/orders" className={s.backLink}>
         <ArrowLeft className="h-4 w-4" />
-        Назад к заказам
+        Back to orders
       </Link>
 
       <div className={s.titleRow}>
-        <h1 className={s.title}>Заказ #{order.id.slice(-8)}</h1>
+        <h1 className={s.title}>Order #{order.id.slice(-8)}</h1>
         <StatusBadge status={order.status} />
       </div>
       <p className={s.subtitle}>

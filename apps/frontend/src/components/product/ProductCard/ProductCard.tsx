@@ -11,8 +11,9 @@ import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
 import { useAddFavorite, useFavoriteIds, useRemoveFavorite } from '@/lib/hooks/useFavorites';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/constants/format';
-import { cn } from '@/lib/utils';
+import { cn, getLocalizedText } from '@/lib/utils';
 import type { Props } from './ProductCard.types';
 import { s } from './ProductCard.styled';
 
@@ -20,6 +21,7 @@ import { s } from './ProductCard.styled';
 export const ProductCard = ({ product }: Props) => {
   const addItem = useCartStore((state) => state.addItem);
   const { isAuthenticated } = useAuth();
+  const { lang, t } = useLanguage();
   const { data: favoriteIds } = useFavoriteIds(isAuthenticated);
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
@@ -40,6 +42,9 @@ export const ProductCard = ({ product }: Props) => {
     ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
     : 0;
 
+  const displayName = getLocalizedText(lang, product.name, product.nameEn);
+  const displayCategory = getLocalizedText(lang, product.category.name, product.category.nameEn);
+
   const handleImgLoad = () => setImgLoaded(true);
 
   const handleImgError = () => setImgError(true);
@@ -59,7 +64,7 @@ export const ProductCard = ({ product }: Props) => {
     if (cartState !== 'idle') return;
     addItem({
       id: product.id,
-      name: product.name,
+      name: displayName,
       price: product.price,
       imageUrl: product.images[0] ?? '',
       slug: product.slug,
@@ -79,7 +84,7 @@ export const ProductCard = ({ product }: Props) => {
             </When>
             <Image
               src={product.images[0]}
-              alt={product.name}
+              alt={displayName}
               fill
               className={s.image}
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -90,7 +95,7 @@ export const ProductCard = ({ product }: Props) => {
           <Else>
             <div className={s.placeholder}>
               <ImageOff className={s.placeholderIcon} />
-              <span className={s.placeholderText}>Нет фото</span>
+              <span className={s.placeholderText}>{t('product.noPhoto')}</span>
             </div>
           </Else>
         </If>
@@ -102,7 +107,7 @@ export const ProductCard = ({ product }: Props) => {
             className={s.favoriteButton}
             onClick={handleToggleFavorite}
             disabled={isFavoritePending}
-            aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+            aria-label={isFavorite ? t('favorites.empty') : t('favorites.title')}
           >
             <If condition={isFavoritePending}>
               <Then><Spinner size="sm" /></Then>
@@ -114,9 +119,9 @@ export const ProductCard = ({ product }: Props) => {
 
       <div className={s.content}>
         <Link href={`/products/${product.slug}`}>
-          <h3 className={s.name}>{product.name}</h3>
+          <h3 className={s.name}>{displayName}</h3>
         </Link>
-        <p className={s.category}>{product.category.name}</p>
+        <p className={s.category}>{displayCategory}</p>
 
         <When condition={reviews.length > 0}>
           <div className={s.rating}>
@@ -138,7 +143,7 @@ export const ProductCard = ({ product }: Props) => {
                   color: tag.color,
                 } : undefined}
               >
-                {tag.name}
+                {getLocalizedText(lang, tag.name, tag.nameEn)}
               </Badge>
             ))}
           </div>
@@ -166,7 +171,7 @@ export const ProductCard = ({ product }: Props) => {
                   cartState === 'success' && s.cartButtonSuccess,
                 )}
                 onClick={handleAddToCart}
-                aria-label={cartState === 'success' ? 'В корзине' : 'Добавить в корзину'}
+                aria-label={cartState === 'success' ? t('product.inCart') : t('product.addToCart')}
                 disabled={cartState === 'loading'}
               >
                 <When condition={cartState === 'idle'}>
@@ -178,13 +183,13 @@ export const ProductCard = ({ product }: Props) => {
                 <When condition={cartState === 'success'}>
                   <>
                     <Check className={s.cartButtonSuccessIcon} />
-                    <span className={s.cartButtonAddedText}>В корзине</span>
+                    <span className={s.cartButtonAddedText}>{t('product.inCart')}</span>
                   </>
                 </When>
               </button>
             </Then>
             <Else>
-              <span className={s.outOfStock}>Нет в наличии</span>
+              <span className={s.outOfStock}>{t('product.outOfStock')}</span>
             </Else>
           </If>
         </div>

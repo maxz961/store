@@ -111,13 +111,13 @@ describe('AdminUsersPage', () => {
   it('renders search input after data loads', async () => {
     renderPage();
     expect(
-      await screen.findByPlaceholderText('Поиск по имени или email...'),
+      await screen.findByPlaceholderText('Search by name or email...'),
     ).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', async () => {
     renderPage();
-    expect(await screen.findByText('Админ-панель')).toBeInTheDocument();
+    expect(await screen.findByText('Admin panel')).toBeInTheDocument();
   });
 
   it('renders user names', async () => {
@@ -143,21 +143,21 @@ describe('AdminUsersPage', () => {
 
   it('renders banned status badge', async () => {
     renderPage();
-    expect(await screen.findByText('Заблокирован')).toBeInTheDocument();
-    expect(screen.getAllByText('Активен')).toHaveLength(2);
+    expect(await screen.findByText('Banned')).toBeInTheDocument();
+    expect(screen.getAllByText('Active')).toHaveLength(2);
   });
 
   it('renders ban/unban buttons for non-admin users', async () => {
     renderPage();
-    expect(await screen.findByText('Заблокировать')).toBeInTheDocument();
-    expect(screen.getByText('Разблокировать')).toBeInTheDocument();
+    expect(await screen.findByText('Ban')).toBeInTheDocument();
+    expect(screen.getByText('Unban')).toBeInTheDocument();
   });
 
   it('shows error message when fetch fails', async () => {
     mockApiGet = jest.fn().mockRejectedValue(new Error('Network error'));
     renderPage();
     expect(
-      await screen.findByText('Не удалось загрузить пользователей'),
+      await screen.findByText('Failed to load users'),
     ).toBeInTheDocument();
   });
 
@@ -165,7 +165,7 @@ describe('AdminUsersPage', () => {
     mockApiGet = jest.fn().mockResolvedValue([]);
     renderPage();
     expect(
-      await screen.findByText('Пользователи не найдены'),
+      await screen.findByText('No users found'),
     ).toBeInTheDocument();
   });
 
@@ -185,7 +185,7 @@ describe('AdminUsersPage', () => {
     mockApiPatch = jest.fn().mockResolvedValue({ ...mockUsers[1], isBanned: true });
     renderPage();
 
-    const banBtn = await screen.findByText('Заблокировать');
+    const banBtn = await screen.findByText('Ban');
     fireEvent.click(banBtn);
 
     await waitFor(() => {
@@ -201,13 +201,13 @@ describe('AdminUsersPage', () => {
   it('renders search input', async () => {
     renderPage();
     expect(
-      await screen.findByPlaceholderText('Поиск по имени или email...'),
+      await screen.findByPlaceholderText('Search by name or email...'),
     ).toBeInTheDocument();
   });
 
   it('filters users by name', async () => {
     renderPage();
-    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    const searchInput = await screen.findByPlaceholderText('Search by name or email...');
     fireEvent.change(searchInput, { target: { value: 'Admin' } });
     expect(screen.getByText('Admin User')).toBeInTheDocument();
     expect(screen.queryByText('Customer User')).not.toBeInTheDocument();
@@ -215,7 +215,7 @@ describe('AdminUsersPage', () => {
 
   it('filters users by email', async () => {
     renderPage();
-    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    const searchInput = await screen.findByPlaceholderText('Search by name or email...');
     fireEvent.change(searchInput, { target: { value: 'customer@' } });
     expect(screen.queryByText('Admin User')).not.toBeInTheDocument();
     expect(screen.getByText('Customer User')).toBeInTheDocument();
@@ -223,21 +223,21 @@ describe('AdminUsersPage', () => {
 
   it('search is case insensitive', async () => {
     renderPage();
-    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    const searchInput = await screen.findByPlaceholderText('Search by name or email...');
     fireEvent.change(searchInput, { target: { value: 'admin user' } });
     expect(screen.getByText('Admin User')).toBeInTheDocument();
   });
 
   it('shows empty state when search has no matches', async () => {
     renderPage();
-    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    const searchInput = await screen.findByPlaceholderText('Search by name or email...');
     fireEvent.change(searchInput, { target: { value: 'xyz-not-exists' } });
-    expect(screen.getByText('Пользователи не найдены')).toBeInTheDocument();
+    expect(screen.getByText('No users found')).toBeInTheDocument();
   });
 
   it('shows all users when search is cleared', async () => {
     renderPage();
-    const searchInput = await screen.findByPlaceholderText('Поиск по имени или email...');
+    const searchInput = await screen.findByPlaceholderText('Search by name or email...');
     fireEvent.change(searchInput, { target: { value: 'Admin' } });
     expect(screen.queryByText('Customer User')).not.toBeInTheDocument();
     fireEvent.change(searchInput, { target: { value: '' } });
@@ -259,13 +259,13 @@ describe('AdminUsersPage', () => {
   it('hides Load More button when fewer than 20 users', async () => {
     renderPage();
     await screen.findByText('Admin User');
-    expect(screen.queryByText('Загрузить ещё')).not.toBeInTheDocument();
+    expect(screen.queryByText('Load more')).not.toBeInTheDocument();
   });
 
   it('shows Load More button when exactly 20 users are loaded', async () => {
     mockApiGet = jest.fn().mockResolvedValue(make20Users());
     renderPage();
-    expect(await screen.findByText('Загрузить ещё')).toBeInTheDocument();
+    expect(await screen.findByText('Load more')).toBeInTheDocument();
   });
 
   it('clicking Load More fetches next page', async () => {
@@ -274,7 +274,7 @@ describe('AdminUsersPage', () => {
       .mockResolvedValueOnce([mockUsers[0]]);
     renderPage();
 
-    const loadMoreBtn = await screen.findByText('Загрузить ещё');
+    const loadMoreBtn = await screen.findByText('Load more');
     fireEvent.click(loadMoreBtn);
 
     await waitFor(() => {

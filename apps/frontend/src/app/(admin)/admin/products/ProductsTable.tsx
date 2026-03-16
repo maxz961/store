@@ -10,19 +10,19 @@ export const ProductsTable = ({ products, sortBy, sortOrder, search }: ProductsT
     <table className={s.table}>
       <thead className={s.thead}>
         <tr>
-          <SortHeader field="name" label="Товар" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
-          <th className={s.th}>Категория</th>
-          <th className={s.th}>Теги</th>
-          <SortHeader field="price" label="Цена" align="right" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
-          <SortHeader field="stock" label="Остаток" align="right" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
-          <th className={s.thCenter}>Статус</th>
+          <SortHeader field="name" label="Product" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
+          <th className={s.th}>Category</th>
+          <th className={s.th}>Tags</th>
+          <SortHeader field="price" label="Price" align="right" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
+          <SortHeader field="stock" label="Stock" align="right" currentSortBy={sortBy} currentSortOrder={sortOrder} search={search} />
+          <th className={s.thCenter}>Status</th>
           <th className={s.th} />
         </tr>
       </thead>
       <tbody>
         <When condition={products.length === 0}>
           <tr>
-            <td colSpan={7} className={s.emptyRow}>Товары не найдены</td>
+            <td colSpan={7} className={s.emptyRow}>Products not found</td>
           </tr>
         </When>
         {products.map((product) => (

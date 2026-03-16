@@ -100,13 +100,13 @@ describe('ProductRow', () => {
 
   it('shows published status', () => {
     render(<table><tbody><ProductRow product={baseProduct} /></tbody></table>);
-    expect(screen.getByText('Опубликован')).toBeInTheDocument();
+    expect(screen.getByText('Published')).toBeInTheDocument();
   });
 
   it('shows draft status when not published', () => {
     const product = { ...baseProduct, isPublished: false };
     render(<table><tbody><ProductRow product={product} /></tbody></table>);
-    expect(screen.getByText('Черновик')).toBeInTheDocument();
+    expect(screen.getByText('Draft')).toBeInTheDocument();
   });
 
   it('shows dash when no category', () => {

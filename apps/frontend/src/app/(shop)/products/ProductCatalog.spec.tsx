@@ -3,6 +3,23 @@ import { render, screen } from '@testing-library/react';
 import { ProductCatalog } from './ProductCatalog';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'common.error': 'An error occurred',
+        'catalog.loading': 'Loading products...',
+        'catalog.noResults': 'No products found',
+        'catalog.noResultsText': 'Try changing the search term or filters',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
+
 jest.mock('lucide-react', () => ({
   ChevronLeft: () => <svg data-testid="chevron-left" />,
   ChevronRight: () => <svg data-testid="chevron-right" />,
@@ -107,8 +124,8 @@ describe('ProductCatalog', () => {
     });
 
     render(<ProductCatalog />);
-    expect(screen.getByText('Ошибка загрузки')).toBeInTheDocument();
-    expect(screen.getByText('Не удалось загрузить товары')).toBeInTheDocument();
+    expect(screen.getByText('An error occurred')).toBeInTheDocument();
+    expect(screen.getByText('Loading products...')).toBeInTheDocument();
   });
 
   it('shows empty state when no products', () => {
@@ -120,7 +137,7 @@ describe('ProductCatalog', () => {
     });
 
     render(<ProductCatalog />);
-    expect(screen.getByText('Товары не найдены')).toBeInTheDocument();
+    expect(screen.getByText('No products found')).toBeInTheDocument();
   });
 
   it('renders product cards', () => {

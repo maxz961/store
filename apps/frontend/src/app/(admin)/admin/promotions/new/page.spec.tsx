@@ -64,12 +64,12 @@ const mockProducts = {
   items: [
     {
       id: 'p1',
-      name: 'Товар 1',
-      slug: 'tovar-1',
+      name: 'Product 1',
+      slug: 'product-1',
       price: 100,
       images: [],
       stock: 10,
-      category: { name: 'Электроника', slug: 'electronics' },
+      category: { name: 'Electronics', slug: 'electronics' },
       tags: [],
       reviews: [],
     },
@@ -92,7 +92,7 @@ describe('NewPromotionPage', () => {
 
   it('renders all form sections', () => {
     renderPage();
-    expect(screen.getByText('Основная информация')).toBeInTheDocument();
+    expect(screen.getByText('Basic information')).toBeInTheDocument();
     expect(screen.getByText('Расписание')).toBeInTheDocument();
     expect(screen.getByText('Скидка')).toBeInTheDocument();
     expect(screen.getByText('Баннер')).toBeInTheDocument();
@@ -101,13 +101,13 @@ describe('NewPromotionPage', () => {
 
   it('renders breadcrumbs', () => {
     renderPage();
-    expect(screen.getByText('Акции')).toBeInTheDocument();
-    expect(screen.getByText('Админ-панель')).toBeInTheDocument();
+    expect(screen.getByText('Promotions')).toBeInTheDocument();
+    expect(screen.getByText('New promotion')).toBeInTheDocument();
   });
 
   it('auto-generates slug from title', () => {
     renderPage();
-    const titleInput = screen.getByPlaceholderText('Например: Весенняя распродажа');
+    const titleInput = screen.getByPlaceholderText('e.g. Spring Sale');
     fireEvent.change(titleInput, { target: { value: 'Spring Sale' } });
     const slugInput = screen.getByDisplayValue('spring-sale');
     expect(slugInput).toBeInTheDocument();
@@ -115,22 +115,27 @@ describe('NewPromotionPage', () => {
 
   it('toggles product selection', async () => {
     renderPage();
-    const productBtn = await screen.findByText('Товар 1');
+    const productBtn = await screen.findByText('Product 1');
     fireEvent.click(productBtn);
     expect(productBtn).toHaveClass('bg-primary');
     fireEvent.click(productBtn);
     expect(productBtn).not.toHaveClass('bg-primary');
   });
 
-  it('renders submit button "Создать акцию"', () => {
+  it('renders submit button "Create promotion"', () => {
     renderPage();
-    expect(screen.getByText('Создать акцию')).toBeInTheDocument();
+    expect(screen.getByText('Create promotion')).toBeInTheDocument();
   });
 
   it('submits form and redirects', async () => {
     const { container } = renderPage();
 
-    fireEvent.change(screen.getByPlaceholderText('Например: Весенняя распродажа'), { target: { value: 'Spring Sale' } });
+    // Fill UK title
+    fireEvent.change(screen.getByPlaceholderText('e.g. Spring Sale'), { target: { value: 'Spring Sale' } });
+
+    // Switch to EN tab and fill required titleEn
+    fireEvent.click(screen.getByText(/🇬🇧/));
+    fireEvent.change(screen.getByPlaceholderText('e.g. Spring Sale'), { target: { value: 'Spring Sale EN' } });
 
     // Switch banner section to URL mode so the URL input is visible
     fireEvent.click(screen.getByText('По ссылке'));
@@ -143,7 +148,7 @@ describe('NewPromotionPage', () => {
 
     fireEvent.change(screen.getByPlaceholderText('25'), { target: { value: '15' } });
 
-    fireEvent.submit(screen.getByText('Создать акцию').closest('form')!);
+    fireEvent.submit(screen.getByText('Create promotion').closest('form')!);
 
     await waitFor(() => {
       expect(mockApiPost).toHaveBeenCalledWith('/promotions', expect.objectContaining({
@@ -161,10 +166,15 @@ describe('NewPromotionPage', () => {
   });
 
   it('shows error on submit failure', async () => {
-    mockApiPost = jest.fn().mockRejectedValue(new Error('Ошибка создания'));
+    mockApiPost = jest.fn().mockRejectedValue(new Error('Failed to create promotion'));
     const { container } = renderPage();
 
-    fireEvent.change(screen.getByPlaceholderText('Например: Весенняя распродажа'), { target: { value: 'Test' } });
+    // Fill UK title
+    fireEvent.change(screen.getByPlaceholderText('e.g. Spring Sale'), { target: { value: 'Test' } });
+
+    // Switch to EN tab and fill required titleEn
+    fireEvent.click(screen.getByText(/🇬🇧/));
+    fireEvent.change(screen.getByPlaceholderText('e.g. Spring Sale'), { target: { value: 'Test EN' } });
 
     // Switch banner section to URL mode so the URL input is visible
     fireEvent.click(screen.getByText('По ссылке'));
@@ -177,8 +187,8 @@ describe('NewPromotionPage', () => {
 
     fireEvent.change(screen.getByPlaceholderText('25'), { target: { value: '15' } });
 
-    fireEvent.submit(screen.getByText('Создать акцию').closest('form')!);
+    fireEvent.submit(screen.getByText('Create promotion').closest('form')!);
 
-    expect(await screen.findByText('Ошибка создания')).toBeInTheDocument();
+    expect(await screen.findByText('Failed to create promotion')).toBeInTheDocument();
   });
 });

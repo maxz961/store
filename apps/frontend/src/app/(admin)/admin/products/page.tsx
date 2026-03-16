@@ -46,7 +46,7 @@ const AdminProductsContent = () => {
         <Link href="/admin/products/new">
           <Button size="sm">
             <Plus className={s.buttonIcon} />
-            Добавить товар
+            Add product
           </Button>
         </Link>
       </div>

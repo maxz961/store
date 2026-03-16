@@ -5,6 +5,7 @@ import { PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js'
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/Spinner';
+import { useLanguage } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { PaymentSectionProps } from './page.types';
@@ -13,6 +14,7 @@ import type { PaymentSectionProps } from './page.types';
 export const PaymentSection = ({ amount, isCreatingOrder, onSuccess, onBack }: PaymentSectionProps) => {
   const stripe = useStripe();
   const elements = useElements();
+  const { t } = useLanguage();
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
 
@@ -31,27 +33,27 @@ export const PaymentSection = ({ amount, isCreatingOrder, onSuccess, onBack }: P
       });
 
       if (stripeError) {
-        setError(stripeError.message ?? 'Ошибка оплаты. Попробуйте ещё раз.');
+        setError(stripeError.message ?? t('common.error'));
         return;
       }
 
       if (paymentIntent?.status === 'succeeded') {
         onSuccess(paymentIntent.id);
       } else {
-        setError('Оплата не завершена. Попробуйте ещё раз.');
+        setError(t('common.error'));
       }
     } catch {
-      setError('Ошибка оплаты. Попробуйте ещё раз.');
+      setError(t('common.error'));
     } finally {
       setIsPending(false);
     }
-  }, [stripe, elements, onSuccess]);
+  }, [stripe, elements, onSuccess, t]);
 
   const isLoading = isPending || isCreatingOrder;
 
   return (
     <div className={s.paymentSection}>
-      <p className={s.paymentTitle}>Оплата</p>
+      <p className={s.paymentTitle}>Payment</p>
 
       <PaymentElement />
 
@@ -62,12 +64,12 @@ export const PaymentSection = ({ amount, isCreatingOrder, onSuccess, onBack }: P
       <Button className={s.payButton} onClick={handlePay} disabled={isLoading || !stripe}>
         <If condition={isLoading}>
           <Then><Spinner size="sm" /></Then>
-          <Else>{`Оплатить ${formatCurrency(amount)}`}</Else>
+          <Else>{`Pay ${formatCurrency(amount)}`}</Else>
         </If>
       </Button>
 
       <button className={s.backLink} onClick={onBack} disabled={isLoading}>
-        ← Вернуться к данным доставки
+        ← {t('checkout.back')}
       </button>
     </div>
   );

@@ -35,9 +35,9 @@ import AdminPromotionsPage from './page';
 const mockPromotions = [
   {
     id: 'promo-1',
-    title: 'Летняя распродажа',
+    title: 'Summer Sale',
     slug: 'summer-sale',
-    description: 'Скидки до 50%',
+    description: 'Up to 50% off',
     bannerImageUrl: 'https://example.com/summer.jpg',
     bannerBgColor: '#ff6600',
     startDate: '2026-06-01T00:00:00.000Z',
@@ -50,7 +50,7 @@ const mockPromotions = [
   },
   {
     id: 'promo-2',
-    title: 'Чёрная пятница',
+    title: 'Black Friday',
     slug: 'black-friday',
     description: null,
     bannerImageUrl: 'https://example.com/bf.jpg',
@@ -88,13 +88,13 @@ describe('AdminPromotionsPage', () => {
 
   it('renders add promotion button', () => {
     renderPage();
-    expect(screen.getByText('Добавить акцию')).toBeInTheDocument();
+    expect(screen.getByText('New promotion')).toBeInTheDocument();
   });
 
   it('renders promotion titles from mock data', () => {
     renderPage();
-    expect(screen.getByText('Летняя распродажа')).toBeInTheDocument();
-    expect(screen.getByText('Чёрная пятница')).toBeInTheDocument();
+    expect(screen.getByText('Summer Sale')).toBeInTheDocument();
+    expect(screen.getByText('Black Friday')).toBeInTheDocument();
   });
 
   it('renders discount values', () => {
@@ -105,19 +105,20 @@ describe('AdminPromotionsPage', () => {
 
   it('renders active/inactive status badges', () => {
     renderPage();
-    expect(screen.getByText('Активна')).toBeInTheDocument();
-    expect(screen.getByText('Неактивна')).toBeInTheDocument();
+    expect(screen.getByText('Active')).toBeInTheDocument();
+    expect(screen.getByText('Inactive')).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', () => {
     renderPage();
-    expect(screen.getByText('Админ-панель')).toBeInTheDocument();
+    expect(screen.getByText('Admin panel')).toBeInTheDocument();
+    expect(screen.getByText('Promotions')).toBeInTheDocument();
   });
 
   it('shows empty message when no promotions', () => {
     mockPromotionsData = [];
     renderPage();
-    expect(screen.getByText('Акции не найдены')).toBeInTheDocument();
+    expect(screen.getByText('No promotions found')).toBeInTheDocument();
   });
 
   it('renders date period', () => {
@@ -130,6 +131,6 @@ describe('AdminPromotionsPage', () => {
     mockIsLoading = true;
     mockPromotionsData = [];
     renderPage();
-    expect(screen.queryByText('Летняя распродажа')).not.toBeInTheDocument();
+    expect(screen.queryByText('Summer Sale')).not.toBeInTheDocument();
   });
 });

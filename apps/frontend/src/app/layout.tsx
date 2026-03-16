@@ -6,6 +6,7 @@ import { QueryProvider } from '@/components/providers/QueryProvider';
 import { NavigationProgress } from '@/components/providers/NavigationProgress';
 import { Header } from '@/components/layout/Header';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
+import { LanguageProvider } from '@/lib/i18n';
 import { Toaster } from 'sonner';
 import './globals.css';
 
@@ -22,23 +23,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="uk" suppressHydrationWarning>
       <body className={inter.className}>
         <QueryProvider>
           <ThemeProvider>
-            <Suspense>
-              <NavigationProgress />
-            </Suspense>
-            <Suspense>
-              <Header />
-            </Suspense>
-            <main>
-              <ErrorBoundary>
-                {children}
-              </ErrorBoundary>
-            </main>
+            <LanguageProvider>
+              <Suspense>
+                <NavigationProgress />
+              </Suspense>
+              <Suspense>
+                <Header />
+              </Suspense>
+              <main>
+                <ErrorBoundary>
+                  {children}
+                </ErrorBoundary>
+              </main>
+            </LanguageProvider>
           </ThemeProvider>
-        <Toaster position="top-right" richColors />
+          <Toaster position="top-right" richColors />
         </QueryProvider>
       </body>
     </html>

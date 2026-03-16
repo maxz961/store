@@ -13,10 +13,12 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyUnreadCount, useAdminUnreadCount } from '@/lib/hooks/useSupport';
 import { useImageErrorCount } from '@/lib/hooks/useAdmin';
 import { useUnreadLogsCount } from '@/lib/hooks/useLogs';
+import { useLanguage } from '@/lib/i18n';
 import { getInitials } from '@/lib/utils';
 import { UserTrigger } from './UserTrigger/UserTrigger';
 import { UserMenu } from './UserMenu/UserMenu';
 import { SearchInput } from './SearchInput';
+import { LangSwitcher } from './LangSwitcher';
 import { s } from './Header.styled';
 
 
@@ -25,6 +27,7 @@ export const Header = () => {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
   const { theme, setTheme } = useTheme();
+  const { t } = useLanguage();
   const { user, isAuthenticated, isAdmin, login, logout } = useAuth();
   const itemCount = useCartStore((state) => state.items.reduce((acc, i) => acc + i.quantity, 0));
   const { data: myUnreadCount } = useMyUnreadCount(isAuthenticated && !isAdmin);
@@ -63,13 +66,15 @@ export const Header = () => {
         </When>
 
         <div className={s.actions}>
-          <Button variant="ghost" size="icon" onClick={handleToggleTheme} aria-label="Переключить тему">
+          <Button variant="ghost" size="icon" onClick={handleToggleTheme} aria-label={t('nav.home')}>
             <Sun className={s.sunIcon} />
             <Moon className={s.moonIcon} />
           </Button>
 
+          <LangSwitcher />
+
           <Link href="/cart">
-            <Button variant="ghost" size="icon" className="relative" aria-label="Корзина">
+            <Button variant="ghost" size="icon" className="relative" aria-label={t('cart.title')}>
               <ShoppingCart className={s.cartIcon} />
               <When condition={itemCount > 0}>
                 <span className={s.cartBadge}>{itemCount}</span>
@@ -85,7 +90,7 @@ export const Header = () => {
             </Then>
             <Else>
               <Button variant="ghost" size="sm" className={s.loginButton} onClick={login}>
-                Войти
+                {t('nav.login')}
               </Button>
             </Else>
           </If>

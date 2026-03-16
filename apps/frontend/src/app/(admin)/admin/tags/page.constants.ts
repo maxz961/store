@@ -2,8 +2,9 @@ import { z } from 'zod';
 
 
 export const tagFormSchema = z.object({
-  name: z.string().min(1, 'Введите название').max(100, 'Максимум 100 символов'),
-  slug: z.string().min(1, 'Введите slug').max(100, 'Максимум 100 символов').regex(/^[a-z0-9-]+$/, 'Только латиница, цифры и дефис'),
+  name: z.string().min(1, 'Required').max(100, 'Max 100 characters'),
+  nameEn: z.string().min(1, 'Required').max(100, 'Max 100 characters'),
+  slug: z.string().min(1, 'Required').max(100, 'Max 100 characters').regex(/^[a-z0-9-]+$/, 'Lowercase letters, digits and hyphens only'),
   color: z.string().optional(),
 });
 

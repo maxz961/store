@@ -204,8 +204,10 @@ describe("ProductsService", () => {
 
       const result = await service.create({
         name: "Test Product",
+        nameEn: "Test product EN",
         slug: "test-product",
         description: "Description",
+        descriptionEn: "Test description EN",
         price: 99.99,
         stock: 10,
         categoryId: "cat-1",
@@ -225,8 +227,10 @@ describe("ProductsService", () => {
       await expect(
         service.create({
           name: "Test Product",
+          nameEn: "Test product EN",
           slug: "test-product",
           description: "Desc",
+          descriptionEn: "Test description EN",
           price: 99.99,
           stock: 10,
           categoryId: "cat-1",
@@ -243,8 +247,10 @@ describe("ProductsService", () => {
       await expect(
         service.create({
           name: "Test Product",
+          nameEn: "Test product EN",
           slug: "test-product-2",
           description: "Desc",
+          descriptionEn: "Test description EN",
           price: 99.99,
           stock: 10,
           categoryId: "cat-1",
