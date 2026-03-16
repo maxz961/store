@@ -6,6 +6,7 @@ jest.mock('lucide-react', () => ({
   ShoppingCart: (props: Record<string, unknown>) => <div data-testid="icon-cart" {...props} />,
   ImageOff: (props: Record<string, unknown>) => <div data-testid="icon-image-off" {...props} />,
   Heart: (props: Record<string, unknown>) => <div data-testid="icon-heart" {...props} />,
+  Check: (props: Record<string, unknown>) => <div data-testid="icon-check" {...props} />,
 }));
 
 jest.mock('@/lib/hooks/useAuth', () => ({
@@ -163,6 +164,15 @@ describe('ProductCard', () => {
       slug: 'test-product',
       stock: 10,
     });
+  });
+
+  it('shows added state permanently after clicking cart button', () => {
+    render(<ProductCard product={baseProduct} />);
+    fireEvent.click(screen.getByLabelText('Добавить в корзину'));
+    expect(screen.getByLabelText('В корзине')).toBeInTheDocument();
+    expect(screen.getByTestId('icon-check')).toBeInTheDocument();
+    expect(screen.getByText('В корзине')).toBeInTheDocument();
+    expect(screen.queryByTestId('icon-cart')).not.toBeInTheDocument();
   });
 
   it('shows placeholder when images array is empty', () => {

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, ImageOff, Heart } from 'lucide-react';
+import { ShoppingCart, ImageOff, Heart, Check } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,6 +26,8 @@ export const ProductCard = ({ product }: Props) => {
   const removeFavorite = useRemoveFavorite();
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [bouncing, setBouncing] = useState(false);
 
   const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
   const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
@@ -64,6 +66,9 @@ export const ProductCard = ({ product }: Props) => {
       slug: product.slug,
       stock: product.stock,
     });
+    setBouncing(true);
+    setTimeout(() => setBouncing(false), 150);
+    setAdded(true);
   };
 
   return (
@@ -155,14 +160,21 @@ export const ProductCard = ({ product }: Props) => {
 
           <If condition={product.stock > 0}>
             <Then>
-              <Button
-                size="icon"
-                className={s.cartButton}
+              <button
+                className={cn(s.cartButton, added && s.cartButtonAdded, bouncing && s.cartButtonBouncing)}
                 onClick={handleAddToCart}
-                aria-label="Добавить в корзину"
+                aria-label={added ? 'В корзине' : 'Добавить в корзину'}
               >
-                <ShoppingCart className={s.cartButtonIcon} />
-              </Button>
+                <If condition={added}>
+                  <Then>
+                    <Check className={s.cartButtonAddedIcon} />
+                    <span className={s.cartButtonAddedText}>В корзине</span>
+                  </Then>
+                  <Else>
+                    <ShoppingCart className={s.cartButtonIcon} />
+                  </Else>
+                </If>
+              </button>
             </Then>
             <Else>
               <span className={s.outOfStock}>Нет в наличии</span>
