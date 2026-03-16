@@ -173,11 +173,19 @@ describe('ProductPage', () => {
     expect(mockAddItem).toHaveBeenCalledTimes(1);
   });
 
-  it('shows added state after clicking add to cart', async () => {
+  it('shows loading state immediately after clicking add to cart', async () => {
     jest.useFakeTimers();
     await renderPage();
     fireEvent.click(screen.getByText('В корзину'));
-    act(() => jest.advanceTimersByTime(150));
+    expect(screen.getByText('Добавляем...')).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it('shows success state after add to cart animation completes', async () => {
+    jest.useFakeTimers();
+    await renderPage();
+    fireEvent.click(screen.getByText('В корзину'));
+    act(() => jest.advanceTimersByTime(700));
     expect(screen.getByText('В корзине')).toBeInTheDocument();
     expect(screen.getByTestId('icon-check')).toBeInTheDocument();
     jest.useRealTimers();

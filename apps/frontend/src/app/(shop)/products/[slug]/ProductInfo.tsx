@@ -23,8 +23,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const [quantity, setQuantity] = useState(1);
-  const [added, setAdded] = useState(false);
-  const [bouncing, setBouncing] = useState(false);
+  const [cartState, setCartState] = useState<'idle' | 'loading' | 'success'>('idle');
 
   const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
   const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
@@ -63,11 +62,8 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       });
     }
     setQuantity(1);
-    setBouncing(true);
-    setTimeout(() => {
-      setAdded(true);
-      setBouncing(false);
-    }, 150);
+    setCartState('loading');
+    setTimeout(() => setCartState('success'), 700);
   }, [quantity, addItem, product]);
 
   return (
@@ -144,16 +140,20 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           </div>
           <Button
             size="lg"
-            className={cn(s.addToCartButton, added && s.addToCartButtonAdded, bouncing && s.addToCartButtonTransitioning)}
+            className={cn(s.addToCartButton, cartState === 'success' && s.addToCartButtonSuccess)}
             onClick={handleAddToCart}
+            disabled={cartState === 'loading'}
           >
-            <When condition={added}>
-              <Check className={s.buttonIcon} />
-            </When>
-            <When condition={!added}>
+            <When condition={cartState === 'idle'}>
               <ShoppingCart className={s.buttonIcon} />
             </When>
-            {added ? 'В корзине' : 'В корзину'}
+            <When condition={cartState === 'loading'}>
+              <Spinner size="sm" />
+            </When>
+            <When condition={cartState === 'success'}>
+              <Check className={s.addToCartButtonSuccessIcon} />
+            </When>
+            {cartState === 'success' ? 'В корзине' : cartState === 'loading' ? 'Добавляем...' : 'В корзину'}
           </Button>
           <When condition={isAuthenticated}>
             <button

@@ -9,6 +9,10 @@ jest.mock('lucide-react', () => ({
   Check: (props: Record<string, unknown>) => <div data-testid="icon-check" {...props} />,
 }));
 
+jest.mock('@/components/ui/Spinner', () => ({
+  Spinner: () => <div data-testid="spinner" />,
+}));
+
 jest.mock('@/lib/hooks/useAuth', () => ({
   useAuth: () => ({ isAuthenticated: false, isLoading: false }),
 }));
@@ -166,15 +170,24 @@ describe('ProductCard', () => {
     });
   });
 
-  it('shows added state permanently after clicking cart button', () => {
+  it('shows spinner while loading after clicking cart button', () => {
     jest.useFakeTimers();
     render(<ProductCard product={baseProduct} />);
     fireEvent.click(screen.getByLabelText('Добавить в корзину'));
-    act(() => jest.advanceTimersByTime(150));
+    expect(screen.getByTestId('spinner')).toBeInTheDocument();
+    expect(screen.queryByTestId('icon-cart')).not.toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it('shows success state after add to cart animation completes', () => {
+    jest.useFakeTimers();
+    render(<ProductCard product={baseProduct} />);
+    fireEvent.click(screen.getByLabelText('Добавить в корзину'));
+    act(() => jest.advanceTimersByTime(700));
     expect(screen.getByLabelText('В корзине')).toBeInTheDocument();
     expect(screen.getByTestId('icon-check')).toBeInTheDocument();
     expect(screen.getByText('В корзине')).toBeInTheDocument();
-    expect(screen.queryByTestId('icon-cart')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('spinner')).not.toBeInTheDocument();
     jest.useRealTimers();
   });
 

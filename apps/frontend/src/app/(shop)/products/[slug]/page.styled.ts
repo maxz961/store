@@ -42,9 +42,9 @@ export const s = {
   quantityButton: 'flex h-10 w-10 items-center justify-center text-lg transition-colors duration-150 hover:bg-accent dark:hover:bg-white/10',
   quantity: 'flex h-10 w-10 items-center justify-center text-sm font-medium',
   buttonIcon: 'mr-2 h-4 w-4 shrink-0',
-  addToCartButton: 'flex-1 transition-all duration-150',
-  addToCartButtonAdded: 'bg-green-500 hover:bg-green-500',
-  addToCartButtonTransitioning: 'scale-0 opacity-0',
+  addToCartButton: 'flex-1 transition-all duration-300',
+  addToCartButtonSuccess: 'bg-green-500 hover:bg-green-500',
+  addToCartButtonSuccessIcon: 'mr-2 h-4 w-4 shrink-0 animate-success-pop',
 
   // Rating row (in product info)
   ratingRow: 'flex items-center gap-2',

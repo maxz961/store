@@ -25,8 +25,7 @@ export const ProductCard = ({ product }: Props) => {
   const removeFavorite = useRemoveFavorite();
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [added, setAdded] = useState(false);
-  const [bouncing, setBouncing] = useState(false);
+  const [cartState, setCartState] = useState<'idle' | 'loading' | 'success'>('idle');
 
   const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
   const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
@@ -57,6 +56,7 @@ export const ProductCard = ({ product }: Props) => {
   };
 
   const handleAddToCart = () => {
+    if (cartState !== 'idle') return;
     addItem({
       id: product.id,
       name: product.name,
@@ -65,11 +65,8 @@ export const ProductCard = ({ product }: Props) => {
       slug: product.slug,
       stock: product.stock,
     });
-    setBouncing(true);
-    setTimeout(() => {
-      setAdded(true);
-      setBouncing(false);
-    }, 150);
+    setCartState('loading');
+    setTimeout(() => setCartState('success'), 700);
   };
 
   return (
@@ -162,16 +159,25 @@ export const ProductCard = ({ product }: Props) => {
           <If condition={product.stock > 0}>
             <Then>
               <button
-                className={cn(s.cartButton, added && s.cartButtonAdded, bouncing && s.cartButtonBouncing)}
+                className={cn(
+                  s.cartButton,
+                  cartState === 'idle' && s.cartButtonIdle,
+                  cartState === 'loading' && s.cartButtonLoading,
+                  cartState === 'success' && s.cartButtonSuccess,
+                )}
                 onClick={handleAddToCart}
-                aria-label={added ? 'В корзине' : 'Добавить в корзину'}
+                aria-label={cartState === 'success' ? 'В корзине' : 'Добавить в корзину'}
+                disabled={cartState === 'loading'}
               >
-                <When condition={!added}>
+                <When condition={cartState === 'idle'}>
                   <ShoppingCart className={s.cartButtonIcon} />
                 </When>
-                <When condition={added}>
+                <When condition={cartState === 'loading'}>
+                  <Spinner size="sm" />
+                </When>
+                <When condition={cartState === 'success'}>
                   <>
-                    <Check className={s.cartButtonAddedIcon} />
+                    <Check className={s.cartButtonSuccessIcon} />
                     <span className={s.cartButtonAddedText}>В корзине</span>
                   </>
                 </When>
