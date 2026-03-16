@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, act } from '@testing-library/react';
 import type { Product } from './ProductCard.types';
 
 
@@ -167,12 +167,15 @@ describe('ProductCard', () => {
   });
 
   it('shows added state permanently after clicking cart button', () => {
+    jest.useFakeTimers();
     render(<ProductCard product={baseProduct} />);
     fireEvent.click(screen.getByLabelText('Добавить в корзину'));
+    act(() => jest.advanceTimersByTime(150));
     expect(screen.getByLabelText('В корзине')).toBeInTheDocument();
     expect(screen.getByTestId('icon-check')).toBeInTheDocument();
     expect(screen.getByText('В корзине')).toBeInTheDocument();
     expect(screen.queryByTestId('icon-cart')).not.toBeInTheDocument();
+    jest.useRealTimers();
   });
 
   it('shows placeholder when images array is empty', () => {

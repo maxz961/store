@@ -24,6 +24,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const removeFavorite = useRemoveFavorite();
   const [quantity, setQuantity] = useState(1);
   const [added, setAdded] = useState(false);
+  const [bouncing, setBouncing] = useState(false);
 
   const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
   const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
@@ -62,7 +63,11 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       });
     }
     setQuantity(1);
-    setAdded(true);
+    setBouncing(true);
+    setTimeout(() => {
+      setAdded(true);
+      setBouncing(false);
+    }, 150);
   }, [quantity, addItem, product]);
 
   return (
@@ -139,7 +144,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
           </div>
           <Button
             size="lg"
-            className={cn(s.addToCartButton, added && s.addToCartButtonAdded)}
+            className={cn(s.addToCartButton, added && s.addToCartButtonAdded, bouncing && s.addToCartButtonTransitioning)}
             onClick={handleAddToCart}
           >
             <When condition={added}>

@@ -174,10 +174,13 @@ describe('ProductPage', () => {
   });
 
   it('shows added state after clicking add to cart', async () => {
+    jest.useFakeTimers();
     await renderPage();
     fireEvent.click(screen.getByText('В корзину'));
+    act(() => jest.advanceTimersByTime(150));
     expect(screen.getByText('В корзине')).toBeInTheDocument();
     expect(screen.getByTestId('icon-check')).toBeInTheDocument();
+    jest.useRealTimers();
   });
 
   it('renders tags', async () => {

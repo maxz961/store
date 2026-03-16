@@ -66,8 +66,10 @@ export const ProductCard = ({ product }: Props) => {
       stock: product.stock,
     });
     setBouncing(true);
-    setTimeout(() => setBouncing(false), 150);
-    setAdded(true);
+    setTimeout(() => {
+      setAdded(true);
+      setBouncing(false);
+    }, 150);
   };
 
   return (
