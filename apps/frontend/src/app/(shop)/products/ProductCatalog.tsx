@@ -1,8 +1,11 @@
 'use client';
 
+import { useState, useCallback } from 'react';
+import { SlidersHorizontal } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ProductFilters } from './ProductFilters';
+import { FiltersDrawer } from './FiltersDrawer';
 import { CatalogPagination } from './CatalogPagination';
 import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
@@ -12,6 +15,7 @@ import { s } from './ProductCatalog.styled';
 
 export const ProductCatalog = () => {
   const { get } = useProductParams();
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const filters = {
     search: get('search'),
@@ -28,20 +32,34 @@ export const ProductCatalog = () => {
   const { data: categories = [] } = useCategories();
   const { data: tags = [] } = useTags();
 
+  const handleOpenFilters = useCallback(() => setIsFiltersOpen(true), []);
+  const handleCloseFilters = useCallback(() => setIsFiltersOpen(false), []);
+
+  const filterProps = {
+    categories,
+    tags,
+    currentCategory: filters.categorySlug,
+    currentTags: filters.tagSlugs?.split(',').filter(Boolean) ?? [],
+    currentMinPrice: filters.minPrice,
+    currentMaxPrice: filters.maxPrice,
+    currentSort: filters.sortBy && filters.sortOrder
+      ? `${filters.sortBy}_${filters.sortOrder}` : undefined,
+  };
+
   return (
     <div className={s.layout}>
+      <button className={s.mobileFilterBtn} onClick={handleOpenFilters} aria-label="Открыть фильтры">
+        <SlidersHorizontal className="h-4 w-4" />
+        Фильтры
+      </button>
+
       <aside className={s.sidebar}>
-        <ProductFilters
-          categories={categories}
-          tags={tags}
-          currentCategory={filters.categorySlug}
-          currentTags={filters.tagSlugs?.split(',').filter(Boolean) ?? []}
-          currentMinPrice={filters.minPrice}
-          currentMaxPrice={filters.maxPrice}
-          currentSort={filters.sortBy && filters.sortOrder
-            ? `${filters.sortBy}_${filters.sortOrder}` : undefined}
-        />
+        <ProductFilters {...filterProps} />
       </aside>
+
+      <FiltersDrawer isOpen={isFiltersOpen} onClose={handleCloseFilters}>
+        <ProductFilters {...filterProps} />
+      </FiltersDrawer>
 
       <div className={s.content}>
         <When condition={isLoading || isFetching}>

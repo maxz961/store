@@ -110,6 +110,17 @@ describe("ProductsService", () => {
       ]);
     });
 
+    it("filters by name only when nameOnly=true", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ search: "laptop", nameOnly: true }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.name).toEqual({ contains: "laptop", mode: "insensitive" });
+      expect(call.where.OR).toBeUndefined();
+    });
+
     it("paginates correctly", async () => {
       (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
       (mockDb.product.count as jest.Mock).mockResolvedValue(50);

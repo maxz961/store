@@ -17,6 +17,28 @@ const PROMOTION_INCLUDE = {
   },
 };
 
+const PRODUCT_CARD_INCLUDE = {
+  products: {
+    include: {
+      product: {
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          price: true,
+          comparePrice: true,
+          images: true,
+          stock: true,
+          isPublished: true,
+          category: { select: { id: true, name: true, slug: true } },
+          tags: { include: { tag: true } },
+          reviews: { select: { rating: true } },
+        },
+      },
+    },
+  },
+};
+
 @Injectable()
 export class PromotionsService {
   async findAll() {
@@ -90,6 +112,23 @@ export class PromotionsService {
       },
       include: PROMOTION_INCLUDE,
     });
+  }
+
+  async findBySlug(slug: string) {
+    const now = new Date();
+
+    const promotion = await db.promotion.findFirst({
+      where: {
+        slug,
+        isActive: true,
+        startDate: { lte: now },
+        endDate: { gte: now },
+      },
+      include: PRODUCT_CARD_INCLUDE,
+    });
+
+    if (!promotion) throw new NotFoundException(`Promotion with slug "${slug}" not found`);
+    return promotion;
   }
 
   async remove(id: string) {

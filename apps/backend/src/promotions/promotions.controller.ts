@@ -27,6 +27,11 @@ export class PromotionsController {
     return this.promotionsService.findActive();
   }
 
+  @Get("slug/:slug")
+  findBySlug(@Param("slug") slug: string) {
+    return this.promotionsService.findBySlug(slug);
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN)

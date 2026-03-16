@@ -79,10 +79,43 @@ export const usePromotion = (id: string) =>
     retry: false,
   });
 
+export interface PublicPromotionProduct {
+  id: string;
+  name: string;
+  slug: string;
+  price: number;
+  comparePrice: number | null;
+  images: string[];
+  stock: number;
+  isPublished: boolean;
+  category: { id: string; name: string; slug: string };
+  tags: { tag: { id: string; name: string; slug: string; color?: string | null } }[];
+  reviews: { rating: number }[];
+}
+
+export interface PublicPromotion {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  discountType: 'PERCENTAGE' | 'FIXED';
+  discountValue: number;
+  bannerBgColor: string | null;
+  products: { product: PublicPromotionProduct }[];
+}
+
 export const useActivePromotions = () =>
   useQuery({
     queryKey: ['promotions', 'active'],
     queryFn: () => api.get<ActivePromotion[]>('/promotions/active'),
+    staleTime: 2 * 60 * 1000,
+  });
+
+export const usePublicPromotion = (slug: string) =>
+  useQuery({
+    queryKey: ['promotions', 'slug', slug],
+    queryFn: () => api.get<PublicPromotion>(`/promotions/slug/${slug}`),
+    enabled: !!slug,
     staleTime: 2 * 60 * 1000,
   });
 

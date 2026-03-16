@@ -68,7 +68,7 @@ export const PromoBanner = () => {
               bannerBgColor={promo.bannerBgColor}
               discountType={promo.discountType}
               discountValue={promo.discountValue}
-              link={promo.link}
+              slug={promo.slug}
             />
           ))}
         </div>

@@ -98,11 +98,11 @@ describe('PromoBanner', () => {
     expect(await screen.findByText('-$50')).toBeInTheDocument();
   });
 
-  it('renders "Подробнее" link when link is provided', async () => {
+  it('renders "Подробнее" link pointing to promotion detail page', async () => {
     renderBanner();
-    const link = await screen.findByText('Подробнее');
-    expect(link).toBeInTheDocument();
-    expect(link.closest('a')).toHaveAttribute('href', '/products?tagSlugs=sale');
+    const links = await screen.findAllByText('Подробнее');
+    expect(links[0]).toBeInTheDocument();
+    expect(links[0].closest('a')).toHaveAttribute('href', '/promotions/spring-sale');
   });
 
   it('renders navigation arrows when multiple promotions', async () => {

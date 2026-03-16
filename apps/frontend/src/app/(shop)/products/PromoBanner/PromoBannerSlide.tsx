@@ -16,7 +16,7 @@ export const PromoBannerSlide = ({
   bannerBgColor,
   discountType,
   discountValue,
-  link,
+  slug,
 }: PromoBannerSlideProps) => (
   <div
     className={s.slide}
@@ -30,11 +30,9 @@ export const PromoBannerSlide = ({
       <When condition={!!description}>
         <p className={s.slideDescription}>{description}</p>
       </When>
-      <When condition={!!link}>
-        <Link href={link ?? '#'} className={s.slideLink}>
-          Подробнее
-        </Link>
-      </When>
+      <Link href={`/promotions/${slug}`} className={s.slideLink}>
+        Подробнее
+      </Link>
     </div>
 
     <div className={s.slideRight}>

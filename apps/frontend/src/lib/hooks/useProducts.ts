@@ -103,7 +103,7 @@ export const useProducts = (filters: ProductsFilters) => {
 export const useSearchSuggestions = (query: string) =>
   useQuery({
     queryKey: ['products', 'suggestions', query],
-    queryFn: () => api.get<ProductsResponse>(`/products?search=${encodeURIComponent(query)}&limit=6`),
+    queryFn: () => api.get<ProductsResponse>(`/products?search=${encodeURIComponent(query)}&limit=6&nameOnly=true`),
     enabled: query.trim().length >= 2,
     staleTime: 60 * 1000,
     meta: { suppressGlobalError: true },

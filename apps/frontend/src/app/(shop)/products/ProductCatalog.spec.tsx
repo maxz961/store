@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ProductCatalog } from './ProductCatalog';
 
@@ -5,6 +6,11 @@ import { ProductCatalog } from './ProductCatalog';
 jest.mock('lucide-react', () => ({
   ChevronLeft: () => <svg data-testid="chevron-left" />,
   ChevronRight: () => <svg data-testid="chevron-right" />,
+  SlidersHorizontal: () => <svg data-testid="sliders-icon" />,
+}));
+
+jest.mock('./FiltersDrawer', () => ({
+  FiltersDrawer: ({ children }: { children: React.ReactNode }) => <div data-testid="filters-drawer">{children}</div>,
 }));
 
 const mockGet = jest.fn().mockReturnValue(undefined);
@@ -149,7 +155,8 @@ describe('ProductCatalog', () => {
     });
 
     render(<ProductCatalog />);
-    expect(screen.getByTestId('product-filters')).toBeInTheDocument();
+    // Filters render twice: desktop sidebar + mobile drawer
+    expect(screen.getAllByTestId('product-filters').length).toBeGreaterThanOrEqual(1);
   });
 
   it('passes URL params to useProducts', () => {

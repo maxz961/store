@@ -1,15 +1,9 @@
 import type { ReactNode } from 'react';
-import { AdminSidebar } from './AdminSidebar';
-import { s } from './layout.styled';
+import { AdminLayoutClient } from './AdminLayoutClient';
 
 
 const AdminLayout = ({ children }: { children: ReactNode }) => (
-  <div className={s.wrapper}>
-    <AdminSidebar />
-    <main className={s.content}>
-      {children}
-    </main>
-  </div>
+  <AdminLayoutClient>{children}</AdminLayoutClient>
 );
 
 export default AdminLayout;
