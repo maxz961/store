@@ -1,5 +1,6 @@
 export const s = {
   page: 'mx-auto max-w-7xl px-4 py-8 sm:px-6',
+  breadcrumbs: 'mb-6',
 
   header: 'mb-8 rounded-xl px-8 py-6',
   headerDiscount: 'mb-2 inline-block rounded-full px-3 py-1 text-sm font-semibold',

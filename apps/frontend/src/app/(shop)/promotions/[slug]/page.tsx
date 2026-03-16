@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation';
 import { If, Then, Else, When } from 'react-if';
 import { ProductCard } from '@/components/product/ProductCard';
 import { Spinner } from '@/components/ui/Spinner';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { usePublicPromotion } from '@/lib/hooks/usePromotions';
 import { s } from './page.styled';
 
@@ -16,8 +17,18 @@ export default function PromotionPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: promotion, isLoading } = usePublicPromotion(slug);
 
+  const breadcrumbs = [
+    { label: 'Главная', href: '/' },
+    { label: 'Акции', href: '/products' },
+    { label: promotion?.title ?? '...' },
+  ];
+
   return (
     <div className={s.page}>
+      <div className={s.breadcrumbs}>
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
+
       <If condition={isLoading}>
         <Then>
           <div className={s.loading}>
