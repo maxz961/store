@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { ShoppingCart, ImageOff, Heart, Check } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/Spinner';
 import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
@@ -165,15 +164,15 @@ export const ProductCard = ({ product }: Props) => {
                 onClick={handleAddToCart}
                 aria-label={added ? 'В корзине' : 'Добавить в корзину'}
               >
-                <If condition={added}>
-                  <Then>
+                <When condition={!added}>
+                  <ShoppingCart className={s.cartButtonIcon} />
+                </When>
+                <When condition={added}>
+                  <>
                     <Check className={s.cartButtonAddedIcon} />
                     <span className={s.cartButtonAddedText}>В корзине</span>
-                  </Then>
-                  <Else>
-                    <ShoppingCart className={s.cartButtonIcon} />
-                  </Else>
-                </If>
+                  </>
+                </When>
               </button>
             </Then>
             <Else>
