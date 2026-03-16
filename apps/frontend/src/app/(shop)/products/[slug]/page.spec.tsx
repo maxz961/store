@@ -12,6 +12,7 @@ jest.mock('lucide-react', () => ({
   ImageOff: (props: any) => <div data-testid="icon-imageoff" {...props} />,
   Star: (props: any) => <div data-testid="icon-star" {...props} />,
   ShoppingCart: (props: any) => <div data-testid="icon-cart" {...props} />,
+  Check: (props: any) => <div data-testid="icon-check" {...props} />,
   Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
@@ -170,6 +171,13 @@ describe('ProductPage', () => {
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
     expect(mockAddItem).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows added state after clicking add to cart', async () => {
+    await renderPage();
+    fireEvent.click(screen.getByText('В корзину'));
+    expect(screen.getByText('В корзине')).toBeInTheDocument();
+    expect(screen.getByTestId('icon-check')).toBeInTheDocument();
   });
 
   it('renders tags', async () => {

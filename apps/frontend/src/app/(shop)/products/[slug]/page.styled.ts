@@ -41,8 +41,9 @@ export const s = {
   quantityGroup: 'flex items-center gap-0 rounded-lg border border-border bg-card',
   quantityButton: 'flex h-10 w-10 items-center justify-center text-lg transition-colors duration-150 hover:bg-accent dark:hover:bg-white/10',
   quantity: 'flex h-10 w-10 items-center justify-center text-sm font-medium',
-  buttonIcon: 'mr-2 h-4 w-4',
-  addToCartButton: 'flex-1',
+  buttonIcon: 'mr-2 h-4 w-4 shrink-0',
+  addToCartButton: 'flex-1 transition-all duration-200',
+  addToCartButtonAdded: 'bg-green-500 hover:bg-green-500',
 
   // Rating row (in product info)
   ratingRow: 'flex items-center gap-2',

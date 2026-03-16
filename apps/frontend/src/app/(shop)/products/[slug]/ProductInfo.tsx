@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { ShoppingCart, Minus, Plus, Heart } from 'lucide-react';
+import { ShoppingCart, Minus, Plus, Heart, Check } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,6 +23,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
 
   const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
   const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
@@ -61,6 +62,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       });
     }
     setQuantity(1);
+    setAdded(true);
   }, [quantity, addItem, product]);
 
   return (
@@ -135,9 +137,18 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
               <Plus className="h-4 w-4" />
             </button>
           </div>
-          <Button size="lg" className={s.addToCartButton} onClick={handleAddToCart}>
-            <ShoppingCart className={s.buttonIcon} />
-            В корзину
+          <Button
+            size="lg"
+            className={cn(s.addToCartButton, added && s.addToCartButtonAdded)}
+            onClick={handleAddToCart}
+          >
+            <When condition={added}>
+              <Check className={s.buttonIcon} />
+            </When>
+            <When condition={!added}>
+              <ShoppingCart className={s.buttonIcon} />
+            </When>
+            {added ? 'В корзине' : 'В корзину'}
           </Button>
           <When condition={isAuthenticated}>
             <button
