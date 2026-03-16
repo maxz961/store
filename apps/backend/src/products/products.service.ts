@@ -16,10 +16,16 @@ export class ProductsService {
     const where: Record<string, unknown> = {
       ...(adminMode ? {} : { isPublished: true }),
       ...(search && (nameOnly
-        ? { name: { contains: search, mode: "insensitive" } }
+        ? { OR: [
+              { name: { startsWith: search, mode: 'insensitive' } },
+              { name: { contains: ` ${search}`, mode: 'insensitive' } },
+            ],
+          }
         : { OR: [
-              { name: { contains: search, mode: "insensitive" } },
-              { description: { contains: search, mode: "insensitive" } },
+              { name: { startsWith: search, mode: 'insensitive' } },
+              { name: { contains: ` ${search}`, mode: 'insensitive' } },
+              { description: { startsWith: search, mode: 'insensitive' } },
+              { description: { contains: ` ${search}`, mode: 'insensitive' } },
             ],
           }
       )),

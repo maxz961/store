@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Minus, Plus } from 'lucide-react';
+import { Minus, Plus, Trash2 } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
@@ -46,13 +46,15 @@ export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemPro
               <Plus className="h-3 w-3" />
             </button>
           </div>
-          <button className={s.removeButton} onClick={onRemove}>
-            Удалить
-          </button>
         </div>
       </div>
 
-      <span className={s.itemTotal}>{formatCurrency(item.price * item.quantity)}</span>
+      <div className={s.itemRight}>
+        <span className={s.itemTotal}>{formatCurrency(item.price * item.quantity)}</span>
+        <button className={s.removeIconButton} onClick={onRemove} aria-label="Удалить товар">
+          <Trash2 className={s.removeIcon} />
+        </button>
+      </div>
     </div>
   );
 };

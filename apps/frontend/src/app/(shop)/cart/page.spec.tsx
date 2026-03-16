@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 jest.mock('lucide-react', () => ({
   Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
+  Trash2: (props: any) => <div data-testid="icon-trash" {...props} />,
   ShoppingBag: (props: any) => <div data-testid="icon-bag" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
 }));
@@ -74,7 +75,7 @@ describe('CartPage', () => {
 
   it('calls removeItem on remove button click', () => {
     render(<CartPage />);
-    fireEvent.click(screen.getByText('Удалить'));
+    fireEvent.click(screen.getByLabelText('Удалить товар'));
     expect(mockRemoveItem).toHaveBeenCalledWith('p1');
   });
 

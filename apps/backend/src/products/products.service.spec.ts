@@ -105,8 +105,10 @@ describe("ProductsService", () => {
 
       const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
       expect(call.where.OR).toEqual([
-        { name: { contains: "laptop", mode: "insensitive" } },
-        { description: { contains: "laptop", mode: "insensitive" } },
+        { name: { startsWith: "laptop", mode: "insensitive" } },
+        { name: { contains: " laptop", mode: "insensitive" } },
+        { description: { startsWith: "laptop", mode: "insensitive" } },
+        { description: { contains: " laptop", mode: "insensitive" } },
       ]);
     });
 
@@ -117,8 +119,11 @@ describe("ProductsService", () => {
       await service.findAll({ search: "laptop", nameOnly: true }, false);
 
       const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
-      expect(call.where.name).toEqual({ contains: "laptop", mode: "insensitive" });
-      expect(call.where.OR).toBeUndefined();
+      expect(call.where.OR).toEqual([
+        { name: { startsWith: "laptop", mode: "insensitive" } },
+        { name: { contains: " laptop", mode: "insensitive" } },
+      ]);
+      expect(call.where.name).toBeUndefined();
     });
 
     it("paginates correctly", async () => {

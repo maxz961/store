@@ -107,7 +107,7 @@ const SupportPage = () => {
 
           {messages.map((msg) => (
             <div key={msg.id} className={msg.fromAdmin ? s.messageRowAdmin : s.messageRowUser}>
-              <div>
+              <div className={msg.fromAdmin ? s.messageWrapperAdmin : s.messageWrapperUser}>
                 {msg.fromAdmin && <p className={s.adminLabel}>Поддержка</p>}
                 <div className={msg.fromAdmin ? s.bubbleAdmin : s.bubbleUser}>
                   {msg.content}
@@ -126,14 +126,14 @@ const SupportPage = () => {
           <div className={s.inputRow}>
             <textarea
               className={s.textarea}
-              placeholder="Напишите сообщение... (Enter — отправить, Shift+Enter — перенос)"
+              placeholder="Напишите сообщение..."
               value={text}
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
               rows={1}
             />
             <Button className={s.sendButton} onClick={handleSend} disabled={!text.trim() || sendMessage.isPending}>
-              {sendMessage.isPending ? <Spinner /> : 'Отправить'}
+              {sendMessage.isPending ? <Spinner size="sm" /> : 'Отправить'}
             </Button>
           </div>
         </div>
