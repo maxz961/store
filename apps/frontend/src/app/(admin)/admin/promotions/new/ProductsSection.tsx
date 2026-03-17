@@ -1,4 +1,4 @@
-import { cn } from '@/lib/utils';
+import { cn, getLocalizedText } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { FIELD_TOOLTIPS } from './page.constants';
@@ -6,7 +6,7 @@ import type { ProductsSectionProps } from './page.types';
 
 
 export const ProductsSection = ({ products, selectedIds, onToggle }: ProductsSectionProps) => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <div className={s.card}>
@@ -24,7 +24,7 @@ export const ProductsSection = ({ products, selectedIds, onToggle }: ProductsSec
               className={cn(s.productBtn, isSelected ? s.productBtnActive : s.productBtnInactive)}
               onClick={onToggle(product.id)}
             >
-              {product.name}
+              {getLocalizedText(lang, product.name, product.nameEn)}
             </button>
           );
         })}

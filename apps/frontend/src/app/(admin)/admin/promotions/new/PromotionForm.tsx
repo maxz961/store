@@ -56,7 +56,7 @@ export const PromotionForm = ({ promotionId }: PromotionFormProps) => {
   const deletePromotion = useDeletePromotion();
 
   const products = useMemo(
-    () => (productsData?.items ?? []).map((p) => ({ id: p.id, name: p.name })),
+    () => (productsData?.items ?? []).map((p) => ({ id: p.id, name: p.name, nameEn: p.nameEn })),
     [productsData],
   );
 
