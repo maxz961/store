@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { When } from 'react-if';
 import { TextField } from '@/components/ui/TextField';
@@ -14,15 +14,22 @@ import type { CreateProductFormValues } from './page.constants';
 type LangTab = 'uk' | 'en';
 
 export const BasicInfoSection = () => {
-  const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { register, formState: { errors, submitCount } } = useFormContext<CreateProductFormValues>();
   const [langTab, setLangTab] = useState<LangTab>('uk');
+  const lastHandledSubmit = useRef(0);
 
   const hasEnError = !!(errors.nameEn || errors.descriptionEn);
   const hasUkError = !!(errors.name || errors.description);
 
+  // Auto-switch tab only once per submit attempt — not while user is typing
   useEffect(() => {
-    if (hasEnError && !hasUkError) setLangTab('en');
-  }, [hasEnError, hasUkError]);
+    const isNewSubmit = submitCount > 0 && submitCount !== lastHandledSubmit.current;
+    if (!isNewSubmit || (!hasUkError && !hasEnError)) return;
+    lastHandledSubmit.current = submitCount;
+    if (hasUkError && !hasEnError) setLangTab('uk');
+    else if (hasEnError && !hasUkError) setLangTab('en');
+    // Both tabs have errors — stay on current tab, user decides where to start
+  }, [hasUkError, hasEnError, submitCount]);
 
   const handleSelectUk = useCallback(() => setLangTab('uk'), []);
   const handleSelectEn = useCallback(() => setLangTab('en'), []);

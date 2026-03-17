@@ -180,6 +180,25 @@ describe('NewProductPage', () => {
     expect(screen.getByText('Sale')).toBeInTheDocument();
   });
 
+  it('shows selected category name in dropdown trigger after selection', async () => {
+    // Regression: SelectField value must be passed via watch(), not just register()
+    // Without value={categoryValue} the visible trigger always shows the placeholder
+    // even after RHF updates — because register() does not return value.
+    renderPage();
+
+    await screen.findByText('Electronics');
+
+    // Change the hidden native select (triggers RHF onChange → updates watch)
+    fireEvent.change(screen.getByDisplayValue('Выберите категорию'), {
+      target: { value: 'cat-1' },
+    });
+
+    // The visible custom dropdown trigger must now show the selected name
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: 'Категория' })).toHaveTextContent('Electronics');
+    });
+  });
+
   it('auto-generates slug from name', () => {
     renderPage();
     const nameInput = screen.getByPlaceholderText('e.g. Wireless Headphones');
@@ -273,5 +292,29 @@ describe('NewProductPage', () => {
     renderPage();
     const fileTab = screen.getByText('Загрузить файл');
     expect(fileTab).toHaveClass('bg-white');
+  });
+
+  it('auto-selects discount tag when comparePrice is filled', async () => {
+    renderPage();
+    await screen.findByText('Sale');
+
+    // comparePrice is the first "Необязательно" input (before SKU)
+    const comparePriceInput = screen.getAllByPlaceholderText('Необязательно')[0];
+    fireEvent.change(comparePriceInput, { target: { value: '150' } });
+
+    expect(screen.getByText('Sale')).toHaveClass('bg-primary');
+  });
+
+  it('auto-deselects discount tag when comparePrice is cleared', async () => {
+    renderPage();
+    await screen.findByText('Sale');
+
+    const comparePriceInput = screen.getAllByPlaceholderText('Необязательно')[0];
+
+    fireEvent.change(comparePriceInput, { target: { value: '150' } });
+    expect(screen.getByText('Sale')).toHaveClass('bg-primary');
+
+    fireEvent.change(comparePriceInput, { target: { value: '' } });
+    expect(screen.getByText('Sale')).not.toHaveClass('bg-primary');
   });
 });

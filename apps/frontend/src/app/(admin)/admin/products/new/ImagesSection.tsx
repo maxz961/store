@@ -60,44 +60,46 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
         </button>
       </div>
 
-      <When condition={mode === 'file'}>
-        <div className="space-y-3">
-          <ImageUpload
-            files={files}
-            onChange={onFilesChange}
-            maxFiles={6}
-          />
+      {/* Keep ImageUpload mounted to preserve blob URL previews across tab switches */}
+      <div className={cn('space-y-3', mode !== 'file' && 'hidden')}>
+        <ImageUpload
+          files={files}
+          onChange={onFilesChange}
+          maxFiles={6}
+        />
 
-          <When condition={existingImages.length > 0}>
-            <div>
-              <p className="mb-2 text-xs text-muted-foreground">Текущие изображения</p>
-              <div className={s.existingThumbs}>
-                {existingImages.map((url) => (
-                  <div key={url} className={s.existingThumb}>
-                    <Image src={url} alt="" fill className="object-cover" unoptimized />
-                    <button
-                      type="button"
-                      className={s.existingThumbRemove}
-                      onClick={handleRemoveExisting(url)}
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
+        <When condition={existingImages.length > 0 && mode === 'file'}>
+          <div>
+            <p className="mb-2 text-xs text-muted-foreground">Текущие изображения</p>
+            <div className={s.existingThumbs}>
+              {existingImages.map((url) => (
+                <div key={url} className={s.existingThumb}>
+                  <Image src={url} alt="" fill className="object-cover" unoptimized />
+                  <button
+                    type="button"
+                    className={s.existingThumbRemove}
+                    onClick={handleRemoveExisting(url)}
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              ))}
             </div>
-          </When>
-        </div>
-      </When>
+          </div>
+        </When>
+      </div>
 
       <When condition={mode === 'url'}>
         <TextField
           label="URL изображений"
           placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
           hint="Несколько URL через запятую"
-          error={errors.imageUrls?.message}
           {...register('imageUrls')}
         />
+      </When>
+
+      <When condition={!!errors.imageUrls?.message}>
+        <p className="text-xs text-destructive">{errors.imageUrls?.message}</p>
       </When>
     </div>
   );

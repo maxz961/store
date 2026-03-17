@@ -125,6 +125,7 @@ export const useUpdateProduct = () => {
       api.put(`/products/${id}`, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['product'] });
     },
     onError: (err) => reportAdminError(err, 'Обновление товара'),
   });

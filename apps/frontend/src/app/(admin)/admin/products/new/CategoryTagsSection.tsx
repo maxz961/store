@@ -1,4 +1,4 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useController } from 'react-hook-form';
 import { When } from 'react-if';
 import { SelectField } from '@/components/ui/SelectField';
 import { FieldTooltip } from '@/components/ui/FieldTooltip';
@@ -15,7 +15,8 @@ export const CategoryTagsSection = ({
   selectedTags,
   onToggleTag,
 }: CategoryTagsSectionProps) => {
-  const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { control, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { field: categoryField } = useController({ name: 'categoryId', control });
 
   return (
     <div className={s.card}>
@@ -27,7 +28,7 @@ export const CategoryTagsSection = ({
         placeholder="Выберите категорию"
         options={categoryOptions}
         error={errors.categoryId?.message}
-        {...register('categoryId')}
+        {...categoryField}
       />
 
       <When condition={tags.length > 0}>
