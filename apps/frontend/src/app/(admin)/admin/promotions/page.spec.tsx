@@ -2,6 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'en', setLang: jest.fn(), t: (key: string) => key }),
+}));
+
 jest.mock('lucide-react', () => ({
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   Pencil: (props: any) => <div data-testid="icon-pencil" {...props} />,

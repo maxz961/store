@@ -6,6 +6,8 @@ import { Pencil } from 'lucide-react';
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { If, Then, Else } from 'react-if';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './page.styled';
 import { DISCOUNT_TYPE_LABELS } from './page.constants';
 import type { PromotionRowProps } from './page.types';
@@ -17,6 +19,7 @@ const formatDate = (dateStr: string) =>
 
 export const PromotionRow = ({ promotion }: PromotionRowProps) => {
   const router = useRouter();
+  const { lang } = useLanguage();
 
   const handleRowClick = useCallback(() => {
     router.push(promotion.link ?? '/products');
@@ -32,13 +35,13 @@ export const PromotionRow = ({ promotion }: PromotionRowProps) => {
         <div className={s.bannerCell}>
           <Image
             src={promotion.bannerImageUrl}
-            alt={promotion.title}
+            alt={getLocalizedText(lang, promotion.title, promotion.titleEn)}
             width={80}
             height={40}
             className={s.bannerThumb}
             unoptimized
           />
-          <span className={s.promoTitle}>{promotion.title}</span>
+          <span className={s.promoTitle}>{getLocalizedText(lang, promotion.title, promotion.titleEn)}</span>
         </div>
       </td>
       <td className={s.td}>
