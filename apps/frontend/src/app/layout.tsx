@@ -31,9 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Suspense>
                 <NavigationProgress />
               </Suspense>
-              <Suspense>
-                <Header />
-              </Suspense>
+              <Header />
               <main>
                 <ErrorBoundary>
                   {children}

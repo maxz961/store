@@ -66,7 +66,7 @@ export const Header = () => {
         </When>
 
         <div className={s.actions}>
-          <Button variant="ghost" size="icon" onClick={handleToggleTheme} aria-label={t('nav.home')}>
+          <Button variant="ghost" size="icon" onClick={handleToggleTheme} aria-label={t('common.toggleTheme')} suppressHydrationWarning>
             <Sun className={s.sunIcon} />
             <Moon className={s.moonIcon} />
           </Button>

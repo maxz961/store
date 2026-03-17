@@ -32,6 +32,7 @@ export const LangSwitcher = () => {
       size="sm"
       className="h-8 min-w-[40px] px-2 text-xs font-medium"
       aria-label="Change language"
+      suppressHydrationWarning
     >
       {LANG_TRIGGER_LABEL[lang]}
     </Button>
@@ -42,6 +43,7 @@ export const LangSwitcher = () => {
       {LANG_OPTIONS.map((option) => (
         <button
           key={option.value}
+          type="button"
           onClick={handleSelect(option.value)}
           className={`flex w-full items-center gap-2.5 px-4 py-2 text-sm transition-colors duration-150 hover:bg-accent ${lang === option.value ? 'font-medium text-primary' : 'text-foreground'}`}
         >

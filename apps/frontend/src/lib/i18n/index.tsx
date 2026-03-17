@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from 'react';
 import { en } from './en';
 import { uk } from './uk';
 import type { Translations } from './en';
@@ -34,6 +34,38 @@ function getByPath(obj: Record<string, unknown>, path: string): string {
 }
 
 
+// ─── External lang store (pub-sub over localStorage) ────────────────────────
+
+const langListeners = new Set<() => void>();
+
+function getLangSnapshot(): Lang {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
+    return stored === 'en' || stored === 'uk' ? stored : DEFAULT_LANG;
+  } catch {
+    return DEFAULT_LANG;
+  }
+}
+
+function subscribeLang(callback: () => void): () => void {
+  langListeners.add(callback);
+  return () => { langListeners.delete(callback); };
+}
+
+function setStoredLang(next: Lang): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, next);
+  } catch { /* ignore */ }
+  langListeners.forEach((cb) => cb());
+}
+
+// Server snapshot — always DEFAULT_LANG so server HTML matches the initial client render.
+// After hydration, useSyncExternalStore automatically switches to getLangSnapshot().
+const getServerLangSnapshot = (): Lang => DEFAULT_LANG;
+
+
+// ─── Context ─────────────────────────────────────────────────────────────────
+
 interface LanguageContextValue {
   lang: Lang;
   setLang: (lang: Lang) => void;
@@ -48,18 +80,14 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider = ({ children }: LanguageProviderProps) => {
-  const [lang, setLangState] = useState<Lang>(DEFAULT_LANG);
-
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Lang | null;
-    if (stored === 'en' || stored === 'uk') {
-      setLangState(stored);
-    }
-  }, []);
+  // useSyncExternalStore guarantees:
+  //   - Server render + client hydration → getServerLangSnapshot() = DEFAULT_LANG → no mismatch
+  //   - After hydration → getLangSnapshot() reads localStorage → re-render to stored lang
+  //   - React Fast Refresh safe: no useState, reads directly from the store each render
+  const lang = useSyncExternalStore(subscribeLang, getLangSnapshot, getServerLangSnapshot);
 
   const setLang = useCallback((next: Lang) => {
-    setLangState(next);
-    localStorage.setItem(STORAGE_KEY, next);
+    setStoredLang(next);
   }, []);
 
   const t = useCallback(

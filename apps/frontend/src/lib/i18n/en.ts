@@ -34,6 +34,17 @@ export const en = {
     noResults: 'No products found',
     noResultsText: 'Try changing the search term or filters',
     loading: 'Loading products...',
+    filters: 'Filters',
+    categories: 'Categories',
+    allProducts: 'All products',
+    tags: 'Tags',
+    price: 'Price',
+    resetFilters: 'Reset filters',
+    sort: 'Sort by',
+    sortDefault: 'Default',
+    sortNewest: 'Newest',
+    sortCheapest: 'Price: low to high',
+    sortMostExpensive: 'Price: high to low',
   },
 
   cart: {
@@ -274,6 +285,7 @@ export const en = {
     langEn: 'EN',
     ukrainian: 'Українська',
     english: 'English',
+    toggleTheme: 'Toggle theme',
   },
 
   status: {

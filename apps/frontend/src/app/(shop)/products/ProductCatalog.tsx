@@ -50,9 +50,9 @@ export const ProductCatalog = () => {
 
   return (
     <div className={s.layout}>
-      <button className={s.mobileFilterBtn} onClick={handleOpenFilters} aria-label="Open filters">
+      <button type="button" className={s.mobileFilterBtn} onClick={handleOpenFilters} aria-label={t('catalog.filters')}>
         <SlidersHorizontal className="h-4 w-4" />
-        Filters
+        {t('catalog.filters')}
       </button>
 
       <aside className={s.sidebar}>

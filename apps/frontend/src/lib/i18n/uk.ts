@@ -14,8 +14,8 @@ export const uk: Translations = {
   },
 
   product: {
-    addToCart: 'Додати до кошика',
-    inCart: 'У кошику',
+    addToCart: 'Купити',
+    inCart: 'В кошику',
     adding: 'Додавання...',
     outOfStock: 'Немає в наявності',
     noPhoto: 'Немає фото',
@@ -37,6 +37,17 @@ export const uk: Translations = {
     noResults: 'Товари не знайдено',
     noResultsText: 'Спробуйте змінити пошуковий запит або фільтри',
     loading: 'Завантаження товарів...',
+    filters: 'Фільтри',
+    categories: 'Категорії',
+    allProducts: 'Всі товари',
+    tags: 'Теги',
+    price: 'Ціна',
+    resetFilters: 'Скинути фільтри',
+    sort: 'Сортувати',
+    sortDefault: 'За замовчуванням',
+    sortNewest: 'Новинки',
+    sortCheapest: 'Спочатку дешевші',
+    sortMostExpensive: 'Спочатку дорожчі',
   },
 
   cart: {
@@ -277,6 +288,7 @@ export const uk: Translations = {
     langEn: 'EN',
     ukrainian: 'Українська',
     english: 'English',
+    toggleTheme: 'Змінити тему',
   },
 
   status: {

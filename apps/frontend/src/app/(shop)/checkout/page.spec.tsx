@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+
 jest.mock('@/lib/i18n', () => ({
   useLanguage: () => ({
     lang: 'en',
