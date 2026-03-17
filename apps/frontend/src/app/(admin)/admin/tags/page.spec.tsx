@@ -30,7 +30,40 @@ jest.mock('@/lib/hooks/useAuth', () => ({
 }));
 
 jest.mock('@/lib/i18n', () => ({
-  useLanguage: () => ({ lang: 'en', setLang: jest.fn(), t: (key: string) => key }),
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.tag.new': 'New tag',
+        'admin.tag.edit': 'Edit tag',
+        'admin.tag.name': 'Name (UK)',
+        'admin.tag.nameEn': 'Name (EN)',
+        'admin.tag.color': 'Tag color',
+        'admin.tag.slug': 'Slug',
+        'admin.tag.save': 'Save',
+        'admin.tag.saving': 'Saving...',
+        'admin.tag.create': 'Create tag',
+        'admin.tag.creating': 'Creating...',
+        'admin.tag.cancel': 'Cancel',
+        'admin.tag.noItems': 'No tags yet',
+        'admin.tag.namePlaceholder': 'New arrival',
+        'admin.tag.slugPlaceholder': 'new-arrival',
+        'admin.tag.nameHint': 'Visible tag name in the catalog',
+        'admin.tag.nameEnHint': 'Tag name in English',
+        'admin.tag.slugHint': 'URL identifier, auto-generated',
+        'admin.tag.colorHint': 'Displayed on the tag badge',
+        'admin.tag.tableTitle': 'Tag',
+        'admin.tag.tableProducts': 'Products',
+        'admin.tag.tableActions': 'Actions',
+        'admin.tag.editWarningBefore': 'Changes will apply to all',
+        'admin.tag.editWarningAfter': 'products with this tag',
+        'admin.tag.slugTaken': 'This slug is already taken',
+        'admin.tag.nameTaken': 'This name is already taken',
+      };
+      return map[key] ?? key;
+    },
+  }),
 }));
 
 import TagsPage from './page';
@@ -95,7 +128,7 @@ describe('TagsPage', () => {
     });
     fireEvent.change(document.querySelector('input[name="nameEn"]')!, { target: { value: 'Premium' } });
 
-    fireEvent.submit(screen.getByText('Create').closest('form')!);
+    fireEvent.submit(screen.getByText('Create tag').closest('form')!);
 
     await waitFor(() => {
       expect(mockApiPost).toHaveBeenCalledWith(
@@ -177,7 +210,7 @@ describe('TagsPage', () => {
     await waitFor(() => {
       expect(document.querySelector('input[name="slug"]')).toBeInTheDocument();
     });
-    fireEvent.submit(screen.getByText('Create').closest('form')!);
+    fireEvent.submit(screen.getByText('Create tag').closest('form')!);
 
     await waitFor(() => {
       expect(screen.getByText('This slug is already taken')).toBeInTheDocument();
@@ -202,7 +235,7 @@ describe('TagsPage', () => {
     await waitFor(() => {
       expect(document.querySelector('input[name="name"]')).toBeInTheDocument();
     });
-    fireEvent.submit(screen.getByText('Create').closest('form')!);
+    fireEvent.submit(screen.getByText('Create tag').closest('form')!);
 
     await waitFor(() => {
       expect(screen.getByText('This name is already taken')).toBeInTheDocument();

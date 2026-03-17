@@ -30,7 +30,44 @@ jest.mock('@/lib/hooks/useAuth', () => ({
 }));
 
 jest.mock('@/lib/i18n', () => ({
-  useLanguage: () => ({ lang: 'en', setLang: jest.fn(), t: (key: string) => key }),
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.category.new': 'New category',
+        'admin.category.edit': 'Edit category',
+        'admin.category.name': 'Name (UK)',
+        'admin.category.nameEn': 'Name (EN)',
+        'admin.category.description': 'Description (UK)',
+        'admin.category.descriptionEn': 'Description (EN)',
+        'admin.category.slug': 'Slug',
+        'admin.category.save': 'Save',
+        'admin.category.saving': 'Saving...',
+        'admin.category.create': 'Create category',
+        'admin.category.creating': 'Creating...',
+        'admin.category.cancel': 'Cancel',
+        'admin.category.noItems': 'No categories yet',
+        'admin.category.namePlaceholder': 'Electronics',
+        'admin.category.slugPlaceholder': 'electronics',
+        'admin.category.descriptionPlaceholder': 'Category description (optional)',
+        'admin.category.descriptionEnPlaceholder': 'Category description in English (optional)',
+        'admin.category.nameHint': 'Visible category name in the catalog',
+        'admin.category.nameEnHint': 'Category name in English',
+        'admin.category.slugHint': 'URL identifier, auto-generated',
+        'admin.category.descriptionHint': 'Short description for the category page, optional',
+        'admin.category.descriptionEnHint': 'Short description in English, optional',
+        'admin.category.tableTitle': 'Category',
+        'admin.category.tableProducts': 'Products',
+        'admin.category.tableActions': 'Actions',
+        'admin.category.editWarningBefore': 'Changes will apply to all',
+        'admin.category.editWarningAfter': 'products in this category',
+        'admin.category.slugTaken': 'This slug is already taken',
+        'admin.category.nameTaken': 'This name is already taken',
+      };
+      return map[key] ?? key;
+    },
+  }),
 }));
 
 import CategoriesPage from './page';
@@ -95,7 +132,7 @@ describe('CategoriesPage', () => {
     });
     fireEvent.change(document.querySelector('input[name="nameEn"]')!, { target: { value: 'Books' } });
 
-    fireEvent.submit(screen.getByText('Create').closest('form')!);
+    fireEvent.submit(screen.getByText('Create category').closest('form')!);
 
     await waitFor(() => {
       expect(mockApiPost).toHaveBeenCalledWith(
@@ -171,7 +208,7 @@ describe('CategoriesPage', () => {
     await waitFor(() => {
       expect(document.querySelector('input[name="slug"]')).toBeInTheDocument();
     });
-    fireEvent.submit(screen.getByText('Create').closest('form')!);
+    fireEvent.submit(screen.getByText('Create category').closest('form')!);
 
     await waitFor(() => {
       expect(screen.getByText('This slug is already taken')).toBeInTheDocument();
@@ -196,7 +233,7 @@ describe('CategoriesPage', () => {
     await waitFor(() => {
       expect(document.querySelector('input[name="name"]')).toBeInTheDocument();
     });
-    fireEvent.submit(screen.getByText('Create').closest('form')!);
+    fireEvent.submit(screen.getByText('Create category').closest('form')!);
 
     await waitFor(() => {
       expect(screen.getByText('This name is already taken')).toBeInTheDocument();

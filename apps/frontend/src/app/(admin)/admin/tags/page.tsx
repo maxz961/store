@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import type { FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,7 @@ import {
 } from '@/lib/hooks/useProducts';
 import type { Tag } from '@/lib/hooks/useProducts';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import {
   tagFormSchema,
@@ -40,6 +42,7 @@ const makeEmptyValues = (): TagFormValues => ({
 
 const TagsPage = () => {
   const { isAdmin } = useAuth();
+  const { t } = useLanguage();
   const { data: tags = [], isLoading } = useTags();
   const createTag = useCreateTag();
   const updateTag = useUpdateTag();
@@ -60,8 +63,6 @@ const TagsPage = () => {
   });
 
   const colorValue = watch('color');
-  const hasEnError = !!errors.nameEn;
-  const hasUkError = !!errors.name;
 
   watch((values, { name: field }) => {
     if (field === 'name' && !editingId) {
@@ -75,6 +76,13 @@ const TagsPage = () => {
 
   const handleSelectUk = useCallback(() => setLangTab('uk'), []);
   const handleSelectEn = useCallback(() => setLangTab('en'), []);
+
+  const handleInvalid = useCallback((fieldErrors: FieldErrors<TagFormValues>) => {
+    const enHasError = !!fieldErrors.nameEn;
+    const ukHasError = !!(fieldErrors.name || fieldErrors.slug);
+    if (enHasError && !ukHasError) setLangTab('en');
+    else if (ukHasError) setLangTab('uk');
+  }, []);
 
   const colorSwatches = useMemo(() =>
     TAG_PRESET_COLORS.map((color) => (
@@ -119,7 +127,6 @@ const TagsPage = () => {
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
-    if (hasEnError && !hasUkError) setLangTab('en');
     try {
       if (editingId) {
         await updateTag.mutateAsync({ id: editingId, ...data });
@@ -132,12 +139,14 @@ const TagsPage = () => {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '';
       if (message.includes('Slug')) {
-        setError('slug', { message: 'This slug is already taken' });
+        setError('slug', { message: t('admin.tag.slugTaken') });
+        setLangTab('uk');
       } else if (message.includes('Name') || message.includes('name')) {
-        setError('name', { message: 'This name is already taken' });
+        setError('name', { message: t('admin.tag.nameTaken') });
+        setLangTab('uk');
       }
     }
-  });
+  }, handleInvalid);
 
   const isSubmitting = createTag.isPending || updateTag.isPending;
 
@@ -146,7 +155,7 @@ const TagsPage = () => {
       <div className={s.formCard}>
         <div className="flex items-center justify-between">
           <h2 className={s.formTitle}>
-            {editingId ? 'Edit tag' : 'New tag'}
+            {editingId ? t('admin.tag.edit') : t('admin.tag.new')}
           </h2>
           <div className={s.langTabs}>
             <button
@@ -170,34 +179,34 @@ const TagsPage = () => {
           <When condition={langTab === 'uk'}>
             <div className={s.formRow}>
               <TextField
-                label="Name (UK)"
-                placeholder="New arrival"
-                hint="Visible tag name in the catalog"
+                label={t('admin.tag.name')}
+                placeholder={t('admin.tag.namePlaceholder')}
+                hint={t('admin.tag.nameHint')}
                 error={errors.name?.message}
                 {...register('name')}
               />
               <TextField
-                label="Slug"
-                placeholder="new-arrival"
-                hint="URL identifier, auto-generated"
+                label={t('admin.tag.slug')}
+                placeholder={t('admin.tag.slugPlaceholder')}
+                hint={t('admin.tag.slugHint')}
                 error={errors.slug?.message}
                 {...register('slug')}
               />
               <div className={s.colorSection}>
-                <label className={s.colorLabel}>Tag color</label>
+                <label className={s.colorLabel}>{t('admin.tag.color')}</label>
                 <div className={s.swatches}>
                   {colorSwatches}
                 </div>
-                <p className={s.colorHint}>Displayed on the tag badge</p>
+                <p className={s.colorHint}>{t('admin.tag.colorHint')}</p>
               </div>
             </div>
           </When>
 
           <When condition={langTab === 'en'}>
             <TextField
-              label="Name (EN)"
-              placeholder="New arrival"
-              hint="Tag name in English"
+              label={t('admin.tag.nameEn')}
+              placeholder={t('admin.tag.namePlaceholder')}
+              hint={t('admin.tag.nameEnHint')}
               error={errors.nameEn?.message}
               {...register('nameEn')}
             />
@@ -206,20 +215,20 @@ const TagsPage = () => {
           <When condition={!!editingId && (editingTag?._count?.products ?? 0) > 0}>
             <div className={s.editWarning}>
               <Info className={s.editWarningIcon} />
-              Changes will apply to all {editingTag?._count?.products} products with this tag
+              {t('admin.tag.editWarningBefore')} {editingTag?._count?.products} {t('admin.tag.editWarningAfter')}
             </div>
           </When>
 
           <div className="flex gap-3">
             <Button type="submit" disabled={isSubmitting}>
               <If condition={isSubmitting}>
-                <Then><Spinner size="sm" /><span className="ml-2">{editingId ? 'Saving...' : 'Creating...'}</span></Then>
-                <Else>{editingId ? 'Save' : 'Create'}</Else>
+                <Then><Spinner size="sm" /><span className="ml-2">{editingId ? t('admin.tag.saving') : t('admin.tag.creating')}</span></Then>
+                <Else>{editingId ? t('admin.tag.save') : t('admin.tag.create')}</Else>
               </If>
             </Button>
             <When condition={!!editingId}>
               <Button type="button" variant="outline" onClick={handleCancelEdit}>
-                Cancel
+                {t('admin.tag.cancel')}
               </Button>
             </When>
           </div>
@@ -237,9 +246,9 @@ const TagsPage = () => {
             <table className={s.table}>
               <thead className={s.thead}>
                 <tr>
-                  <th className={s.th}>Tag</th>
-                  <th className={s.thCenter}>Products</th>
-                  <th className={s.thCenter}>Actions</th>
+                  <th className={s.th}>{t('admin.tag.tableTitle')}</th>
+                  <th className={s.thCenter}>{t('admin.tag.tableProducts')}</th>
+                  <th className={s.thCenter}>{t('admin.tag.tableActions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -258,7 +267,7 @@ const TagsPage = () => {
                   <Else>
                     <tr>
                       <td colSpan={3} className={s.emptyRow}>
-                        No tags yet
+                        {t('admin.tag.noItems')}
                       </td>
                     </tr>
                   </Else>

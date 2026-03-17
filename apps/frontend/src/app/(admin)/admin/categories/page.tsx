@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import type { FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { If, Then, Else, When } from 'react-if';
 import { Info } from 'lucide-react';
@@ -17,6 +18,7 @@ import {
 } from '@/lib/hooks/useProducts';
 import { useAuth } from '@/lib/hooks/useAuth';
 import type { Category } from '@/lib/hooks/useProducts';
+import { useLanguage } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
 import { categoryFormSchema, generateSlug, type CategoryFormValues } from './page.constants';
@@ -35,6 +37,7 @@ const EMPTY_VALUES: CategoryFormValues = {
 
 const CategoriesPage = () => {
   const { isAdmin } = useAuth();
+  const { t } = useLanguage();
   const { data: categories = [], isLoading } = useCategories();
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
@@ -54,9 +57,6 @@ const CategoriesPage = () => {
     defaultValues: EMPTY_VALUES,
   });
 
-  const hasEnError = !!(errors.nameEn || errors.descriptionEn);
-  const hasUkError = !!(errors.name || errors.description);
-
   watch((values, { name: field }) => {
     if (field === 'name' && !editingId) {
       setValue('slug', generateSlug(values.name ?? ''));
@@ -65,6 +65,13 @@ const CategoriesPage = () => {
 
   const handleSelectUk = useCallback(() => setLangTab('uk'), []);
   const handleSelectEn = useCallback(() => setLangTab('en'), []);
+
+  const handleInvalid = useCallback((fieldErrors: FieldErrors<CategoryFormValues>) => {
+    const enHasError = !!(fieldErrors.nameEn || fieldErrors.descriptionEn);
+    const ukHasError = !!(fieldErrors.name || fieldErrors.slug || fieldErrors.description);
+    if (enHasError && !ukHasError) setLangTab('en');
+    else if (ukHasError) setLangTab('uk');
+  }, []);
 
   const handleEdit = useCallback((category: Category) => {
     setEditingId(category.id);
@@ -98,7 +105,6 @@ const CategoriesPage = () => {
   }, []);
 
   const onSubmit = handleSubmit(async (data) => {
-    if (hasEnError && !hasUkError) setLangTab('en');
     try {
       if (editingId) {
         await updateCategory.mutateAsync({ id: editingId, ...data });
@@ -111,12 +117,14 @@ const CategoriesPage = () => {
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : '';
       if (message.includes('Slug')) {
-        setError('slug', { message: 'This slug is already taken' });
+        setError('slug', { message: t('admin.category.slugTaken') });
+        setLangTab('uk');
       } else if (message.includes('Name') || message.includes('name')) {
-        setError('name', { message: 'This name is already taken' });
+        setError('name', { message: t('admin.category.nameTaken') });
+        setLangTab('uk');
       }
     }
-  });
+  }, handleInvalid);
 
   const isSubmitting = createCategory.isPending || updateCategory.isPending;
 
@@ -126,7 +134,7 @@ const CategoriesPage = () => {
       <div className={s.formCard}>
         <div className="flex items-center justify-between">
           <h2 className={s.formTitle}>
-            {editingId ? 'Edit category' : 'New category'}
+            {editingId ? t('admin.category.edit') : t('admin.category.new')}
           </h2>
           <div className={s.langTabs}>
             <button
@@ -150,24 +158,24 @@ const CategoriesPage = () => {
           <When condition={langTab === 'uk'}>
             <div className={s.formRow}>
               <TextField
-                label="Name (UK)"
-                placeholder="Electronics"
-                hint="Visible category name in the catalog"
+                label={t('admin.category.name')}
+                placeholder={t('admin.category.namePlaceholder')}
+                hint={t('admin.category.nameHint')}
                 error={errors.name?.message}
                 {...register('name')}
               />
               <TextField
-                label="Slug"
-                placeholder="electronics"
-                hint="URL identifier, auto-generated"
+                label={t('admin.category.slug')}
+                placeholder={t('admin.category.slugPlaceholder')}
+                hint={t('admin.category.slugHint')}
                 error={errors.slug?.message}
                 {...register('slug')}
               />
             </div>
             <TextField
-              label="Description (UK)"
-              placeholder="Category description (optional)"
-              hint="Short description for the category page, optional"
+              label={t('admin.category.description')}
+              placeholder={t('admin.category.descriptionPlaceholder')}
+              hint={t('admin.category.descriptionHint')}
               error={errors.description?.message}
               {...register('description')}
             />
@@ -175,16 +183,16 @@ const CategoriesPage = () => {
 
           <When condition={langTab === 'en'}>
             <TextField
-              label="Name (EN)"
-              placeholder="Electronics"
-              hint="Category name in English"
+              label={t('admin.category.nameEn')}
+              placeholder={t('admin.category.namePlaceholder')}
+              hint={t('admin.category.nameEnHint')}
               error={errors.nameEn?.message}
               {...register('nameEn')}
             />
             <TextField
-              label="Description (EN)"
-              placeholder="Category description in English (optional)"
-              hint="Short description in English, optional"
+              label={t('admin.category.descriptionEn')}
+              placeholder={t('admin.category.descriptionEnPlaceholder')}
+              hint={t('admin.category.descriptionEnHint')}
               error={errors.descriptionEn?.message}
               {...register('descriptionEn')}
             />
@@ -193,20 +201,20 @@ const CategoriesPage = () => {
           <When condition={!!editingId && (editingCategory?._count?.products ?? 0) > 0}>
             <div className={s.editWarning}>
               <Info className={s.editWarningIcon} />
-              Changes will apply to all {editingCategory?._count?.products} products in this category
+              {t('admin.category.editWarningBefore')} {editingCategory?._count?.products} {t('admin.category.editWarningAfter')}
             </div>
           </When>
 
           <div className="flex gap-3">
             <Button type="submit" disabled={isSubmitting}>
               <If condition={isSubmitting}>
-                <Then><Spinner size="sm" /><span className="ml-2">{editingId ? 'Saving...' : 'Creating...'}</span></Then>
-                <Else>{editingId ? 'Save' : 'Create'}</Else>
+                <Then><Spinner size="sm" /><span className="ml-2">{editingId ? t('admin.category.saving') : t('admin.category.creating')}</span></Then>
+                <Else>{editingId ? t('admin.category.save') : t('admin.category.create')}</Else>
               </If>
             </Button>
             <When condition={!!editingId}>
               <Button type="button" variant="outline" onClick={handleCancelEdit}>
-                Cancel
+                {t('admin.category.cancel')}
               </Button>
             </When>
           </div>
@@ -224,9 +232,9 @@ const CategoriesPage = () => {
             <table className={s.table}>
               <thead className={s.thead}>
                 <tr>
-                  <th className={s.th}>Category</th>
-                  <th className={s.thCenter}>Products</th>
-                  <th className={s.thCenter}>Actions</th>
+                  <th className={s.th}>{t('admin.category.tableTitle')}</th>
+                  <th className={s.thCenter}>{t('admin.category.tableProducts')}</th>
+                  <th className={s.thCenter}>{t('admin.category.tableActions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -245,7 +253,7 @@ const CategoriesPage = () => {
                   <Else>
                     <tr>
                       <td colSpan={3} className={s.emptyRow}>
-                        No categories yet
+                        {t('admin.category.noItems')}
                       </td>
                     </tr>
                   </Else>
