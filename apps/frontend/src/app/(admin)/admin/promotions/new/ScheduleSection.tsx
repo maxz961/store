@@ -9,7 +9,7 @@ import type { CreatePromotionFormValues } from './page.constants';
 
 export const ScheduleSection = () => {
   const { register, formState: { errors } } = useFormContext<CreatePromotionFormValues>();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <div className={s.card}>
@@ -20,6 +20,7 @@ export const ScheduleSection = () => {
           label={t('admin.promotion.scheduleStartDate')}
           tooltip={FIELD_TOOLTIPS.startDate}
           type="datetime-local"
+          lang={lang}
           inputClassName="!block"
           error={errors.startDate?.message}
           {...register('startDate')}
@@ -29,6 +30,7 @@ export const ScheduleSection = () => {
           label={t('admin.promotion.scheduleEndDate')}
           tooltip={FIELD_TOOLTIPS.endDate}
           type="datetime-local"
+          lang={lang}
           inputClassName="!block"
           error={errors.endDate?.message}
           {...register('endDate')}
