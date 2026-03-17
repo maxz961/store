@@ -8,7 +8,6 @@ import { TextareaField } from '@/components/ui/TextareaField';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 
 
@@ -61,14 +60,14 @@ export const BasicInfoSection = () => {
       <When condition={langTab === 'uk'}>
         <TextField
           label={t('admin.product.name')}
-          tooltip={FIELD_TOOLTIPS.name}
+          tooltip={t('admin.product.tooltip.name')}
           placeholder="e.g. Wireless Headphones"
           error={errors.name?.message}
           {...register('name')}
         />
         <TextareaField
           label={t('admin.product.description')}
-          tooltip={FIELD_TOOLTIPS.description}
+          tooltip={t('admin.product.tooltip.description')}
           placeholder="Detailed product description..."
           error={errors.description?.message}
           {...register('description')}
@@ -78,14 +77,14 @@ export const BasicInfoSection = () => {
       <When condition={langTab === 'en'}>
         <TextField
           label={t('admin.product.nameEn')}
-          tooltip={FIELD_TOOLTIPS.nameEn}
+          tooltip={t('admin.product.tooltip.nameEn')}
           placeholder="e.g. Wireless Headphones"
           error={errors.nameEn?.message}
           {...register('nameEn')}
         />
         <TextareaField
           label={t('admin.product.descriptionEn')}
-          tooltip={FIELD_TOOLTIPS.descriptionEn}
+          tooltip={t('admin.product.tooltip.descriptionEn')}
           placeholder="Detailed product description..."
           error={errors.descriptionEn?.message}
           {...register('descriptionEn')}
@@ -94,7 +93,7 @@ export const BasicInfoSection = () => {
 
       <TextField
         label={t('admin.product.slug')}
-        tooltip={FIELD_TOOLTIPS.slug}
+        tooltip={t('admin.product.tooltip.slug')}
         hint={t('admin.product.slugHint')}
         inputClassName={s.slugInput}
         error={errors.slug?.message}

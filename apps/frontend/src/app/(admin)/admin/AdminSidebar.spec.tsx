@@ -1,6 +1,20 @@
 import { render, screen } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'uk',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.sidebarTitle': 'Administration',
+        'admin.closeMenu': 'Close menu',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(() => '/admin/dashboard'),
   useRouter: () => ({ prefetch: jest.fn(), push: jest.fn(), replace: jest.fn(), back: jest.fn() }),

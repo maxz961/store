@@ -53,18 +53,3 @@ export const createPromotionFormSchema = z.object({
 
 export type CreatePromotionFormValues = z.infer<typeof createPromotionFormSchema>;
 
-export const FIELD_TOOLTIPS = {
-  banner: 'Banner is displayed in the carousel on the catalog home page. Recommended image size: 1200×400 px.',
-  title: 'Promotion title — shown on the banner in the catalog and in the admin panel list.',
-  slug: 'Unique identifier for the promotion in the URL. Generated automatically from the title.',
-  description: 'Short promotion description — shown on the banner below the title.',
-  bannerImageUrl: 'Banner image URL. Recommended size: 800x300 px.',
-  bannerBgColor: 'Banner background color in HEX format (e.g. #e8f5e9). Soft pastel tones look best.',
-  startDate: 'Promotion start date. The banner will appear in the catalog from this date.',
-  endDate: 'Promotion end date. After this date the banner will be hidden automatically.',
-  discountType: 'Discount type: percentage of price or fixed amount.',
-  discountValue: 'Discount amount. For percentage: 25 = 25%. For fixed: 50 = $50.',
-  position: 'Display order in the carousel. 0 = first, 1 = second, etc.',
-  link: 'Link for the "Learn more" button on the banner. Example: /products?tagSlugs=sale',
-  products: 'Products participating in the promotion. Select from the list.',
-} as const;

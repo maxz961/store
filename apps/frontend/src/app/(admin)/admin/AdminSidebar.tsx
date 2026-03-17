@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { AlertTriangle, X } from 'lucide-react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './layout.styled';
 import { NAV_ITEMS } from './layout.constants';
 import { useAdminUnreadCount } from '@/lib/hooks/useSupport';
@@ -20,6 +21,7 @@ interface Props {
 
 
 export const AdminSidebar = ({ isOpen = false, onClose }: Props) => {
+  const { t } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const { data: unreadCount } = useAdminUnreadCount();
@@ -72,15 +74,15 @@ export const AdminSidebar = ({ isOpen = false, onClose }: Props) => {
       <aside className={cn(isOpen ? s.sidebarMobileOpen : s.sidebar)}>
         <When condition={isOpen}>
           <div className={s.drawerHeader}>
-            <p className={s.sidebarTitle} style={{ margin: 0 }}>Administration</p>
-            <button onClick={onClose} className={s.drawerClose} aria-label="Close menu">
+            <p className={s.sidebarTitle} style={{ margin: 0 }}>{t('admin.sidebarTitle')}</p>
+            <button onClick={onClose} className={s.drawerClose} aria-label={t('admin.closeMenu')}>
               <X className="h-5 w-5" />
             </button>
           </div>
         </When>
         <nav className={s.sidebarInner}>
           <When condition={!isOpen}>
-            <p className={s.sidebarTitle}>Administration</p>
+            <p className={s.sidebarTitle}>{t('admin.sidebarTitle')}</p>
           </When>
           {navItems}
         </nav>

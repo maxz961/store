@@ -6,6 +6,8 @@ import { ProductCard } from '@/components/product/ProductCard';
 import { Spinner } from '@/components/ui/Spinner';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { usePublicPromotion } from '@/lib/hooks/usePromotions';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './page.styled';
 
 
@@ -16,11 +18,12 @@ const formatDiscount = (type: 'PERCENTAGE' | 'FIXED', value: number) =>
 export default function PromotionPage() {
   const { slug } = useParams<{ slug: string }>();
   const { data: promotion, isLoading } = usePublicPromotion(slug);
+  const { t, lang } = useLanguage();
 
   const breadcrumbs = [
-    { label: 'Главная', href: '/' },
-    { label: 'Акции', href: '/products' },
-    { label: promotion?.title ?? '...' },
+    { label: t('nav.home'), href: '/' },
+    { label: t('promotions.title'), href: '/promotions' },
+    { label: promotion ? getLocalizedText(lang, promotion.title, promotion.titleEn) : '...' },
   ];
 
   return (
@@ -44,17 +47,21 @@ export default function PromotionPage() {
               <span className={s.headerDiscount} style={{ backgroundColor: 'rgba(0,0,0,0.12)' }}>
                 {promotion && formatDiscount(promotion.discountType, promotion.discountValue)}
               </span>
-              <h1 className={s.headerTitle}>{promotion?.title}</h1>
+              <h1 className={s.headerTitle}>
+                {promotion && getLocalizedText(lang, promotion.title, promotion.titleEn)}
+              </h1>
               <When condition={!!promotion?.description}>
-                <p className={s.headerDescription}>{promotion?.description}</p>
+                <p className={s.headerDescription}>
+                  {promotion && getLocalizedText(lang, promotion.description ?? '', promotion.descriptionEn)}
+                </p>
               </When>
             </div>
 
             <If condition={(promotion?.products.length ?? 0) === 0}>
               <Then>
                 <div className={s.empty}>
-                  <p className={s.emptyTitle}>Товары не найдены</p>
-                  <p className={s.emptyText}>В этой акции пока нет товаров</p>
+                  <p className={s.emptyTitle}>{t('promotions.noProducts')}</p>
+                  <p className={s.emptyText}>{t('promotions.noProductsText')}</p>
                 </div>
               </Then>
               <Else>

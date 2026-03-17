@@ -8,7 +8,6 @@ import { useLanguage } from '@/lib/i18n';
 import { getLocalizedText } from '@/lib/utils';
 import { TagToggleButton } from './TagToggleButton';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 import type { CategoryTagsSectionProps } from './page.types';
 
@@ -29,7 +28,7 @@ export const CategoryTagsSection = ({
 
       <SelectField
         label={t('admin.product.category')}
-        tooltip={FIELD_TOOLTIPS.categoryId}
+        tooltip={t('admin.product.tooltip.categoryId')}
         placeholder={t('admin.product.selectCategory')}
         options={categoryOptions}
         error={errors.categoryId?.message}
@@ -40,7 +39,7 @@ export const CategoryTagsSection = ({
         <div>
           <p className={s.tagsTitle}>
             {t('admin.product.tags')}
-            <FieldTooltip text={FIELD_TOOLTIPS.tags} />
+            <FieldTooltip text={t('admin.product.tooltip.tags')} />
           </p>
           <div className={s.tagsWrapper}>
             {tags.map((tag) => (

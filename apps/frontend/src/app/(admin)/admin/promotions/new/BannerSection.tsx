@@ -14,7 +14,7 @@ import { useUploadProductImages } from '@/lib/hooks/useAdmin';
 import { useLanguage } from '@/lib/i18n';
 import { BannerPreviewModal } from './BannerPreviewModal';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS, BANNER_BG_PRESET_COLORS } from './page.constants';
+import { BANNER_BG_PRESET_COLORS } from './page.constants';
 import type { CreatePromotionFormValues } from './page.constants';
 
 
@@ -85,7 +85,7 @@ export const BannerSection = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
           <h2 className={s.cardTitle}>{t('admin.promotion.bannerTitle')}</h2>
-          <FieldTooltip text={FIELD_TOOLTIPS.banner} />
+          <FieldTooltip text={t('admin.promotion.tooltip.banner')} />
         </div>
         <button type="button" className={s.previewBtn} onClick={handleOpenPreview}>
           <Eye className="h-4 w-4" />
@@ -158,7 +158,7 @@ export const BannerSection = () => {
       <When condition={mode === 'url'}>
         <TextField
           label={t('admin.promotion.bannerImageUrl')}
-          tooltip={FIELD_TOOLTIPS.bannerImageUrl}
+          tooltip={t('admin.promotion.tooltip.bannerImageUrl')}
           placeholder="https://images.unsplash.com/..."
           error={errors.bannerImageUrl?.message}
           {...register('bannerImageUrl')}
@@ -175,7 +175,7 @@ export const BannerSection = () => {
 
       <TextField
         label={t('admin.promotion.bannerLink')}
-        tooltip={FIELD_TOOLTIPS.link}
+        tooltip={t('admin.promotion.tooltip.link')}
         placeholder="/products?tagSlugs=sale"
         error={errors.link?.message}
         {...register('link')}

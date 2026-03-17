@@ -4,7 +4,6 @@ import { useFormContext } from 'react-hook-form';
 import { TextField } from '@/components/ui/TextField';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 
 
@@ -19,7 +18,7 @@ export const PricingSection = () => {
       <div className={s.grid2}>
         <TextField
           label={t('admin.product.priceLabel')}
-          tooltip={FIELD_TOOLTIPS.price}
+          tooltip={t('admin.product.tooltip.price')}
           type="number"
           step="0.01"
           min="0"
@@ -29,7 +28,7 @@ export const PricingSection = () => {
         />
         <TextField
           label={t('admin.product.oldPriceLabel')}
-          tooltip={FIELD_TOOLTIPS.comparePrice}
+          tooltip={t('admin.product.tooltip.comparePrice')}
           type="number"
           step="0.01"
           min="0"
@@ -42,7 +41,7 @@ export const PricingSection = () => {
       <div className={s.grid2}>
         <TextField
           label={t('admin.product.stockLabel')}
-          tooltip={FIELD_TOOLTIPS.stock}
+          tooltip={t('admin.product.tooltip.stock')}
           type="number"
           min="0"
           error={errors.stock?.message}
@@ -50,7 +49,7 @@ export const PricingSection = () => {
         />
         <TextField
           label="SKU"
-          tooltip={FIELD_TOOLTIPS.sku}
+          tooltip={t('admin.product.tooltip.sku')}
           placeholder={t('admin.product.optional')}
           error={errors.sku?.message}
           {...register('sku')}

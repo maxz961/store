@@ -69,7 +69,7 @@ export const ImageUpload = ({
     if (toAdd.length > 0) {
       onChange([...files, ...toAdd]);
     }
-  }, [files, totalCount, maxFiles, onChange]);
+  }, [files, totalCount, maxFiles, onChange, t]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();

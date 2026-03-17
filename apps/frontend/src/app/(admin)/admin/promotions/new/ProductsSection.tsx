@@ -1,7 +1,7 @@
 import { cn, getLocalizedText } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
+
 import type { ProductsSectionProps } from './page.types';
 
 
@@ -11,7 +11,7 @@ export const ProductsSection = ({ products, selectedIds, onToggle }: ProductsSec
   return (
     <div className={s.card}>
       <h2 className={s.cardTitle}>{t('admin.promotion.productsTitle')}</h2>
-      <p className="text-xs text-muted-foreground">{FIELD_TOOLTIPS.products}</p>
+      <p className="text-xs text-muted-foreground">{t('admin.promotion.tooltip.products')}</p>
 
       <div className={s.productsWrapper}>
         {products.map((product) => {

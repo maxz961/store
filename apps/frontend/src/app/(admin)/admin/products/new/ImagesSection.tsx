@@ -11,7 +11,6 @@ import { FieldTooltip } from '@/components/ui/FieldTooltip';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 import type { ImagesSectionProps } from './page.types';
 
@@ -42,7 +41,7 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
     <div className={s.card}>
       <div className="flex items-center gap-2">
         <h2 className={s.cardTitle}>{t('admin.product.images')}</h2>
-        <FieldTooltip text={FIELD_TOOLTIPS.images} />
+        <FieldTooltip text={t('admin.product.tooltip.images')} />
       </div>
 
       <div className={s.imageTabs}>

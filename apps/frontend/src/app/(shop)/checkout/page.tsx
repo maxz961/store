@@ -7,7 +7,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { LogIn } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Spinner } from '@/components/ui/Spinner';
@@ -20,6 +19,7 @@ import { DeliveryMethodSection } from './DeliveryMethodSection';
 import { ShippingAddressSection } from './ShippingAddressSection';
 import { OrderSummary } from './OrderSummary';
 import { PaymentSection } from './PaymentSection';
+import { StepBar } from './StepBar';
 import { s } from './page.styled';
 import type { DeliveryMethod, CheckoutStep } from './page.types';
 import {
@@ -30,24 +30,6 @@ import {
 
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-
-const StepBar = ({ step }: { step: CheckoutStep }) => {
-  const { t } = useLanguage();
-
-  return (
-    <div className={s.stepBar}>
-      <div className={s.stepItem}>
-        <span className={cn(s.stepDot, step === 'info' ? s.stepDotActive : s.stepDotDone)}>1</span>
-        <span className={cn(step === 'info' ? s.stepLabelActive : s.stepLabelInactive)}>{t('checkout.step1')}</span>
-      </div>
-      <div className={s.stepLine} />
-      <div className={s.stepItem}>
-        <span className={cn(s.stepDot, step === 'payment' ? s.stepDotActive : s.stepDotInactive)}>2</span>
-        <span className={cn(step === 'payment' ? s.stepLabelActive : s.stepLabelInactive)}>{t('checkout.step2')}</span>
-      </div>
-    </div>
-  );
-};
 
 
 const CheckoutPage = () => {

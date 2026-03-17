@@ -4,7 +4,7 @@ import { TextField } from '@/components/ui/TextField';
 import { SelectField } from '@/components/ui/SelectField';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS, DISCOUNT_TYPE_OPTIONS } from './page.constants';
+import { DISCOUNT_TYPE_OPTIONS } from './page.constants';
 import type { CreatePromotionFormValues } from './page.constants';
 
 
@@ -27,7 +27,7 @@ export const DiscountSection = () => {
       <div className={s.grid2}>
         <SelectField
           label={t('admin.promotion.discountType')}
-          tooltip={FIELD_TOOLTIPS.discountType}
+          tooltip={t('admin.promotion.tooltip.discountType')}
           options={DISCOUNT_TYPE_OPTIONS}
           value={discountType}
           onChange={handleDiscountTypeChange}
@@ -36,7 +36,7 @@ export const DiscountSection = () => {
 
         <TextField
           label={t('admin.promotion.discountValue')}
-          tooltip={FIELD_TOOLTIPS.discountValue}
+          tooltip={t('admin.promotion.tooltip.discountValue')}
           type="number"
           placeholder="25"
           error={errors.discountValue?.message}
@@ -46,7 +46,7 @@ export const DiscountSection = () => {
 
       <TextField
         label={t('admin.promotion.discountPosition')}
-        tooltip={FIELD_TOOLTIPS.position}
+        tooltip={t('admin.promotion.tooltip.position')}
         type="number"
         placeholder="0"
         error={errors.position?.message}

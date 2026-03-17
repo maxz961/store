@@ -3,7 +3,6 @@ import { TextField } from '@/components/ui/TextField';
 import { CheckboxField } from '@/components/ui/CheckboxField';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreatePromotionFormValues } from './page.constants';
 
 
@@ -18,7 +17,7 @@ export const ScheduleSection = () => {
       <div className={s.grid2}>
         <TextField
           label={t('admin.promotion.scheduleStartDate')}
-          tooltip={FIELD_TOOLTIPS.startDate}
+          tooltip={t('admin.promotion.tooltip.startDate')}
           type="datetime-local"
           lang={lang}
           inputClassName="!block"
@@ -28,7 +27,7 @@ export const ScheduleSection = () => {
 
         <TextField
           label={t('admin.promotion.scheduleEndDate')}
-          tooltip={FIELD_TOOLTIPS.endDate}
+          tooltip={t('admin.promotion.tooltip.endDate')}
           type="datetime-local"
           lang={lang}
           inputClassName="!block"

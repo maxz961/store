@@ -8,7 +8,6 @@ import { TextField } from '@/components/ui/TextField';
 import { TextareaField } from '@/components/ui/TextareaField';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreatePromotionFormValues } from './page.constants';
 
 
@@ -49,14 +48,14 @@ export const BasicInfoSection = ({ langTab, onTabChange }: BasicInfoSectionProps
         <div className="space-y-4">
           <TextField
             label={t('admin.promotion.title')}
-            tooltip={FIELD_TOOLTIPS.title}
+            tooltip={t('admin.promotion.tooltip.title')}
             placeholder={t('admin.promotion.titlePlaceholder')}
             error={errors.title?.message}
             {...register('title')}
           />
           <TextareaField
             label={t('admin.promotion.description')}
-            tooltip={FIELD_TOOLTIPS.description}
+            tooltip={t('admin.promotion.tooltip.description')}
             placeholder={t('admin.promotion.descriptionPlaceholder')}
             error={errors.description?.message}
             {...register('description')}
@@ -68,14 +67,14 @@ export const BasicInfoSection = ({ langTab, onTabChange }: BasicInfoSectionProps
         <div className="space-y-4">
           <TextField
             label={t('admin.promotion.titleEn')}
-            tooltip={FIELD_TOOLTIPS.title}
+            tooltip={t('admin.promotion.tooltip.title')}
             placeholder={t('admin.promotion.titlePlaceholder')}
             error={errors.titleEn?.message}
             {...register('titleEn')}
           />
           <TextareaField
             label={t('admin.promotion.descriptionEn')}
-            tooltip={FIELD_TOOLTIPS.description}
+            tooltip={t('admin.promotion.tooltip.description')}
             placeholder={t('admin.promotion.descriptionPlaceholder')}
             error={errors.descriptionEn?.message}
             {...register('descriptionEn')}
@@ -85,7 +84,7 @@ export const BasicInfoSection = ({ langTab, onTabChange }: BasicInfoSectionProps
 
       <TextField
         label={t('admin.promotion.slug')}
-        tooltip={FIELD_TOOLTIPS.slug}
+        tooltip={t('admin.promotion.tooltip.slug')}
         hint={t('admin.promotion.slugHint')}
         inputClassName={s.slugInput}
         error={errors.slug?.message}

@@ -23,7 +23,6 @@ import { s } from './new/page.styled';
 import {
   generateSlug,
   buildProductFormSchema,
-  FIELD_TOOLTIPS,
   type CreateProductFormValues,
 } from './new/page.constants';
 
@@ -250,7 +249,7 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
 
           <CheckboxField
             label={isEdit ? t('admin.product.publishedLabel') : t('admin.product.publishNow')}
-            tooltip={FIELD_TOOLTIPS.isPublished}
+            tooltip={t('admin.product.tooltip.isPublished')}
             error={errors.isPublished?.message}
             {...register('isPublished')}
           />
