@@ -86,11 +86,28 @@ describe('ReviewForm', () => {
     expect(screen.getByText(/to leave a review/)).toBeInTheDocument();
   });
 
-  it('renders review form title when authenticated', () => {
+  it('renders submit button with write review text when authenticated', () => {
     (useAuthModule.useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
     render(<ReviewForm {...defaultProps} />);
-    // Both title <p> and submit button contain this text
-    expect(screen.getAllByText('Write a review').length).toBeGreaterThan(0);
+    expect(screen.getByRole('button', { name: 'Write a review' })).toBeInTheDocument();
+  });
+
+  it('does not show a duplicate title when creating a new review', () => {
+    (useAuthModule.useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
+    render(<ReviewForm {...defaultProps} />);
+    expect(screen.getAllByText('Write a review')).toHaveLength(1);
+  });
+
+  it('shows edit title when editing an existing review', () => {
+    (useAuthModule.useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
+    const existingReview = {
+      id: 'r1', rating: 4, comment: 'Хорошо', images: [],
+      userId: 'u1', productId: 'p1', adminReply: null, adminReplyAt: null,
+      createdAt: '2024-01-01T00:00:00.000Z',
+      user: { id: 'u1', name: 'Test', image: null },
+    };
+    render(<ReviewForm {...defaultProps} existingReview={existingReview} />);
+    expect(screen.getByText('Edit review')).toBeInTheDocument();
   });
 
   it('shows "Сохранить" button when editing existing review', () => {

@@ -109,7 +109,7 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
         </div>
 
         {/* Sort toolbar */}
-        <When condition={total > 1}>
+        <When condition={total > 0}>
           <div className={s.toolbar}>
             <div className={s.sortGroup}>
               <span className={s.sortLabel}>{t('review.sortLabel')}</span>

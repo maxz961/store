@@ -95,7 +95,9 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
 
   return (
     <form onSubmit={handleSubmit} className={s.form}>
-      <p className={s.title}>{isEditing ? t('review.editTitle') : t('product.writeReview')}</p>
+      <When condition={isEditing}>
+        <p className={s.title}>{t('review.editTitle')}</p>
+      </When>
 
       <When condition={!!submitError}>
         <div className={s.error}>{submitError}</div>
@@ -116,6 +118,7 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
           placeholder={t('review.commentPlaceholder')}
           maxLength={2000}
           rows={3}
+          className="resize-none"
         />
       </div>
 
