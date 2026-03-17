@@ -40,8 +40,8 @@ export const s = {
 
   // Product cell
   productCell: 'flex items-center gap-3',
-  productImage: 'h-10 w-10 rounded-lg object-cover border border-border bg-muted',
-  productImageFallback: 'flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-muted text-xs text-muted-foreground',
+  productImage: 'h-10 w-10 shrink-0 rounded-lg object-cover border border-border bg-muted',
+  productImageFallback: 'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-muted text-xs text-muted-foreground',
   productName: 'text-sm font-medium text-foreground',
 
   // Tags

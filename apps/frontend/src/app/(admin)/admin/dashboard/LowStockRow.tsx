@@ -1,12 +1,16 @@
+'use client';
+
 import Image from 'next/image';
 import { If, Then, Else } from 'react-if';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import type { LowStockRowProps } from './page.types';
 
 
 export const LowStockRow = ({ name, stock, image }: LowStockRowProps) => {
+  const { t } = useLanguage();
   const badgeClass = stock <= 2 ? s.lowStockBadgeCritical : s.lowStockBadgeWarning;
-  const stockLabel = stock === 0 ? 'Нет в наличии' : `${stock} шт.`;
+  const stockLabel = stock === 0 ? t('product.outOfStock') : `${stock} ${t('admin.dashboard.pieces')}`;
 
   return (
     <div className={s.lowStockRow}>

@@ -9,6 +9,7 @@ import { ImageUpload } from '@/components/ui/ImageUpload';
 import { TextField } from '@/components/ui/TextField';
 import { FieldTooltip } from '@/components/ui/FieldTooltip';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
@@ -20,6 +21,7 @@ type UploadMode = 'file' | 'url';
 export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
   const [mode, setMode] = useState<UploadMode>('file');
   const { register, watch, setValue, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { t } = useLanguage();
 
   const imageUrlsValue = watch('imageUrls');
   const existingImages = useMemo(
@@ -39,7 +41,7 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
   return (
     <div className={s.card}>
       <div className="flex items-center gap-2">
-        <h2 className={s.cardTitle}>Изображения</h2>
+        <h2 className={s.cardTitle}>{t('admin.product.images')}</h2>
         <FieldTooltip text={FIELD_TOOLTIPS.images} />
       </div>
 
@@ -49,14 +51,14 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
           className={cn(s.imageTab, mode === 'file' && s.imageTabActive)}
           onClick={handleSetFileMode}
         >
-          Загрузить файл
+          {t('admin.product.uploadFile')}
         </button>
         <button
           type="button"
           className={cn(s.imageTab, mode === 'url' && s.imageTabActive)}
           onClick={handleSetUrlMode}
         >
-          По ссылке
+          {t('admin.product.byUrl')}
         </button>
       </div>
 
@@ -70,7 +72,7 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
 
         <When condition={existingImages.length > 0 && mode === 'file'}>
           <div>
-            <p className="mb-2 text-xs text-muted-foreground">Текущие изображения</p>
+            <p className="mb-2 text-xs text-muted-foreground">{t('admin.product.currentImages')}</p>
             <div className={s.existingThumbs}>
               {existingImages.map((url) => (
                 <div key={url} className={s.existingThumb}>
@@ -91,9 +93,9 @@ export const ImagesSection = ({ files, onFilesChange }: ImagesSectionProps) => {
 
       <When condition={mode === 'url'}>
         <TextField
-          label="URL изображений"
+          label={t('admin.product.imageUrlsLabel')}
           placeholder="https://example.com/img1.jpg, https://example.com/img2.jpg"
-          hint="Несколько URL через запятую"
+          hint={t('admin.product.imageUrlsHint')}
           {...register('imageUrls')}
         />
       </When>

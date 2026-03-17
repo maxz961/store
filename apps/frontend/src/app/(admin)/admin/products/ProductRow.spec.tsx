@@ -40,6 +40,20 @@ jest.mock('@/lib/api', () => ({
   api: { patch: jest.fn().mockResolvedValue({}) },
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.products.statusPublished': 'Published',
+        'admin.products.statusDraft': 'Draft',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('@/lib/constants/format', () => ({
   formatCurrency: (v: number) => `${v} ₴`,
 }));

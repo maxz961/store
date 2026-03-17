@@ -21,7 +21,6 @@ import { ImagesSection } from './new/ImagesSection';
 import { ProductPreview } from './new/ProductPreview';
 import { s } from './new/page.styled';
 import {
-  breadcrumbs as newBreadcrumbs,
   generateSlug,
   buildProductFormSchema,
   FIELD_TOOLTIPS,
@@ -62,14 +61,11 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
     [tags],
   );
 
-  const breadcrumbs = useMemo(() => {
-    if (!isEdit) return newBreadcrumbs;
-    return [
-      { label: 'Адмін-панель', href: '/admin/dashboard' },
-      { label: 'Товари', href: '/admin/products' },
-      { label: product?.name ?? 'Редагувати товар' },
-    ];
-  }, [isEdit, product?.name]);
+  const breadcrumbs = useMemo(() => [
+    { label: t('nav.admin'), href: '/admin/dashboard' },
+    { label: t('admin.dashboard.products'), href: '/admin/products' },
+    { label: isEdit ? (product?.name ?? t('admin.product.edit')) : t('admin.product.new') },
+  ], [isEdit, product?.name, t]);
 
   const productFormSchema = useMemo(() => buildProductFormSchema({
     required: t('admin.product.validation.required'),
@@ -232,7 +228,7 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
   if (isEdit && (isError || !product)) {
     return (
       <div className={s.page}>
-        <div className={s.error}>Не удалось загрузить товар</div>
+        <div className={s.error}>{t('admin.product.loadFailed')}</div>
       </div>
     );
   }
@@ -253,7 +249,7 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
           <ImagesSection files={files} onFilesChange={setFiles} />
 
           <CheckboxField
-            label={isEdit ? 'Опубликован' : 'Опубликовать сразу'}
+            label={isEdit ? t('admin.product.publishedLabel') : t('admin.product.publishNow')}
             tooltip={FIELD_TOOLTIPS.isPublished}
             error={errors.isPublished?.message}
             {...register('isPublished')}
@@ -262,7 +258,7 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
           <When condition={uploadImages.isError || !!errors.root}>
             <div className={s.error}>
               {uploadImages.isError
-                ? (uploadImages.error instanceof Error ? uploadImages.error.message : 'Не удалось загрузить изображения')
+                ? (uploadImages.error instanceof Error ? uploadImages.error.message : t('admin.product.uploadFailed'))
                 : errors.root?.message}
             </div>
           </When>
@@ -275,7 +271,7 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
                 onClick={handleCancel}
                 className={cn('flex-1', s.previewBtn)}
               >
-                Отмена
+                {t('admin.product.cancel')}
               </Button>
             </When>
             <Button
@@ -285,15 +281,15 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
               className={cn('flex-1', s.previewBtn)}
             >
               <Eye className="mr-2 h-4 w-4" />
-              Предпросмотр
+              {t('admin.product.preview')}
             </Button>
             <Button type="submit" disabled={isSubmitting} className="flex-1">
               <If condition={isSubmitting}>
                 <Then>
                   <Spinner size="sm" />
-                  <span className="ml-2">{isEdit ? 'Сохранение...' : 'Создание...'}</span>
+                  <span className="ml-2">{isEdit ? t('admin.product.saving') : t('admin.product.creating')}</span>
                 </Then>
-                <Else>{isEdit ? 'Сохранить товар' : 'Создать товар'}</Else>
+                <Else>{isEdit ? t('admin.product.save') : t('admin.product.create')}</Else>
               </If>
             </Button>
           </div>

@@ -34,6 +34,35 @@ jest.mock('@/lib/hooks/useAdmin', () => ({
   useAdminProductSuggestions: () => ({ data: undefined }),
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'nav.admin': 'Admin',
+        'admin.dashboard.products': 'Products',
+        'admin.products.addProduct': 'Add product',
+        'admin.products.searchPlaceholder': 'Search products...',
+        'admin.products.viewAll': 'All',
+        'admin.products.viewBroken': 'Broken',
+        'admin.products.colProduct': 'Product',
+        'admin.products.colCategory': 'Category',
+        'admin.products.colTags': 'Tags',
+        'admin.products.colPrice': 'Price',
+        'admin.products.colStock': 'Stock',
+        'admin.products.colStatus': 'Status',
+        'admin.products.notFound': 'Products not found',
+        'admin.products.statusPublished': 'Published',
+        'admin.products.statusDraft': 'Draft',
+        'admin.products.prev': 'Previous',
+        'admin.products.next': 'Next',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 import AdminProductsPage from './page';
 
 
@@ -143,7 +172,7 @@ describe('AdminProductsPage', () => {
 
   it('renders search input', () => {
     renderPage();
-    expect(screen.getByPlaceholderText('Поиск товаров...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search products...')).toBeInTheDocument();
   });
 
   it('renders pagination with page numbers', () => {
@@ -156,8 +185,8 @@ describe('AdminProductsPage', () => {
 
   it('renders view switch tabs', () => {
     renderPage();
-    expect(screen.getByText('Все')).toBeInTheDocument();
-    expect(screen.getByText('Проблемные')).toBeInTheDocument();
+    expect(screen.getByText('All')).toBeInTheDocument();
+    expect(screen.getByText('Broken')).toBeInTheDocument();
   });
 
   it('shows loading spinner when fetching', () => {

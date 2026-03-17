@@ -22,6 +22,52 @@ jest.mock('@/lib/i18n', () => ({
         'product.tags': 'Tags',
         'favorites.empty': 'No favorites yet',
         'favorites.title': 'Favorites',
+        'nav.admin': 'Admin',
+        'admin.dashboard.products': 'Products',
+        'admin.product.basicInfo': 'Basic information',
+        'admin.product.pricingAndStock': 'Pricing & Stock',
+        'admin.product.categoryAndTags': 'Category & Tags',
+        'admin.product.images': 'Images',
+        'admin.product.name': 'Name (UK)',
+        'admin.product.nameEn': 'Name (EN)',
+        'admin.product.description': 'Description (UK)',
+        'admin.product.descriptionEn': 'Description (EN)',
+        'admin.product.slug': 'Slug',
+        'admin.product.slugHint': 'Used in URL. Generated automatically from name.',
+        'admin.product.priceLabel': 'Price (₴)',
+        'admin.product.oldPriceLabel': 'Compare price (₴)',
+        'admin.product.stockLabel': 'Stock',
+        'admin.product.optional': 'Optional',
+        'admin.product.category': 'Category',
+        'admin.product.selectCategory': 'Select category',
+        'admin.product.tags': 'Tags',
+        'admin.product.uploadFile': 'Upload file',
+        'admin.product.byUrl': 'By URL',
+        'admin.product.imageUrlsLabel': 'Image URLs',
+        'admin.product.imageUrlsHint': 'Multiple URLs separated by commas',
+        'admin.product.currentImages': 'Current images',
+        'admin.product.preview': 'Preview',
+        'admin.product.publishNow': 'Publish immediately',
+        'admin.product.publishedLabel': 'Published',
+        'admin.product.create': 'Create product',
+        'admin.product.creating': 'Creating...',
+        'admin.product.cancel': 'Cancel',
+        'admin.product.new': 'New product',
+        'admin.product.validation.required': 'Required',
+        'admin.product.validation.nameMax': 'Max 200 characters',
+        'admin.product.validation.slugFormat': 'Lowercase letters, digits and hyphens only',
+        'admin.product.validation.descriptionMin': 'Min 10 characters',
+        'admin.product.validation.pricePositive': 'Must be greater than 0',
+        'admin.product.validation.stockWhole': 'Must be a whole number ≥ 0',
+        'admin.product.validation.categoryRequired': 'Select a category',
+        'admin.product.validation.imageUrlsInvalid': 'Each URL must be valid (https://...)',
+        'admin.product.validation.imageRequired': 'Add at least one image',
+        'admin.product.validation.slugTaken': 'This slug is already taken',
+        'admin.product.validation.nameTaken': 'This name is already taken',
+        'admin.product.validation.saveFailed': 'Failed to save product',
+        'admin.product.validation.createFailed': 'Failed to create product',
+        'common.langUk': 'UK',
+        'common.langEn': 'EN',
       };
       return map[key] ?? key;
     },
@@ -131,36 +177,36 @@ describe('NewProductPage', () => {
   it('renders form sections', () => {
     renderPage();
     expect(screen.getByText('Basic information')).toBeInTheDocument();
-    expect(screen.getByText('Цена и склад')).toBeInTheDocument();
-    expect(screen.getByText('Изображения')).toBeInTheDocument();
+    expect(screen.getByText('Pricing & Stock')).toBeInTheDocument();
+    expect(screen.getByText('Images')).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', () => {
     renderPage();
-    expect(screen.getByText('Товари')).toBeInTheDocument();
+    expect(screen.getByText('Products')).toBeInTheDocument();
   });
 
   it('renders image upload tabs', () => {
     renderPage();
-    expect(screen.getByText('Загрузить файл')).toBeInTheDocument();
-    expect(screen.getByText('По ссылке')).toBeInTheDocument();
+    expect(screen.getByText('Upload file')).toBeInTheDocument();
+    expect(screen.getByText('By URL')).toBeInTheDocument();
   });
 
   it('switches between file and url tabs', () => {
     renderPage();
-    const urlTab = screen.getByText('По ссылке');
+    const urlTab = screen.getByText('By URL');
     fireEvent.click(urlTab);
     expect(screen.getByPlaceholderText(/example.com/)).toBeInTheDocument();
   });
 
   it('renders preview button', () => {
     renderPage();
-    expect(screen.getByText('Предпросмотр')).toBeInTheDocument();
+    expect(screen.getByText('Preview')).toBeInTheDocument();
   });
 
   it('opens and closes preview modal', () => {
     renderPage();
-    fireEvent.click(screen.getByText('Предпросмотр'));
+    fireEvent.click(screen.getByText('Preview'));
     expect(screen.getByText('Out of stock')).toBeInTheDocument();
     expect(screen.getByText('0 ₴')).toBeInTheDocument();
 
@@ -189,13 +235,13 @@ describe('NewProductPage', () => {
     await screen.findByText('Electronics');
 
     // Change the hidden native select (triggers RHF onChange → updates watch)
-    fireEvent.change(screen.getByDisplayValue('Выберите категорию'), {
+    fireEvent.change(screen.getByDisplayValue('Select category'), {
       target: { value: 'cat-1' },
     });
 
     // The visible custom dropdown trigger must now show the selected name
     await waitFor(() => {
-      expect(screen.getByRole('button', { name: 'Категория' })).toHaveTextContent('Electronics');
+      expect(screen.getByRole('button', { name: 'Category' })).toHaveTextContent('Electronics');
     });
   });
 
@@ -231,13 +277,13 @@ describe('NewProductPage', () => {
     fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
 
     await screen.findByText('Electronics');
-    fireEvent.change(screen.getByDisplayValue('Выберите категорию'), { target: { value: 'cat-1' } });
+    fireEvent.change(screen.getByDisplayValue('Select category'), { target: { value: 'cat-1' } });
 
     // Switch to URL tab and enter image URL
-    fireEvent.click(screen.getByText('По ссылке'));
+    fireEvent.click(screen.getByText('By URL'));
     fireEvent.change(screen.getByPlaceholderText(/example.com/), { target: { value: 'https://img.jpg' } });
 
-    fireEvent.submit(screen.getByText('Создать товар').closest('form')!);
+    fireEvent.submit(screen.getByText('Create product').closest('form')!);
 
     await waitFor(() => {
       expect(mockApiPost).toHaveBeenCalledWith('/products', expect.objectContaining({ name: 'Test' }));
@@ -260,19 +306,19 @@ describe('NewProductPage', () => {
     fireEvent.change(screen.getByPlaceholderText('0.00'), { target: { value: '100' } });
 
     await screen.findByText('Electronics');
-    fireEvent.change(screen.getByDisplayValue('Выберите категорию'), { target: { value: 'cat-1' } });
+    fireEvent.change(screen.getByDisplayValue('Select category'), { target: { value: 'cat-1' } });
 
-    fireEvent.click(screen.getByText('По ссылке'));
+    fireEvent.click(screen.getByText('By URL'));
     fireEvent.change(screen.getByPlaceholderText(/example.com/), { target: { value: 'https://img.jpg' } });
 
-    fireEvent.submit(screen.getByText('Создать товар').closest('form')!);
+    fireEvent.submit(screen.getByText('Create product').closest('form')!);
 
     expect(await screen.findByText('Ошибка валидации')).toBeInTheDocument();
   });
 
   it('renders publish checkbox', () => {
     renderPage();
-    expect(screen.getByText('Опубликовать сразу')).toBeInTheDocument();
+    expect(screen.getByText('Publish immediately')).toBeInTheDocument();
   });
 
   it('displays thumbnail after file selection', () => {
@@ -290,7 +336,7 @@ describe('NewProductPage', () => {
 
   it('file tab is active by default', () => {
     renderPage();
-    const fileTab = screen.getByText('Загрузить файл');
+    const fileTab = screen.getByText('Upload file');
     expect(fileTab).toHaveClass('bg-white');
   });
 
@@ -299,7 +345,7 @@ describe('NewProductPage', () => {
     await screen.findByText('Sale');
 
     // comparePrice is the first "Необязательно" input (before SKU)
-    const comparePriceInput = screen.getAllByPlaceholderText('Необязательно')[0];
+    const comparePriceInput = screen.getAllByPlaceholderText('Optional')[0];
     fireEvent.change(comparePriceInput, { target: { value: '150' } });
 
     expect(screen.getByText('Sale')).toHaveClass('bg-primary');
@@ -309,7 +355,7 @@ describe('NewProductPage', () => {
     renderPage();
     await screen.findByText('Sale');
 
-    const comparePriceInput = screen.getAllByPlaceholderText('Необязательно')[0];
+    const comparePriceInput = screen.getAllByPlaceholderText('Optional')[0];
 
     fireEvent.change(comparePriceInput, { target: { value: '150' } });
     expect(screen.getByText('Sale')).toHaveClass('bg-primary');

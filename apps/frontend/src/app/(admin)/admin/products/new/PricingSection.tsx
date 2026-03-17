@@ -1,5 +1,8 @@
+'use client';
+
 import { useFormContext } from 'react-hook-form';
 import { TextField } from '@/components/ui/TextField';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
@@ -7,14 +10,15 @@ import type { CreateProductFormValues } from './page.constants';
 
 export const PricingSection = () => {
   const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { t } = useLanguage();
 
   return (
     <div className={s.card}>
-      <h2 className={s.cardTitle}>Цена и склад</h2>
+      <h2 className={s.cardTitle}>{t('admin.product.pricingAndStock')}</h2>
 
       <div className={s.grid2}>
         <TextField
-          label="Цена (₴)"
+          label={t('admin.product.priceLabel')}
           tooltip={FIELD_TOOLTIPS.price}
           type="number"
           step="0.01"
@@ -24,12 +28,12 @@ export const PricingSection = () => {
           {...register('price')}
         />
         <TextField
-          label="Старая цена (₴)"
+          label={t('admin.product.oldPriceLabel')}
           tooltip={FIELD_TOOLTIPS.comparePrice}
           type="number"
           step="0.01"
           min="0"
-          placeholder="Необязательно"
+          placeholder={t('admin.product.optional')}
           error={errors.comparePrice?.message}
           {...register('comparePrice')}
         />
@@ -37,7 +41,7 @@ export const PricingSection = () => {
 
       <div className={s.grid2}>
         <TextField
-          label="Остаток на складе"
+          label={t('admin.product.stockLabel')}
           tooltip={FIELD_TOOLTIPS.stock}
           type="number"
           min="0"
@@ -47,7 +51,7 @@ export const PricingSection = () => {
         <TextField
           label="SKU"
           tooltip={FIELD_TOOLTIPS.sku}
-          placeholder="Необязательно"
+          placeholder={t('admin.product.optional')}
           error={errors.sku?.message}
           {...register('sku')}
         />

@@ -3,8 +3,8 @@
 import { useMemo } from 'react';
 import { useAnalyticsSummary } from '@/lib/hooks/useAdmin';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { breadcrumbs } from './page.constants';
 import { STATUS_LABELS, PIE_COLORS, DELIVERY_LABELS } from '@/lib/constants/order';
 import { StatsSection } from './StatsSection';
 import { OrdersByStatusCard } from './OrdersByStatusCard';
@@ -19,7 +19,9 @@ import { LowStockCard } from './LowStockCard';
 
 const DashboardPage = () => {
   const { data: summary, error: queryError, isLoading } = useAnalyticsSummary();
-  const error = queryError ? 'Не удалось загрузить аналитику. Убедитесь, что вы администратор.' : null;
+  const { t } = useLanguage();
+  const breadcrumbs = useMemo(() => [{ label: t('admin.dashboard.title') }], [t]);
+  const error = queryError ? t('admin.dashboard.loadError') : null;
 
   const revenueChartData = useMemo(() => {
     if (!summary) return [];

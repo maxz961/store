@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { Pencil } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { formatCurrency } from '@/lib/constants/format';
 import { api } from '@/lib/api';
@@ -15,6 +16,7 @@ import type { ProductRowProps } from './page.types';
 
 export const ProductRow = ({ product }: ProductRowProps) => {
   const router = useRouter();
+  const { t } = useLanguage();
   const errorReported = useRef(false);
   const [imgError, setImgError] = useState(false);
 
@@ -85,8 +87,8 @@ export const ProductRow = ({ product }: ProductRowProps) => {
       </td>
       <td className={s.tdCenter}>
         <If condition={product.isPublished}>
-          <Then><span className={s.statusPublished}>Published</span></Then>
-          <Else><span className={s.statusDraft}>Draft</span></Else>
+          <Then><span className={s.statusPublished}>{t('admin.products.statusPublished')}</span></Then>
+          <Else><span className={s.statusDraft}>{t('admin.products.statusDraft')}</span></Else>
         </If>
       </td>
       <td className={s.td}>
