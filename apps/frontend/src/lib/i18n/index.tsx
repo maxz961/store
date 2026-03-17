@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useCallback, useContext, useMemo, useSyncExternalStore } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore } from 'react';
 import { en } from './en';
 import { uk } from './uk';
 import type { Translations } from './en';
@@ -85,6 +85,10 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   //   - After hydration → getLangSnapshot() reads localStorage → re-render to stored lang
   //   - React Fast Refresh safe: no useState, reads directly from the store each render
   const lang = useSyncExternalStore(subscribeLang, getLangSnapshot, getServerLangSnapshot);
+
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   const setLang = useCallback((next: Lang) => {
     setStoredLang(next);
