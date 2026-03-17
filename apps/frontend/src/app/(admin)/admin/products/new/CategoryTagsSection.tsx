@@ -5,6 +5,7 @@ import { When } from 'react-if';
 import { SelectField } from '@/components/ui/SelectField';
 import { FieldTooltip } from '@/components/ui/FieldTooltip';
 import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { TagToggleButton } from './TagToggleButton';
 import { s } from './page.styled';
 import { FIELD_TOOLTIPS } from './page.constants';
@@ -20,7 +21,7 @@ export const CategoryTagsSection = ({
 }: CategoryTagsSectionProps) => {
   const { control, formState: { errors } } = useFormContext<CreateProductFormValues>();
   const { field: categoryField } = useController({ name: 'categoryId', control });
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   return (
     <div className={s.card}>
@@ -46,6 +47,7 @@ export const CategoryTagsSection = ({
               <TagToggleButton
                 key={tag.id}
                 tag={tag}
+                label={getLocalizedText(lang, tag.name, tag.nameEn)}
                 isActive={selectedTags.includes(tag.id)}
                 onClick={onToggleTag(tag.id)}
               />

@@ -6,7 +6,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { If, Then, Else, When } from 'react-if';
 import { Eye } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { cn, getLocalizedText } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/Spinner';
 import { CheckboxField } from '@/components/ui/CheckboxField';
@@ -37,7 +37,7 @@ interface ProductFormProps {
 export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
   const isEdit = mode === 'edit';
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   const { data: product, isLoading, isError } = useProduct(productSlug ?? '');
   const { data: categories = [] } = useCategories();
@@ -52,8 +52,8 @@ export const ProductForm = ({ mode, productSlug }: ProductFormProps) => {
   const formRef = useRef<HTMLFormElement>(null);
 
   const categoryOptions = useMemo(
-    () => categories.map((c) => ({ value: c.id, label: c.name })),
-    [categories],
+    () => categories.map((c) => ({ value: c.id, label: getLocalizedText(lang, c.name, c.nameEn) })),
+    [categories, lang],
   );
 
   const discountTagId = useMemo(
