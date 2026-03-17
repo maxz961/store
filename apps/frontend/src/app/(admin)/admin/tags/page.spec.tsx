@@ -29,6 +29,10 @@ jest.mock('@/lib/hooks/useAuth', () => ({
   useAuth: () => ({ isAdmin: true }),
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'en', setLang: jest.fn(), t: (key: string) => key }),
+}));
+
 import TagsPage from './page';
 
 
@@ -67,8 +71,8 @@ describe('TagsPage', () => {
 
   it('loads and displays tags with color dots', async () => {
     renderPage();
-    expect(await screen.findByText('Новинка')).toBeInTheDocument();
-    expect(screen.getByText('Скидка')).toBeInTheDocument();
+    expect(await screen.findByText('New')).toBeInTheDocument();
+    expect(screen.getByText('Sale')).toBeInTheDocument();
     expect(screen.getByText('4')).toBeInTheDocument();
   });
 
@@ -103,7 +107,7 @@ describe('TagsPage', () => {
 
   it('renders edit and delete buttons for each tag', async () => {
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
     expect(screen.getAllByTestId('icon-pencil')).toHaveLength(2);
     expect(screen.getAllByTestId('icon-trash')).toHaveLength(2);
   });
@@ -117,7 +121,7 @@ describe('TagsPage', () => {
   it('clicking delete opens confirm modal with tag name', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
 
     const trashButtons = screen.getAllByTestId('icon-trash');
     await user.click(trashButtons[0].closest('button')!);
@@ -131,7 +135,7 @@ describe('TagsPage', () => {
   it('confirming delete calls delete API', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
 
     const trashButtons = screen.getAllByTestId('icon-trash');
     await user.click(trashButtons[0].closest('button')!);
@@ -145,7 +149,7 @@ describe('TagsPage', () => {
   it('cancelling delete modal closes without deleting', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
 
     const trashButtons = screen.getAllByTestId('icon-trash');
     await user.click(trashButtons[0].closest('button')!);
@@ -158,7 +162,7 @@ describe('TagsPage', () => {
   it('shows slug error inline when create returns Slug conflict', async () => {
     mockApiPost = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
 
     fireEvent.change(screen.getByPlaceholderText('New arrival'), { target: { value: 'Новый' } });
     fireEvent.change(screen.getByPlaceholderText('new-arrival'), { target: { value: 'new' } });
@@ -183,7 +187,7 @@ describe('TagsPage', () => {
   it('shows name error inline when create returns name conflict', async () => {
     mockApiPost = jest.fn().mockRejectedValue(new Error('name is already taken'));
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
 
     fireEvent.change(screen.getByPlaceholderText('New arrival'), { target: { value: 'Новинка' } });
     fireEvent.change(screen.getByPlaceholderText('new-arrival'), { target: { value: 'new-2' } });
@@ -209,7 +213,7 @@ describe('TagsPage', () => {
     mockApiPut = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
 
     const pencilButtons = screen.getAllByTestId('icon-pencil');
     await user.click(pencilButtons[0].closest('button')!);
@@ -223,7 +227,7 @@ describe('TagsPage', () => {
   it('shows edit warning when editing tag with products', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Новинка');
+    await screen.findByText('New');
 
     const pencilButtons = screen.getAllByTestId('icon-pencil');
     await user.click(pencilButtons[0].closest('button')!);

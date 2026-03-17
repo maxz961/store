@@ -29,6 +29,10 @@ jest.mock('@/lib/hooks/useAuth', () => ({
   useAuth: () => ({ isAdmin: true }),
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'en', setLang: jest.fn(), t: (key: string) => key }),
+}));
+
 import CategoriesPage from './page';
 
 
@@ -67,8 +71,8 @@ describe('CategoriesPage', () => {
 
   it('loads and displays categories', async () => {
     renderPage();
-    expect(await screen.findByText('Электроника')).toBeInTheDocument();
-    expect(screen.getByText('Одежда')).toBeInTheDocument();
+    expect(await screen.findByText('Electronics')).toBeInTheDocument();
+    expect(screen.getByText('Clothing')).toBeInTheDocument();
     expect(screen.getByText('5')).toBeInTheDocument();
   });
 
@@ -103,7 +107,7 @@ describe('CategoriesPage', () => {
 
   it('renders edit and delete buttons', async () => {
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
     expect(screen.getAllByTestId('icon-pencil')).toHaveLength(2);
     expect(screen.getAllByTestId('icon-trash')).toHaveLength(2);
   });
@@ -111,7 +115,7 @@ describe('CategoriesPage', () => {
   it('clicking delete opens confirm modal with category name', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
 
     const trashButtons = screen.getAllByTestId('icon-trash');
     await user.click(trashButtons[0].closest('button')!);
@@ -125,7 +129,7 @@ describe('CategoriesPage', () => {
   it('confirming delete calls delete API', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
 
     const trashButtons = screen.getAllByTestId('icon-trash');
     await user.click(trashButtons[0].closest('button')!);
@@ -139,7 +143,7 @@ describe('CategoriesPage', () => {
   it('cancelling delete modal closes without deleting', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
 
     const trashButtons = screen.getAllByTestId('icon-trash');
     await user.click(trashButtons[0].closest('button')!);
@@ -152,7 +156,7 @@ describe('CategoriesPage', () => {
   it('shows slug error inline when create returns Slug conflict', async () => {
     mockApiPost = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
 
     fireEvent.change(screen.getByPlaceholderText('Electronics'), { target: { value: 'Новая' } });
     fireEvent.change(screen.getByPlaceholderText('electronics'), { target: { value: 'electronics' } });
@@ -177,7 +181,7 @@ describe('CategoriesPage', () => {
   it('shows name error inline when create returns name conflict', async () => {
     mockApiPost = jest.fn().mockRejectedValue(new Error('name is already taken'));
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
 
     fireEvent.change(screen.getByPlaceholderText('Electronics'), { target: { value: 'Электроника' } });
     fireEvent.change(screen.getByPlaceholderText('electronics'), { target: { value: 'electronics-2' } });
@@ -203,7 +207,7 @@ describe('CategoriesPage', () => {
     mockApiPut = jest.fn().mockRejectedValue(new Error('Slug уже занят, выберите другой'));
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
 
     const pencilButtons = screen.getAllByTestId('icon-pencil');
     await user.click(pencilButtons[0].closest('button')!);
@@ -217,7 +221,7 @@ describe('CategoriesPage', () => {
   it('shows edit warning when editing category with products', async () => {
     const user = userEvent.setup();
     renderPage();
-    await screen.findByText('Электроника');
+    await screen.findByText('Electronics');
 
     const pencilButtons = screen.getAllByTestId('icon-pencil');
     await user.click(pencilButtons[0].closest('button')!);

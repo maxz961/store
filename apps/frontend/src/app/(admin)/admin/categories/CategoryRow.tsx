@@ -1,17 +1,22 @@
+'use client';
+
 import { Pencil, Trash2 } from 'lucide-react';
 import { When } from 'react-if';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './page.styled';
 import type { CategoryRowProps } from './page.types';
 
 
 export const CategoryRow = ({ category, canDelete, onEdit, onDelete }: CategoryRowProps) => {
+  const { lang } = useLanguage();
   const handleEdit = () => onEdit(category);
   const handleDelete = () => onDelete(category);
 
   return (
     <tr className={s.tr}>
       <td className={s.td}>
-        <p className={s.name}>{category.name}</p>
+        <p className={s.name}>{getLocalizedText(lang, category.name, category.nameEn)}</p>
         <p className={s.slug}>{category.slug}</p>
       </td>
       <td className={s.tdCenter}>
