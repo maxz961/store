@@ -10,6 +10,8 @@ import { SimilarProducts } from './SimilarProducts';
 import { RecentlyViewed } from './RecentlyViewed';
 import { useTrackProductView } from './useTrackProductView';
 import { useProduct } from '@/lib/hooks/useProducts';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './page.styled';
 import type { Props } from './page.types';
 
@@ -17,6 +19,7 @@ import type { Props } from './page.types';
 const ProductPage = (props: Props) => {
   const { slug } = use(props.params);
   const { data: product, isLoading, isError } = useProduct(slug);
+  const { t, lang } = useLanguage();
   useTrackProductView(product);
 
   if (isLoading) {
@@ -31,17 +34,17 @@ const ProductPage = (props: Props) => {
     return (
       <div className={s.page}>
         <div className={s.error}>
-          <p className={s.errorTitle}>Товар не найден</p>
-          <p className={s.errorText}>Возможно, он был удалён или ссылка неверна</p>
+          <p className={s.errorTitle}>{t('product.notFound')}</p>
+          <p className={s.errorText}>{t('product.notFoundText')}</p>
         </div>
       </div>
     );
   }
 
   const breadcrumbs = [
-    { label: 'Каталог', href: '/products' },
-    { label: product.category.name, href: `/products?categorySlug=${product.category.slug}` },
-    { label: product.name },
+    { label: t('catalog.title'), href: '/products' },
+    { label: getLocalizedText(lang, product.category.name, product.category.nameEn), href: `/products?categorySlug=${product.category.slug}` },
+    { label: getLocalizedText(lang, product.name, product.nameEn) },
   ];
 
   return (

@@ -27,6 +27,15 @@ export const uk: Translations = {
     tags: 'Теги',
     inStock: 'В наявності',
     pieces: 'шт.',
+    notFound: 'Товар не знайдено',
+    notFoundText: 'Можливо, його було видалено або посилання невірне',
+    similar: 'Схожі товари',
+    recentlyViewed: 'Нещодавно переглянуті',
+    showAllReviews: 'Показати всі',
+    writeReview: 'Залишити відгук',
+    reviewsOne: 'відгук',
+    reviewsFew: 'відгуки',
+    reviewsMany: 'відгуків',
   },
 
   catalog: {

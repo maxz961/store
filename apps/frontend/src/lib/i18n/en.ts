@@ -24,6 +24,15 @@ export const en = {
     tags: 'Tags',
     inStock: 'In stock',
     pieces: 'pcs.',
+    notFound: 'Product not found',
+    notFoundText: 'It may have been deleted or the link is invalid',
+    similar: 'Similar products',
+    recentlyViewed: 'Recently viewed',
+    showAllReviews: 'Show all',
+    writeReview: 'Write a review',
+    reviewsOne: 'review',
+    reviewsFew: 'reviews',
+    reviewsMany: 'reviews',
   },
 
   catalog: {

@@ -20,6 +20,16 @@ jest.mock('@/lib/i18n', () => ({
         'product.description': 'Description',
         'product.category': 'Category',
         'product.tags': 'Tags',
+        'product.notFound': 'Product not found',
+        'product.notFoundText': 'It may have been deleted or the link is invalid',
+        'product.similar': 'Similar products',
+        'product.recentlyViewed': 'Recently viewed',
+        'product.showAllReviews': 'Show all',
+        'product.writeReview': 'Write a review',
+        'product.reviewsOne': 'review',
+        'product.reviewsFew': 'reviews',
+        'product.reviewsMany': 'reviews',
+        'catalog.title': 'Catalog',
         'favorites.empty': 'No favorites yet',
         'favorites.title': 'Favorites',
       };
@@ -169,27 +179,27 @@ describe('ProductPage', () => {
   it('shows error state when product not found', async () => {
     mockProductHook = { data: undefined, isLoading: false, isError: true };
     await renderPage();
-    expect(screen.getByText('Товар не найден')).toBeInTheDocument();
-    expect(screen.getByText('Возможно, он был удалён или ссылка неверна')).toBeInTheDocument();
+    expect(screen.getByText('Product not found')).toBeInTheDocument();
+    expect(screen.getByText('It may have been deleted or the link is invalid')).toBeInTheDocument();
   });
 
   it('renders reviews summary with count and rating', async () => {
     await renderPage();
-    expect(screen.getByText('Отзывы')).toBeInTheDocument();
-    expect(screen.getByText(/4\.5 · 2 отзыва/)).toBeInTheDocument();
-    expect(screen.getByText('Показать все')).toBeInTheDocument();
+    expect(screen.getByText('Reviews')).toBeInTheDocument();
+    expect(screen.getByText(/4\.5 · 2 reviews/)).toBeInTheDocument();
+    expect(screen.getByText('Show all')).toBeInTheDocument();
   });
 
-  it('shows "Оставить отзыв" button when no reviews', async () => {
+  it('shows "Write a review" button when no reviews', async () => {
     mockProductHook = { ...mockProductHook, data: { ...baseProduct, reviews: [] } };
     await renderPage();
-    expect(screen.getByText('Оставить отзыв')).toBeInTheDocument();
+    expect(screen.getByText('Write a review')).toBeInTheDocument();
   });
 
-  it('opens ReviewModal when "Показать все" is clicked', async () => {
+  it('opens ReviewModal when "Show all" is clicked', async () => {
     await renderPage();
     expect(screen.queryByTestId('review-modal')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText('Показать все'));
+    fireEvent.click(screen.getByText('Show all'));
     expect(screen.getByTestId('review-modal')).toBeInTheDocument();
   });
 
@@ -226,7 +236,7 @@ describe('ProductPage', () => {
 
   it('renders breadcrumbs', async () => {
     await renderPage();
-    expect(screen.getByText('Каталог')).toBeInTheDocument();
+    expect(screen.getByText('Catalog')).toBeInTheDocument();
   });
 
   it('renders product description', async () => {
