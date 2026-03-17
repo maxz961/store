@@ -6,12 +6,14 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { When, If, Then, Else } from 'react-if';
 import { Spinner } from '@/components/ui/Spinner';
 import { useUsers, useUpdateUserRole, useBanUser } from '@/lib/hooks/useUsers';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 import { UsersTable } from './UsersTable';
 
 
 const AdminUsersPage = () => {
+  const { isAdmin } = useAuth();
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useUsers();
   const updateRole = useUpdateUserRole();
   const banUser = useBanUser();
@@ -79,6 +81,7 @@ const AdminUsersPage = () => {
           <>
             <UsersTable
               users={filteredUsers}
+              canEditRole={isAdmin}
               onUpdateRole={handleUpdateRole}
               onToggleBan={handleToggleBan}
             />

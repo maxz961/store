@@ -17,6 +17,7 @@ import {
   useDeleteTag,
 } from '@/lib/hooks/useProducts';
 import type { Tag } from '@/lib/hooks/useProducts';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { s } from './page.styled';
 import {
   tagFormSchema,
@@ -38,6 +39,7 @@ const makeEmptyValues = (): TagFormValues => ({
 });
 
 const TagsPage = () => {
+  const { isAdmin } = useAuth();
   const { data: tags = [], isLoading } = useTags();
   const createTag = useCreateTag();
   const updateTag = useUpdateTag();
@@ -247,6 +249,7 @@ const TagsPage = () => {
                       <TagRow
                         key={tag.id}
                         tag={tag}
+                        canDelete={isAdmin}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                       />

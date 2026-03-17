@@ -25,6 +25,10 @@ jest.mock('@/lib/api', () => ({
   },
 }));
 
+jest.mock('@/lib/hooks/useAuth', () => ({
+  useAuth: () => ({ isAdmin: true }),
+}));
+
 import TagsPage from './page';
 
 

@@ -260,6 +260,7 @@ enum DiscountType {
 
 enum Role {
   CUSTOMER
+  MANAGER
   ADMIN
 }
 

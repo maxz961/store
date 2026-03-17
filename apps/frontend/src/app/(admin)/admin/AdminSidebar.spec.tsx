@@ -114,4 +114,9 @@ describe('AdminSidebar', () => {
     render(<AdminSidebar />);
     expect(screen.queryByTestId('logs-unread-badge')).not.toBeInTheDocument();
   });
+
+  it('shows Users link for all admin users', () => {
+    render(<AdminSidebar />);
+    expect(screen.getByText('Users')).toBeInTheDocument();
+  });
 });

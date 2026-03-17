@@ -15,6 +15,7 @@ import {
   useUpdateCategory,
   useDeleteCategory,
 } from '@/lib/hooks/useProducts';
+import { useAuth } from '@/lib/hooks/useAuth';
 import type { Category } from '@/lib/hooks/useProducts';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
@@ -33,6 +34,7 @@ const EMPTY_VALUES: CategoryFormValues = {
 };
 
 const CategoriesPage = () => {
+  const { isAdmin } = useAuth();
   const { data: categories = [], isLoading } = useCategories();
   const createCategory = useCreateCategory();
   const updateCategory = useUpdateCategory();
@@ -234,6 +236,7 @@ const CategoriesPage = () => {
                       <CategoryRow
                         key={category.id}
                         category={category}
+                        canDelete={isAdmin}
                         onEdit={handleEdit}
                         onDelete={handleDelete}
                       />

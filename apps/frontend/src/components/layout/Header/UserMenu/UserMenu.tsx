@@ -7,7 +7,7 @@ import { s } from '../Header.styled';
 import type { UserMenuProps } from './UserMenu.types';
 
 
-export const UserMenu = ({ user, isAdmin, logout }: UserMenuProps) => (
+export const UserMenu = ({ user, isAdmin, isManager, logout }: UserMenuProps) => (
   <>
     <div className={s.dropdownHeader}>
       <p className={s.dropdownName}>{user?.name ?? 'Пользователь'}</p>
@@ -24,7 +24,7 @@ export const UserMenu = ({ user, isAdmin, logout }: UserMenuProps) => (
       Мои заказы
     </Link>
 
-    <When condition={isAdmin}>
+    <When condition={isAdmin || isManager}>
       <div className={s.dropdownDivider} />
       <Link href="/admin/dashboard" className={s.dropdownItem}>
         <LayoutDashboard className={s.dropdownIcon} />

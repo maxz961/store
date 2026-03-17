@@ -4,7 +4,7 @@ import { s } from './page.styled';
 import type { TagRowProps } from './page.types';
 
 
-export const TagRow = ({ tag, onEdit, onDelete }: TagRowProps) => {
+export const TagRow = ({ tag, canDelete, onEdit, onDelete }: TagRowProps) => {
   const handleEdit = () => onEdit(tag);
   const handleDelete = () => onDelete(tag);
 
@@ -29,9 +29,11 @@ export const TagRow = ({ tag, onEdit, onDelete }: TagRowProps) => {
           <button className={s.editBtn} onClick={handleEdit}>
             <Pencil className="h-3.5 w-3.5" />
           </button>
-          <button className={s.deleteBtn} onClick={handleDelete}>
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+          <When condition={canDelete}>
+            <button className={s.deleteBtn} onClick={handleDelete}>
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </When>
         </div>
       </td>
     </tr>

@@ -49,6 +49,10 @@ jest.mock('@/lib/api', () => ({
   },
 }));
 
+jest.mock('@/lib/hooks/useAuth', () => ({
+  useAuth: () => ({ isAdmin: true }),
+}));
+
 import AdminUsersPage from './page';
 
 

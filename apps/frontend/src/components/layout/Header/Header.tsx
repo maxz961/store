@@ -28,17 +28,18 @@ export const Header = () => {
   const isAdminPage = pathname.startsWith('/admin');
   const { theme, setTheme } = useTheme();
   const { t } = useLanguage();
-  const { user, isAuthenticated, isAdmin, login, logout } = useAuth();
+  const { user, isAuthenticated, isAdmin, isManager, login, logout } = useAuth();
   const itemCount = useCartStore((state) => state.items.reduce((acc, i) => acc + i.quantity, 0));
-  const { data: myUnreadCount } = useMyUnreadCount(isAuthenticated && !isAdmin);
-  const { data: adminUnreadCount } = useAdminUnreadCount(isAdmin);
-  const { data: imageErrorData } = useImageErrorCount(isAdmin);
-  const { data: logsUnread } = useUnreadLogsCount(isAdmin);
-  const hasUnread = isAdmin
+  const isAdminOrManager = isAdmin || isManager;
+  const { data: myUnreadCount } = useMyUnreadCount(isAuthenticated && !isAdminOrManager);
+  const { data: adminUnreadCount } = useAdminUnreadCount(isAdminOrManager);
+  const { data: imageErrorData } = useImageErrorCount(isAdminOrManager);
+  const { data: logsUnread } = useUnreadLogsCount(isAdminOrManager);
+  const hasUnread = isAdminOrManager
     ? (!!adminUnreadCount && adminUnreadCount > 0)
     : (!!myUnreadCount && myUnreadCount > 0);
-  const hasImageErrors = isAdmin && !!imageErrorData?.count && imageErrorData.count > 0;
-  const hasUnreadLogs = isAdmin && !!logsUnread && logsUnread > 0;
+  const hasImageErrors = isAdminOrManager && !!imageErrorData?.count && imageErrorData.count > 0;
+  const hasUnreadLogs = isAdminOrManager && !!logsUnread && logsUnread > 0;
 
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -46,8 +47,8 @@ export const Header = () => {
     router.prefetch('/account/orders');
     router.prefetch('/account/support');
     router.prefetch('/cart');
-    if (isAdmin) router.prefetch('/admin/dashboard');
-  }, [router, isAuthenticated, isAdmin]);
+    if (isAdminOrManager) router.prefetch('/admin/dashboard');
+  }, [router, isAuthenticated, isAdminOrManager]);
 
   const handleToggleTheme = useCallback(() => setTheme(theme === 'dark' ? 'light' : 'dark'), [theme, setTheme]);
 
@@ -85,7 +86,7 @@ export const Header = () => {
           <If condition={isAuthenticated && !!user}>
             <Then>
               <Dropdown className={s.userDropdown} trigger={<UserTrigger image={user?.image} initials={initials} hasUnreadMessages={hasUnread} hasImageErrors={hasImageErrors} hasUnreadLogs={hasUnreadLogs} />}>
-                <UserMenu user={user!} isAdmin={isAdmin} logout={logout} />
+                <UserMenu user={user!} isAdmin={isAdmin} isManager={isManager} logout={logout} />
               </Dropdown>
             </Then>
             <Else>

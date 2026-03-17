@@ -162,7 +162,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
               <ShoppingCart className={s.buttonIcon} />
             </When>
             <When condition={cartState === 'loading'}>
-              <Spinner size="sm" />
+              <Spinner size="sm" className="mr-2" />
             </When>
             <When condition={cartState === 'success'}>
               <Check className={s.addToCartButtonSuccessIcon} />

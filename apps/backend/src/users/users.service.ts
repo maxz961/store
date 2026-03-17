@@ -22,6 +22,7 @@ export class UsersService {
         name: googleUser.name,
         image: googleUser.image,
         googleId: googleUser.googleId,
+        role: Role.MANAGER,
       },
     });
   }

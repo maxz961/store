@@ -4,7 +4,7 @@ import { UserRow } from './UserRow';
 import type { UsersTableProps } from './page.types';
 
 
-export const UsersTable = ({ users, onUpdateRole, onToggleBan }: UsersTableProps) => (
+export const UsersTable = ({ users, canEditRole, onUpdateRole, onToggleBan }: UsersTableProps) => (
   <div className={s.tableWrapper}>
     <table className={s.table}>
       <thead className={s.thead}>
@@ -26,6 +26,7 @@ export const UsersTable = ({ users, onUpdateRole, onToggleBan }: UsersTableProps
           <UserRow
             key={user.id}
             user={user}
+            canEditRole={canEditRole}
             onUpdateRole={onUpdateRole}
             onToggleBan={onToggleBan}
           />
