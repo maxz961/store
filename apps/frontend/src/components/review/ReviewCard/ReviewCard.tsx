@@ -22,7 +22,7 @@ export const ReviewCard = ({
   onDeleteReply,
 }: ReviewCardProps) => {
   const { user, isAdmin } = useAuth();
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const isOwn = user?.id === review.userId;
 
   const [isReplying, setIsReplying] = useState(false);
@@ -76,7 +76,7 @@ export const ReviewCard = ({
         </If>
 
         <div className={s.authorInfo}>
-          <p className={s.authorName}>{review.user.name ?? 'Аноним'}</p>
+          <p className={s.authorName}>{review.user.name ?? t('review.anonymous')}</p>
           <p className={s.date}>{date}</p>
         </div>
 
@@ -146,7 +146,7 @@ export const ReviewCard = ({
       <When condition={!!review.adminReply}>
         <div className={s.adminReply}>
           <div className={s.adminReplyHeader}>
-            <span className={s.adminReplyLabel}>Ответ магазина</span>
+            <span className={s.adminReplyLabel}>{t('review.shopReply')}</span>
             <When condition={isAdmin}>
               <Button
                 variant="ghost"
@@ -173,17 +173,17 @@ export const ReviewCard = ({
           <textarea
             className={s.replyTextarea}
             rows={2}
-            placeholder="Ответ от имени магазина..."
+            placeholder={t('review.replyPlaceholder')}
             value={replyText}
             onChange={handleReplyTextChange}
             maxLength={2000}
           />
           <div className={s.replyActions}>
             <Button size="sm" onClick={handleSubmitReply} disabled={!replyText.trim()}>
-              Ответить
+              {t('review.reply')}
             </Button>
             <Button size="sm" variant="outline" onClick={handleCancelReply}>
-              Отмена
+              {t('common.cancel')}
             </Button>
           </div>
         </div>

@@ -1,9 +1,9 @@
 import type { ReviewSort } from '@/lib/hooks/useReviews';
 
 
-export const SORT_OPTIONS: { value: ReviewSort; label: string }[] = [
-  { value: 'newest', label: 'Новые' },
-  { value: 'oldest', label: 'Старые' },
-  { value: 'highest', label: 'Высокий рейтинг' },
-  { value: 'lowest', label: 'Низкий рейтинг' },
+export const SORT_OPTIONS: { value: ReviewSort; labelKey: string }[] = [
+  { value: 'newest', labelKey: 'review.sortNewest' },
+  { value: 'oldest', labelKey: 'review.sortOldest' },
+  { value: 'highest', labelKey: 'review.sortHighest' },
+  { value: 'lowest', labelKey: 'review.sortLowest' },
 ];

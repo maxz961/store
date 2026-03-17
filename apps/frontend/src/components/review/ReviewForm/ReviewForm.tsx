@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { StarRating } from '@/components/ui/StarRating';
 import { ImageUpload } from '@/components/ui/ImageUpload';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/i18n';
 import {
   useCreateReview,
   useUpdateReview,
@@ -19,6 +20,7 @@ import { s } from './ReviewForm.styled';
 
 export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }: ReviewFormProps) => {
   const { isAuthenticated } = useAuth();
+  const { t } = useLanguage();
   const createReview = useCreateReview(productSlug);
   const updateReview = useUpdateReview(productSlug);
   const uploadImages = useUploadReviewImages();
@@ -38,8 +40,8 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
     return (
       <div className={s.notAuth}>
         <p className={s.notAuthText}>
-          <Link href="/login" className="text-primary hover:underline">Войдите</Link>
-          {' '}чтобы оставить отзыв
+          <Link href="/login" className="text-primary hover:underline">{t('review.loginToReview')}</Link>
+          {' '}{t('review.loginToReviewSuffix')}
         </p>
       </div>
     );
@@ -51,7 +53,7 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
     setSubmitError('');
 
     if (rating === 0) {
-      setRatingError('Выберите оценку');
+      setRatingError(t('review.selectRating'));
       return;
     }
 
@@ -83,7 +85,7 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
       }
       onSuccess?.();
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : 'Не удалось отправить отзыв');
+      setSubmitError(err instanceof Error ? err.message : t('review.submitError'));
     }
   };
 
@@ -93,14 +95,14 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
 
   return (
     <form onSubmit={handleSubmit} className={s.form}>
-      <p className={s.title}>{isEditing ? 'Редактировать отзыв' : 'Оставить отзыв'}</p>
+      <p className={s.title}>{isEditing ? t('review.editTitle') : t('product.writeReview')}</p>
 
       <When condition={!!submitError}>
         <div className={s.error}>{submitError}</div>
       </When>
 
       <div className={s.ratingField}>
-        <p className={s.ratingLabel}>Оценка</p>
+        <p className={s.ratingLabel}>{t('review.rating')}</p>
         <StarRating value={rating} onChange={setRating} size="lg" />
         <When condition={!!ratingError}>
           <p className={s.ratingError}>{ratingError}</p>
@@ -111,14 +113,14 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
         <Textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          placeholder="Расскажите о товаре..."
+          placeholder={t('review.commentPlaceholder')}
           maxLength={2000}
           rows={3}
         />
       </div>
 
       <div className={s.imagesField}>
-        <p className={s.imagesLabel}>Фото (необязательно)</p>
+        <p className={s.imagesLabel}>{t('review.photosLabel')}</p>
         <ImageUpload
           files={files}
           existingUrls={existingUrls}
@@ -130,7 +132,7 @@ export const ReviewForm = ({ productId, productSlug, existingReview, onSuccess }
 
       <div className={s.actions}>
         <Button type="submit" disabled={isSubmitting} className={s.submitButton}>
-          {isSubmitting ? 'Отправка...' : isEditing ? 'Сохранить' : 'Оставить отзыв'}
+          {isSubmitting ? t('review.submitting') : isEditing ? t('common.save') : t('product.writeReview')}
         </Button>
       </div>
     </form>

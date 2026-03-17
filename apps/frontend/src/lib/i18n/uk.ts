@@ -482,6 +482,28 @@ export const uk: Translations = {
     toggleTheme: 'Змінити тему',
   },
 
+  review: {
+    empty: 'Відгуків ще немає. Будьте першим!',
+    sortLabel: 'Сортування:',
+    sortNewest: 'Нові',
+    sortOldest: 'Старі',
+    sortHighest: 'Високий рейтинг',
+    sortLowest: 'Низький рейтинг',
+    anonymous: 'Анонім',
+    shopReply: 'Відповідь магазину',
+    replyPlaceholder: 'Відповідь від імені магазину...',
+    reply: 'Відповісти',
+    selectRating: 'Оберіть оцінку',
+    editTitle: 'Редагувати відгук',
+    rating: 'Оцінка',
+    commentPlaceholder: 'Розкажіть про товар...',
+    photosLabel: 'Фото (необов\'язково)',
+    submitting: 'Відправка...',
+    submitError: 'Не вдалося відправити відгук',
+    loginToReview: 'Увійдіть',
+    loginToReviewSuffix: 'щоб залишити відгук',
+  },
+
   status: {
     PENDING: 'Очікується',
     CONFIRMED: 'Підтверджено',

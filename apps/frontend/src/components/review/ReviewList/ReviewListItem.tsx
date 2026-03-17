@@ -18,7 +18,7 @@ export const ReviewListItem = ({
   onDelete,
   onImageClick,
 }: ReviewListItemProps) => {
-  const { lang } = useLanguage();
+  const { lang, t } = useLanguage();
   const initials = getInitials(review.user.name, undefined);
   const date = new Date(review.createdAt).toLocaleDateString(langToLocale(lang));
 
@@ -48,7 +48,7 @@ export const ReviewListItem = ({
         </If>
 
         <div className={s.authorInfo}>
-          <p className={s.authorName}>{review.user.name ?? 'Аноним'}</p>
+          <p className={s.authorName}>{review.user.name ?? t('review.anonymous')}</p>
           <p className={s.date}>{date}</p>
         </div>
 

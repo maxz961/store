@@ -1,6 +1,28 @@
 import { render, screen } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    t: (k: string) => {
+      const map: Record<string, string> = {
+        'review.loginToReview': 'Log in',
+        'review.loginToReviewSuffix': 'to leave a review',
+        'product.writeReview': 'Write a review',
+        'review.editTitle': 'Edit review',
+        'review.rating': 'Rating',
+        'review.commentPlaceholder': 'Tell us about the product...',
+        'review.photosLabel': 'Photos (optional)',
+        'review.submitting': 'Submitting...',
+        'review.submitError': 'Failed to submit the review',
+        'review.selectRating': 'Select a rating',
+        'common.save': 'Save',
+      };
+      return map[k] ?? k;
+    },
+  }),
+}));
+
 jest.mock('lucide-react', () => ({}));
 
 jest.mock('next/link', () => {
@@ -60,15 +82,15 @@ describe('ReviewForm', () => {
   it('shows login prompt when not authenticated', () => {
     (useAuthModule.useAuth as jest.Mock).mockReturnValue({ isAuthenticated: false });
     render(<ReviewForm {...defaultProps} />);
-    expect(screen.getByText('Войдите')).toBeInTheDocument();
-    expect(screen.getByText(/чтобы оставить отзыв/)).toBeInTheDocument();
+    expect(screen.getByText('Log in')).toBeInTheDocument();
+    expect(screen.getByText(/to leave a review/)).toBeInTheDocument();
   });
 
   it('renders review form title when authenticated', () => {
     (useAuthModule.useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
     render(<ReviewForm {...defaultProps} />);
     // Both title <p> and submit button contain this text
-    expect(screen.getAllByText('Оставить отзыв').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Write a review').length).toBeGreaterThan(0);
   });
 
   it('shows "Сохранить" button when editing existing review', () => {
@@ -80,19 +102,19 @@ describe('ReviewForm', () => {
       user: { id: 'u1', name: 'Test', image: null },
     };
     render(<ReviewForm {...defaultProps} existingReview={existingReview} />);
-    expect(screen.getByText('Сохранить')).toBeInTheDocument();
+    expect(screen.getByText('Save')).toBeInTheDocument();
   });
 
   it('renders textarea for comment', () => {
     (useAuthModule.useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
     render(<ReviewForm {...defaultProps} />);
-    expect(screen.getByPlaceholderText('Расскажите о товаре...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Tell us about the product...')).toBeInTheDocument();
   });
 
   it('submit button is right-aligned (justify-end on actions)', () => {
     (useAuthModule.useAuth as jest.Mock).mockReturnValue({ isAuthenticated: true });
     render(<ReviewForm {...defaultProps} />);
-    const btn = screen.getByRole('button', { name: 'Оставить отзыв' });
+    const btn = screen.getByRole('button', { name: 'Write a review' });
     const actionsDiv = btn?.parentElement;
     expect(actionsDiv?.className).toContain('justify-end');
   });

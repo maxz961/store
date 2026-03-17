@@ -479,6 +479,28 @@ export const en = {
     toggleTheme: 'Toggle theme',
   },
 
+  review: {
+    empty: 'No reviews yet. Be the first!',
+    sortLabel: 'Sort:',
+    sortNewest: 'Newest',
+    sortOldest: 'Oldest',
+    sortHighest: 'Highest rated',
+    sortLowest: 'Lowest rated',
+    anonymous: 'Anonymous',
+    shopReply: 'Shop reply',
+    replyPlaceholder: 'Reply on behalf of the shop...',
+    reply: 'Reply',
+    selectRating: 'Select a rating',
+    editTitle: 'Edit review',
+    rating: 'Rating',
+    commentPlaceholder: 'Tell us about the product...',
+    photosLabel: 'Photos (optional)',
+    submitting: 'Submitting...',
+    submitError: 'Failed to submit the review',
+    loginToReview: 'Log in',
+    loginToReviewSuffix: 'to leave a review',
+  },
+
   status: {
     PENDING: 'Pending',
     CONFIRMED: 'Confirmed',

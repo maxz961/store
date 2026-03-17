@@ -4,17 +4,19 @@ import { useState, useCallback } from 'react';
 import { X } from 'lucide-react';
 import { When } from 'react-if';
 import { ReviewListItem } from './ReviewListItem';
+import { useLanguage } from '@/lib/i18n';
 import type { ReviewListProps } from './ReviewList.types';
 import { s } from './ReviewList.styled';
 
 
 export const ReviewList = ({ reviews, currentUserId, onEdit, onDelete }: ReviewListProps) => {
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
+  const { t } = useLanguage();
 
   const closeLightbox = useCallback(() => setLightboxUrl(null), []);
 
   if (reviews.length === 0) {
-    return <p className={s.empty}>Пока нет отзывов</p>;
+    return <p className={s.empty}>{t('review.empty')}</p>;
   }
 
   return (

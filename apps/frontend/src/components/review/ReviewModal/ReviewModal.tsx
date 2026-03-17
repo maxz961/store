@@ -16,6 +16,7 @@ import {
   type ReviewSort,
 } from '@/lib/hooks/useReviews';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import type { ReviewModalProps } from './ReviewModal.types';
 import { SORT_OPTIONS } from './ReviewModal.constants';
 import { s } from './ReviewModal.styled';
@@ -23,6 +24,7 @@ import { s } from './ReviewModal.styled';
 
 export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProps) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [sort, setSort] = useState<ReviewSort>('newest');
   const [page, setPage] = useState(1);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
@@ -100,7 +102,7 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
       <div className={s.modal}>
         {/* Header */}
         <div className={s.header}>
-          <h2 className={s.title}>Отзывы ({total})</h2>
+          <h2 className={s.title}>{t('product.reviews')} ({total})</h2>
           <button className={s.closeButton} onClick={onClose}>
             <X className="h-4 w-4" />
           </button>
@@ -110,14 +112,14 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
         <When condition={total > 1}>
           <div className={s.toolbar}>
             <div className={s.sortGroup}>
-              <span className={s.sortLabel}>Сортировка:</span>
+              <span className={s.sortLabel}>{t('review.sortLabel')}</span>
               {SORT_OPTIONS.map((opt) => (
                 <button
                   key={opt.value}
                   className={cn(s.sortButton, sort === opt.value ? s.sortActive : s.sortInactive)}
                   onClick={handleSort(opt.value)}
                 >
-                  {opt.label}
+                  {t(opt.labelKey as Parameters<typeof t>[0])}
                 </button>
               ))}
             </div>
@@ -128,7 +130,7 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
         <div className={s.content}>
           <If condition={reviews.length === 0}>
             <Then>
-              <p className={s.empty}>Пока нет отзывов. Будьте первым!</p>
+              <p className={s.empty}>{t('review.empty')}</p>
             </Then>
             <Else>
               {reviews.map((review) => (
@@ -172,7 +174,7 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
           <If condition={editingReview || (showForm && !myReview)}>
             <Then>
               <div className={s.formHeader}>
-                <span className={s.formTitle}>Оставить отзыв</span>
+                <span className={s.formTitle}>{t('product.writeReview')}</span>
                 <When condition={!editingReview}>
                   <button type="button" className={s.formCloseBtn} onClick={handleCancelForm}>
                     <X className="h-4 w-4" />
@@ -189,7 +191,7 @@ export const ReviewModal = ({ productId, productSlug, onClose }: ReviewModalProp
             <Else>
               <When condition={!myReview}>
                 <button type="button" className={s.writeReviewBtn} onClick={handleShowForm}>
-                  Оставить отзыв
+                  {t('product.writeReview')}
                 </button>
               </When>
             </Else>
