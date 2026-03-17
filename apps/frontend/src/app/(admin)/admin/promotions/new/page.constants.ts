@@ -36,17 +36,17 @@ export const createPromotionFormSchema = z.object({
   slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Lowercase letters, digits and dashes only'),
   description: z.string(),
   descriptionEn: z.string(),
-  bannerImageUrl: z.string().min(1, 'URL баннера обязателен'),
+  bannerImageUrl: z.string().min(1, 'Banner image URL is required'),
   bannerBgColor: z.string(),
-  startDate: z.string().min(1, 'Дата начала обязательна'),
-  endDate: z.string().min(1, 'Дата окончания обязательна'),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
   discountType: z.enum(['PERCENTAGE', 'FIXED']),
-  discountValue: z.string().min(1, 'Укажите размер скидки').refine(
+  discountValue: z.string().min(1, 'Discount amount is required').refine(
     (v) => !isNaN(Number(v)) && Number(v) > 0,
-    'Скидка должна быть больше 0',
+    'Discount must be greater than 0',
   ),
   isActive: z.boolean(),
-  position: z.string().refine((v) => !isNaN(Number(v)) && Number(v) >= 0, 'Позиция не может быть отрицательной'),
+  position: z.string().refine((v) => !isNaN(Number(v)) && Number(v) >= 0, 'Position cannot be negative'),
   link: z.string(),
   productIds: z.array(z.string()),
 });

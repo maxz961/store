@@ -1,31 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { When } from 'react-if';
 import { cn } from '@/lib/utils';
 import { TextField } from '@/components/ui/TextField';
 import { TextareaField } from '@/components/ui/TextareaField';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreatePromotionFormValues } from './page.constants';
 
 
-export const BasicInfoSection = () => {
-  const [langTab, setLangTab] = useState<'uk' | 'en'>('uk');
+interface BasicInfoSectionProps {
+  langTab: 'uk' | 'en';
+  onTabChange: (tab: 'uk' | 'en') => void;
+}
+
+export const BasicInfoSection = ({ langTab, onTabChange }: BasicInfoSectionProps) => {
   const { register, formState: { errors } } = useFormContext<CreatePromotionFormValues>();
+  const { t } = useLanguage();
 
-  useEffect(() => {
-    if (errors.titleEn) {
-      setLangTab('en');
-    }
-  }, [errors.titleEn]);
-
-  const handleTabUk = () => setLangTab('uk');
-  const handleTabEn = () => setLangTab('en');
+  const handleTabUk = useCallback(() => onTabChange('uk'), [onTabChange]);
+  const handleTabEn = useCallback(() => onTabChange('en'), [onTabChange]);
 
   return (
     <div className={s.card}>
-      <h2 className={s.cardTitle}>Basic information</h2>
+      <h2 className={s.cardTitle}>{t('admin.promotion.basicInfoTitle')}</h2>
 
       <div className={s.langTabs}>
         <button
@@ -44,50 +45,48 @@ export const BasicInfoSection = () => {
         </button>
       </div>
 
-      {langTab === 'uk' && (
-        <>
+      <When condition={langTab === 'uk'}>
+        <div className="space-y-4">
           <TextField
-            label="Title (UK)"
+            label={t('admin.promotion.title')}
             tooltip={FIELD_TOOLTIPS.title}
-            placeholder="e.g. Spring Sale"
+            placeholder={t('admin.promotion.titlePlaceholder')}
             error={errors.title?.message}
             {...register('title')}
           />
-
           <TextareaField
-            label="Description (UK)"
+            label={t('admin.promotion.description')}
             tooltip={FIELD_TOOLTIPS.description}
-            placeholder="Short promotion description..."
+            placeholder={t('admin.promotion.descriptionPlaceholder')}
             error={errors.description?.message}
             {...register('description')}
           />
-        </>
-      )}
+        </div>
+      </When>
 
-      {langTab === 'en' && (
-        <>
+      <When condition={langTab === 'en'}>
+        <div className="space-y-4">
           <TextField
-            label="Title (EN)"
+            label={t('admin.promotion.titleEn')}
             tooltip={FIELD_TOOLTIPS.title}
-            placeholder="e.g. Spring Sale"
+            placeholder={t('admin.promotion.titlePlaceholder')}
             error={errors.titleEn?.message}
             {...register('titleEn')}
           />
-
           <TextareaField
-            label="Description (EN)"
+            label={t('admin.promotion.descriptionEn')}
             tooltip={FIELD_TOOLTIPS.description}
-            placeholder="Short promotion description..."
+            placeholder={t('admin.promotion.descriptionPlaceholder')}
             error={errors.descriptionEn?.message}
             {...register('descriptionEn')}
           />
-        </>
-      )}
+        </div>
+      </When>
 
       <TextField
-        label="Slug"
+        label={t('admin.promotion.slug')}
         tooltip={FIELD_TOOLTIPS.slug}
-        hint="Generated automatically from title"
+        hint={t('admin.promotion.slugHint')}
         inputClassName={s.slugInput}
         error={errors.slug?.message}
         {...register('slug')}

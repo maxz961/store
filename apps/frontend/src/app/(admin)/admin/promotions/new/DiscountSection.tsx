@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TextField } from '@/components/ui/TextField';
 import { SelectField } from '@/components/ui/SelectField';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { FIELD_TOOLTIPS, DISCOUNT_TYPE_OPTIONS } from './page.constants';
 import type { CreatePromotionFormValues } from './page.constants';
@@ -9,6 +10,7 @@ import type { CreatePromotionFormValues } from './page.constants';
 
 export const DiscountSection = () => {
   const { register, watch, setValue, formState: { errors } } = useFormContext<CreatePromotionFormValues>();
+  const { t } = useLanguage();
   const discountType = watch('discountType');
 
   const handleDiscountTypeChange = useCallback(
@@ -20,11 +22,11 @@ export const DiscountSection = () => {
 
   return (
     <div className={s.card}>
-      <h2 className={s.cardTitle}>Скидка</h2>
+      <h2 className={s.cardTitle}>{t('admin.promotion.discountTitle')}</h2>
 
       <div className={s.grid2}>
         <SelectField
-          label="Тип скидки"
+          label={t('admin.promotion.discountType')}
           tooltip={FIELD_TOOLTIPS.discountType}
           options={DISCOUNT_TYPE_OPTIONS}
           value={discountType}
@@ -33,7 +35,7 @@ export const DiscountSection = () => {
         />
 
         <TextField
-          label="Размер скидки"
+          label={t('admin.promotion.discountValue')}
           tooltip={FIELD_TOOLTIPS.discountValue}
           type="number"
           placeholder="25"
@@ -43,7 +45,7 @@ export const DiscountSection = () => {
       </div>
 
       <TextField
-        label="Позиция в карусели"
+        label={t('admin.promotion.discountPosition')}
         tooltip={FIELD_TOOLTIPS.position}
         type="number"
         placeholder="0"

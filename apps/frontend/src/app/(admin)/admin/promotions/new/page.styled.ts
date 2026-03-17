@@ -47,6 +47,12 @@ export const s = {
   // Error
   error: 'rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive',
 
+  // Danger zone
+  dangerZone: 'rounded-xl border border-destructive/30 bg-destructive/5 p-6 space-y-4',
+  dangerTitle: 'text-lg font-medium text-destructive',
+  dangerText: 'text-sm text-muted-foreground',
+  dangerActions: 'flex gap-3',
+
   // Preview button (in BannerSection card header)
   previewBtn: 'inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground',
 
