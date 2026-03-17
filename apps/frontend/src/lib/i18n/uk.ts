@@ -407,6 +407,14 @@ export const uk: Translations = {
     },
   },
 
+  imageUpload: {
+    addPhoto: 'Додати фото',
+    hint: 'JPG, PNG або WebP, до {max} МБ',
+    errorTooLarge: 'Файл завеликий (макс. {max} МБ): {names}',
+    errorWrongType: 'Підтримуються лише JPG, PNG та WebP',
+    errorOverLimit: 'Можна завантажити ще {remaining} фото (макс. {max})',
+  },
+
   common: {
     loading: 'Завантаження...',
     error: 'Сталася помилка',

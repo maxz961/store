@@ -404,6 +404,14 @@ export const en = {
     },
   },
 
+  imageUpload: {
+    addPhoto: 'Add photo',
+    hint: 'JPG, PNG or WebP, up to {max} MB',
+    errorTooLarge: 'File is too large (max {max} MB): {names}',
+    errorWrongType: 'Only JPG, PNG and WebP are supported',
+    errorOverLimit: 'You can upload {remaining} more photo(s) (max {max})',
+  },
+
   common: {
     loading: 'Loading...',
     error: 'An error occurred',
