@@ -7,7 +7,8 @@ import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { getInitials } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
+import { getInitials, langToLocale } from '@/lib/utils';
 import type { ReviewCardProps } from './ReviewCard.types';
 import { s } from '../ReviewModal/ReviewModal.styled';
 
@@ -21,13 +22,14 @@ export const ReviewCard = ({
   onDeleteReply,
 }: ReviewCardProps) => {
   const { user, isAdmin } = useAuth();
+  const { lang } = useLanguage();
   const isOwn = user?.id === review.userId;
 
   const [isReplying, setIsReplying] = useState(false);
   const [replyText, setReplyText] = useState('');
 
   const initials = getInitials(review.user.name, undefined);
-  const date = new Date(review.createdAt).toLocaleDateString('ru-RU');
+  const date = new Date(review.createdAt).toLocaleDateString(langToLocale(lang));
 
   const handleDelete = useCallback(() => onDeleteReview?.(review.id), [onDeleteReview, review.id]);
   const handleImageClick = useCallback((url: string) => () => onImageClick(url), [onImageClick]);
@@ -159,7 +161,7 @@ export const ReviewCard = ({
           <p className={s.adminReplyText}>{review.adminReply}</p>
           <When condition={!!review.adminReplyAt}>
             <p className={s.adminReplyDate}>
-              {new Date(review.adminReplyAt!).toLocaleDateString('ru-RU')}
+              {new Date(review.adminReplyAt!).toLocaleDateString(langToLocale(lang))}
             </p>
           </When>
         </div>

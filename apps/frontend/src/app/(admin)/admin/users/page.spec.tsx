@@ -2,6 +2,15 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'uk', t: (k: string) => k }),
+}));
+
+jest.mock('@/lib/utils', () => ({
+  ...jest.requireActual('@/lib/utils'),
+  langToLocale: () => 'uk-UA',
+}));
+
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   Users: (props: any) => <div data-testid="icon-users" {...props} />,

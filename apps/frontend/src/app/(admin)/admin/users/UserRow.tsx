@@ -5,14 +5,16 @@ import Image from 'next/image';
 import { If, Then, Else, When } from 'react-if';
 import type { ChangeEvent } from 'react';
 import { SelectField } from '@/components/ui/SelectField';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { ROLE_OPTIONS } from './page.constants';
-import { getInitials } from '@/lib/utils';
+import { getInitials, langToLocale } from '@/lib/utils';
 import type { UserRowProps, UserRole } from './page.types';
 
 
 export const UserRow = ({ user, canEditRole, onUpdateRole, onToggleBan }: UserRowProps) => {
   const [imgError, setImgError] = useState(false);
+  const { lang } = useLanguage();
 
   const handleImgError = useCallback(() => setImgError(true), []);
 
@@ -24,7 +26,7 @@ export const UserRow = ({ user, canEditRole, onUpdateRole, onToggleBan }: UserRo
     onToggleBan(user.id, !user.isBanned);
   };
 
-  const dateStr = new Date(user.createdAt).toLocaleDateString('en-US');
+  const dateStr = new Date(user.createdAt).toLocaleDateString(langToLocale(lang));
 
   const avatar = (
     <If condition={!!user.image && !imgError}>

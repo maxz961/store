@@ -7,19 +7,18 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { If, Then, Else } from 'react-if';
 import { useLanguage } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils';
+import { getLocalizedText, langToLocale } from '@/lib/utils';
 import { s } from './page.styled';
 import { DISCOUNT_TYPE_LABELS } from './page.constants';
 import type { PromotionRowProps } from './page.types';
 
 
-const formatDate = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
-
-
 export const PromotionRow = ({ promotion }: PromotionRowProps) => {
   const router = useRouter();
   const { lang } = useLanguage();
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString(langToLocale(lang), { day: 'numeric', month: 'short' });
 
   const handleRowClick = useCallback(() => {
     router.push(promotion.link ?? '/products');

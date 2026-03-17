@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
-import { cn } from '@/lib/utils';
+import { cn, langToLocale } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n';
 import { STATUS_LABELS } from '@/lib/constants/order';
 import { formatCurrency } from '@/lib/constants/format';
@@ -11,9 +11,9 @@ import type { OrderCardProps } from './page.types';
 
 
 export const OrderCard = ({ order }: OrderCardProps) => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const itemCount = order.orderItems.reduce((sum, i) => sum + i.quantity, 0);
-  const date = new Date(order.createdAt).toLocaleDateString('en-US', {
+  const date = new Date(order.createdAt).toLocaleDateString(langToLocale(lang), {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

@@ -22,8 +22,13 @@ jest.mock('@/lib/hooks/useAuth', () => ({
   useAuth: () => ({ user: null, isAdmin: false }),
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'uk', t: (k: string) => k }),
+}));
+
 jest.mock('@/lib/utils', () => ({
   getInitials: (name: string | null) => name?.slice(0, 2).toUpperCase() ?? '??',
+  langToLocale: () => 'uk-UA',
 }));
 
 jest.mock('@/components/ui/StarRating', () => ({

@@ -7,6 +7,8 @@ import { ArrowLeft } from 'lucide-react';
 import { StatusBadge } from '@/components/admin/StatusBadge';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAdminOrder, useUpdateOrderStatus } from '@/lib/hooks/useAdmin';
+import { useLanguage } from '@/lib/i18n';
+import { langToLocale } from '@/lib/utils';
 import { s } from './page.styled';
 import { formatDate } from '@/lib/constants/format';
 import { StatusSection } from './StatusSection';
@@ -23,6 +25,7 @@ const breadcrumbs = [
 const AdminOrderDetailPage = () => {
   const params = useParams<{ id: string }>();
   const router = useRouter();
+  const { lang } = useLanguage();
   const { data: order, isLoading, isError } = useAdminOrder(params.id);
   const updateStatus = useUpdateOrderStatus(params.id);
 
@@ -60,7 +63,7 @@ const AdminOrderDetailPage = () => {
         <StatusBadge status={order.status} />
       </div>
       <p className={s.subtitle}>
-        {order.user?.name ?? order.user?.email ?? '—'} · {formatDate(order.createdAt, 'long')}
+        {order.user?.name ?? order.user?.email ?? '—'} · {formatDate(order.createdAt, 'long', langToLocale(lang))}
       </p>
 
       <StatusSection

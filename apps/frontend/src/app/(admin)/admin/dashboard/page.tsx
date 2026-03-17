@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { useAnalyticsSummary } from '@/lib/hooks/useAdmin';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useLanguage } from '@/lib/i18n';
+import { langToLocale } from '@/lib/utils';
 import { s } from './page.styled';
 import { STATUS_LABELS, PIE_COLORS, DELIVERY_LABELS } from '@/lib/constants/order';
 import { StatsSection } from './StatsSection';
@@ -19,17 +20,17 @@ import { LowStockCard } from './LowStockCard';
 
 const DashboardPage = () => {
   const { data: summary, error: queryError, isLoading } = useAnalyticsSummary();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const breadcrumbs = useMemo(() => [{ label: t('admin.dashboard.title') }], [t]);
   const error = queryError ? t('admin.dashboard.loadError') : null;
 
   const revenueChartData = useMemo(() => {
     if (!summary) return [];
     return summary.revenueByDay.map(({ date, revenue }) => ({
-      date: new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+      date: new Date(date).toLocaleDateString(langToLocale(lang), { day: 'numeric', month: 'short' }),
       revenue,
     }));
-  }, [summary]);
+  }, [summary, lang]);
 
   const pieData = useMemo(() => {
     if (!summary) return [];
@@ -45,10 +46,10 @@ const DashboardPage = () => {
   const aovChartData = useMemo(() => {
     if (!summary) return [];
     return summary.aovByDay.map(({ date, aov }) => ({
-      date: new Date(date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' }),
+      date: new Date(date).toLocaleDateString(langToLocale(lang), { day: 'numeric', month: 'short' }),
       aov,
     }));
-  }, [summary]);
+  }, [summary, lang]);
 
   const deliveryData = useMemo(() => {
     if (!summary) return [];

@@ -17,3 +17,7 @@ export function getInitials(name?: string | null, email?: string | null): string
 export function getLocalizedText(lang: Lang, uk: string, en?: string | null): string {
   return lang === 'uk' ? uk : (en || uk);
 }
+
+export function langToLocale(lang: Lang): string {
+  return lang === 'uk' ? 'uk-UA' : 'en-US';
+}

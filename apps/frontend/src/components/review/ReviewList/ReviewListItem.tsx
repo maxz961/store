@@ -1,9 +1,12 @@
+'use client';
+
 import Image from 'next/image';
 import { Pencil, Trash2 } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
-import { getInitials } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
+import { getInitials, langToLocale } from '@/lib/utils';
 import type { ReviewListItemProps } from './ReviewListItem.types';
 import { s } from './ReviewList.styled';
 
@@ -15,8 +18,9 @@ export const ReviewListItem = ({
   onDelete,
   onImageClick,
 }: ReviewListItemProps) => {
+  const { lang } = useLanguage();
   const initials = getInitials(review.user.name, undefined);
-  const date = new Date(review.createdAt).toLocaleDateString('ru-RU');
+  const date = new Date(review.createdAt).toLocaleDateString(langToLocale(lang));
 
   const handleEdit = () => onEdit?.(review);
 

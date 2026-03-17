@@ -6,11 +6,14 @@ import { StatusBadge } from '@/components/admin/StatusBadge';
 import { s } from './page.styled';
 import { DELIVERY_LABELS } from '@/lib/constants/order';
 import { formatCurrency, formatDate } from '@/lib/constants/format';
+import { useLanguage } from '@/lib/i18n';
+import { langToLocale } from '@/lib/utils';
 import type { OrderRowProps } from './page.types';
 
 
 export const OrderRow = ({ order }: OrderRowProps) => {
   const router = useRouter();
+  const { lang } = useLanguage();
 
   const handleRowClick = useCallback(() => {
     router.push(`/admin/orders/${order.id}`);
@@ -34,7 +37,7 @@ export const OrderRow = ({ order }: OrderRowProps) => {
         <span className={s.amount}>{formatCurrency(Number(order.totalAmount))}</span>
       </td>
       <td className={s.td}>
-        <span className={s.date}>{formatDate(order.createdAt)}</span>
+        <span className={s.date}>{formatDate(order.createdAt, 'short', langToLocale(lang))}</span>
       </td>
     </tr>
   );
