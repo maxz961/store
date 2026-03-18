@@ -25,6 +25,7 @@ export const s = {
 
   // Role
   roleAdmin: 'inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary',
+  roleManager: 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
   roleCustomer: 'inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground',
   roleSelect: 'w-36 [&>label]:hidden [&>div]:mt-0',
 
