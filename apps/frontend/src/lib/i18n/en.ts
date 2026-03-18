@@ -286,6 +286,7 @@ export const en = {
       tableActions: 'Actions',
       slugTaken: 'This slug is already taken',
       nameTaken: 'This name is already taken',
+      slugTooltip: 'Lowercase Latin letters, digits and hyphens only. Example: my-category',
       validation: {
         required: 'Required',
         nameMax: 'Max 100 characters',
@@ -324,6 +325,7 @@ export const en = {
       tableActions: 'Actions',
       slugTaken: 'This slug is already taken',
       nameTaken: 'This name is already taken',
+      slugTooltip: 'Lowercase Latin letters, digits and hyphens only. Example: new-arrival',
       validation: {
         required: 'Required',
         nameMax: 'Max 100 characters',

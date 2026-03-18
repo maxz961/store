@@ -289,6 +289,7 @@ export const uk: Translations = {
       tableActions: 'Дії',
       slugTaken: 'Цей slug вже зайнятий',
       nameTaken: 'Ця назва вже зайнята',
+      slugTooltip: 'Тільки малі латинські літери, цифри та дефіси. Наприклад: my-category',
       validation: {
         required: 'Обов\'язкове поле',
         nameMax: 'Максимум 100 символів',
@@ -327,6 +328,7 @@ export const uk: Translations = {
       tableActions: 'Дії',
       slugTaken: 'Цей slug вже зайнятий',
       nameTaken: 'Ця назва вже зайнята',
+      slugTooltip: 'Тільки малі латинські літери, цифри та дефіси. Наприклад: new-arrival',
       validation: {
         required: 'Обов\'язкове поле',
         nameMax: 'Максимум 100 символів',

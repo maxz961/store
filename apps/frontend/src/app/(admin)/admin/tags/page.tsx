@@ -24,7 +24,6 @@ import { s } from './page.styled';
 import {
   buildTagFormSchema,
   generateSlug,
-  sanitizeSlugInput,
   DEFAULT_TAG_COLOR,
   TAG_PRESET_COLORS,
   type TagFormValues,
@@ -74,10 +73,6 @@ const TagsPage = () => {
   watch((values, { name: field }) => {
     if (field === 'name' && !editingId) {
       setValue('slug', generateSlug(values.name ?? ''));
-    }
-    if (field === 'slug') {
-      const sanitized = sanitizeSlugInput(values.slug ?? '');
-      if (sanitized !== values.slug) setValue('slug', sanitized);
     }
   });
 
@@ -200,6 +195,7 @@ const TagsPage = () => {
                 label={t('admin.tag.slug')}
                 placeholder={t('admin.tag.slugPlaceholder')}
                 hint={t('admin.tag.slugHint')}
+                tooltip={t('admin.tag.slugTooltip')}
                 error={errors.slug?.message}
                 {...register('slug')}
               />
