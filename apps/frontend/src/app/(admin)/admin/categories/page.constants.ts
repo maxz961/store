@@ -18,10 +18,12 @@ export const buildCategoryFormSchema = (msg: CategoryValidationMessages) =>
 
 export type CategoryFormValues = z.infer<ReturnType<typeof buildCategoryFormSchema>>;
 
-export const generateSlug = (name: string) =>
-  name
+export const sanitizeSlugInput = (value: string) =>
+  value
     .toLowerCase()
-    .replace(/[^a-z0-9а-яёіїєґ\s-]/g, '')
-    .replace(/\s+/g, '-')
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+
+export const generateSlug = (name: string) => sanitizeSlugInput(name);

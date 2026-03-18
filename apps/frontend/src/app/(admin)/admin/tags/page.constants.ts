@@ -32,10 +32,12 @@ export const TAG_PRESET_COLORS = [
   '#6b7280', // gray
 ];
 
-export const generateSlug = (name: string) =>
-  name
+export const sanitizeSlugInput = (value: string) =>
+  value
     .toLowerCase()
-    .replace(/[^a-z0-9а-яёіїєґ\s-]/g, '')
-    .replace(/\s+/g, '-')
+    .replace(/[\s_]+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+
+export const generateSlug = (name: string) => sanitizeSlugInput(name);

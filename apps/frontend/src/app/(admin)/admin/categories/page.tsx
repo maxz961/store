@@ -21,7 +21,7 @@ import type { Category } from '@/lib/hooks/useProducts';
 import { useLanguage } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
-import { buildCategoryFormSchema, generateSlug, type CategoryFormValues } from './page.constants';
+import { buildCategoryFormSchema, generateSlug, sanitizeSlugInput, type CategoryFormValues } from './page.constants';
 import { CategoryRow } from './CategoryRow';
 
 
@@ -66,6 +66,10 @@ const CategoriesPage = () => {
   watch((values, { name: field }) => {
     if (field === 'name' && !editingId) {
       setValue('slug', generateSlug(values.name ?? ''));
+    }
+    if (field === 'slug') {
+      const sanitized = sanitizeSlugInput(values.slug ?? '');
+      if (sanitized !== values.slug) setValue('slug', sanitized);
     }
   });
 
