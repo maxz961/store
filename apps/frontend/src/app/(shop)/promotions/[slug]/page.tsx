@@ -22,7 +22,6 @@ export default function PromotionPage() {
 
   const breadcrumbs = [
     { label: t('nav.home'), href: '/' },
-    { label: t('promotions.title'), href: '/promotions' },
     { label: promotion ? getLocalizedText(lang, promotion.title, promotion.titleEn) : '...' },
   ];
 

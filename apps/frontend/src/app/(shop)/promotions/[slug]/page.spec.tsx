@@ -103,10 +103,10 @@ describe('PromotionPage', () => {
     render(<PromotionPage />);
   });
 
-  it('renders breadcrumbs with home and promotions', () => {
+  it('renders breadcrumbs with home', () => {
     render(<PromotionPage />);
     expect(screen.getByText('Home')).toBeInTheDocument();
-    expect(screen.getByText('Promotions')).toBeInTheDocument();
+    expect(screen.queryByText('Promotions')).not.toBeInTheDocument();
   });
 
   it('renders promotion title', () => {
