@@ -19,13 +19,19 @@ export class ProductsService {
         ? { OR: [
               { name: { startsWith: search, mode: 'insensitive' } },
               { name: { contains: ` ${search}`, mode: 'insensitive' } },
+              { nameEn: { startsWith: search, mode: 'insensitive' } },
+              { nameEn: { contains: ` ${search}`, mode: 'insensitive' } },
             ],
           }
         : { OR: [
               { name: { startsWith: search, mode: 'insensitive' } },
               { name: { contains: ` ${search}`, mode: 'insensitive' } },
+              { nameEn: { startsWith: search, mode: 'insensitive' } },
+              { nameEn: { contains: ` ${search}`, mode: 'insensitive' } },
               { description: { startsWith: search, mode: 'insensitive' } },
               { description: { contains: ` ${search}`, mode: 'insensitive' } },
+              { descriptionEn: { startsWith: search, mode: 'insensitive' } },
+              { descriptionEn: { contains: ` ${search}`, mode: 'insensitive' } },
             ],
           }
       )),
