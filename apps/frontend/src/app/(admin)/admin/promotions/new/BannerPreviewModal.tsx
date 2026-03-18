@@ -19,7 +19,7 @@ const formatDiscount = (type: 'PERCENTAGE' | 'FIXED', value: number) =>
 
 export const BannerPreviewModal = ({ onClose }: BannerPreviewModalProps) => {
   const { watch } = useFormContext<CreatePromotionFormValues>();
-  const { title, description, bannerImageUrl, bannerBgColor, discountType, discountValue, link } = watch();
+  const { title, description, bannerImageUrl, bannerBgColor, discountType, discountValue } = watch();
 
   const discountNum = parseFloat(discountValue) || 0;
   const bgColor = bannerBgColor || '#f1f5f9';
@@ -56,7 +56,6 @@ export const BannerPreviewModal = ({ onClose }: BannerPreviewModalProps) => {
               bannerBgColor={bgColor}
               discountType={discountType}
               discountValue={discountNum}
-              link={link || null}
             />
           </Then>
           <Else>
