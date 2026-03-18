@@ -18,7 +18,6 @@ export const DiscountSection = ({ currentPromotionId }: DiscountSectionProps) =>
   const { register, watch, setValue, formState: { errors } } = useFormContext<CreatePromotionFormValues>();
   const { t } = useLanguage();
   const { data: allPromotionsData } = usePromotions();
-  const allPromotions = allPromotionsData ?? [];
 
   const discountType = watch('discountType');
   const positionValue = watch('position');
@@ -38,12 +37,13 @@ export const DiscountSection = ({ currentPromotionId }: DiscountSectionProps) =>
   );
 
   const positionOptions = useMemo(() => {
+    const promotions = allPromotionsData ?? [];
     const taken = new Map(
-      allPromotions
+      promotions
         .filter((p) => p.id !== currentPromotionId)
         .map((p) => [p.position, p.title]),
     );
-    const maxPos = allPromotions.length;
+    const maxPos = promotions.length;
     return Array.from({ length: maxPos + 1 }, (_, i) => {
       const takenBy = taken.get(i);
       return {
@@ -52,7 +52,7 @@ export const DiscountSection = ({ currentPromotionId }: DiscountSectionProps) =>
         disabled: !!takenBy,
       };
     });
-  }, [allPromotions, currentPromotionId]);
+  }, [allPromotionsData, currentPromotionId]);
 
   return (
     <div className={s.card}>
