@@ -13,8 +13,13 @@ jest.mock('next/link', () => ({
 jest.mock('lucide-react', () => ({
   MessageCircle: (props: any) => <div data-testid="icon-message" {...props} />,
 }));
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'uk', t: (k: string) => k }),
+}));
+
 jest.mock('@/lib/utils', () => ({
   getInitials: (name: string | null, email: string) => name?.slice(0, 2).toUpperCase() ?? email.slice(0, 2).toUpperCase(),
+  langToLocale: () => 'uk-UA',
 }));
 
 let mockThreads: any[];

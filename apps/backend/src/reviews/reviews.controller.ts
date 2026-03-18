@@ -74,7 +74,7 @@ export class ReviewsController {
 
   @Get('admin/all')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findAll(
     @Query('sort') sort?: string,
     @Query('page') page?: string,

@@ -9,22 +9,24 @@ import { Spinner } from '@/components/ui/Spinner';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyMessages, useSendMessage } from '@/lib/hooks/useSupport';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-
-
-const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Профиль', href: '/account/profile' },
-  { label: 'Колл-центр' },
-];
 
 
 const formatTime = (iso: string) =>
   new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 
 
+const breadcrumbs = [
+  { label: 'Home', href: '/' },
+  { label: 'Profile', href: '/account/profile' },
+  { label: 'Support' },
+];
+
+
 const SupportPage = () => {
   const router = useRouter();
+  const { t } = useLanguage();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: messages = [], isLoading } = useMyMessages();
   const sendMessage = useSendMessage();
@@ -76,9 +78,9 @@ const SupportPage = () => {
       <div className={s.page}>
         <div className={s.notAuth}>
           <MessageCircle className="h-12 w-12 text-muted-foreground" />
-          <p className={s.notAuthTitle}>Вы не авторизованы</p>
-          <p className={s.notAuthText}>Войдите, чтобы написать в поддержку</p>
-          <Link href="/login"><Button>Войти</Button></Link>
+          <p className={s.notAuthTitle}>{t('support.notAuth')}</p>
+          <p className={s.notAuthText}>{t('support.notAuthText')}</p>
+          <Link href="/login"><Button>{t('support.login')}</Button></Link>
         </div>
       </div>
     );
@@ -88,7 +90,7 @@ const SupportPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
       <div className={s.header}>
-        <p className={s.pageSubtitle}>Напишите нам — мы ответим как можно скорее</p>
+        <p className={s.pageSubtitle}>{t('support.subtitle')}</p>
       </div>
 
       <div className={s.chatCard}>
@@ -100,15 +102,15 @@ const SupportPage = () => {
           {!isLoading && messages.length === 0 && (
             <div className={s.emptyState}>
               <MessageCircle className={s.emptyIcon} />
-              <p className={s.emptyTitle}>Нет сообщений</p>
-              <p className={s.emptyText}>Напишите ваш вопрос — мы ответим в ближайшее время</p>
+              <p className={s.emptyTitle}>{t('support.noMessages')}</p>
+              <p className={s.emptyText}>{t('support.noMessagesText')}</p>
             </div>
           )}
 
           {messages.map((msg) => (
             <div key={msg.id} className={msg.fromAdmin ? s.messageRowAdmin : s.messageRowUser}>
-              <div>
-                {msg.fromAdmin && <p className={s.adminLabel}>Поддержка</p>}
+              <div className={msg.fromAdmin ? s.messageWrapperAdmin : s.messageWrapperUser}>
+                {msg.fromAdmin && <p className={s.adminLabel}>{t('support.adminLabel')}</p>}
                 <div className={msg.fromAdmin ? s.bubbleAdmin : s.bubbleUser}>
                   {msg.content}
                 </div>
@@ -126,14 +128,14 @@ const SupportPage = () => {
           <div className={s.inputRow}>
             <textarea
               className={s.textarea}
-              placeholder="Напишите сообщение... (Enter — отправить, Shift+Enter — перенос)"
+              placeholder={t('support.placeholder')}
               value={text}
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
               rows={1}
             />
             <Button className={s.sendButton} onClick={handleSend} disabled={!text.trim() || sendMessage.isPending}>
-              {sendMessage.isPending ? <Spinner /> : 'Отправить'}
+              {sendMessage.isPending ? <Spinner size="sm" /> : t('support.send')}
             </Button>
           </div>
         </div>

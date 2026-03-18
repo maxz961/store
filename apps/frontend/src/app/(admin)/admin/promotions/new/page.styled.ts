@@ -13,6 +13,11 @@ export const s = {
   // Grid
   grid2: 'grid grid-cols-2 gap-4',
 
+  // Lang tabs
+  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 p-1 w-fit',
+  langTab: 'rounded-md px-3 py-1 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
+  langTabActive: 'bg-white text-foreground shadow-sm ring-1 ring-border/50 dark:bg-slate-800',
+
   // Image tabs
   imageTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 p-1',
   imageTab: 'flex-1 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
@@ -41,6 +46,12 @@ export const s = {
 
   // Error
   error: 'rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive',
+
+  // Danger zone
+  dangerZone: 'rounded-xl border border-destructive/30 bg-destructive/5 p-6 space-y-4',
+  dangerTitle: 'text-lg font-medium text-destructive',
+  dangerText: 'text-sm text-muted-foreground',
+  dangerActions: 'flex gap-3',
 
   // Preview button (in BannerSection card header)
   previewBtn: 'inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground transition-colors duration-150 hover:bg-accent hover:text-foreground',

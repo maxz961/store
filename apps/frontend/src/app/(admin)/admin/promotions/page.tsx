@@ -38,7 +38,7 @@ const AdminPromotionsPage = () => {
         <Link href="/admin/promotions/new">
           <Button size="sm">
             <Plus className={s.buttonIcon} />
-            Добавить акцию
+            New promotion
           </Button>
         </Link>
       </div>

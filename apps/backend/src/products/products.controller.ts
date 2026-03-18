@@ -41,14 +41,14 @@ export class ProductsController {
 
   @Get("admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findAllAdmin(@Query() filters: ProductFiltersDto) {
     return this.productsService.findAll(filters, true);
   }
 
   @Get("admin/image-error-count")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   getImageErrorCount() {
     return this.productsService.getImageErrorCount();
   }
@@ -77,7 +77,7 @@ export class ProductsController {
 
   @Post('upload')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   @UseInterceptors(FilesInterceptor('images', 6))
   async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
     const urls = await Promise.all(
@@ -88,14 +88,14 @@ export class ProductsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
   }
 
   @Put(":id")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   update(@Param("id") id: string, @Body() dto: UpdateProductDto) {
     return this.productsService.update(id, dto);
   }

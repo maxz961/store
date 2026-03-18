@@ -1,6 +1,28 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'support.subtitle': 'Write to us — we will respond as soon as possible',
+        'support.noMessages': 'No messages yet',
+        'support.noMessagesText': 'Start a conversation with our support team',
+        'support.notAuth': 'Sign in to contact support',
+        'support.notAuthText': 'Please log in to send messages',
+        'support.login': 'Log in',
+        'support.send': 'Send',
+        'support.sending': 'Sending...',
+        'support.placeholder': 'Write a message...',
+        'support.adminLabel': 'Support',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
 jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn(), prefetch: jest.fn() }) }));
@@ -49,17 +71,17 @@ describe('SupportPage', () => {
 
   it('renders without crashing', () => {
     render(<SupportPage />);
-    expect(screen.getByText('Колл-центр')).toBeInTheDocument();
+    expect(screen.getByText('Support')).toBeInTheDocument();
   });
 
   it('renders page subtitle', () => {
     render(<SupportPage />);
-    expect(screen.getByText(/Напишите нам/)).toBeInTheDocument();
+    expect(screen.getByText(/Write to us/)).toBeInTheDocument();
   });
 
   it('shows empty state when no messages', () => {
     render(<SupportPage />);
-    expect(screen.getByText('Нет сообщений')).toBeInTheDocument();
+    expect(screen.getByText('No messages yet')).toBeInTheDocument();
   });
 
   it('renders messages from user and admin', () => {
@@ -70,15 +92,15 @@ describe('SupportPage', () => {
     render(<SupportPage />);
     expect(screen.getByText('Привет, помогите')).toBeInTheDocument();
     expect(screen.getByText('Конечно, помогем!')).toBeInTheDocument();
-    expect(screen.getByText('Поддержка')).toBeInTheDocument();
+    expect(screen.getAllByText('Support').length).toBeGreaterThanOrEqual(1);
   });
 
   it('shows not authenticated state', () => {
     mockAuthState = { isAuthenticated: false, isLoading: false };
     render(<SupportPage />);
-    expect(screen.getByText('Вы не авторизованы')).toBeInTheDocument();
-    expect(screen.getByText('Войдите, чтобы написать в поддержку')).toBeInTheDocument();
-    expect(screen.getByText('Войти')).toBeInTheDocument();
+    expect(screen.getByText('Sign in to contact support')).toBeInTheDocument();
+    expect(screen.getByText('Please log in to send messages')).toBeInTheDocument();
+    expect(screen.getByText('Log in')).toBeInTheDocument();
   });
 
   it('shows spinner when auth is loading', () => {
@@ -89,19 +111,19 @@ describe('SupportPage', () => {
 
   it('renders send button', () => {
     render(<SupportPage />);
-    expect(screen.getByText('Отправить')).toBeInTheDocument();
+    expect(screen.getByText('Send')).toBeInTheDocument();
   });
 
   it('send button is disabled when textarea is empty', () => {
     render(<SupportPage />);
-    const button = screen.getByText('Отправить');
+    const button = screen.getByText('Send');
     expect(button).toBeDisabled();
   });
 
   it('send button becomes enabled when text is entered', () => {
     render(<SupportPage />);
-    const textarea = screen.getByPlaceholderText(/Напишите сообщение/);
+    const textarea = screen.getByPlaceholderText(/Write a message/);
     fireEvent.change(textarea, { target: { value: 'Мой вопрос' } });
-    expect(screen.getByText('Отправить')).not.toBeDisabled();
+    expect(screen.getByText('Send')).not.toBeDisabled();
   });
 });

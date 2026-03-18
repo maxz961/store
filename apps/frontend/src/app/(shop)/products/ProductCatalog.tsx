@@ -1,17 +1,23 @@
 'use client';
 
+import { useState, useCallback } from 'react';
+import { SlidersHorizontal } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ProductFilters } from './ProductFilters';
+import { FiltersDrawer } from './FiltersDrawer';
 import { CatalogPagination } from './CatalogPagination';
 import { useProducts, useCategories, useTags } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { Spinner } from '@/components/ui/Spinner';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './ProductCatalog.styled';
 
 
 export const ProductCatalog = () => {
   const { get } = useProductParams();
+  const { t } = useLanguage();
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const filters = {
     search: get('search'),
@@ -28,20 +34,34 @@ export const ProductCatalog = () => {
   const { data: categories = [] } = useCategories();
   const { data: tags = [] } = useTags();
 
+  const handleOpenFilters = useCallback(() => setIsFiltersOpen(true), []);
+  const handleCloseFilters = useCallback(() => setIsFiltersOpen(false), []);
+
+  const filterProps = {
+    categories,
+    tags,
+    currentCategory: filters.categorySlug,
+    currentTags: filters.tagSlugs?.split(',').filter(Boolean) ?? [],
+    currentMinPrice: filters.minPrice,
+    currentMaxPrice: filters.maxPrice,
+    currentSort: filters.sortBy && filters.sortOrder
+      ? `${filters.sortBy}_${filters.sortOrder}` : undefined,
+  };
+
   return (
     <div className={s.layout}>
+      <button type="button" className={s.mobileFilterBtn} onClick={handleOpenFilters} aria-label={t('catalog.filters')}>
+        <SlidersHorizontal className="h-4 w-4" />
+        {t('catalog.filters')}
+      </button>
+
       <aside className={s.sidebar}>
-        <ProductFilters
-          categories={categories}
-          tags={tags}
-          currentCategory={filters.categorySlug}
-          currentTags={filters.tagSlugs?.split(',').filter(Boolean) ?? []}
-          currentMinPrice={filters.minPrice}
-          currentMaxPrice={filters.maxPrice}
-          currentSort={filters.sortBy && filters.sortOrder
-            ? `${filters.sortBy}_${filters.sortOrder}` : undefined}
-        />
+        <ProductFilters {...filterProps} />
       </aside>
+
+      <FiltersDrawer isOpen={isFiltersOpen} onClose={handleCloseFilters}>
+        <ProductFilters {...filterProps} />
+      </FiltersDrawer>
 
       <div className={s.content}>
         <When condition={isLoading || isFetching}>
@@ -53,8 +73,8 @@ export const ProductCatalog = () => {
         <If condition={isError}>
           <Then>
             <div className={s.error}>
-              <p className={s.errorTitle}>Ошибка загрузки</p>
-              <p className={s.errorText}>Не удалось загрузить товары</p>
+              <p className={s.errorTitle}>{t('common.error')}</p>
+              <p className={s.errorText}>{t('catalog.loading')}</p>
             </div>
           </Then>
           <Else>
@@ -62,8 +82,8 @@ export const ProductCatalog = () => {
               <Then>
                 <When condition={!isLoading}>
                   <div className={s.empty}>
-                    <p className={s.emptyTitle}>Товары не найдены</p>
-                    <p className={s.emptyText}>Попробуйте изменить фильтры</p>
+                    <p className={s.emptyTitle}>{t('catalog.noResults')}</p>
+                    <p className={s.emptyText}>{t('catalog.noResultsText')}</p>
                   </div>
                 </When>
               </Then>

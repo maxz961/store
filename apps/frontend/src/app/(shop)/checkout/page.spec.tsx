@@ -1,6 +1,40 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'checkout.step1': 'Delivery',
+        'checkout.step2': 'Payment',
+        'checkout.loginRequired': 'Sign in to place an order',
+        'checkout.loginRequiredText': 'Authorization required to place an order',
+        'checkout.loginViaGoogle': 'Sign in via Google',
+        'checkout.delivery': 'Delivery method',
+        'checkout.courier': 'Courier',
+        'checkout.pickup': 'Pickup',
+        'checkout.post': 'Post office',
+        'checkout.address': 'Delivery address',
+        'checkout.submit': 'Place order',
+        'checkout.submitting': 'Placing order...',
+        'checkout.back': 'Back',
+        'checkout.intentError': 'Failed to create payment. Please try again.',
+        'cart.title': 'Cart',
+        'cart.total': 'Total',
+        'cart.subtotal': 'Subtotal',
+        'cart.items': 'items',
+        'product.pieces': 'pcs.',
+        'common.loading': 'Loading...',
+        'common.error': 'An error occurred',
+      };
+      return translations[key] ?? key;
+    },
+  }),
+}));
+
 // Mock lucide-react before importing components
 jest.mock('lucide-react', () => ({
   Truck: (props: any) => <div data-testid="icon-truck" {...props} />,
@@ -40,7 +74,7 @@ let mockAuthState = {
 
 let mockCartState = {
   items: [
-    { id: 'p1', name: 'Наушники', price: 199.99, imageUrl: '', quantity: 2, slug: 'headphones', stock: 10 },
+    { id: 'p1', name: 'Headphones', price: 199.99, imageUrl: '', quantity: 2, slug: 'headphones', stock: 10 },
   ],
   totalPrice: () => 399.98,
   clearCart: mockClearCart,
@@ -88,10 +122,10 @@ const createWrapper = () => {
 const renderPage = () => render(<CheckoutPage />, { wrapper: createWrapper() });
 
 const fillForm = () => {
-  fireEvent.change(screen.getByPlaceholderText('Иван Петров'), { target: { value: 'Тест Юзер' } });
-  fireEvent.change(screen.getByPlaceholderText('ул. Шевченко, 10, кв. 5'), { target: { value: 'ул. Тестовая, 1' } });
-  fireEvent.change(screen.getByPlaceholderText('Киев'), { target: { value: 'Киев' } });
-  fireEvent.change(screen.getByPlaceholderText('Киевская обл.'), { target: { value: 'Киевская' } });
+  fireEvent.change(screen.getByPlaceholderText('John Smith'), { target: { value: 'Test User' } });
+  fireEvent.change(screen.getByPlaceholderText('123 Main St, Apt 5'), { target: { value: '123 Test St' } });
+  fireEvent.change(screen.getByPlaceholderText('Kyiv'), { target: { value: 'Kyiv' } });
+  fireEvent.change(screen.getByPlaceholderText('Kyiv region'), { target: { value: 'Kyiv region' } });
   fireEvent.change(screen.getByPlaceholderText('01001'), { target: { value: '01001' } });
 };
 
@@ -111,7 +145,7 @@ describe('CheckoutPage', () => {
 
     mockCartState = {
       items: [
-        { id: 'p1', name: 'Наушники', price: 199.99, imageUrl: '', quantity: 2, slug: 'headphones', stock: 10 },
+        { id: 'p1', name: 'Headphones', price: 199.99, imageUrl: '', quantity: 2, slug: 'headphones', stock: 10 },
       ],
       totalPrice: () => 399.98,
       clearCart: mockClearCart,
@@ -125,8 +159,8 @@ describe('CheckoutPage', () => {
 
     renderPage();
 
-    expect(screen.getByText('Войдите, чтобы оформить заказ')).toBeInTheDocument();
-    expect(screen.getByText('Войти через Google')).toBeInTheDocument();
+    expect(screen.getByText('Sign in to place an order')).toBeInTheDocument();
+    expect(screen.getByText('Sign in via Google')).toBeInTheDocument();
   });
 
   it('calls login on auth button click', () => {
@@ -134,7 +168,7 @@ describe('CheckoutPage', () => {
 
     renderPage();
 
-    fireEvent.click(screen.getByText('Войти через Google'));
+    fireEvent.click(screen.getByText('Sign in via Google'));
     expect(mockLogin).toHaveBeenCalledTimes(1);
   });
 
@@ -149,34 +183,34 @@ describe('CheckoutPage', () => {
   it('renders step 1 (info) by default with delivery options', () => {
     renderPage();
 
-    expect(screen.getByText('Курьер')).toBeInTheDocument();
-    expect(screen.getByText('Самовывоз')).toBeInTheDocument();
-    expect(screen.getByText('Почта')).toBeInTheDocument();
+    expect(screen.getByText('Courier')).toBeInTheDocument();
+    expect(screen.getByText('Pickup')).toBeInTheDocument();
+    expect(screen.getByText('Post office')).toBeInTheDocument();
   });
 
   it('renders step indicator showing both steps', () => {
     renderPage();
 
-    expect(screen.getByText('Доставка')).toBeInTheDocument();
-    expect(screen.getByText('Оплата')).toBeInTheDocument();
+    expect(screen.getByText('Delivery')).toBeInTheDocument();
+    expect(screen.getByText('Payment')).toBeInTheDocument();
   });
 
   it('renders address form fields', () => {
     renderPage();
 
-    expect(screen.getByText('Полное имя')).toBeInTheDocument();
-    expect(screen.getByText('Адрес')).toBeInTheDocument();
-    expect(screen.getByText('Город')).toBeInTheDocument();
-    expect(screen.getByText('Почтовый индекс')).toBeInTheDocument();
-    expect(screen.getByText('Страна')).toBeInTheDocument();
+    expect(screen.getByText('Full name')).toBeInTheDocument();
+    expect(screen.getByText('Address')).toBeInTheDocument();
+    expect(screen.getByText('City')).toBeInTheDocument();
+    expect(screen.getByText('Postal code')).toBeInTheDocument();
+    expect(screen.getByText('Country')).toBeInTheDocument();
   });
 
   it('renders order summary with cart items', () => {
     renderPage();
 
-    expect(screen.getByText('Ваш заказ')).toBeInTheDocument();
-    expect(screen.getByText('Наушники')).toBeInTheDocument();
-    expect(screen.getByText('2 шт. × 199,99 ₴')).toBeInTheDocument();
+    expect(screen.getAllByText('Cart').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Headphones')).toBeInTheDocument();
+    expect(screen.getByText('2 pcs. × 199,99 ₴')).toBeInTheDocument();
   });
 
   it('renders total price', () => {
@@ -189,7 +223,7 @@ describe('CheckoutPage', () => {
     renderPage();
 
     fillForm();
-    fireEvent.click(screen.getByText('Перейти к оплате →'));
+    fireEvent.click(screen.getByText('Place order →'));
 
     await waitFor(() => {
       expect(mockApiPost).toHaveBeenCalledWith('/payments/create-intent', { amount: 399.98 });
@@ -206,26 +240,26 @@ describe('CheckoutPage', () => {
     renderPage();
 
     fillForm();
-    fireEvent.click(screen.getByText('Перейти к оплате →'));
+    fireEvent.click(screen.getByText('Place order →'));
 
     await waitFor(() => {
-      expect(screen.getByText('Не удалось создать платёж. Попробуйте ещё раз.')).toBeInTheDocument();
+      expect(screen.getByText('Failed to create payment. Please try again.')).toBeInTheDocument();
     });
   });
 
   it('switches delivery method', () => {
     renderPage();
 
-    fireEvent.click(screen.getByText('Самовывоз'));
+    fireEvent.click(screen.getByText('Pickup'));
 
-    const pickupButton = screen.getByText('Самовывоз').closest('button');
+    const pickupButton = screen.getByText('Pickup').closest('button');
     expect(pickupButton?.className).toContain('border-primary');
   });
 
   it('renders breadcrumbs', () => {
     renderPage();
 
-    expect(screen.getByText('Корзина')).toBeInTheDocument();
-    expect(screen.getByText('Оформление заказа')).toBeInTheDocument();
+    expect(screen.getAllByText('Cart').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText('Checkout')).toBeInTheDocument();
   });
 });

@@ -1,29 +1,34 @@
-import { cn } from '@/lib/utils';
+import { cn, getLocalizedText } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
+
 import type { ProductsSectionProps } from './page.types';
 
 
-export const ProductsSection = ({ products, selectedIds, onToggle }: ProductsSectionProps) => (
-  <div className={s.card}>
-    <h2 className={s.cardTitle}>Товары в акции</h2>
-    <p className="text-xs text-muted-foreground">{FIELD_TOOLTIPS.products}</p>
+export const ProductsSection = ({ products, selectedIds, onToggle }: ProductsSectionProps) => {
+  const { t, lang } = useLanguage();
 
-    <div className={s.productsWrapper}>
-      {products.map((product) => {
-        const isSelected = selectedIds.includes(product.id);
+  return (
+    <div className={s.card}>
+      <h2 className={s.cardTitle}>{t('admin.promotion.productsTitle')}</h2>
+      <p className="text-xs text-muted-foreground">{t('admin.promotion.tooltip.products')}</p>
 
-        return (
-          <button
-            key={product.id}
-            type="button"
-            className={cn(s.productBtn, isSelected ? s.productBtnActive : s.productBtnInactive)}
-            onClick={onToggle(product.id)}
-          >
-            {product.name}
-          </button>
-        );
-      })}
+      <div className={s.productsWrapper}>
+        {products.map((product) => {
+          const isSelected = selectedIds.includes(product.id);
+
+          return (
+            <button
+              key={product.id}
+              type="button"
+              className={cn(s.productBtn, isSelected ? s.productBtnActive : s.productBtnInactive)}
+              onClick={onToggle(product.id)}
+            >
+              {getLocalizedText(lang, product.name, product.nameEn)}
+            </button>
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};

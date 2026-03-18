@@ -22,8 +22,25 @@ jest.mock('@/lib/hooks/useAuth', () => ({
   useAuth: () => ({ user: null, isAdmin: false }),
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'uk',
+    t: (k: string) => {
+      const map: Record<string, string> = {
+        'review.shopReply': 'Ответ магазина',
+        'review.replyPlaceholder': 'Ответ от имени магазина...',
+        'review.reply': 'Ответить',
+        'review.anonymous': 'Аноним',
+        'common.cancel': 'Отмена',
+      };
+      return map[k] ?? k;
+    },
+  }),
+}));
+
 jest.mock('@/lib/utils', () => ({
   getInitials: (name: string | null) => name?.slice(0, 2).toUpperCase() ?? '??',
+  langToLocale: () => 'uk-UA',
 }));
 
 jest.mock('@/components/ui/StarRating', () => ({

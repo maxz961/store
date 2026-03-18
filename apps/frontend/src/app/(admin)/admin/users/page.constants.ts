@@ -1,11 +1,11 @@
 export const breadcrumbs = [
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Пользователи' },
+  { label: 'Admin panel', href: '/admin/dashboard' },
+  { label: 'Users' },
 ];
 
 export const ROLE_LABELS: Record<string, string> = {
-  CUSTOMER: 'Покупатель',
-  ADMIN: 'Админ',
+  CUSTOMER: 'Customer',
+  ADMIN: 'Admin',
 };
 
 export const ROLE_OPTIONS = Object.entries(ROLE_LABELS).map(([value, label]) => ({

@@ -3,7 +3,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { When } from 'react-if';
-import { cn } from '@/lib/utils';
+import { cn, getLocalizedText } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { useActivePromotions } from '@/lib/hooks/usePromotions';
 import { s } from './PromoBanner.styled';
 import { PromoBannerSlide } from './PromoBannerSlide';
@@ -13,6 +14,7 @@ const AUTOPLAY_INTERVAL = 5000;
 
 export const PromoBanner = () => {
   const { data: promotions = [] } = useActivePromotions();
+  const { t, lang } = useLanguage();
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -62,13 +64,13 @@ export const PromoBanner = () => {
           {promotions.map((promo) => (
             <PromoBannerSlide
               key={promo.id}
-              title={promo.title}
-              description={promo.description}
+              title={getLocalizedText(lang, promo.title, promo.titleEn)}
+              description={getLocalizedText(lang, promo.description ?? '', promo.descriptionEn)}
               bannerImageUrl={promo.bannerImageUrl}
               bannerBgColor={promo.bannerBgColor}
               discountType={promo.discountType}
               discountValue={promo.discountValue}
-              link={promo.link}
+              slug={promo.slug}
             />
           ))}
         </div>
@@ -79,7 +81,7 @@ export const PromoBanner = () => {
           type="button"
           className={cn(s.arrowBase, s.arrowLeft)}
           onClick={handlePrev}
-          aria-label="Предыдущий баннер"
+          aria-label={t('promotions.prevBanner')}
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -87,7 +89,7 @@ export const PromoBanner = () => {
           type="button"
           className={cn(s.arrowBase, s.arrowRight)}
           onClick={handleNext}
-          aria-label="Следующий баннер"
+          aria-label={t('promotions.nextBanner')}
         >
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -101,7 +103,7 @@ export const PromoBanner = () => {
               type="button"
               className={cn(s.dot, i === current ? s.dotActive : s.dotInactive)}
               onClick={handleDotClick(i)}
-              aria-label={`Баннер ${i + 1}`}
+              aria-label={`${t('promotions.bannerLabel')} ${i + 1}`}
             />
           ))}
         </div>

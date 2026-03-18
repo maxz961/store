@@ -7,7 +7,7 @@ import { Role } from "@store/shared";
 
 @Controller("admin/analytics")
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.ADMIN)
+@Roles(Role.ADMIN, Role.MANAGER)
 export class AnalyticsController {
   constructor(private readonly analyticsService: AnalyticsService) {}
 

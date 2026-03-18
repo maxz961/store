@@ -1,6 +1,26 @@
 import { render, screen } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'orders.order': 'Order',
+        'orders.empty': 'No orders yet',
+        'orders.emptyText': 'Go to the catalog and place your first order',
+        'orders.notAuth': 'You are not signed in',
+        'orders.notAuthText': 'Sign in to view your orders',
+        'orders.login': 'Sign in',
+        'cart.items': 'items',
+        'cart.browseCatalog': 'Go to catalog',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('lucide-react', () => ({
   Package: (props: any) => <div data-testid="icon-package" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
@@ -53,13 +73,13 @@ describe('OrdersPage', () => {
 
   it('renders orders title', () => {
     render(<OrdersPage />);
-    expect(screen.getByText('Мои заказы')).toBeInTheDocument();
+    expect(screen.getByText('My Orders')).toBeInTheDocument();
   });
 
   it('renders order cards with IDs', () => {
     render(<OrdersPage />);
-    expect(screen.getByText('Заказ #12345678')).toBeInTheDocument();
-    expect(screen.getByText('Заказ #87654321')).toBeInTheDocument();
+    expect(screen.getByText('Order #12345678')).toBeInTheDocument();
+    expect(screen.getByText('Order #87654321')).toBeInTheDocument();
   });
 
   it('renders order amounts', () => {
@@ -70,29 +90,29 @@ describe('OrdersPage', () => {
 
   it('renders status badges', () => {
     render(<OrdersPage />);
-    expect(screen.getByText('Ожидает')).toBeInTheDocument();
-    expect(screen.getByText('Доставлен')).toBeInTheDocument();
+    expect(screen.getByText('Pending')).toBeInTheDocument();
+    expect(screen.getByText('Delivered')).toBeInTheDocument();
   });
 
   it('renders item count with correct pluralization', () => {
     render(<OrdersPage />);
-    expect(screen.getByText('2 товара')).toBeInTheDocument();
-    expect(screen.getByText('1 товар')).toBeInTheDocument();
+    expect(screen.getByText('2 items')).toBeInTheDocument();
+    expect(screen.getByText('1 items')).toBeInTheDocument();
   });
 
   it('shows empty state when no orders', () => {
     mockOrdersState = { data: [], isLoading: false };
     render(<OrdersPage />);
-    expect(screen.getByText('Заказов пока нет')).toBeInTheDocument();
-    expect(screen.getByText('Ваши заказы появятся здесь после оформления')).toBeInTheDocument();
-    expect(screen.getByText('Перейти в каталог')).toBeInTheDocument();
+    expect(screen.getByText('No orders yet')).toBeInTheDocument();
+    expect(screen.getByText('Go to the catalog and place your first order')).toBeInTheDocument();
+    expect(screen.getByText('Go to catalog')).toBeInTheDocument();
   });
 
   it('shows not authenticated state', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false, user: null };
     render(<OrdersPage />);
-    expect(screen.getByText('Вы не авторизованы')).toBeInTheDocument();
-    expect(screen.getByText('Войдите, чтобы увидеть свои заказы')).toBeInTheDocument();
+    expect(screen.getByText('You are not signed in')).toBeInTheDocument();
+    expect(screen.getByText('Sign in to view your orders')).toBeInTheDocument();
   });
 
   it('shows loading skeleton without order content', () => {
@@ -103,6 +123,6 @@ describe('OrdersPage', () => {
 
   it('renders breadcrumbs', () => {
     render(<OrdersPage />);
-    expect(screen.getByText('Профиль')).toBeInTheDocument();
+    expect(screen.getByText('Profile')).toBeInTheDocument();
   });
 });

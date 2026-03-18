@@ -6,17 +6,19 @@ import { Pencil } from 'lucide-react';
 import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { If, Then, Else } from 'react-if';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText, langToLocale } from '@/lib/utils';
 import { s } from './page.styled';
 import { DISCOUNT_TYPE_LABELS } from './page.constants';
 import type { PromotionRowProps } from './page.types';
 
 
-const formatDate = (dateStr: string) =>
-  new Date(dateStr).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-
-
 export const PromotionRow = ({ promotion }: PromotionRowProps) => {
   const router = useRouter();
+  const { lang } = useLanguage();
+
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString(langToLocale(lang), { day: 'numeric', month: 'short' });
 
   const handleRowClick = useCallback(() => {
     router.push(promotion.link ?? '/products');
@@ -32,13 +34,13 @@ export const PromotionRow = ({ promotion }: PromotionRowProps) => {
         <div className={s.bannerCell}>
           <Image
             src={promotion.bannerImageUrl}
-            alt={promotion.title}
+            alt={getLocalizedText(lang, promotion.title, promotion.titleEn)}
             width={80}
             height={40}
             className={s.bannerThumb}
             unoptimized
           />
-          <span className={s.promoTitle}>{promotion.title}</span>
+          <span className={s.promoTitle}>{getLocalizedText(lang, promotion.title, promotion.titleEn)}</span>
         </div>
       </td>
       <td className={s.td}>
@@ -53,8 +55,8 @@ export const PromotionRow = ({ promotion }: PromotionRowProps) => {
       </td>
       <td className={s.tdCenter}>
         <If condition={promotion.isActive}>
-          <Then><span className={s.statusActive}>Активна</span></Then>
-          <Else><span className={s.statusInactive}>Неактивна</span></Else>
+          <Then><span className={s.statusActive}>Active</span></Then>
+          <Else><span className={s.statusInactive}>Inactive</span></Else>
         </If>
       </td>
       <td className={s.tdCenter}>

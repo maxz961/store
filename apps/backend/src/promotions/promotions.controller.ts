@@ -27,30 +27,35 @@ export class PromotionsController {
     return this.promotionsService.findActive();
   }
 
+  @Get("slug/:slug")
+  findBySlug(@Param("slug") slug: string) {
+    return this.promotionsService.findBySlug(slug);
+  }
+
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findAll() {
     return this.promotionsService.findAll();
   }
 
   @Get(":id")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findById(@Param("id") id: string) {
     return this.promotionsService.findById(id);
   }
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   create(@Body() dto: CreatePromotionDto) {
     return this.promotionsService.create(dto);
   }
 
   @Put(":id")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   update(@Param("id") id: string, @Body() dto: UpdatePromotionDto) {
     return this.promotionsService.update(id, dto);
   }

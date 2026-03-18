@@ -5,11 +5,11 @@ import { cn } from '@/lib/utils';
 import { When } from 'react-if';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { usePriceRange } from '@/lib/hooks/useProducts';
+import { useLanguage } from '@/lib/i18n';
 import { PriceRangeSlider } from '@/components/ui/PriceRangeSlider';
 import { SelectField } from '@/components/ui/SelectField';
 import { CategoryButton } from './CategoryButton';
 import { TagButton } from './TagButton';
-import { SORT_OPTIONS } from './ProductFilters.constants';
 import type { Props } from './ProductFilters.types';
 import { s } from './ProductFilters.styled';
 
@@ -25,6 +25,13 @@ export const ProductFilters = ({
 }: Props) => {
   const { update, reset } = useProductParams();
   const { data: priceRange } = usePriceRange();
+  const { t } = useLanguage();
+
+  const sortOptions = useMemo(() => [
+    { value: 'createdAt_desc', label: t('catalog.sortNewest') },
+    { value: 'price_asc', label: t('catalog.sortCheapest') },
+    { value: 'price_desc', label: t('catalog.sortMostExpensive') },
+  ], [t]);
 
   const filteredCategories = useMemo(
     () => categories.filter((c) => (c._count?.products ?? 0) > 0),
@@ -86,23 +93,24 @@ export const ProductFilters = ({
   return (
     <div className={s.wrapper}>
       <SelectField
-        label="Сортировка"
+        label={t('catalog.sort')}
         value={currentSort ?? ''}
         onChange={handleSortChange}
-        options={SORT_OPTIONS}
-        placeholder="По умолчанию"
+        options={sortOptions}
+        placeholder={t('catalog.sortDefault')}
       />
 
       <When condition={filteredCategories.length > 0}>
         <div className={s.divider} />
         <div className={s.section}>
-          <p className={s.label}>Категории</p>
+          <p className={s.label}>{t('catalog.categories')}</p>
           <div className={s.categoryList}>
             <button
+              type="button"
               onClick={handleClearCategory}
               className={cn(s.categoryItem, !currentCategory ? s.categoryActive : s.categoryInactive)}
             >
-              Все товары
+              {t('catalog.allProducts')}
             </button>
             {filteredCategories.map((cat) => (
               <CategoryButton
@@ -119,7 +127,7 @@ export const ProductFilters = ({
       <When condition={filteredTags.length > 0}>
         <div className={s.divider} />
         <div className={s.section}>
-          <p className={s.label}>Теги</p>
+          <p className={s.label}>{t('catalog.tags')}</p>
           <div className={s.tags}>
             {filteredTags.map((tag) => (
               <TagButton
@@ -136,7 +144,7 @@ export const ProductFilters = ({
       <When condition={!!priceRange}>
         <div className={s.divider} />
         <div className={s.section}>
-          <p className={s.label}>Цена</p>
+          <p className={s.label}>{t('catalog.price')}</p>
           <PriceRangeSlider
             min={priceRange?.min ?? 0}
             max={priceRange?.max ?? 0}
@@ -151,8 +159,8 @@ export const ProductFilters = ({
 
       <When condition={hasFilters}>
         <div className={s.divider} />
-        <button className={s.resetButton} onClick={handleReset}>
-          Сбросить фильтры
+        <button type="button" className={s.resetButton} onClick={handleReset}>
+          {t('catalog.resetFilters')}
         </button>
       </When>
     </div>

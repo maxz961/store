@@ -9,7 +9,12 @@ export class CreateCategoryDto {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[a-z0-9-]+$/, { message: 'Slug должен содержать только строчные буквы, цифры и дефисы' })
+  @MaxLength(100)
+  nameEn: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^[a-z0-9-]+$/, { message: 'Slug must contain only lowercase letters, numbers, and hyphens' })
   @MaxLength(100)
   slug: string;
 
@@ -17,6 +22,11 @@ export class CreateCategoryDto {
   @IsString()
   @MaxLength(500)
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  descriptionEn?: string;
 
   @IsOptional()
   @IsString()

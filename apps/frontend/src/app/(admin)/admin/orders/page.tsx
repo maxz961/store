@@ -38,7 +38,7 @@ const AdminOrdersContent = () => {
         page={data?.page ?? 1}
         totalPages={data?.totalPages ?? 1}
         total={data?.total ?? 0}
-        itemLabel="заказов"
+        itemLabel="orders"
       />
     </>
   );
