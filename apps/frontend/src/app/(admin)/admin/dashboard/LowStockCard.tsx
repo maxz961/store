@@ -25,6 +25,7 @@ export const LowStockCard = ({ products }: LowStockCardProps) => {
                 key={product.id}
                 id={product.id}
                 name={product.name}
+                nameEn={product.nameEn}
                 slug={product.slug}
                 stock={product.stock}
                 image={product.image}

@@ -19,7 +19,7 @@ interface AnalyticsSummary {
   averageOrderValue: number;
   deliveryMethodDistribution: { method: string; count: number }[];
   ratingDistribution: { rating: number; count: number }[];
-  lowStockProducts: { id: string; name: string; slug: string; stock: number; image: string | null }[];
+  lowStockProducts: { id: string; name: string; nameEn: string | null; slug: string; stock: number; image: string | null }[];
 }
 
 interface AdminOrder {
