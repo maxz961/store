@@ -1,19 +1,13 @@
 import type { Metadata } from 'next';
-import dynamic from 'next/dynamic';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { QueryProvider } from '@/components/providers/QueryProvider';
+import { NavigationProgressClient } from '@/components/providers/NavigationProgress/NavigationProgressClient';
 import { Header } from '@/components/layout/Header';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { LanguageProvider } from '@/lib/i18n';
 import { Toaster } from 'sonner';
 import './globals.css';
-
-
-const NavigationProgress = dynamic(
-  () => import('@/components/providers/NavigationProgress').then((m) => m.NavigationProgress),
-  { ssr: false },
-);
 
 
 const inter = Inter({
@@ -38,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <ThemeProvider>
             <LanguageProvider>
-              <NavigationProgress />
+              <NavigationProgressClient />
               <Header />
               <main>
                 <ErrorBoundary>
