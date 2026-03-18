@@ -15,6 +15,7 @@ import type { User } from '@store/shared';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @Roles(Role.ADMIN, Role.MANAGER)
   @Get()
   findAll(
     @Query('skip', new DefaultValuePipe(0), ParseIntPipe) skip: number,

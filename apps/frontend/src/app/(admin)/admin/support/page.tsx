@@ -6,23 +6,25 @@ import { MessageCircle } from 'lucide-react';
 import { When } from 'react-if';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAdminThreads } from '@/lib/hooks/useSupport';
-import { getInitials } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
+import { getInitials, langToLocale } from '@/lib/utils';
 import { s } from './page.styled';
-
-
-const formatTime = (iso: string) => {
-  const date = new Date(iso);
-  const now = new Date();
-  const isToday = date.toDateString() === now.toDateString();
-
-  return isToday
-    ? date.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })
-    : date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-};
 
 
 const AdminSupportPage = () => {
   const { data: threads = [], isLoading } = useAdminThreads();
+  const { lang } = useLanguage();
+
+  const formatTime = (iso: string) => {
+    const date = new Date(iso);
+    const now = new Date();
+    const isToday = date.toDateString() === now.toDateString();
+    const locale = langToLocale(lang);
+
+    return isToday
+      ? date.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+      : date.toLocaleDateString(locale, { day: 'numeric', month: 'short' });
+  };
 
   if (isLoading) {
     return (

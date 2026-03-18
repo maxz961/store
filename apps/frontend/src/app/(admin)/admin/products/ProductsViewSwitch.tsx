@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import type { ProductsViewSwitchProps } from './page.types';
 
@@ -11,6 +12,7 @@ import type { ProductsViewSwitchProps } from './page.types';
 export const ProductsViewSwitch = ({ currentView, imageErrorCount }: ProductsViewSwitchProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t } = useLanguage();
 
   const handleSelectAll = useCallback(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -32,13 +34,13 @@ export const ProductsViewSwitch = ({ currentView, imageErrorCount }: ProductsVie
         onClick={handleSelectAll}
         className={cn(s.viewTab, currentView === 'all' && s.viewTabActive)}
       >
-        Все
+        {t('admin.products.viewAll')}
       </button>
       <button
         onClick={handleSelectBroken}
         className={cn(s.viewTab, currentView === 'broken' && s.viewTabActive)}
       >
-        Проблемные
+        {t('admin.products.viewBroken')}
         {imageErrorCount > 0 && (
           <span className={s.viewTabBadge}>
             <AlertTriangle className="h-3 w-3" />

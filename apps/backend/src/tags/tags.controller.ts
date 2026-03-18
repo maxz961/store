@@ -17,14 +17,14 @@ export class TagsController {
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   create(@Body() dto: CreateTagDto) {
     return this.tagsService.create(dto);
   }
 
   @Put(":id")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   update(@Param("id") id: string, @Body() dto: Partial<CreateTagDto>) {
     return this.tagsService.update(id, dto);
   }

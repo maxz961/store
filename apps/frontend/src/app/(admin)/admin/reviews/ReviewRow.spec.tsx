@@ -41,8 +41,13 @@ jest.mock('react-if', () => ({
     condition ? children : null,
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'uk', t: (k: string) => k }),
+}));
+
 jest.mock('@/lib/utils', () => ({
   getInitials: (name: string | null) => name?.slice(0, 2).toUpperCase() ?? '??',
+  langToLocale: () => 'uk-UA',
 }));
 
 import { ReviewRow } from './ReviewRow';

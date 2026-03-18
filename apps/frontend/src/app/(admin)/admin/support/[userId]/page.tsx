@@ -105,7 +105,7 @@ const AdminSupportThreadPage = ({ params }: { params: Promise<{ userId: string }
 
           {messages.map((msg) => (
             <div key={msg.id} className={msg.fromAdmin ? s.messageRowAdmin : s.messageRowUser}>
-              <div>
+              <div className={s.messageWrapper}>
                 <p className={msg.fromAdmin ? s.senderLabel : s.senderLabelRight}>
                   {msg.fromAdmin ? 'Вы (поддержка)' : (user.name ?? user.email)}
                 </p>
@@ -126,14 +126,14 @@ const AdminSupportThreadPage = ({ params }: { params: Promise<{ userId: string }
           <div className={s.inputRow}>
             <textarea
               className={s.textarea}
-              placeholder="Ответить пользователю... (Enter — отправить, Shift+Enter — перенос)"
+              placeholder="Ответить пользователю..."
               value={text}
               onChange={handleTextChange}
               onKeyDown={handleKeyDown}
               rows={1}
             />
-            <Button onClick={handleSend} disabled={!text.trim() || reply.isPending}>
-              {reply.isPending ? <Spinner /> : 'Отправить'}
+            <Button className={s.sendButton} onClick={handleSend} disabled={!text.trim() || reply.isPending}>
+              {reply.isPending ? <Spinner size="sm" /> : 'Отправить'}
             </Button>
           </div>
         </div>

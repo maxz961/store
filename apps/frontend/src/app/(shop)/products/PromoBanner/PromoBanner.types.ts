@@ -5,5 +5,5 @@ export interface PromoBannerSlideProps {
   bannerBgColor: string | null;
   discountType: 'PERCENTAGE' | 'FIXED';
   discountValue: number;
-  link: string | null;
+  slug: string;
 }

@@ -7,6 +7,28 @@ jest.mock('lucide-react', () => ({
   ChevronDown: (props: React.SVGProps<SVGSVGElement>) => <svg data-testid="icon-chevron-down" {...props} />,
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'catalog.sort': 'Sort by',
+        'catalog.sortDefault': 'Default',
+        'catalog.sortNewest': 'Newest',
+        'catalog.sortCheapest': 'Price: low to high',
+        'catalog.sortMostExpensive': 'Price: high to low',
+        'catalog.categories': 'Categories',
+        'catalog.allProducts': 'All products',
+        'catalog.tags': 'Tags',
+        'catalog.price': 'Price',
+        'catalog.resetFilters': 'Reset filters',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 
 const mockUpdate = jest.fn();
 const mockReset = jest.fn();
@@ -22,15 +44,15 @@ jest.mock('@/lib/hooks/useProducts', () => ({
 }));
 
 const categories = [
-  { id: '1', name: 'Электроника', slug: 'electronics', _count: { products: 5 } },
-  { id: '2', name: 'Одежда', slug: 'clothing', _count: { products: 3 } },
-  { id: '3', name: 'Пустая', slug: 'empty', _count: { products: 0 } },
+  { id: '1', name: 'Electronics', slug: 'electronics', _count: { products: 5 } },
+  { id: '2', name: 'Clothing', slug: 'clothing', _count: { products: 3 } },
+  { id: '3', name: 'Empty', slug: 'empty', _count: { products: 0 } },
 ];
 
 const tags = [
-  { id: '1', name: 'Новинка', slug: 'new', _count: { products: 2 } },
-  { id: '2', name: 'Скидка', slug: 'sale', _count: { products: 1 } },
-  { id: '3', name: 'Нет товаров', slug: 'no-products', _count: { products: 0 } },
+  { id: '1', name: 'New', slug: 'new', _count: { products: 2 } },
+  { id: '2', name: 'Sale', slug: 'sale', _count: { products: 1 } },
+  { id: '3', name: 'No products', slug: 'no-products', _count: { products: 0 } },
 ];
 
 describe('ProductFilters', () => {
@@ -52,25 +74,25 @@ describe('ProductFilters', () => {
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
 
-    expect(screen.getByText('Все товары')).toBeInTheDocument();
-    expect(screen.getByText('Электроника')).toBeInTheDocument();
-    expect(screen.getByText('Одежда')).toBeInTheDocument();
-    expect(screen.getByText('Новинка')).toBeInTheDocument();
-    expect(screen.getByText('Скидка')).toBeInTheDocument();
+    expect(screen.getByText('All products')).toBeInTheDocument();
+    expect(screen.getByText('Electronics')).toBeInTheDocument();
+    expect(screen.getByText('Clothing')).toBeInTheDocument();
+    expect(screen.getByText('New')).toBeInTheDocument();
+    expect(screen.getByText('Sale')).toBeInTheDocument();
   });
 
   it('does not render category with 0 products', () => {
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
-    expect(screen.queryByText('Пустая')).not.toBeInTheDocument();
+    expect(screen.queryByText('Empty')).not.toBeInTheDocument();
   });
 
   it('does not render tag with 0 products', () => {
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
-    expect(screen.queryByText('Нет товаров')).not.toBeInTheDocument();
+    expect(screen.queryByText('No products')).not.toBeInTheDocument();
   });
 
   it('calls update with categorySlug on category click', async () => {
@@ -79,11 +101,11 @@ describe('ProductFilters', () => {
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
 
-    await user.click(screen.getByText('Электроника'));
+    await user.click(screen.getByText('Electronics'));
     expect(mockUpdate).toHaveBeenCalledWith({ categorySlug: 'electronics' });
   });
 
-  it('calls update with undefined categorySlug on "Все товары" click', async () => {
+  it('calls update with undefined categorySlug on "All products" click', async () => {
     const user = userEvent.setup();
     render(
       <ProductFilters
@@ -94,7 +116,7 @@ describe('ProductFilters', () => {
       />,
     );
 
-    await user.click(screen.getByText('Все товары'));
+    await user.click(screen.getByText('All products'));
     expect(mockUpdate).toHaveBeenCalledWith({ categorySlug: undefined });
   });
 
@@ -104,7 +126,7 @@ describe('ProductFilters', () => {
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
 
-    await user.click(screen.getByText('Новинка'));
+    await user.click(screen.getByText('New'));
     expect(mockUpdate).toHaveBeenCalledWith({ tagSlugs: ['new'] });
   });
 
@@ -114,7 +136,7 @@ describe('ProductFilters', () => {
       <ProductFilters categories={categories} tags={tags} currentTags={['new', 'sale']} />,
     );
 
-    await user.click(screen.getByText('Новинка'));
+    await user.click(screen.getByText('New'));
     expect(mockUpdate).toHaveBeenCalledWith({ tagSlugs: ['sale'] });
   });
 
@@ -143,8 +165,8 @@ describe('ProductFilters', () => {
     render(
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
-    expect(screen.getByText('Сортировка')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Сортировка' })).toBeInTheDocument();
+    expect(screen.getByText('Sort by')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Sort by' })).toBeInTheDocument();
   });
 
   it('calls update with sortBy and sortOrder on sort change', async () => {
@@ -153,8 +175,8 @@ describe('ProductFilters', () => {
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Сортировка' }));
-    await user.click(screen.getByRole('option', { name: 'Сначала дешёвые' }));
+    await user.click(screen.getByRole('button', { name: 'Sort by' }));
+    await user.click(screen.getByRole('option', { name: 'Price: low to high' }));
 
     expect(mockUpdate).toHaveBeenCalledWith({ sortBy: 'price', sortOrder: 'asc' });
   });
@@ -170,8 +192,8 @@ describe('ProductFilters', () => {
       />,
     );
 
-    await user.click(screen.getByRole('button', { name: 'Сортировка' }));
-    await user.click(screen.getByRole('option', { name: 'По умолчанию' }));
+    await user.click(screen.getByRole('button', { name: 'Sort by' }));
+    await user.click(screen.getByRole('option', { name: 'Default' }));
 
     expect(mockUpdate).toHaveBeenCalledWith({ sortBy: undefined, sortOrder: undefined });
   });
@@ -186,7 +208,7 @@ describe('ProductFilters', () => {
       />,
     );
 
-    expect(screen.getByText('Сбросить фильтры')).toBeInTheDocument();
+    expect(screen.getByText('Reset filters')).toBeInTheDocument();
   });
 
   it('shows reset button when minPrice is set', () => {
@@ -199,7 +221,7 @@ describe('ProductFilters', () => {
       />,
     );
 
-    expect(screen.getByText('Сбросить фильтры')).toBeInTheDocument();
+    expect(screen.getByText('Reset filters')).toBeInTheDocument();
   });
 
   it('hides reset button when no filters active', () => {
@@ -207,7 +229,7 @@ describe('ProductFilters', () => {
       <ProductFilters categories={categories} tags={tags} currentTags={[]} />,
     );
 
-    expect(screen.queryByText('Сбросить фильтры')).not.toBeInTheDocument();
+    expect(screen.queryByText('Reset filters')).not.toBeInTheDocument();
   });
 
   it('calls reset on reset button click', async () => {
@@ -221,7 +243,7 @@ describe('ProductFilters', () => {
       />,
     );
 
-    await user.click(screen.getByText('Сбросить фильтры'));
+    await user.click(screen.getByText('Reset filters'));
     expect(mockReset).toHaveBeenCalledTimes(1);
   });
 });

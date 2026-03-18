@@ -1,6 +1,7 @@
 export interface Category {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   _count?: { products: number };
 }
@@ -8,6 +9,7 @@ export interface Category {
 export interface Tag {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   _count?: { products: number };
 }

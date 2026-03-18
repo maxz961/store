@@ -1,4 +1,4 @@
 export const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Профиль' },
+  { label: 'Home', href: '/' },
+  { label: 'Profile' },
 ];

@@ -1,6 +1,10 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'uk', t: (k: string) => k }),
+}));
+
 jest.mock('lucide-react', () => ({
   ImagePlus: (props: any) => <div data-testid="icon-image-plus" {...props} />,
   X: (props: any) => <div data-testid="icon-x" {...props} />,
@@ -34,7 +38,7 @@ const getImages = () => document.querySelectorAll<HTMLImageElement>('img');
 describe('ImageUpload', () => {
   it('renders dropzone when no files', () => {
     render(<ImageUpload files={[]} onChange={jest.fn()} />);
-    expect(screen.getByText('Добавить фото')).toBeInTheDocument();
+    expect(screen.getByText('imageUpload.addPhoto')).toBeInTheDocument();
   });
 
   it('displays thumbnails for selected files', () => {
@@ -90,14 +94,14 @@ describe('ImageUpload', () => {
     const files = [createFile('1.png'), createFile('2.png')];
     render(<ImageUpload files={files} onChange={jest.fn()} maxFiles={2} />);
 
-    expect(screen.queryByText('Добавить фото')).not.toBeInTheDocument();
+    expect(screen.queryByText('imageUpload.addPhoto')).not.toBeInTheDocument();
   });
 
   it('defaults maxFiles to 6', () => {
     const files = Array.from({ length: 5 }, (_, i) => createFile(`${i}.png`));
     render(<ImageUpload files={files} onChange={jest.fn()} />);
 
-    expect(screen.getByText('Добавить фото')).toBeInTheDocument();
+    expect(screen.getByText('imageUpload.addPhoto')).toBeInTheDocument();
   });
 
   it('displays existing URL thumbnails', () => {
@@ -134,8 +138,7 @@ describe('ImageUpload', () => {
     const input = document.querySelector('input[type="file"]')!;
     fireEvent.change(input, { target: { files: [largeFile] } });
 
-    expect(screen.getByRole('alert')).toHaveTextContent('Файл слишком большой');
-    expect(screen.getByRole('alert')).toHaveTextContent('huge.png');
+    expect(screen.getByRole('alert')).toHaveTextContent('imageUpload.errorTooLarge');
   });
 
   it('shows error when file type is not supported', () => {
@@ -146,6 +149,6 @@ describe('ImageUpload', () => {
     const input = document.querySelector('input[type="file"]')!;
     fireEvent.change(input, { target: { files: [pdfFile] } });
 
-    expect(screen.getByRole('alert')).toHaveTextContent('JPG, PNG и WebP');
+    expect(screen.getByRole('alert')).toHaveTextContent('imageUpload.errorWrongType');
   });
 });

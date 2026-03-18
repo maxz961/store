@@ -7,7 +7,7 @@ export const AddressCard = ({ address }: AddressCardProps) => (
   <div className={s.infoCard}>
     <div className={s.infoTitleRow}>
       <MapPin className={s.infoTitleIcon} />
-      <p className={s.infoTitle}>Адрес</p>
+      <p className={s.infoTitle}>Address</p>
     </div>
     <p className={s.infoValue}>
       {address.fullName}<br />

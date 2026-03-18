@@ -17,7 +17,7 @@ export const StatusSection = ({ orderStatus, onUpdateStatus, isPending }: Status
 
   return (
     <div className={s.statusCard}>
-      <p className={s.statusTitle}>Статус заказа</p>
+      <p className={s.statusTitle}>Change status</p>
       <div className={s.statusButtons}>
         {STATUSES.map((status) => (
           <StatusButton

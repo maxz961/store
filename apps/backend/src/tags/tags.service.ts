@@ -16,27 +16,27 @@ export class TagsService {
     return tag;
   }
 
-  async create(data: { name: string; slug: string; color?: string }) {
+  async create(data: { name: string; nameEn: string; slug: string; color?: string }) {
     const [existingSlug, existingName] = await Promise.all([
       db.tag.findFirst({ where: { slug: data.slug } }),
       db.tag.findFirst({ where: { name: data.name } }),
     ]);
-    if (existingSlug) throw new ConflictException('Slug уже занят, выберите другой');
-    if (existingName) throw new ConflictException('Название уже занято, введите другое');
+    if (existingSlug) throw new ConflictException('Slug is already taken, choose another');
+    if (existingName) throw new ConflictException('Name is already taken, choose another');
     return db.tag.create({ data });
   }
 
-  async update(id: string, data: { name?: string; slug?: string; color?: string }) {
+  async update(id: string, data: { name?: string; nameEn?: string; slug?: string; color?: string }) {
     const tag = await db.tag.findUnique({ where: { id } });
     if (!tag) throw new NotFoundException(`Tag ${id} not found`);
 
     if (data.slug) {
       const existingSlug = await db.tag.findFirst({ where: { slug: data.slug, NOT: { id } } });
-      if (existingSlug) throw new ConflictException('Slug уже занят, выберите другой');
+      if (existingSlug) throw new ConflictException('Slug is already taken, choose another');
     }
     if (data.name) {
       const existingName = await db.tag.findFirst({ where: { name: data.name, NOT: { id } } });
-      if (existingName) throw new ConflictException('Название уже занято, введите другое');
+      if (existingName) throw new ConflictException('Name is already taken, choose another');
     }
 
     return db.tag.update({ where: { id }, data });

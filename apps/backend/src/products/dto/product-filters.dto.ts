@@ -54,4 +54,9 @@ export class ProductFiltersDto {
   @Transform(({ value }) => value === 'true')
   @IsBoolean()
   imageError?: boolean;
+
+  @IsOptional()
+  @Transform(({ value }) => value === 'true')
+  @IsBoolean()
+  nameOnly?: boolean;
 }

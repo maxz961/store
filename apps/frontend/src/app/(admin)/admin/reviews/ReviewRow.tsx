@@ -1,16 +1,20 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { getInitials } from '@/lib/utils';
+import { getInitials, langToLocale } from '@/lib/utils';
 import type { ReviewRowProps } from './page.types';
 
 
 export const ReviewRow = ({ review, onDelete }: ReviewRowProps) => {
+  const { lang } = useLanguage();
   const handleDelete = () => onDelete(review.id);
 
-  const dateStr = new Date(review.createdAt).toLocaleDateString('ru-RU');
+  const dateStr = new Date(review.createdAt).toLocaleDateString(langToLocale(lang));
 
   const avatar = (
     <If condition={!!review.user.image}>

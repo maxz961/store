@@ -7,6 +7,8 @@ import { useRouter } from 'next/navigation';
 import { Pencil } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { Badge } from '@/components/ui/badge';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './page.styled';
 import { formatCurrency } from '@/lib/constants/format';
 import { api } from '@/lib/api';
@@ -15,6 +17,7 @@ import type { ProductRowProps } from './page.types';
 
 export const ProductRow = ({ product }: ProductRowProps) => {
   const router = useRouter();
+  const { t, lang } = useLanguage();
   const errorReported = useRef(false);
   const [imgError, setImgError] = useState(false);
 
@@ -53,26 +56,28 @@ export const ProductRow = ({ product }: ProductRowProps) => {
               <div className={s.productImageFallback}>—</div>
             </Else>
           </If>
-          <span className={s.productName}>{product.name}</span>
+          <span className={s.productName}>{getLocalizedText(lang, product.name, product.nameEn)}</span>
         </div>
       </td>
       <td className={s.td}>
-        <span className={s.category}>{product.category?.name ?? '—'}</span>
+        <span className={s.category}>
+          {product.category ? getLocalizedText(lang, product.category.name, product.category.nameEn) : '—'}
+        </span>
       </td>
       <td className={s.td}>
         <div className={s.tagsWrapper}>
-          {product.tags?.slice(0, 3).map((t) => (
+          {product.tags?.slice(0, 3).map((tagItem) => (
             <Badge
-              key={t.tag.slug}
+              key={tagItem.tag.slug}
               variant="outline"
               className={s.tag}
-              style={t.tag.color ? {
-                borderColor: `${t.tag.color}40`,
-                backgroundColor: `${t.tag.color}12`,
-                color: t.tag.color,
+              style={tagItem.tag.color ? {
+                borderColor: `${tagItem.tag.color}40`,
+                backgroundColor: `${tagItem.tag.color}12`,
+                color: tagItem.tag.color,
               } : undefined}
             >
-              {t.tag.name}
+              {getLocalizedText(lang, tagItem.tag.name, tagItem.tag.nameEn)}
             </Badge>
           ))}
         </div>
@@ -85,8 +90,8 @@ export const ProductRow = ({ product }: ProductRowProps) => {
       </td>
       <td className={s.tdCenter}>
         <If condition={product.isPublished}>
-          <Then><span className={s.statusPublished}>Опубликован</span></Then>
-          <Else><span className={s.statusDraft}>Черновик</span></Else>
+          <Then><span className={s.statusPublished}>{t('admin.products.statusPublished')}</span></Then>
+          <Else><span className={s.statusDraft}>{t('admin.products.statusDraft')}</span></Else>
         </If>
       </td>
       <td className={s.td}>

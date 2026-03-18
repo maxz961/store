@@ -7,6 +7,11 @@ export const s = {
   formTitle: 'text-lg font-medium text-foreground',
   formRow: 'grid grid-cols-1 gap-4 sm:grid-cols-2',
 
+  // Lang tabs
+  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 p-1 w-fit',
+  langTab: 'rounded-md px-3 py-1 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
+  langTabActive: 'bg-white text-foreground shadow-sm ring-1 ring-border/50 dark:bg-slate-800',
+
   // Table
   tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
   table: 'w-full text-sm',

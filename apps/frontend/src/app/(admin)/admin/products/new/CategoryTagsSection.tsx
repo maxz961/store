@@ -1,10 +1,13 @@
-import { useFormContext } from 'react-hook-form';
+'use client';
+
+import { useFormContext, useController } from 'react-hook-form';
 import { When } from 'react-if';
 import { SelectField } from '@/components/ui/SelectField';
 import { FieldTooltip } from '@/components/ui/FieldTooltip';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { TagToggleButton } from './TagToggleButton';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 import type { CategoryTagsSectionProps } from './page.types';
 
@@ -15,32 +18,35 @@ export const CategoryTagsSection = ({
   selectedTags,
   onToggleTag,
 }: CategoryTagsSectionProps) => {
-  const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { control, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { field: categoryField } = useController({ name: 'categoryId', control });
+  const { t, lang } = useLanguage();
 
   return (
     <div className={s.card}>
-      <h2 className={s.cardTitle}>Категория и теги</h2>
+      <h2 className={s.cardTitle}>{t('admin.product.categoryAndTags')}</h2>
 
       <SelectField
-        label="Категория"
-        tooltip={FIELD_TOOLTIPS.categoryId}
-        placeholder="Выберите категорию"
+        label={t('admin.product.category')}
+        tooltip={t('admin.product.tooltip.categoryId')}
+        placeholder={t('admin.product.selectCategory')}
         options={categoryOptions}
         error={errors.categoryId?.message}
-        {...register('categoryId')}
+        {...categoryField}
       />
 
       <When condition={tags.length > 0}>
         <div>
           <p className={s.tagsTitle}>
-            Теги
-            <FieldTooltip text={FIELD_TOOLTIPS.tags} />
+            {t('admin.product.tags')}
+            <FieldTooltip text={t('admin.product.tooltip.tags')} />
           </p>
           <div className={s.tagsWrapper}>
             {tags.map((tag) => (
               <TagToggleButton
                 key={tag.id}
                 tag={tag}
+                label={getLocalizedText(lang, tag.name, tag.nameEn)}
                 isActive={selectedTags.includes(tag.id)}
                 onClick={onToggleTag(tag.id)}
               />

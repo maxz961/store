@@ -18,6 +18,9 @@ export class CreatePromotionDto {
   title: string;
 
   @IsString()
+  titleEn: string;
+
+  @IsString()
   @Matches(/^[a-z0-9-]+$/, {
     message: "Slug must contain only lowercase letters, numbers, and hyphens",
   })
@@ -26,6 +29,10 @@ export class CreatePromotionDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsString()
+  descriptionEn?: string;
 
   @IsString()
   bannerImageUrl: string;

@@ -32,9 +32,9 @@ export const Dropdown = ({ trigger, children, onClose, className }: Props) => {
 
   return (
     <div className={className ?? s.wrapper} ref={ref}>
-      <button type="button" onClick={handleToggle}>
+      <div onClick={handleToggle}>
         {trigger}
-      </button>
+      </div>
 
       <When condition={open}>
         <div className={s.panel} onClick={handlePanelClick}>

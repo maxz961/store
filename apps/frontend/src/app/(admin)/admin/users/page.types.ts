@@ -8,16 +8,18 @@ export interface UserRow {
   createdAt: string;
 }
 
-export type UserRole = 'CUSTOMER' | 'ADMIN';
+export type UserRole = 'CUSTOMER' | 'MANAGER' | 'ADMIN';
 
 export interface UsersTableProps {
   users: UserRow[];
+  canEditRole: boolean;
   onUpdateRole: (id: string, role: UserRole) => void;
   onToggleBan: (id: string, isBanned: boolean) => void;
 }
 
 export interface UserRowProps {
   user: UserRow;
+  canEditRole: boolean;
   onUpdateRole: (id: string, role: UserRole) => void;
   onToggleBan: (id: string, isBanned: boolean) => void;
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { ShoppingCart, Minus, Plus, Heart } from 'lucide-react';
+import { ShoppingCart, Minus, Plus, Heart, Check } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -10,7 +10,8 @@ import { StarRating } from '@/components/ui/StarRating';
 import { useCartStore } from '@/store/cart';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useAddFavorite, useFavoriteIds, useRemoveFavorite } from '@/lib/hooks/useFavorites';
-import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
+import { cn, getLocalizedText } from '@/lib/utils';
 import { formatCurrency } from '@/lib/constants/format';
 import { s } from './page.styled';
 import type { ProductInfoProps } from './page.types';
@@ -19,10 +20,12 @@ import type { ProductInfoProps } from './page.types';
 export const ProductInfo = ({ product }: ProductInfoProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const { isAuthenticated } = useAuth();
+  const { lang, t } = useLanguage();
   const { data: favoriteIds } = useFavoriteIds(isAuthenticated);
   const addFavorite = useAddFavorite();
   const removeFavorite = useRemoveFavorite();
   const [quantity, setQuantity] = useState(1);
+  const [cartState, setCartState] = useState<'idle' | 'loading' | 'success'>('idle');
 
   const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
   const isFavoritePending = addFavorite.isPending || removeFavorite.isPending;
@@ -36,6 +39,10 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const discount = product.comparePrice
     ? Math.round((1 - product.price / Number(product.comparePrice)) * 100)
     : null;
+
+  const displayName = getLocalizedText(lang, product.name, product.nameEn);
+  const displayCategory = getLocalizedText(lang, product.category.name, product.category.nameEn);
+  const displayDescription = getLocalizedText(lang, product.description, product.descriptionEn);
 
   const handleDecrease = useCallback(() => setQuantity((q) => Math.max(1, q - 1)), []);
   const handleIncrease = useCallback(() => setQuantity((q) => Math.min(product.stock, q + 1)), [product.stock]);
@@ -53,7 +60,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
-        name: product.name,
+        name: displayName,
         price: product.price,
         imageUrl: product.images[0] ?? '',
         slug: product.slug,
@@ -61,12 +68,20 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       });
     }
     setQuantity(1);
-  }, [quantity, addItem, product]);
+    setCartState('loading');
+    setTimeout(() => setCartState('success'), 700);
+  }, [quantity, addItem, product, displayName]);
+
+  const addToCartLabel = cartState === 'success'
+    ? t('product.inCart')
+    : cartState === 'loading'
+    ? t('product.adding')
+    : t('product.addToCart');
 
   return (
     <div className={s.info}>
-      <p className={s.category}>{product.category.name}</p>
-      <h1 className={s.title}>{product.name}</h1>
+      <p className={s.category}>{displayCategory}</p>
+      <h1 className={s.title}>{displayName}</h1>
 
       <When condition={reviews.length > 0}>
         <div className={s.ratingRow}>
@@ -88,12 +103,14 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
       </div>
 
       <p className={cn(s.stock, product.stock > 0 ? s.stockInStock : s.stockOut)}>
-        {product.stock > 0 ? `В наличии: ${product.stock} шт.` : 'Нет в наличии'}
+        {product.stock > 0
+          ? `${t('product.inStock')}: ${product.stock} ${t('product.pieces')}`
+          : t('product.outOfStock')}
       </p>
 
       <div className={s.divider} />
 
-      <p className={s.description}>{product.description}</p>
+      <p className={s.description}>{displayDescription}</p>
 
       <When condition={tags.length > 0}>
         <div className={s.tags}>
@@ -108,7 +125,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
                 color: tag.color,
               } : undefined}
             >
-              {tag.name}
+              {getLocalizedText(lang, tag.name, tag.nameEn)}
             </Badge>
           ))}
         </div>
@@ -135,16 +152,29 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
               <Plus className="h-4 w-4" />
             </button>
           </div>
-          <Button size="lg" className={s.addToCartButton} onClick={handleAddToCart}>
-            <ShoppingCart className={s.buttonIcon} />
-            В корзину
+          <Button
+            size="lg"
+            className={cn(s.addToCartButton, cartState === 'success' && s.addToCartButtonSuccess)}
+            onClick={handleAddToCart}
+            disabled={cartState === 'loading'}
+          >
+            <When condition={cartState === 'idle'}>
+              <ShoppingCart className={s.buttonIcon} />
+            </When>
+            <When condition={cartState === 'loading'}>
+              <Spinner size="sm" className="mr-2" />
+            </When>
+            <When condition={cartState === 'success'}>
+              <Check className={s.addToCartButtonSuccessIcon} />
+            </When>
+            {addToCartLabel}
           </Button>
           <When condition={isAuthenticated}>
             <button
               className={cn(s.favoriteButton, isFavorite && s.favoriteButtonActive)}
               onClick={handleToggleFavorite}
               disabled={isFavoritePending}
-              aria-label={isFavorite ? 'Убрать из избранного' : 'Добавить в избранное'}
+              aria-label={isFavorite ? t('favorites.empty') : t('favorites.title')}
             >
               <If condition={isFavoritePending}>
                 <Then><Spinner size="sm" /></Then>

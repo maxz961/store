@@ -30,21 +30,21 @@ export class LogsController {
 
   @Get()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findAll() {
     return this.logsService.findAll();
   }
 
   @Get('unread-count')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   getUnreadCount() {
     return this.logsService.getUnreadCount();
   }
 
   @Put('mark-all-read')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   @HttpCode(HttpStatus.OK)
   markAllRead() {
     return this.logsService.markAllRead();

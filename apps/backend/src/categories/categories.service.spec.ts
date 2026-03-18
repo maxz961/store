@@ -57,7 +57,7 @@ describe("CategoriesService", () => {
       (mockDb.category.findFirst as jest.Mock).mockResolvedValue(null);
       (mockDb.category.create as jest.Mock).mockResolvedValue(mockCategory);
 
-      const result = await service.create({ name: "Electronics", slug: "electronics" });
+      const result = await service.create({ name: "Electronics", nameEn: "Test EN", slug: "electronics" });
       expect(result).toEqual(mockCategory);
     });
 
@@ -67,7 +67,7 @@ describe("CategoriesService", () => {
         .mockResolvedValueOnce(null);
 
       await expect(
-        service.create({ name: "Electronics", slug: "electronics" })
+        service.create({ name: "Electronics", nameEn: "Test EN", slug: "electronics" })
       ).rejects.toThrow(ConflictException);
     });
 
@@ -77,7 +77,7 @@ describe("CategoriesService", () => {
         .mockResolvedValueOnce(mockCategory);
 
       await expect(
-        service.create({ name: "Electronics", slug: "electronics-2" })
+        service.create({ name: "Electronics", nameEn: "Test EN", slug: "electronics-2" })
       ).rejects.toThrow(ConflictException);
     });
   });

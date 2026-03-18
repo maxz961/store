@@ -1,14 +1,15 @@
 export interface Product {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   price: number;
   stock: number;
   isPublished: boolean;
   hasImageError?: boolean;
   images: string[];
-  category: { name: string } | null;
-  tags: { tag: { slug: string; name: string; color?: string | null } }[];
+  category: { name: string; nameEn?: string | null } | null;
+  tags: { tag: { slug: string; name: string; nameEn?: string | null; color?: string | null } }[];
 }
 
 export interface ProductsResponse {

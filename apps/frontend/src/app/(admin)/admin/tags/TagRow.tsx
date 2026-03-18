@@ -1,10 +1,15 @@
+'use client';
+
 import { Pencil, Trash2 } from 'lucide-react';
 import { When } from 'react-if';
+import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './page.styled';
 import type { TagRowProps } from './page.types';
 
 
-export const TagRow = ({ tag, onEdit, onDelete }: TagRowProps) => {
+export const TagRow = ({ tag, canDelete, onEdit, onDelete }: TagRowProps) => {
+  const { lang } = useLanguage();
   const handleEdit = () => onEdit(tag);
   const handleDelete = () => onDelete(tag);
 
@@ -16,7 +21,7 @@ export const TagRow = ({ tag, onEdit, onDelete }: TagRowProps) => {
             <span className={s.colorDot} style={{ backgroundColor: tag.color ?? undefined }} />
           </When>
           <div>
-            <p className={s.name}>{tag.name}</p>
+            <p className={s.name}>{getLocalizedText(lang, tag.name, tag.nameEn)}</p>
             <p className={s.slug}>{tag.slug}</p>
           </div>
         </div>
@@ -29,9 +34,11 @@ export const TagRow = ({ tag, onEdit, onDelete }: TagRowProps) => {
           <button className={s.editBtn} onClick={handleEdit}>
             <Pencil className="h-3.5 w-3.5" />
           </button>
-          <button className={s.deleteBtn} onClick={handleDelete}>
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+          <When condition={canDelete}>
+            <button className={s.deleteBtn} onClick={handleDelete}>
+              <Trash2 className="h-3.5 w-3.5" />
+            </button>
+          </When>
         </div>
       </td>
     </tr>

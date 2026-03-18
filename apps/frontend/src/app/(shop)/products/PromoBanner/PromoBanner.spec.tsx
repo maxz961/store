@@ -22,6 +22,18 @@ jest.mock('next/link', () => {
   return { __esModule: true, default: MockLink };
 });
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    t: (key: string) => ({
+      'promotions.learnMore': 'Learn more',
+      'promotions.prevBanner': 'Previous banner',
+      'promotions.nextBanner': 'Next banner',
+      'promotions.bannerLabel': 'Banner',
+    }[key] ?? key),
+    lang: 'uk',
+  }),
+}));
+
 let mockApiGet: jest.Mock;
 
 jest.mock('@/lib/api', () => ({
@@ -98,33 +110,33 @@ describe('PromoBanner', () => {
     expect(await screen.findByText('-$50')).toBeInTheDocument();
   });
 
-  it('renders "Подробнее" link when link is provided', async () => {
+  it('renders "Learn more" link pointing to promotion detail page', async () => {
     renderBanner();
-    const link = await screen.findByText('Подробнее');
-    expect(link).toBeInTheDocument();
-    expect(link.closest('a')).toHaveAttribute('href', '/products?tagSlugs=sale');
+    const links = await screen.findAllByText('Learn more');
+    expect(links[0]).toBeInTheDocument();
+    expect(links[0].closest('a')).toHaveAttribute('href', '/promotions/spring-sale');
   });
 
   it('renders navigation arrows when multiple promotions', async () => {
     renderBanner();
     await screen.findByText('Весенняя распродажа');
-    expect(screen.getByLabelText('Предыдущий баннер')).toBeInTheDocument();
-    expect(screen.getByLabelText('Следующий баннер')).toBeInTheDocument();
+    expect(screen.getByLabelText('Previous banner')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next banner')).toBeInTheDocument();
   });
 
   it('does not render arrows when single promotion', async () => {
     mockApiGet = jest.fn().mockResolvedValue([mockPromotions[0]]);
     renderBanner();
     await screen.findByText('Весенняя распродажа');
-    expect(screen.queryByLabelText('Предыдущий баннер')).not.toBeInTheDocument();
-    expect(screen.queryByLabelText('Следующий баннер')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Previous banner')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Next banner')).not.toBeInTheDocument();
   });
 
   it('renders dots for multiple promotions', async () => {
     renderBanner();
     await screen.findByText('Весенняя распродажа');
-    expect(screen.getByLabelText('Баннер 1')).toBeInTheDocument();
-    expect(screen.getByLabelText('Баннер 2')).toBeInTheDocument();
+    expect(screen.getByLabelText('Banner 1')).toBeInTheDocument();
+    expect(screen.getByLabelText('Banner 2')).toBeInTheDocument();
   });
 
   it('clicking next arrow changes slide', async () => {
@@ -134,7 +146,7 @@ describe('PromoBanner', () => {
     const track = screen.getByTestId('promo-track');
     expect(track).toHaveStyle({ transform: 'translateX(-0%)' });
 
-    fireEvent.click(screen.getByLabelText('Следующий баннер'));
+    fireEvent.click(screen.getByLabelText('Next banner'));
     expect(track).toHaveStyle({ transform: 'translateX(-100%)' });
   });
 
@@ -144,7 +156,7 @@ describe('PromoBanner', () => {
 
     const track = screen.getByTestId('promo-track');
 
-    fireEvent.click(screen.getByLabelText('Баннер 2'));
+    fireEvent.click(screen.getByLabelText('Banner 2'));
     expect(track).toHaveStyle({ transform: 'translateX(-100%)' });
   });
 

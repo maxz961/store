@@ -43,28 +43,28 @@ export class SupportController {
 
   @Get('admin/unread-count')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   adminGetTotalUnreadCount() {
     return this.supportService.adminGetTotalUnreadCount();
   }
 
   @Get('admin/threads')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   adminGetThreads() {
     return this.supportService.adminGetThreads();
   }
 
   @Get('admin/threads/:userId')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   adminGetMessages(@Param('userId') userId: string) {
     return this.supportService.adminGetMessages(userId);
   }
 
   @Post('admin/threads/:userId/reply')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   @HttpCode(HttpStatus.CREATED)
   adminReply(@Param('userId') userId: string, @Body() dto: SendMessageDto) {
     return this.supportService.adminReply(userId, dto);

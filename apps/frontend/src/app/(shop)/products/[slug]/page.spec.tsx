@@ -1,6 +1,41 @@
-import { Suspense } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 
+
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'product.addToCart': 'Add to cart',
+        'product.inCart': 'In cart',
+        'product.adding': 'Adding...',
+        'product.outOfStock': 'Out of stock',
+        'product.noPhoto': 'No photo',
+        'product.inStock': 'In stock',
+        'product.pieces': 'pcs.',
+        'product.reviews': 'Reviews',
+        'product.noReviews': 'No reviews yet',
+        'product.description': 'Description',
+        'product.category': 'Category',
+        'product.tags': 'Tags',
+        'product.notFound': 'Product not found',
+        'product.notFoundText': 'It may have been deleted or the link is invalid',
+        'product.similar': 'Similar products',
+        'product.recentlyViewed': 'Recently viewed',
+        'product.showAllReviews': 'Show all',
+        'product.writeReview': 'Write a review',
+        'product.reviewsOne': 'review',
+        'product.reviewsFew': 'reviews',
+        'product.reviewsMany': 'reviews',
+        'catalog.title': 'Catalog',
+        'favorites.empty': 'No favorites yet',
+        'favorites.title': 'Favorites',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
 
 jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
@@ -12,6 +47,7 @@ jest.mock('lucide-react', () => ({
   ImageOff: (props: any) => <div data-testid="icon-imageoff" {...props} />,
   Star: (props: any) => <div data-testid="icon-star" {...props} />,
   ShoppingCart: (props: any) => <div data-testid="icon-cart" {...props} />,
+  Check: (props: any) => <div data-testid="icon-check" {...props} />,
   Minus: (props: any) => <div data-testid="icon-minus" {...props} />,
   Plus: (props: any) => <div data-testid="icon-plus" {...props} />,
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
@@ -29,23 +65,25 @@ jest.mock('@/lib/hooks/useFavorites', () => ({
   useRemoveFavorite: () => ({ mutate: jest.fn() }),
 }));
 
-import ProductPage from './page';
+import { ProductPageClient as ProductPage } from './ProductPageClient';
 
 
 const mockAddItem = jest.fn();
 
 const baseProduct = {
   id: 'p1',
-  name: 'Тестовый товар',
+  name: 'Test Product',
+  nameEn: 'Test Product',
   slug: 'test-product',
   price: 199.99,
   comparePrice: null,
   images: ['https://example.com/img.jpg'],
   stock: 10,
-  description: 'Описание товара',
+  description: 'Product description',
+  descriptionEn: 'Product description',
   sku: 'SKU-001',
-  category: { name: 'Электроника', slug: 'electronics' },
-  tags: [{ tag: { name: 'Новинка', slug: 'new' } }],
+  category: { name: 'Electronics', nameEn: 'Electronics', slug: 'electronics' },
+  tags: [{ tag: { name: 'New', nameEn: 'New', slug: 'new' } }],
   reviews: [{ rating: 5 }, { rating: 4 }],
 };
 
@@ -101,90 +139,104 @@ describe('ProductPage', () => {
 
   const renderPage = async () => {
     await act(async () => {
-      render(
-        <Suspense fallback={<div>Loading...</div>}>
-          <ProductPage params={Promise.resolve({ slug: 'test-product' })} />
-        </Suspense>
-      );
+      render(<ProductPage slug="test-product" />);
     });
   };
 
   it('renders product name and price', async () => {
     await renderPage();
-    expect(screen.getByRole('heading', { name: 'Тестовый товар' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Test Product' })).toBeInTheDocument();
     expect(screen.getByText('199,99 ₴')).toBeInTheDocument();
   });
 
   it('renders category name', async () => {
     await renderPage();
-    expect(screen.getAllByText('Электроника').length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText('Electronics').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders stock status when in stock', async () => {
     await renderPage();
-    expect(screen.getByText('В наличии: 10 шт.')).toBeInTheDocument();
+    expect(screen.getByText('In stock: 10 pcs.')).toBeInTheDocument();
   });
 
   it('renders out of stock message', async () => {
     mockProductHook = { ...mockProductHook, data: { ...baseProduct, stock: 0 } };
     await renderPage();
-    expect(screen.getByText('Нет в наличии')).toBeInTheDocument();
+    expect(screen.getByText('Out of stock')).toBeInTheDocument();
   });
 
   it('shows loading state', async () => {
     mockProductHook = { data: undefined, isLoading: true, isError: false };
     await renderPage();
-    expect(screen.queryByText('Тестовый товар')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test Product')).not.toBeInTheDocument();
   });
 
   it('shows error state when product not found', async () => {
     mockProductHook = { data: undefined, isLoading: false, isError: true };
     await renderPage();
-    expect(screen.getByText('Товар не найден')).toBeInTheDocument();
-    expect(screen.getByText('Возможно, он был удалён или ссылка неверна')).toBeInTheDocument();
+    expect(screen.getByText('Product not found')).toBeInTheDocument();
+    expect(screen.getByText('It may have been deleted or the link is invalid')).toBeInTheDocument();
   });
 
   it('renders reviews summary with count and rating', async () => {
     await renderPage();
-    expect(screen.getByText('Отзывы')).toBeInTheDocument();
-    expect(screen.getByText(/4\.5 · 2 отзыва/)).toBeInTheDocument();
-    expect(screen.getByText('Показать все')).toBeInTheDocument();
+    expect(screen.getByText('Reviews')).toBeInTheDocument();
+    expect(screen.getByText(/4\.5 · 2 reviews/)).toBeInTheDocument();
+    expect(screen.getByText('Show all')).toBeInTheDocument();
   });
 
-  it('shows "Оставить отзыв" button when no reviews', async () => {
+  it('shows "Write a review" button when no reviews', async () => {
     mockProductHook = { ...mockProductHook, data: { ...baseProduct, reviews: [] } };
     await renderPage();
-    expect(screen.getByText('Оставить отзыв')).toBeInTheDocument();
+    expect(screen.getByText('Write a review')).toBeInTheDocument();
   });
 
-  it('opens ReviewModal when "Показать все" is clicked', async () => {
+  it('opens ReviewModal when "Show all" is clicked', async () => {
     await renderPage();
     expect(screen.queryByTestId('review-modal')).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText('Показать все'));
+    fireEvent.click(screen.getByText('Show all'));
     expect(screen.getByTestId('review-modal')).toBeInTheDocument();
   });
 
   it('renders add to cart button and calls addItem on click', async () => {
     await renderPage();
-    const button = screen.getByText('В корзину');
+    const button = screen.getByText('Add to cart');
     expect(button).toBeInTheDocument();
     fireEvent.click(button);
     expect(mockAddItem).toHaveBeenCalledTimes(1);
   });
 
+  it('shows loading state immediately after clicking add to cart', async () => {
+    jest.useFakeTimers();
+    await renderPage();
+    fireEvent.click(screen.getByText('Add to cart'));
+    expect(screen.getByText('Adding...')).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it('shows success state after add to cart animation completes', async () => {
+    jest.useFakeTimers();
+    await renderPage();
+    fireEvent.click(screen.getByText('Add to cart'));
+    act(() => jest.advanceTimersByTime(700));
+    expect(screen.getByText('In cart')).toBeInTheDocument();
+    expect(screen.getByTestId('icon-check')).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
   it('renders tags', async () => {
     await renderPage();
-    expect(screen.getByText('Новинка')).toBeInTheDocument();
+    expect(screen.getByText('New')).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', async () => {
     await renderPage();
-    expect(screen.getByText('Каталог')).toBeInTheDocument();
+    expect(screen.getByText('Catalog')).toBeInTheDocument();
   });
 
   it('renders product description', async () => {
     await renderPage();
-    expect(screen.getByText('Описание товара')).toBeInTheDocument();
+    expect(screen.getByText('Product description')).toBeInTheDocument();
   });
 
   it('renders discount when comparePrice exists', async () => {

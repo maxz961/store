@@ -7,7 +7,8 @@ import { If, Then, Else, When } from 'react-if';
 import { Button } from '@/components/ui/button';
 import { StarRating } from '@/components/ui/StarRating';
 import { useAuth } from '@/lib/hooks/useAuth';
-import { getInitials } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
+import { getInitials, langToLocale } from '@/lib/utils';
 import type { ReviewCardProps } from './ReviewCard.types';
 import { s } from '../ReviewModal/ReviewModal.styled';
 
@@ -21,13 +22,14 @@ export const ReviewCard = ({
   onDeleteReply,
 }: ReviewCardProps) => {
   const { user, isAdmin } = useAuth();
+  const { lang, t } = useLanguage();
   const isOwn = user?.id === review.userId;
 
   const [isReplying, setIsReplying] = useState(false);
   const [replyText, setReplyText] = useState('');
 
   const initials = getInitials(review.user.name, undefined);
-  const date = new Date(review.createdAt).toLocaleDateString('ru-RU');
+  const date = new Date(review.createdAt).toLocaleDateString(langToLocale(lang));
 
   const handleDelete = useCallback(() => onDeleteReview?.(review.id), [onDeleteReview, review.id]);
   const handleImageClick = useCallback((url: string) => () => onImageClick(url), [onImageClick]);
@@ -74,7 +76,7 @@ export const ReviewCard = ({
         </If>
 
         <div className={s.authorInfo}>
-          <p className={s.authorName}>{review.user.name ?? 'Аноним'}</p>
+          <p className={s.authorName}>{review.user.name ?? t('review.anonymous')}</p>
           <p className={s.date}>{date}</p>
         </div>
 
@@ -144,7 +146,7 @@ export const ReviewCard = ({
       <When condition={!!review.adminReply}>
         <div className={s.adminReply}>
           <div className={s.adminReplyHeader}>
-            <span className={s.adminReplyLabel}>Ответ магазина</span>
+            <span className={s.adminReplyLabel}>{t('review.shopReply')}</span>
             <When condition={isAdmin}>
               <Button
                 variant="ghost"
@@ -159,7 +161,7 @@ export const ReviewCard = ({
           <p className={s.adminReplyText}>{review.adminReply}</p>
           <When condition={!!review.adminReplyAt}>
             <p className={s.adminReplyDate}>
-              {new Date(review.adminReplyAt!).toLocaleDateString('ru-RU')}
+              {new Date(review.adminReplyAt!).toLocaleDateString(langToLocale(lang))}
             </p>
           </When>
         </div>
@@ -171,17 +173,17 @@ export const ReviewCard = ({
           <textarea
             className={s.replyTextarea}
             rows={2}
-            placeholder="Ответ от имени магазина..."
+            placeholder={t('review.replyPlaceholder')}
             value={replyText}
             onChange={handleReplyTextChange}
             maxLength={2000}
           />
           <div className={s.replyActions}>
             <Button size="sm" onClick={handleSubmitReply} disabled={!replyText.trim()}>
-              Ответить
+              {t('review.reply')}
             </Button>
             <Button size="sm" variant="outline" onClick={handleCancelReply}>
-              Отмена
+              {t('common.cancel')}
             </Button>
           </div>
         </div>

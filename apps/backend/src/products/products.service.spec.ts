@@ -105,9 +105,25 @@ describe("ProductsService", () => {
 
       const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
       expect(call.where.OR).toEqual([
-        { name: { contains: "laptop", mode: "insensitive" } },
-        { description: { contains: "laptop", mode: "insensitive" } },
+        { name: { startsWith: "laptop", mode: "insensitive" } },
+        { name: { contains: " laptop", mode: "insensitive" } },
+        { description: { startsWith: "laptop", mode: "insensitive" } },
+        { description: { contains: " laptop", mode: "insensitive" } },
       ]);
+    });
+
+    it("filters by name only when nameOnly=true", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ search: "laptop", nameOnly: true }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.OR).toEqual([
+        { name: { startsWith: "laptop", mode: "insensitive" } },
+        { name: { contains: " laptop", mode: "insensitive" } },
+      ]);
+      expect(call.where.name).toBeUndefined();
     });
 
     it("paginates correctly", async () => {
@@ -188,8 +204,10 @@ describe("ProductsService", () => {
 
       const result = await service.create({
         name: "Test Product",
+        nameEn: "Test product EN",
         slug: "test-product",
         description: "Description",
+        descriptionEn: "Test description EN",
         price: 99.99,
         stock: 10,
         categoryId: "cat-1",
@@ -209,8 +227,10 @@ describe("ProductsService", () => {
       await expect(
         service.create({
           name: "Test Product",
+          nameEn: "Test product EN",
           slug: "test-product",
           description: "Desc",
+          descriptionEn: "Test description EN",
           price: 99.99,
           stock: 10,
           categoryId: "cat-1",
@@ -227,8 +247,10 @@ describe("ProductsService", () => {
       await expect(
         service.create({
           name: "Test Product",
+          nameEn: "Test product EN",
           slug: "test-product-2",
           description: "Desc",
+          descriptionEn: "Test description EN",
           price: 99.99,
           stock: 10,
           categoryId: "cat-1",

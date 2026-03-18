@@ -26,7 +26,7 @@ export class OrdersController {
 
   @Get("admin")
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findAll(
     @Query("page") page?: number,
     @Query("limit") limit?: number,
@@ -44,7 +44,7 @@ export class OrdersController {
 
   @Put(":id/status")
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   updateStatus(@Param("id") id: string, @Body() dto: UpdateOrderStatusDto) {
     return this.ordersService.updateStatus(id, dto);
   }

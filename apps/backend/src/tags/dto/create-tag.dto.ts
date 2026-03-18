@@ -9,7 +9,12 @@ export class CreateTagDto {
 
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[a-z0-9-]+$/, { message: 'Slug должен содержать только строчные буквы, цифры и дефисы' })
+  @MaxLength(50)
+  nameEn: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @Matches(/^[a-z0-9-]+$/, { message: 'Slug must contain only lowercase letters, numbers, and hyphens' })
   @MaxLength(50)
   slug: string;
 

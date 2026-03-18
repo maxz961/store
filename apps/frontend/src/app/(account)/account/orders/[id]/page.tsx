@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Package, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { useLanguage } from '@/lib/i18n';
 import { useOrder } from '@/lib/hooks/useOrders';
 import type { OrderDetailPageProps } from './page.types';
 import { s } from './page.styled';
@@ -17,12 +18,13 @@ import { OrderAddressSection } from './OrderAddressSection';
 
 const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
   const { id } = use(params);
+  const { t } = useLanguage();
   const { data: order, isLoading, error } = useOrder(id);
 
   const breadcrumbs = [
-    { label: 'Главная', href: '/' },
-    { label: 'Мои заказы', href: '/account/orders' },
-    { label: order ? `#${order.id.slice(-8)}` : 'Загрузка...' },
+    { label: t('nav.home'), href: '/' },
+    { label: t('orders.title'), href: '/account/orders' },
+    { label: order ? `#${order.id.slice(-8)}` : t('common.loading') },
   ];
 
   if (isLoading) {
@@ -48,12 +50,12 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
       <div className={s.page}>
         <div className={s.error}>
           <Package className={s.emptyIcon} />
-          <p className={s.errorTitle}>Заказ не найден</p>
-          <p className={s.errorText}>Возможно, заказ был удалён или вы не имеете к нему доступа</p>
+          <p className={s.errorTitle}>{t('common.notFound')}</p>
+          <p className={s.errorText}>{t('common.error')}</p>
           <Link href="/account/orders">
             <Button variant="outline">
               <ArrowLeft className={s.backIcon} />
-              К заказам
+              {t('orders.backToOrders')}
             </Button>
           </Link>
         </div>
@@ -61,7 +63,7 @@ const OrderDetailPage = ({ params }: OrderDetailPageProps) => {
     );
   }
 
-  const date = new Date(order.createdAt).toLocaleDateString('ru-RU', {
+  const date = new Date(order.createdAt).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
