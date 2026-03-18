@@ -19,6 +19,7 @@ jest.mock('@/lib/i18n', () => ({
 
 jest.mock('next/navigation', () => ({
   useParams: () => ({ slug: 'summer-sale' }),
+  useRouter: () => ({ push: jest.fn() }),
 }));
 
 jest.mock('lucide-react', () => ({
@@ -61,7 +62,7 @@ jest.mock('@/lib/hooks/usePromotions', () => ({
   usePublicPromotion: () => ({ data: mockPromotion, isLoading: mockIsLoading }),
 }));
 
-import PromotionPage from './page';
+import { PromotionPageClient as PromotionPage } from './PromotionPageClient';
 
 
 const mockProduct = {
@@ -100,46 +101,46 @@ describe('PromotionPage', () => {
   });
 
   it('renders without crashing', () => {
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
   });
 
   it('renders breadcrumbs with home', () => {
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
     expect(screen.getByText('Home')).toBeInTheDocument();
     expect(screen.queryByText('Promotions')).not.toBeInTheDocument();
   });
 
   it('renders promotion title', () => {
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
     expect(screen.getAllByText('Summer Sale EN').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders discount badge', () => {
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
     expect(screen.getByText('-20%')).toBeInTheDocument();
   });
 
   it('renders product list', () => {
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
     expect(screen.getByText('Test Product')).toBeInTheDocument();
   });
 
   it('renders spinner in loading state', () => {
     mockIsLoading = true;
     mockPromotion = undefined;
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
     expect(screen.queryByText('Summer Sale')).not.toBeInTheDocument();
   });
 
   it('renders empty state when no products', () => {
     mockPromotion = { ...mockPromotionData, products: [] };
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
     expect(screen.getByText('No products found')).toBeInTheDocument();
     expect(screen.getByText('This promotion has no products yet')).toBeInTheDocument();
   });
 
   it('renders promotion description', () => {
-    render(<PromotionPage />);
+    render(<PromotionPage slug="summer-sale" />);
     expect(screen.getByText('Big discounts this summer EN')).toBeInTheDocument();
   });
 });

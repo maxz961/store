@@ -1,71 +1,43 @@
-'use client';
-
-import { use } from 'react';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
-import { Spinner } from '@/components/ui/Spinner';
-import { ProductGallery } from './ProductGallery';
-import { ProductInfo } from './ProductInfo';
-import { ProductReviews } from './ProductReviews';
-import { SimilarProducts } from './SimilarProducts';
-import { RecentlyViewed } from './RecentlyViewed';
-import { useTrackProductView } from './useTrackProductView';
-import { useProduct } from '@/lib/hooks/useProducts';
-import { useLanguage } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils';
-import { s } from './page.styled';
+import type { Metadata } from 'next';
+import { api } from '@/lib/api';
+import { ProductPageClient } from './ProductPageClient';
 import type { Props } from './page.types';
 
 
-const ProductPage = (props: Props) => {
-  const { slug } = use(props.params);
-  const { data: product, isLoading, isError } = useProduct(slug);
-  const { t, lang } = useLanguage();
-  useTrackProductView(product);
+interface ProductMeta {
+  name: string;
+  nameEn?: string | null;
+  description: string;
+  descriptionEn?: string | null;
+  images: string[];
+}
 
-  if (isLoading) {
-    return (
-      <div className={s.page}>
-        <Spinner />
-      </div>
-    );
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const product = await api.get<ProductMeta>(`/products/${slug}`);
+    const title = product.nameEn ?? product.name;
+    const description = product.descriptionEn ?? product.description;
+    const image = product.images[0];
+
+    return {
+      title: `${title} | Store`,
+      description: description.slice(0, 160),
+      openGraph: {
+        title: `${title} | Store`,
+        description: description.slice(0, 160),
+        ...(image ? { images: [{ url: image }] } : {}),
+      },
+    };
+  } catch {
+    return { title: 'Store' };
   }
+}
 
-  if (isError || !product) {
-    return (
-      <div className={s.page}>
-        <div className={s.error}>
-          <p className={s.errorTitle}>{t('product.notFound')}</p>
-          <p className={s.errorText}>{t('product.notFoundText')}</p>
-        </div>
-      </div>
-    );
-  }
 
-  const breadcrumbs = [
-    { label: t('catalog.title'), href: '/products' },
-    { label: getLocalizedText(lang, product.category.name, product.category.nameEn), href: `/products?categorySlug=${product.category.slug}` },
-    { label: getLocalizedText(lang, product.name, product.nameEn) },
-  ];
-
-  return (
-    <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-
-      <div className={s.layout}>
-        <ProductGallery images={product.images} name={product.name} />
-        <ProductInfo product={product} />
-      </div>
-
-      <ProductReviews
-        productId={product.id}
-        productSlug={slug}
-        reviews={product.reviews}
-      />
-
-      <SimilarProducts slug={slug} />
-      <RecentlyViewed currentProductId={product.id} />
-    </div>
-  );
-};
-
-export default ProductPage;
+export default async function ProductPage({ params }: Props) {
+  const { slug } = await params;
+  return <ProductPageClient slug={slug} />;
+}

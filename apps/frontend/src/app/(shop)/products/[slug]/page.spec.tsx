@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { render, screen, fireEvent, act } from '@testing-library/react';
 
 
@@ -66,7 +65,7 @@ jest.mock('@/lib/hooks/useFavorites', () => ({
   useRemoveFavorite: () => ({ mutate: jest.fn() }),
 }));
 
-import ProductPage from './page';
+import { ProductPageClient as ProductPage } from './ProductPageClient';
 
 
 const mockAddItem = jest.fn();
@@ -140,11 +139,7 @@ describe('ProductPage', () => {
 
   const renderPage = async () => {
     await act(async () => {
-      render(
-        <Suspense fallback={<div>Loading...</div>}>
-          <ProductPage params={Promise.resolve({ slug: 'test-product' })} />
-        </Suspense>
-      );
+      render(<ProductPage slug="test-product" />);
     });
   };
 
