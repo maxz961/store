@@ -398,21 +398,49 @@ describe("ProductsService", () => {
   });
 
   describe("getImageErrorCount", () => {
-    it("returns count of products with hasImageError true", async () => {
+    it("counts both hasImageError products AND products with no images (regression)", async () => {
       (mockDb.product.count as jest.Mock).mockResolvedValue(3);
 
       const result = await service.getImageErrorCount();
 
       expect(result).toEqual({ count: 3 });
-      expect(mockDb.product.count).toHaveBeenCalledWith({ where: { hasImageError: true } });
+      expect(mockDb.product.count).toHaveBeenCalledWith({
+        where: { OR: [{ hasImageError: true }, { images: { isEmpty: true } }] },
+      });
     });
 
-    it("returns zero when no broken products", async () => {
+    it("returns zero when no broken or missing-image products", async () => {
       (mockDb.product.count as jest.Mock).mockResolvedValue(0);
 
       const result = await service.getImageErrorCount();
 
       expect(result).toEqual({ count: 0 });
+    });
+  });
+
+  describe("findAll imageError filter", () => {
+    it("includes products with no images in imageError=true filter (regression: empty images were invisible)", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ imageError: true }, true);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.OR).toEqual([
+        { hasImageError: true },
+        { images: { isEmpty: true } },
+      ]);
+    });
+
+    it("imageError=false excludes products with broken images and empty images", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ imageError: false }, true);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.hasImageError).toBe(false);
+      expect(call.where.images).toEqual({ isEmpty: false });
     });
   });
 

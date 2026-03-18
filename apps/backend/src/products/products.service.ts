@@ -45,7 +45,11 @@ export class ProductsService {
           ...(maxPrice !== undefined && { lte: maxPrice }),
         },
       }),
-      ...(imageError !== undefined && { hasImageError: imageError }),
+      ...(imageError !== undefined && (
+        imageError
+          ? { OR: [{ hasImageError: true }, { images: { isEmpty: true } }] }
+          : { hasImageError: false, images: { isEmpty: false } }
+      )),
     };
 
     const [items, total] = await Promise.all([
@@ -177,7 +181,9 @@ export class ProductsService {
   }
 
   async getImageErrorCount() {
-    const count = await db.product.count({ where: { hasImageError: true } });
+    const count = await db.product.count({
+      where: { OR: [{ hasImageError: true }, { images: { isEmpty: true } }] },
+    });
     return { count };
   }
 
