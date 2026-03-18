@@ -289,6 +289,15 @@ export const uk: Translations = {
       tableActions: 'Дії',
       slugTaken: 'Цей slug вже зайнятий',
       nameTaken: 'Ця назва вже зайнята',
+      validation: {
+        required: 'Обов\'язкове поле',
+        nameMax: 'Максимум 100 символів',
+        slugFormat: 'Тільки малі літери, цифри та дефіси',
+      },
+      confirmDeleteTitle: 'Видалити категорію?',
+      confirmDeletePrefix: 'Категорія',
+      confirmDeleteSuffix: 'буде видалена.',
+      confirmDeleteProductsSuffix: 'товарів залишаться без категорії.',
     },
     tag: {
       new: 'Новий тег',
@@ -318,6 +327,16 @@ export const uk: Translations = {
       tableActions: 'Дії',
       slugTaken: 'Цей slug вже зайнятий',
       nameTaken: 'Ця назва вже зайнята',
+      validation: {
+        required: 'Обов\'язкове поле',
+        nameMax: 'Максимум 100 символів',
+        slugFormat: 'Тільки малі літери, цифри та дефіси',
+      },
+      confirmDeleteTitle: 'Видалити тег?',
+      confirmDeletePrefix: 'Тег',
+      confirmDeleteSuffix: 'буде видалено.',
+      confirmDeleteProductsBefore: 'Він буде прибраний з',
+      confirmDeleteProductsAfter: 'товарів.',
     },
     promotion: {
       new: 'Нова акція',

@@ -22,7 +22,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import {
-  tagFormSchema,
+  buildTagFormSchema,
   generateSlug,
   DEFAULT_TAG_COLOR,
   TAG_PRESET_COLORS,
@@ -56,6 +56,12 @@ const TagsPage = () => {
     () => tags.find((t) => t.id === editingId),
     [tags, editingId],
   );
+
+  const tagFormSchema = useMemo(() => buildTagFormSchema({
+    required: t('admin.tag.validation.required'),
+    nameMax: t('admin.tag.validation.nameMax'),
+    slugFormat: t('admin.tag.validation.slugFormat'),
+  }), [t]);
 
   const { register, handleSubmit, reset, setValue, watch, setError, formState: { errors } } = useForm<TagFormValues>({
     resolver: zodResolver(tagFormSchema),
@@ -282,13 +288,13 @@ const TagsPage = () => {
         open={!!pendingDelete}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
-        title="Delete tag?"
+        title={t('admin.tag.confirmDeleteTitle')}
         isLoading={deleteTag.isPending}
         description={
           <>
-            Tag <strong>«{pendingDelete?.name}»</strong> will be deleted.{' '}
+            {t('admin.tag.confirmDeletePrefix')} <strong>«{pendingDelete?.name}»</strong> {t('admin.tag.confirmDeleteSuffix')}{' '}
             <When condition={(pendingDelete?._count?.products ?? 0) > 0}>
-              It will be removed from {pendingDelete?._count?.products} products.
+              {t('admin.tag.confirmDeleteProductsBefore')} {pendingDelete?._count?.products} {t('admin.tag.confirmDeleteProductsAfter')}
             </When>
           </>
         }

@@ -286,6 +286,15 @@ export const en = {
       tableActions: 'Actions',
       slugTaken: 'This slug is already taken',
       nameTaken: 'This name is already taken',
+      validation: {
+        required: 'Required',
+        nameMax: 'Max 100 characters',
+        slugFormat: 'Lowercase letters, digits and hyphens only',
+      },
+      confirmDeleteTitle: 'Delete category?',
+      confirmDeletePrefix: 'Category',
+      confirmDeleteSuffix: 'will be deleted.',
+      confirmDeleteProductsSuffix: 'products will lose their category.',
     },
     tag: {
       new: 'New tag',
@@ -315,6 +324,16 @@ export const en = {
       tableActions: 'Actions',
       slugTaken: 'This slug is already taken',
       nameTaken: 'This name is already taken',
+      validation: {
+        required: 'Required',
+        nameMax: 'Max 100 characters',
+        slugFormat: 'Lowercase letters, digits and hyphens only',
+      },
+      confirmDeleteTitle: 'Delete tag?',
+      confirmDeletePrefix: 'Tag',
+      confirmDeleteSuffix: 'will be deleted.',
+      confirmDeleteProductsBefore: 'It will be removed from',
+      confirmDeleteProductsAfter: 'products.',
     },
     promotion: {
       new: 'New promotion',
