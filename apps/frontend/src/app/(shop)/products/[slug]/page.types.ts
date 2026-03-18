@@ -10,6 +10,7 @@ export interface ProductGalleryProps {
 }
 
 export interface ProductInfoProps {
+  previewMode?: boolean;
   product: {
     name: string;
     nameEn?: string | null;

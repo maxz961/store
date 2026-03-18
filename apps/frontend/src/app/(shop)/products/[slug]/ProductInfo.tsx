@@ -17,7 +17,7 @@ import { s } from './page.styled';
 import type { ProductInfoProps } from './page.types';
 
 
-export const ProductInfo = ({ product }: ProductInfoProps) => {
+export const ProductInfo = ({ product, previewMode = false }: ProductInfoProps) => {
   const addItem = useCartStore((state) => state.addItem);
   const { isAuthenticated } = useAuth();
   const { lang, t } = useLanguage();
@@ -44,19 +44,27 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
   const displayCategory = getLocalizedText(lang, product.category.name, product.category.nameEn);
   const displayDescription = getLocalizedText(lang, product.description, product.descriptionEn);
 
-  const handleDecrease = useCallback(() => setQuantity((q) => Math.max(1, q - 1)), []);
-  const handleIncrease = useCallback(() => setQuantity((q) => Math.min(product.stock, q + 1)), [product.stock]);
+  const handleDecrease = useCallback(() => {
+    if (previewMode) return;
+    setQuantity((q) => Math.max(1, q - 1));
+  }, [previewMode]);
+
+  const handleIncrease = useCallback(() => {
+    if (previewMode) return;
+    setQuantity((q) => Math.min(product.stock, q + 1));
+  }, [previewMode, product.stock]);
 
   const handleToggleFavorite = useCallback(() => {
-    if (!isAuthenticated) return;
+    if (previewMode || !isAuthenticated) return;
     if (isFavorite) {
       removeFavorite.mutate(product.id);
     } else {
       addFavorite.mutate(product.id);
     }
-  }, [isAuthenticated, isFavorite, product.id, addFavorite, removeFavorite]);
+  }, [previewMode, isAuthenticated, isFavorite, product.id, addFavorite, removeFavorite]);
 
   const handleAddToCart = useCallback(() => {
+    if (previewMode) return;
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
@@ -71,7 +79,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     setQuantity(1);
     setCartState('loading');
     setTimeout(() => setCartState('success'), 700);
-  }, [quantity, addItem, product]);
+  }, [previewMode, quantity, addItem, product]);
 
   const addToCartLabel = cartState === 'success'
     ? t('product.inCart')
