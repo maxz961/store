@@ -210,7 +210,7 @@ export const PromotionForm = ({ promotionId }: PromotionFormProps) => {
         <form ref={formRef} onSubmit={onSubmit} className={s.form}>
           <BasicInfoSection langTab={langTab} onTabChange={handleLangTabChange} />
           <ScheduleSection />
-          <DiscountSection />
+          <DiscountSection currentPromotionId={promotionId} />
           <BannerSection />
           <ProductsSection
             products={products}
