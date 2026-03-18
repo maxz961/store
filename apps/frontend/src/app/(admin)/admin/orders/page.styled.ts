@@ -31,7 +31,11 @@ export const s = {
   emptyRow: 'px-4 py-12 text-center text-sm text-muted-foreground',
 
   // Pagination
-  pagination: 'mt-6 flex items-center justify-between text-sm text-muted-foreground',
-  pageInfo: 'text-sm text-muted-foreground',
-  pageButtons: 'flex gap-2',
+  pagination: 'mt-6 flex items-center justify-between gap-4',
+  paginationArrow: 'flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-foreground shadow-sm transition-colors duration-150 hover:bg-accent',
+  paginationArrowDisabled: 'flex items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-2 text-sm font-medium text-muted-foreground shadow-sm opacity-40 pointer-events-none',
+  paginationNumbers: 'flex items-center gap-1',
+  paginationNumber: 'flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-sm text-foreground shadow-sm transition-colors duration-150 hover:bg-accent',
+  paginationNumberActive: 'border-primary bg-primary text-primary-foreground hover:bg-primary/90 pointer-events-none',
+  paginationDots: 'flex h-9 w-9 items-center justify-center text-sm text-muted-foreground',
 };

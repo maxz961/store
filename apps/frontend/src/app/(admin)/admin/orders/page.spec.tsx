@@ -118,11 +118,6 @@ describe('AdminOrdersPage', () => {
     expect(screen.getByText('Pickup')).toBeInTheDocument();
   });
 
-  it('renders pagination info', () => {
-    renderPage();
-    expect(screen.getByText(/Всего 2 orders/)).toBeInTheDocument();
-  });
-
   it('renders breadcrumbs', () => {
     renderPage();
     expect(screen.getByText('Admin panel')).toBeInTheDocument();
