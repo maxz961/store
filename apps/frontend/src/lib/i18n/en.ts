@@ -114,6 +114,11 @@ export const en = {
     notAuth: 'You are not signed in',
     notAuthText: 'Sign in to view your profile',
     login: 'Sign in',
+    user: 'User',
+    quickLinks: 'Quick links',
+    ordersDescription: 'Order history and delivery status',
+    favoritesDescription: 'Saved products for quick access',
+    breadcrumb: 'Profile',
   },
 
   orders: {
@@ -169,6 +174,10 @@ export const en = {
     validUntil: 'Valid until',
     noProducts: 'No products found',
     noProductsText: 'This promotion has no products yet',
+    learnMore: 'Learn more',
+    prevBanner: 'Previous banner',
+    nextBanner: 'Next banner',
+    bannerLabel: 'Banner',
   },
 
   admin: {

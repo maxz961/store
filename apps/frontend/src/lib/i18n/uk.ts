@@ -117,6 +117,11 @@ export const uk: Translations = {
     notAuth: 'Ви не авторизовані',
     notAuthText: 'Увійдіть, щоб переглянути свій профіль',
     login: 'Увійти',
+    user: 'Користувач',
+    quickLinks: 'Швидкі посилання',
+    ordersDescription: 'Історія покупок та статуси доставки',
+    favoritesDescription: 'Збережені товари для швидкого доступу',
+    breadcrumb: 'Профіль',
   },
 
   orders: {
@@ -172,6 +177,10 @@ export const uk: Translations = {
     validUntil: 'Діє до',
     noProducts: 'Товари не знайдено',
     noProductsText: 'У цій акції поки немає товарів',
+    learnMore: 'Докладніше',
+    prevBanner: 'Попередній банер',
+    nextBanner: 'Наступний банер',
+    bannerLabel: 'Банер',
   },
 
   admin: {

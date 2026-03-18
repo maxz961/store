@@ -8,7 +8,6 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/i18n';
 import { getInitials } from '@/lib/utils';
 import { s } from './page.styled';
-import { breadcrumbs } from './page.constants';
 import { UserCard } from './UserCard';
 import { QuickLinks } from './QuickLinks';
 
@@ -16,6 +15,11 @@ import { QuickLinks } from './QuickLinks';
 const ProfilePage = () => {
   const { t, lang } = useLanguage();
   const { user, isLoading, isAuthenticated, logout } = useAuth();
+
+  const breadcrumbs = [
+    { label: t('nav.home'), href: '/' },
+    { label: t('profile.breadcrumb') },
+  ];
 
   if (isLoading) {
     return (
