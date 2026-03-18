@@ -453,6 +453,10 @@ export const en = {
       noItems: 'No users found',
     },
     logs: {
+      pageTitle: 'Error Logs',
+      breadcrumbLabel: 'Logs',
+      markAllRead: 'Mark all as read',
+      emptyState: 'No errors recorded',
       tableMessage: 'Message / URL',
       tableUser: 'User',
       tableDate: 'Date',

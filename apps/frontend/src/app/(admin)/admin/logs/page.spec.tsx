@@ -2,6 +2,10 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import AdminLogsPage from './page';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'uk', t: (k: string) => k }),
+}));
+
 jest.mock('lucide-react', () => ({
   AlertTriangle: () => <div data-testid="icon-alert" />,
 }));
@@ -76,7 +80,7 @@ describe('AdminLogsPage', () => {
     render(<AdminLogsPage />);
 
     expect(screen.getByTestId('breadcrumbs')).toBeInTheDocument();
-    expect(screen.getByText('Админ-панель / Логи')).toBeInTheDocument();
+    expect(screen.getByText('nav.admin / admin.logs.breadcrumbLabel')).toBeInTheDocument();
   });
 
   it('renders page title', () => {
@@ -84,7 +88,7 @@ describe('AdminLogsPage', () => {
 
     render(<AdminLogsPage />);
 
-    expect(screen.getByRole('heading', { name: 'Логи ошибок' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'admin.logs.pageTitle' })).toBeInTheDocument();
   });
 
   it('renders empty state when no logs', () => {
@@ -92,7 +96,7 @@ describe('AdminLogsPage', () => {
 
     render(<AdminLogsPage />);
 
-    expect(screen.getByText('Ошибок не зафиксировано')).toBeInTheDocument();
+    expect(screen.getByText('admin.logs.emptyState')).toBeInTheDocument();
     expect(screen.queryByTestId('logs-table')).not.toBeInTheDocument();
   });
 
@@ -109,7 +113,7 @@ describe('AdminLogsPage', () => {
 
     render(<AdminLogsPage />);
 
-    expect(screen.getByRole('button', { name: 'Отметить все как прочитанные' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'admin.logs.markAllRead' })).toBeInTheDocument();
   });
 
   it('calls markRead.mutate when mark-all-read button is clicked', async () => {
@@ -117,7 +121,7 @@ describe('AdminLogsPage', () => {
 
     render(<AdminLogsPage />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Отметить все как прочитанные' }));
+    fireEvent.click(screen.getByRole('button', { name: 'admin.logs.markAllRead' }));
 
     await waitFor(() => {
       expect(mockMutate).toHaveBeenCalledTimes(1);
@@ -129,6 +133,6 @@ describe('AdminLogsPage', () => {
 
     render(<AdminLogsPage />);
 
-    expect(screen.queryByRole('button', { name: 'Отметить все как прочитанные' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'admin.logs.markAllRead' })).not.toBeInTheDocument();
   });
 });

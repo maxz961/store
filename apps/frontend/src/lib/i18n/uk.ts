@@ -456,6 +456,10 @@ export const uk: Translations = {
       noItems: 'Користувачів не знайдено',
     },
     logs: {
+      pageTitle: 'Логи помилок',
+      breadcrumbLabel: 'Логи',
+      markAllRead: 'Позначити всі як прочитані',
+      emptyState: 'Помилок не зафіксовано',
       tableMessage: 'Повідомлення / URL',
       tableUser: 'Користувач',
       tableDate: 'Дата',
