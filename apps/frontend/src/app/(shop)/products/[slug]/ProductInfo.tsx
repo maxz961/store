@@ -60,7 +60,8 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     for (let i = 0; i < quantity; i++) {
       addItem({
         id: product.id,
-        name: displayName,
+        name: product.name,
+        nameEn: product.nameEn,
         price: product.price,
         imageUrl: product.images[0] ?? '',
         slug: product.slug,
@@ -70,7 +71,7 @@ export const ProductInfo = ({ product }: ProductInfoProps) => {
     setQuantity(1);
     setCartState('loading');
     setTimeout(() => setCartState('success'), 700);
-  }, [quantity, addItem, product, displayName]);
+  }, [quantity, addItem, product]);
 
   const addToCartLabel = cartState === 'success'
     ? t('product.inCart')

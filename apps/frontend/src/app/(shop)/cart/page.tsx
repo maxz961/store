@@ -11,11 +11,16 @@ import { formatCurrency } from '@/lib/constants/format';
 import { useLanguage } from '@/lib/i18n';
 import { CartItem } from './CartItem';
 import { s } from './page.styled';
-import { breadcrumbs } from './page.constants';
 
 
 const CartPage = () => {
   const { t } = useLanguage();
+
+  const breadcrumbs = [
+    { label: t('nav.home'), href: '/' },
+    { label: t('nav.catalog'), href: '/products' },
+    { label: t('nav.cart') },
+  ];
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart, hydrated } = useCartStore();
 
   if (!hydrated) {

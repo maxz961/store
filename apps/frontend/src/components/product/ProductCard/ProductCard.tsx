@@ -64,7 +64,8 @@ export const ProductCard = ({ product }: Props) => {
     if (cartState !== 'idle') return;
     addItem({
       id: product.id,
-      name: displayName,
+      name: product.name,
+      nameEn: product.nameEn,
       price: product.price,
       imageUrl: product.images[0] ?? '',
       slug: product.slug,
