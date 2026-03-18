@@ -8,9 +8,9 @@ export const s = {
   formRow: 'grid grid-cols-1 gap-4 sm:grid-cols-3',
 
   // Lang tabs
-  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 p-1 w-fit',
+  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 dark:bg-black/30 p-1 w-fit',
   langTab: 'rounded-md px-3 py-1 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
-  langTabActive: 'bg-white text-foreground shadow-sm ring-1 ring-border/50 dark:bg-slate-800',
+  langTabActive: 'bg-white dark:bg-slate-600 text-foreground shadow-sm ring-1 ring-border/50',
 
   // Color picker
   colorLabel: 'text-sm font-medium text-foreground',
