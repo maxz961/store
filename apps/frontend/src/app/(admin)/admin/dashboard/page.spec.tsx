@@ -138,8 +138,8 @@ const mockSummary = {
     { rating: 3, count: 3 },
   ],
   lowStockProducts: [
-    { id: 'p1', name: 'USB-кабель', slug: 'usb-cable', stock: 2, image: 'img.jpg' },
-    { id: 'p2', name: 'Чехол для телефона', slug: 'phone-case', stock: 0, image: null },
+    { id: 'p1', name: 'USB-кабель', nameEn: 'USB Cable', slug: 'usb-cable', stock: 2, image: 'img.jpg' },
+    { id: 'p2', name: 'Чехол для телефона', nameEn: null, slug: 'phone-case', stock: 0, image: null },
   ],
 };
 
@@ -196,8 +196,14 @@ describe('DashboardPage', () => {
   it('renders low stock warning', async () => {
     renderPage();
     expect(await screen.findByText('Low Stock')).toBeInTheDocument();
-    expect(screen.getByText('USB-кабель')).toBeInTheDocument();
-    expect(screen.getByText('Чехол для телефона')).toBeInTheDocument();
+    // lang='en' in mock → shows nameEn when available, falls back to name when nameEn is null
+    expect(screen.getByText('USB Cable')).toBeInTheDocument();
+    expect(screen.getByText('Чехол для телефона')).toBeInTheDocument(); // nameEn is null → fallback
+  });
+
+  it('shows nameEn in Low Stock widget when language is EN (regression: names were always shown in Ukrainian)', async () => {
+    renderPage();
+    expect(await screen.findByText('USB Cable')).toBeInTheDocument();
   });
 
   it('shows stock badge for low stock products', async () => {
