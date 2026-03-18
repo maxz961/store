@@ -1,9 +1,8 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
 import { Inter } from 'next/font/google';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { QueryProvider } from '@/components/providers/QueryProvider';
-import { NavigationProgress } from '@/components/providers/NavigationProgress';
+import { NavigationProgressClient } from '@/components/providers/NavigationProgress/NavigationProgressClient';
 import { Header } from '@/components/layout/Header';
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary';
 import { LanguageProvider } from '@/lib/i18n';
@@ -33,9 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <QueryProvider>
           <ThemeProvider>
             <LanguageProvider>
-              <Suspense>
-                <NavigationProgress />
-              </Suspense>
+              <NavigationProgressClient />
               <Header />
               <main>
                 <ErrorBoundary>
