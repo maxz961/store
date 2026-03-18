@@ -6,18 +6,14 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { When, If, Then, Else } from 'react-if';
 import { Spinner } from '@/components/ui/Spinner';
 import { useUsers, useUpdateUserRole, useBanUser } from '@/lib/hooks/useUsers';
+import { useAuth } from '@/lib/hooks/useAuth';
 import { s } from './page.styled';
+import { breadcrumbs } from './page.constants';
 import { UsersTable } from './UsersTable';
 
 
-const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Пользователи' },
-];
-
-
 const AdminUsersPage = () => {
+  const { isAdmin } = useAuth();
   const { data, isLoading, isError, fetchNextPage, hasNextPage, isFetchingNextPage } = useUsers();
   const updateRole = useUpdateUserRole();
   const banUser = useBanUser();
@@ -71,7 +67,7 @@ const AdminUsersPage = () => {
             type="text"
             value={query}
             onChange={handleSearchChange}
-            placeholder="Поиск по имени или email..."
+            placeholder="Search by name or email..."
             className={s.searchInput}
           />
         </div>
@@ -79,12 +75,13 @@ const AdminUsersPage = () => {
 
       <If condition={isError}>
         <Then>
-          <p className="mt-6 text-sm text-destructive">Не удалось загрузить пользователей</p>
+          <p className="mt-6 text-sm text-destructive">Failed to load users</p>
         </Then>
         <Else>
           <>
             <UsersTable
               users={filteredUsers}
+              canEditRole={isAdmin}
               onUpdateRole={handleUpdateRole}
               onToggleBan={handleToggleBan}
             />
@@ -95,7 +92,7 @@ const AdminUsersPage = () => {
                   onClick={handleLoadMore}
                   disabled={isFetchingNextPage}
                 >
-                  {isFetchingNextPage ? 'Загрузка...' : 'Загрузить ещё'}
+                  {isFetchingNextPage ? 'Loading...' : 'Load more'}
                 </button>
               </div>
             </When>

@@ -3,12 +3,12 @@ import { s } from './page.styled';
 import type { TagToggleButtonProps } from './page.types';
 
 
-export const TagToggleButton = ({ tag, isActive, onClick }: TagToggleButtonProps) => (
+export const TagToggleButton = ({ tag, label, isActive, onClick }: TagToggleButtonProps) => (
   <button
     type="button"
     onClick={onClick}
     className={cn(s.tagBtn, isActive ? s.tagBtnActive : s.tagBtnInactive)}
   >
-    {tag.name}
+    {label}
   </button>
 );

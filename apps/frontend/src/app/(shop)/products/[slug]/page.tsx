@@ -1,68 +1,73 @@
-'use client';
-
-import { use } from 'react';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
-import { Spinner } from '@/components/ui/Spinner';
-import { ProductGallery } from './ProductGallery';
-import { ProductInfo } from './ProductInfo';
-import { ProductReviews } from './ProductReviews';
-import { SimilarProducts } from './SimilarProducts';
-import { RecentlyViewed } from './RecentlyViewed';
-import { useTrackProductView } from './useTrackProductView';
-import { useProduct } from '@/lib/hooks/useProducts';
-import { s } from './page.styled';
+import { cache } from 'react';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { api, ApiError } from '@/lib/api';
+import { ProductPageClient } from './ProductPageClient';
 import type { Props } from './page.types';
 
 
-const ProductPage = (props: Props) => {
-  const { slug } = use(props.params);
-  const { data: product, isLoading, isError } = useProduct(slug);
-  useTrackProductView(product);
+export const revalidate = 3600;
 
-  if (isLoading) {
-    return (
-      <div className={s.page}>
-        <Spinner />
-      </div>
-    );
+
+interface ProductMeta {
+  name: string;
+  nameEn?: string | null;
+  description: string;
+  descriptionEn?: string | null;
+  images: string[];
+}
+
+
+const fetchProduct = cache((slug: string) =>
+  api.get<ProductMeta>(`/products/${slug}`),
+);
+
+
+export async function generateStaticParams() {
+  try {
+    const data = await api.get<{ items: Array<{ slug: string }> }>('/products?limit=1000');
+    return data.items.map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
+}
+
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const product = await fetchProduct(slug);
+    const title = product.nameEn ?? product.name;
+    const description = product.descriptionEn ?? product.description;
+    const image = product.images[0];
+
+    return {
+      title: `${title} | Store`,
+      description: description.slice(0, 160),
+      openGraph: {
+        title: `${title} | Store`,
+        description: description.slice(0, 160),
+        ...(image ? { images: [{ url: image }] } : {}),
+      },
+    };
+  } catch {
+    return { title: 'Store' };
+  }
+}
+
+
+export default async function ProductPage({ params }: Props) {
+  const { slug } = await params;
+
+  try {
+    await fetchProduct(slug);
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      notFound();
+    }
+    throw error;
   }
 
-  if (isError || !product) {
-    return (
-      <div className={s.page}>
-        <div className={s.error}>
-          <p className={s.errorTitle}>Товар не найден</p>
-          <p className={s.errorText}>Возможно, он был удалён или ссылка неверна</p>
-        </div>
-      </div>
-    );
-  }
-
-  const breadcrumbs = [
-    { label: 'Каталог', href: '/products' },
-    { label: product.category.name, href: `/products?categorySlug=${product.category.slug}` },
-    { label: product.name },
-  ];
-
-  return (
-    <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-
-      <div className={s.layout}>
-        <ProductGallery images={product.images} name={product.name} />
-        <ProductInfo product={product} />
-      </div>
-
-      <ProductReviews
-        productId={product.id}
-        productSlug={slug}
-        reviews={product.reviews}
-      />
-
-      <SimilarProducts slug={slug} />
-      <RecentlyViewed currentProductId={product.id} />
-    </div>
-  );
-};
-
-export default ProductPage;
+  return <ProductPageClient slug={slug} />;
+}

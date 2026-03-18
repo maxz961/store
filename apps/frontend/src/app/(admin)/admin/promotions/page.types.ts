@@ -1,6 +1,7 @@
 export interface Promotion {
   id: string;
   title: string;
+  titleEn?: string | null;
   slug: string;
   description: string | null;
   bannerImageUrl: string;

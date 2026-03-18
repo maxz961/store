@@ -7,18 +7,19 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import { LogIn } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Spinner } from '@/components/ui/Spinner';
 import { useCartStore } from '@/store/cart';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/i18n';
 import { useCreateOrder } from '@/lib/hooks/useOrders';
 import { api } from '@/lib/api';
 import { DeliveryMethodSection } from './DeliveryMethodSection';
 import { ShippingAddressSection } from './ShippingAddressSection';
 import { OrderSummary } from './OrderSummary';
 import { PaymentSection } from './PaymentSection';
+import { StepBar } from './StepBar';
 import { s } from './page.styled';
 import type { DeliveryMethod, CheckoutStep } from './page.types';
 import {
@@ -30,22 +31,9 @@ import {
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-const StepBar = ({ step }: { step: CheckoutStep }) => (
-  <div className={s.stepBar}>
-    <div className={s.stepItem}>
-      <span className={cn(s.stepDot, step === 'info' ? s.stepDotActive : s.stepDotDone)}>1</span>
-      <span className={cn(step === 'info' ? s.stepLabelActive : s.stepLabelInactive)}>Доставка</span>
-    </div>
-    <div className={s.stepLine} />
-    <div className={s.stepItem}>
-      <span className={cn(s.stepDot, step === 'payment' ? s.stepDotActive : s.stepDotInactive)}>2</span>
-      <span className={cn(step === 'payment' ? s.stepLabelActive : s.stepLabelInactive)}>Оплата</span>
-    </div>
-  </div>
-);
-
 
 const CheckoutPage = () => {
+  const { t } = useLanguage();
   const { items, totalPrice, clearCart, hydrated } = useCartStore();
   const { isAuthenticated, isLoading: authLoading, login } = useAuth();
   const router = useRouter();
@@ -86,11 +74,11 @@ const CheckoutPage = () => {
       setFormSnapshot(data);
       setStep('payment');
     } catch {
-      setIntentError('Не удалось создать платёж. Попробуйте ещё раз.');
+      setIntentError(t('checkout.intentError'));
     } finally {
       setIsCreatingIntent(false);
     }
-  }, [totalPrice]);
+  }, [totalPrice, t]);
 
   const handlePaymentSuccess = useCallback((paymentIntentId: string) => {
     if (!formSnapshot) return;
@@ -143,10 +131,10 @@ const CheckoutPage = () => {
         <Breadcrumbs items={breadcrumbs} />
         <div className={s.authCard}>
           <LogIn className={s.authIcon} />
-          <h1 className={s.authTitle}>Войдите, чтобы оформить заказ</h1>
-          <p className={s.authText}>Для оформления заказа необходима авторизация</p>
+          <h1 className={s.authTitle}>{t('checkout.loginRequired')}</h1>
+          <p className={s.authText}>{t('checkout.loginRequiredText')}</p>
           <Button onClick={login} size="lg">
-            Войти через Google
+            {t('checkout.loginViaGoogle')}
           </Button>
         </div>
       </div>

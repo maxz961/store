@@ -11,16 +11,24 @@ import { ProductFiltersDto } from "./dto/product-filters.dto";
 @Injectable()
 export class ProductsService {
   async findAll(filters: ProductFiltersDto, adminMode = false) {
-    const { search, categorySlug, tagSlugs, minPrice, maxPrice, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc', imageError } = filters;
+    const { search, categorySlug, tagSlugs, minPrice, maxPrice, page = 1, limit = 20, sortBy = 'createdAt', sortOrder = 'desc', imageError, nameOnly } = filters;
 
     const where: Record<string, unknown> = {
       ...(adminMode ? {} : { isPublished: true }),
-      ...(search && {
-        OR: [
-          { name: { contains: search, mode: "insensitive" } },
-          { description: { contains: search, mode: "insensitive" } },
-        ],
-      }),
+      ...(search && (nameOnly
+        ? { OR: [
+              { name: { startsWith: search, mode: 'insensitive' } },
+              { name: { contains: ` ${search}`, mode: 'insensitive' } },
+            ],
+          }
+        : { OR: [
+              { name: { startsWith: search, mode: 'insensitive' } },
+              { name: { contains: ` ${search}`, mode: 'insensitive' } },
+              { description: { startsWith: search, mode: 'insensitive' } },
+              { description: { contains: ` ${search}`, mode: 'insensitive' } },
+            ],
+          }
+      )),
       ...(categorySlug && { category: { slug: categorySlug } }),
       ...(tagSlugs?.length && {
         tags: { some: { tag: { slug: { in: tagSlugs } } } },

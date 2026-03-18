@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useFavorites } from '@/lib/hooks/useFavorites';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 import { FavoriteCard } from './FavoriteCard';
@@ -26,6 +27,7 @@ const FavoriteSkeleton = () => (
 
 
 const FavoritesPage = () => {
+  const { t } = useLanguage();
   const router = useRouter();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: favorites, isLoading: favoritesLoading } = useFavorites();
@@ -43,10 +45,10 @@ const FavoritesPage = () => {
       <div className={s.page}>
         <div className={s.notAuth}>
           <UserCircle className={s.emptyIcon} />
-          <p className={s.notAuthTitle}>Вы не авторизованы</p>
-          <p className={s.notAuthText}>Войдите, чтобы увидеть избранное</p>
+          <p className={s.notAuthTitle}>{t('favorites.notAuth')}</p>
+          <p className={s.notAuthText}>{t('favorites.notAuthText')}</p>
           <Link href="/login">
-            <Button>Войти</Button>
+            <Button>{t('favorites.login')}</Button>
           </Link>
         </div>
       </div>
@@ -70,10 +72,10 @@ const FavoritesPage = () => {
             <Then>
               <div className={s.empty}>
                 <Heart className={s.emptyIcon} />
-                <p className={s.emptyTitle}>Избранное пусто</p>
-                <p className={s.emptyText}>Добавляйте товары в избранное, чтобы вернуться к ним позже</p>
+                <p className={s.emptyTitle}>{t('favorites.empty')}</p>
+                <p className={s.emptyText}>{t('favorites.emptyText')}</p>
                 <Link href="/products">
-                  <Button>Перейти в каталог</Button>
+                  <Button>{t('favorites.browseCatalog')}</Button>
                 </Link>
               </div>
             </Then>

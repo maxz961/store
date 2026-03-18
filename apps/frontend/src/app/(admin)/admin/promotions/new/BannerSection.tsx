@@ -11,9 +11,10 @@ import { ImageUpload } from '@/components/ui/ImageUpload';
 import { Spinner } from '@/components/ui/Spinner';
 import { FieldTooltip } from '@/components/ui/FieldTooltip';
 import { useUploadProductImages } from '@/lib/hooks/useAdmin';
+import { useLanguage } from '@/lib/i18n';
 import { BannerPreviewModal } from './BannerPreviewModal';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS, BANNER_BG_PRESET_COLORS } from './page.constants';
+import { BANNER_BG_PRESET_COLORS } from './page.constants';
 import type { CreatePromotionFormValues } from './page.constants';
 
 
@@ -21,6 +22,7 @@ type ImageMode = 'file' | 'url';
 
 export const BannerSection = () => {
   const { register, watch, setValue, formState: { errors } } = useFormContext<CreatePromotionFormValues>();
+  const { t } = useLanguage();
   const [mode, setMode] = useState<ImageMode>('file');
   const [files, setFiles] = useState<File[]>([]);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
@@ -32,7 +34,10 @@ export const BannerSection = () => {
 
   const handleSetFileMode = useCallback(() => setMode('file'), []);
 
-  const handleSetUrlMode = useCallback(() => setMode('url'), []);
+  const handleSetUrlMode = useCallback(() => {
+    setMode('url');
+    setFiles([]);
+  }, []);
 
   const handleOpenPreview = useCallback(() => setIsPreviewOpen(true), []);
 
@@ -79,12 +84,12 @@ export const BannerSection = () => {
     <div className={s.card}>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1">
-          <h2 className={s.cardTitle}>Баннер</h2>
-          <FieldTooltip text={FIELD_TOOLTIPS.banner} />
+          <h2 className={s.cardTitle}>{t('admin.promotion.bannerTitle')}</h2>
+          <FieldTooltip text={t('admin.promotion.tooltip.banner')} />
         </div>
         <button type="button" className={s.previewBtn} onClick={handleOpenPreview}>
           <Eye className="h-4 w-4" />
-          Предосмотр
+          {t('admin.promotion.bannerPreview')}
         </button>
       </div>
 
@@ -94,14 +99,14 @@ export const BannerSection = () => {
           className={cn(s.imageTab, mode === 'file' && s.imageTabActive)}
           onClick={handleSetFileMode}
         >
-          Загрузить файл
+          {t('admin.promotion.bannerUploadFile')}
         </button>
         <button
           type="button"
           className={cn(s.imageTab, mode === 'url' && s.imageTabActive)}
           onClick={handleSetUrlMode}
         >
-          По ссылке
+          {t('admin.promotion.bannerByUrl')}
         </button>
       </div>
 
@@ -109,11 +114,11 @@ export const BannerSection = () => {
         <div className="space-y-3">
           <When condition={!!bannerImageUrl && files.length === 0}>
             <div>
-              <p className="mb-2 text-xs text-muted-foreground">Текущее изображение</p>
+              <p className="mb-2 text-xs text-muted-foreground">{t('admin.promotion.bannerCurrent')}</p>
               <div className={s.bannerThumbWrapper}>
                 <Image
                   src={bannerImageUrl}
-                  alt="Баннер"
+                  alt={t('admin.promotion.bannerTitle')}
                   fill
                   className="object-cover"
                   unoptimized
@@ -135,14 +140,14 @@ export const BannerSection = () => {
               <When condition={uploadImages.isPending}>
                 <div className={s.imageUploadPending}>
                   <Spinner size="sm" />
-                  <span>Загружаем изображение...</span>
+                  <span>{t('admin.promotion.bannerUploading')}</span>
                 </div>
               </When>
               <When condition={uploadImages.isError}>
                 <p className={s.error}>
                   {uploadImages.error instanceof Error
                     ? uploadImages.error.message
-                    : 'Не удалось загрузить изображение'}
+                    : t('admin.promotion.bannerUploadFailed')}
                 </p>
               </When>
             </div>
@@ -152,8 +157,8 @@ export const BannerSection = () => {
 
       <When condition={mode === 'url'}>
         <TextField
-          label="URL изображения"
-          tooltip={FIELD_TOOLTIPS.bannerImageUrl}
+          label={t('admin.promotion.bannerImageUrl')}
+          tooltip={t('admin.promotion.tooltip.bannerImageUrl')}
           placeholder="https://images.unsplash.com/..."
           error={errors.bannerImageUrl?.message}
           {...register('bannerImageUrl')}
@@ -161,16 +166,16 @@ export const BannerSection = () => {
       </When>
 
       <div className={s.colorSection}>
-        <label className={s.colorLabel}>Цвет фона</label>
+        <label className={s.colorLabel}>{t('admin.promotion.bannerBgColor')}</label>
         <div className={s.swatches}>
           {colorSwatches}
         </div>
-        <p className={s.colorHint}>Текущий: {bgColor || '—'}</p>
+        <p className={s.colorHint}>{t('admin.promotion.bannerCurrentColor')} {bgColor || '—'}</p>
       </div>
 
       <TextField
-        label="Ссылка"
-        tooltip={FIELD_TOOLTIPS.link}
+        label={t('admin.promotion.bannerLink')}
+        tooltip={t('admin.promotion.tooltip.link')}
         placeholder="/products?tagSlugs=sale"
         error={errors.link?.message}
         {...register('link')}

@@ -5,6 +5,7 @@ import { Search } from 'lucide-react';
 import { When } from 'react-if';
 import { useSearchSuggestions } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './SearchInput.styled';
 
 
@@ -13,6 +14,7 @@ export const SearchInput = () => {
   const [query, setQuery] = useState(get('search') ?? '');
   const [isOpen, setIsOpen] = useState(false);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { t } = useLanguage();
 
   const { data } = useSearchSuggestions(query);
   const suggestions = data?.items ?? [];
@@ -58,7 +60,7 @@ export const SearchInput = () => {
           onChange={handleInput}
           onFocus={handleFocus}
           onBlur={handleBlur}
-          placeholder="Поиск товаров..."
+          placeholder={t('catalog.search')}
           className={s.input}
         />
         <When condition={showDropdown}>

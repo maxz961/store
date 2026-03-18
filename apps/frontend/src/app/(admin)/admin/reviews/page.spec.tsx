@@ -4,6 +4,16 @@ import AdminReviewsPage from './page';
 import * as useReviewsModule from '@/lib/hooks/useReviews';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ lang: 'uk', t: (k: string) => k }),
+}));
+
+jest.mock('@/lib/utils', () => ({
+  ...jest.requireActual('@/lib/utils'),
+  getInitials: (name: string | null) => name?.slice(0, 2).toUpperCase() ?? '??',
+  langToLocale: () => 'uk-UA',
+}));
+
 jest.mock('lucide-react', () => ({
   Star: (props: React.SVGProps<SVGSVGElement>) => <svg data-testid="icon-star" {...props} />,
   ChevronLeft: (props: React.SVGProps<SVGSVGElement>) => <svg data-testid="icon-chevron-left" {...props} />,

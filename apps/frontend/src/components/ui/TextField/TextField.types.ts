@@ -12,6 +12,7 @@ export interface TextFieldProps {
   maxLength?: number;
   min?: string | number;
   step?: string;
+  lang?: string;
   className?: string;
   inputClassName?: string;
 }

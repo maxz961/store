@@ -9,7 +9,7 @@ interface User {
   email: string;
   name: string | null;
   image: string | null;
-  role: 'CUSTOMER' | 'ADMIN';
+  role: 'CUSTOMER' | 'MANAGER' | 'ADMIN';
   createdAt: string;
 }
 
@@ -53,6 +53,7 @@ export const useAuth = () => {
     isLoading,
     isAuthenticated: !!user,
     isAdmin: user?.role === 'ADMIN',
+    isManager: user?.role === 'MANAGER',
     login,
     logout,
     invalidate,

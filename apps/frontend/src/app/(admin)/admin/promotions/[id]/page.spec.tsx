@@ -2,6 +2,63 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.promotion.basicInfoTitle': 'Basic information',
+        'admin.promotion.bannerTitle': 'Banner',
+        'admin.promotion.bannerPreview': 'Preview',
+        'admin.promotion.bannerUploadFile': 'Upload file',
+        'admin.promotion.bannerByUrl': 'By URL',
+        'admin.promotion.bannerCurrent': 'Current image',
+        'admin.promotion.bannerUploading': 'Uploading image...',
+        'admin.promotion.bannerUploadFailed': 'Failed to upload image',
+        'admin.promotion.bannerImageUrl': 'Image URL',
+        'admin.promotion.bannerBgColor': 'Background color',
+        'admin.promotion.bannerCurrentColor': 'Current:',
+        'admin.promotion.bannerLink': 'Link',
+        'admin.promotion.discountTitle': 'Discount',
+        'admin.promotion.discountType': 'Discount type',
+        'admin.promotion.discountValue': 'Discount amount',
+        'admin.promotion.discountPosition': 'Position in carousel',
+        'admin.promotion.scheduleTitle': 'Schedule',
+        'admin.promotion.scheduleStartDate': 'Start date',
+        'admin.promotion.scheduleEndDate': 'End date',
+        'admin.promotion.scheduleActive': 'Active',
+        'admin.promotion.scheduleActiveHint': 'If disabled, the promotion will not be displayed in the catalog even during the active period',
+        'admin.promotion.productsTitle': 'Products in promotion',
+        'admin.promotion.title': 'Title (UK)',
+        'admin.promotion.titleEn': 'Title (EN)',
+        'admin.promotion.description': 'Description (UK)',
+        'admin.promotion.descriptionEn': 'Description (EN)',
+        'admin.promotion.titlePlaceholder': 'e.g. Spring Sale',
+        'admin.promotion.descriptionPlaceholder': 'Short promotion description...',
+        'admin.promotion.slug': 'Slug',
+        'admin.promotion.slugHint': 'Generated automatically from title',
+        'admin.promotion.save': 'Save',
+        'admin.promotion.saving': 'Saving...',
+        'admin.promotion.saveChanges': 'Save changes',
+        'admin.promotion.create': 'Create promotion',
+        'admin.promotion.creating': 'Creating...',
+        'admin.promotion.delete': 'Delete promotion',
+        'admin.promotion.deleting': 'Deleting...',
+        'admin.promotion.cancel': 'Cancel',
+        'admin.promotion.new': 'New promotion',
+        'admin.promotion.breadcrumbLabel': 'Promotions',
+        'admin.promotion.loadFailed': 'Failed to load promotion',
+        'admin.promotion.createFailed': 'Failed to create promotion',
+        'admin.promotion.updateFailed': 'Failed to update promotion',
+        'admin.promotion.dangerZone': 'Danger zone',
+        'admin.promotion.dangerText': 'Deleting a promotion is irreversible. The banner will disappear from the catalog and product links will be removed.',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('lucide-react', () => ({
   ChevronRight: (props: any) => <div data-testid="icon-chevron" {...props} />,
   ChevronDown: (props: any) => <div data-testid="icon-chevron-down" {...props} />,
@@ -125,21 +182,21 @@ describe('EditPromotionPage', () => {
 
   it('renders save button after data loads', async () => {
     renderPage();
-    expect(await screen.findByText('Сохранить изменения')).toBeInTheDocument();
+    expect(await screen.findByText('Save changes')).toBeInTheDocument();
   });
 
   it('renders all form sections', async () => {
     renderPage();
-    expect(await screen.findByText('Основная информация')).toBeInTheDocument();
-    expect(screen.getByText('Расписание')).toBeInTheDocument();
-    expect(screen.getByText('Скидка')).toBeInTheDocument();
-    expect(screen.getByText('Баннер')).toBeInTheDocument();
-    expect(screen.getByText('Товары в акции')).toBeInTheDocument();
+    expect(await screen.findByText('Basic information')).toBeInTheDocument();
+    expect(screen.getByText('Schedule')).toBeInTheDocument();
+    expect(screen.getByText('Discount')).toBeInTheDocument();
+    expect(screen.getByText('Banner')).toBeInTheDocument();
+    expect(screen.getByText('Products in promotion')).toBeInTheDocument();
   });
 
   it('renders breadcrumbs with promotion title', async () => {
     renderPage();
-    expect(await screen.findByText('Акции')).toBeInTheDocument();
+    expect(await screen.findByText('Promotions')).toBeInTheDocument();
     expect(screen.getByText('Весенняя распродажа')).toBeInTheDocument();
   });
 
@@ -159,12 +216,12 @@ describe('EditPromotionPage', () => {
 
   it('renders delete button', async () => {
     renderPage();
-    expect(await screen.findByText('Удалить акцию')).toBeInTheDocument();
+    expect(await screen.findByText('Delete promotion')).toBeInTheDocument();
   });
 
   it('renders submit button', async () => {
     renderPage();
-    expect(await screen.findByText('Сохранить изменения')).toBeInTheDocument();
+    expect(await screen.findByText('Save changes')).toBeInTheDocument();
   });
 
   it('shows error message when fetch fails', async () => {
@@ -174,29 +231,29 @@ describe('EditPromotionPage', () => {
       return Promise.resolve(null);
     });
     renderPage();
-    expect(await screen.findByText('Не удалось загрузить акцию')).toBeInTheDocument();
+    expect(await screen.findByText('Failed to load promotion')).toBeInTheDocument();
   });
 
   it('renders danger zone section', async () => {
     renderPage();
-    expect(await screen.findByText('Опасная зона')).toBeInTheDocument();
+    expect(await screen.findByText('Danger zone')).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Удаление акции необратимо. Баннер исчезнет из каталога, а привязка к товарам будет удалена.',
+        'Deleting a promotion is irreversible. The banner will disappear from the catalog and product links will be removed.',
       ),
     ).toBeInTheDocument();
   });
 
   it('loads products for toggle selection', async () => {
     renderPage();
-    await screen.findByText('Товары в акции');
+    await screen.findByText('Products in promotion');
     expect(await screen.findByText('Товар 1')).toBeInTheDocument();
     expect(screen.getByText('Товар 2')).toBeInTheDocument();
   });
 
   it('calls delete mutation and redirects on success', async () => {
     renderPage();
-    const deleteBtn = await screen.findByText('Удалить акцию');
+    const deleteBtn = await screen.findByText('Delete promotion');
     fireEvent.click(deleteBtn);
 
     await waitFor(() => {

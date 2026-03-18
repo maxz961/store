@@ -19,6 +19,10 @@ jest.mock('@/lib/hooks/useProducts', () => ({
   useSearchSuggestions: (...args: unknown[]) => mockUseSuggestions(...args),
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({ t: (key: string) => key === 'catalog.search' ? 'Search products...' : key }),
+}));
+
 
 const products = [
   { id: '1', name: 'RTX 5070', slug: 'rtx-5070' },
@@ -33,12 +37,12 @@ describe('SearchInput', () => {
 
   it('renders search input', () => {
     render(<SearchInput />);
-    expect(screen.getByPlaceholderText('Поиск товаров...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search products...')).toBeInTheDocument();
   });
 
   it('hides dropdown when no suggestions', () => {
     render(<SearchInput />);
-    const input = screen.getByPlaceholderText('Поиск товаров...');
+    const input = screen.getByPlaceholderText('Search products...');
     fireEvent.change(input, { target: { value: 'rt' } });
     expect(screen.queryByText('RTX 5070')).not.toBeInTheDocument();
   });
@@ -47,7 +51,7 @@ describe('SearchInput', () => {
     mockUseSuggestions.mockReturnValue({ data: { items: products } });
 
     render(<SearchInput />);
-    const input = screen.getByPlaceholderText('Поиск товаров...');
+    const input = screen.getByPlaceholderText('Search products...');
     fireEvent.focus(input);
     fireEvent.change(input, { target: { value: 'rtx' } });
 
@@ -59,7 +63,7 @@ describe('SearchInput', () => {
     mockUseSuggestions.mockReturnValue({ data: { items: products } });
 
     render(<SearchInput />);
-    const input = screen.getByPlaceholderText('Поиск товаров...');
+    const input = screen.getByPlaceholderText('Search products...');
     fireEvent.focus(input);
     fireEvent.change(input, { target: { value: 'rtx' } });
 
@@ -73,7 +77,7 @@ describe('SearchInput', () => {
     mockUseSuggestions.mockReturnValue({ data: { items: products } });
 
     render(<SearchInput />);
-    const input = screen.getByPlaceholderText('Поиск товаров...');
+    const input = screen.getByPlaceholderText('Search products...');
     fireEvent.focus(input);
     fireEvent.change(input, { target: { value: 'rtx' } });
 
@@ -84,7 +88,7 @@ describe('SearchInput', () => {
 
   it('calls update with trimmed query on form submit', () => {
     render(<SearchInput />);
-    const input = screen.getByPlaceholderText('Поиск товаров...');
+    const input = screen.getByPlaceholderText('Search products...');
     fireEvent.change(input, { target: { value: '  laptop  ' } });
     fireEvent.submit(input.closest('form')!);
 
@@ -93,7 +97,7 @@ describe('SearchInput', () => {
 
   it('calls update with undefined on empty submit (clears search)', () => {
     render(<SearchInput />);
-    const input = screen.getByPlaceholderText('Поиск товаров...');
+    const input = screen.getByPlaceholderText('Search products...');
     fireEvent.change(input, { target: { value: '   ' } });
     fireEvent.submit(input.closest('form')!);
 

@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { Mail, AlertTriangle } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
@@ -5,12 +8,16 @@ import { s } from '../Header.styled';
 import type { UserTriggerProps } from './UserTrigger.types';
 
 
-export const UserTrigger = ({ image, initials, hasUnreadMessages, hasImageErrors, hasUnreadLogs }: UserTriggerProps) => (
+export const UserTrigger = ({ image, initials, hasUnreadMessages, hasImageErrors, hasUnreadLogs }: UserTriggerProps) => {
+  const [imgError, setImgError] = useState(false);
+  const handleImgError = useCallback(() => setImgError(true), []);
+
+  return (
   <div className={s.userWrapper} aria-label="Меню пользователя">
     <div className={s.userButton}>
-      <If condition={!!image}>
+      <If condition={!!image && !imgError}>
         <Then>
-          <Image src={image ?? ''} alt="" width={32} height={32} className={s.userAvatar} referrerPolicy="no-referrer" />
+          <Image src={image ?? ''} alt="" width={32} height={32} className={s.userAvatar} referrerPolicy="no-referrer" onError={handleImgError} />
         </Then>
         <Else>
           <span className={s.userFallback}>{initials}</span>
@@ -41,4 +48,5 @@ export const UserTrigger = ({ image, initials, hasUnreadMessages, hasImageErrors
       </Else>
     </If>
   </div>
-);
+  );
+};

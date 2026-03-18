@@ -1,5 +1,14 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
+
+export class ApiError extends Error {
+  constructor(public readonly status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+
 type RequestOptions = {
   method?: "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
   body?: unknown;
@@ -40,7 +49,7 @@ async function request<T>(
 
   if (!res.ok) {
     const error = await res.json().catch(() => ({ message: 'Request failed' }));
-    throw new Error(error.message ?? `HTTP ${res.status}`);
+    throw new ApiError(res.status, error.message ?? `HTTP ${res.status}`);
   }
 
   if (res.status === 204) return undefined as T;

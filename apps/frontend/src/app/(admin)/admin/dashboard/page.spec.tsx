@@ -1,3 +1,43 @@
+
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.dashboard.title': 'Dashboard',
+        'admin.dashboard.totalRevenue': 'Total Revenue',
+        'admin.dashboard.thisMonth': 'this month',
+        'admin.dashboard.totalOrders': 'Total Orders',
+        'admin.dashboard.ordersThisMonth': 'Monthly Orders',
+        'admin.dashboard.newUsers': 'New Users',
+        'admin.dashboard.byStatus': 'Orders by Status',
+        'admin.dashboard.pieces': 'pcs.',
+        'admin.dashboard.unknown': 'Unknown',
+        'admin.dashboard.noSalesData': 'No sales data',
+        'admin.dashboard.revenueByCategory': 'Revenue by Category',
+        'admin.dashboard.deliveryMethods': 'Delivery Methods',
+        'admin.dashboard.ordersLabel': 'orders',
+        'admin.dashboard.ratingDistribution': 'Rating Distribution',
+        'admin.dashboard.reviews': 'reviews',
+        'admin.dashboard.noReviews': 'No reviews',
+        'admin.dashboard.revenue30days': 'Revenue (30 days)',
+        'admin.dashboard.aov30days': 'Avg. Order (30 days)',
+        'admin.dashboard.aov': 'Avg. order',
+        'admin.dashboard.lowStock': 'Low Stock',
+        'admin.dashboard.allInStock': 'All products in stock',
+        'admin.dashboard.sold': 'sold',
+        'admin.dashboard.loadError': 'Failed to load analytics. Make sure you are an administrator.',
+        'admin.dashboard.revenue': 'Revenue',
+        'admin.dashboard.topProducts': 'Top products',
+        'product.outOfStock': 'Out of stock',
+        'common.noData': 'No data',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
@@ -111,10 +151,10 @@ describe('DashboardPage', () => {
 
   it('renders stats cards after loading', async () => {
     renderPage();
-    expect(await screen.findByText('Общая выручка')).toBeInTheDocument();
-    expect(screen.getByText('Всего заказов')).toBeInTheDocument();
-    expect(screen.getByText('Заказы за месяц')).toBeInTheDocument();
-    expect(screen.getByText('Новые пользователи')).toBeInTheDocument();
+    expect(await screen.findByText('Total Revenue')).toBeInTheDocument();
+    expect(screen.getByText('Total Orders')).toBeInTheDocument();
+    expect(screen.getByText('Monthly Orders')).toBeInTheDocument();
+    expect(screen.getByText('New Users')).toBeInTheDocument();
   });
 
   it('renders orders count value', async () => {
@@ -130,57 +170,57 @@ describe('DashboardPage', () => {
 
   it('renders orders by status section', async () => {
     renderPage();
-    expect(await screen.findByText('Заказы по статусам')).toBeInTheDocument();
+    expect(await screen.findByText('Orders by Status')).toBeInTheDocument();
   });
 
   it('renders revenue by category section', async () => {
     renderPage();
-    expect(await screen.findByText('Выручка по категориям')).toBeInTheDocument();
+    expect(await screen.findByText('Revenue by Category')).toBeInTheDocument();
   });
 
   it('renders delivery method section', async () => {
     renderPage();
-    expect(await screen.findByText('Способы доставки')).toBeInTheDocument();
+    expect(await screen.findByText('Delivery Methods')).toBeInTheDocument();
   });
 
   it('renders rating distribution section', async () => {
     renderPage();
-    expect(await screen.findByText('Распределение оценок')).toBeInTheDocument();
+    expect(await screen.findByText('Rating Distribution')).toBeInTheDocument();
   });
 
   it('renders AOV trend chart', async () => {
     renderPage();
-    expect(await screen.findByText('Средний чек за 30 дней')).toBeInTheDocument();
+    expect(await screen.findByText('Avg. Order (30 days)')).toBeInTheDocument();
   });
 
   it('renders low stock warning', async () => {
     renderPage();
-    expect(await screen.findByText('Товары с низким остатком')).toBeInTheDocument();
+    expect(await screen.findByText('Low Stock')).toBeInTheDocument();
     expect(screen.getByText('USB-кабель')).toBeInTheDocument();
     expect(screen.getByText('Чехол для телефона')).toBeInTheDocument();
   });
 
   it('shows stock badge for low stock products', async () => {
     renderPage();
-    expect(await screen.findByText('2 шт.')).toBeInTheDocument();
-    expect(screen.getByText('Нет в наличии')).toBeInTheDocument();
+    expect(await screen.findByText('2 pcs.')).toBeInTheDocument();
+    expect(screen.getByText('Out of stock')).toBeInTheDocument();
   });
 
   it('shows "all in stock" message when no low stock products', async () => {
     mockApiGet = jest.fn().mockResolvedValue({ ...mockSummary, lowStockProducts: [] });
     renderPage();
-    expect(await screen.findByText('Все товары в наличии')).toBeInTheDocument();
+    expect(await screen.findByText('All products in stock')).toBeInTheDocument();
   });
 
   it('renders error state', async () => {
     mockApiGet = jest.fn().mockRejectedValue(new Error('Forbidden'));
     renderPage();
-    expect(await screen.findByText(/Не удалось загрузить аналитику/)).toBeInTheDocument();
+    expect(await screen.findByText(/Failed to load analytics/)).toBeInTheDocument();
   });
 
   it('renders breadcrumbs', () => {
     renderPage();
-    expect(screen.getByText('Админ-панель')).toBeInTheDocument();
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 
   it('renders loading skeletons', () => {

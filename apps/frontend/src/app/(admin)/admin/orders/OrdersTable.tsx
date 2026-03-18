@@ -10,18 +10,18 @@ export const OrdersTable = ({ orders }: OrdersTableProps) => (
     <table className={s.table}>
       <thead className={s.thead}>
         <tr>
-          <th className={s.th}>Заказ</th>
-          <th className={s.th}>Покупатель</th>
-          <th className={s.th}>Статус</th>
-          <th className={s.th}>Доставка</th>
-          <SortHeader field="totalAmount" label="Сумма" className={s.thSortable} />
-          <SortHeader field="createdAt" label="Дата" className={s.thSortable} />
+          <th className={s.th}>Order</th>
+          <th className={s.th}>Customer</th>
+          <th className={s.th}>Status</th>
+          <th className={s.th}>Delivery</th>
+          <SortHeader field="totalAmount" label="Total" className={s.thSortable} />
+          <SortHeader field="createdAt" label="Date" className={s.thSortable} />
         </tr>
       </thead>
       <tbody>
         <When condition={orders.length === 0}>
           <tr>
-            <td colSpan={6} className={s.emptyRow}>Заказы не найдены</td>
+            <td colSpan={6} className={s.emptyRow}>No orders found</td>
           </tr>
         </When>
         {orders.map((order) => (

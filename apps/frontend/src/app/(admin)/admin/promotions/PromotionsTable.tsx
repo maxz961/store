@@ -9,18 +9,18 @@ export const PromotionsTable = ({ promotions }: PromotionsTableProps) => (
     <table className={s.table}>
       <thead className={s.thead}>
         <tr>
-          <th className={s.th}>Акция</th>
-          <th className={s.th}>Период</th>
-          <th className={s.th}>Скидка</th>
-          <th className={s.thCenter}>Статус</th>
-          <th className={s.thCenter}>Позиция</th>
+          <th className={s.th}>Promotion</th>
+          <th className={s.th}>Period</th>
+          <th className={s.th}>Discount</th>
+          <th className={s.thCenter}>Status</th>
+          <th className={s.thCenter}>Position</th>
           <th className={s.th} />
         </tr>
       </thead>
       <tbody>
         <When condition={promotions.length === 0}>
           <tr>
-            <td colSpan={6} className={s.emptyRow}>Акции не найдены</td>
+            <td colSpan={6} className={s.emptyRow}>No promotions found</td>
           </tr>
         </When>
         {promotions.map((promotion) => (
