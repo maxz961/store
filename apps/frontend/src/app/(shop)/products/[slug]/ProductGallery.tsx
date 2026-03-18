@@ -1,18 +1,20 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import { ImageOff } from 'lucide-react';
 import { If, Then, Else, When } from 'react-if';
+import { api } from '@/lib/api';
 import { GalleryThumb } from './GalleryThumb';
 import { s } from './page.styled';
 import type { ProductGalleryProps } from './page.types';
 
 
-export const ProductGallery = ({ images, name, unoptimized }: ProductGalleryProps) => {
+export const ProductGallery = ({ productId, images, name, unoptimized }: ProductGalleryProps) => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [mainImgLoaded, setMainImgLoaded] = useState(false);
   const [mainImgError, setMainImgError] = useState(false);
+  const errorReported = useRef(false);
 
   const handleSelectImage = useCallback((index: number) => () => {
     setSelectedImage(index);
@@ -21,7 +23,13 @@ export const ProductGallery = ({ images, name, unoptimized }: ProductGalleryProp
   }, []);
 
   const handleMainImgLoad = useCallback(() => setMainImgLoaded(true), []);
-  const handleMainImgError = useCallback(() => setMainImgError(true), []);
+
+  const handleMainImgError = useCallback(() => {
+    setMainImgError(true);
+    if (!productId || errorReported.current) return;
+    errorReported.current = true;
+    api.patch(`/products/${productId}/image-error`).catch(() => undefined);
+  }, [productId]);
 
   return (
     <div className={s.gallery}>

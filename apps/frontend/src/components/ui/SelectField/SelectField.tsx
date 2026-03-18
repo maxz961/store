@@ -37,7 +37,8 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(({
   const handleToggle = useCallback(() => setOpen((prev) => !prev), []);
 
   const handleSelectOption = useCallback(
-    (optValue: string) => () => {
+    (optValue: string, disabled?: boolean) => () => {
+      if (disabled) return;
       onChange?.({ target: { value: optValue } } as React.ChangeEvent<HTMLSelectElement>);
       setOpen(false);
     },
@@ -111,8 +112,13 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(({
                 key={opt.value}
                 role="option"
                 aria-selected={opt.value === (value ?? '')}
-                className={cn(s.option, opt.value === (value ?? '') && s.optionActive)}
-                onClick={handleSelectOption(opt.value)}
+                aria-disabled={opt.disabled}
+                className={cn(
+                  s.option,
+                  opt.value === (value ?? '') && s.optionActive,
+                  opt.disabled && s.optionDisabled,
+                )}
+                onClick={handleSelectOption(opt.value, opt.disabled)}
               >
                 {opt.label}
               </li>

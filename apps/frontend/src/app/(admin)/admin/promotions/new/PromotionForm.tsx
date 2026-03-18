@@ -21,7 +21,7 @@ import { s } from './page.styled';
 import {
   breadcrumbs as createBreadcrumbs,
   generateSlug,
-  createPromotionFormSchema,
+  buildPromotionFormSchema,
   type CreatePromotionFormValues,
 } from './page.constants';
 import { BasicInfoSection } from './BasicInfoSection';
@@ -60,8 +60,22 @@ export const PromotionForm = ({ promotionId }: PromotionFormProps) => {
     [productsData],
   );
 
+  const promotionFormSchema = useMemo(() => buildPromotionFormSchema({
+    required: t('admin.promotion.validation.required'),
+    slugRequired: t('admin.promotion.validation.slugRequired'),
+    slugFormat: t('admin.promotion.validation.slugFormat'),
+    descriptionMin: t('admin.promotion.validation.descriptionMin'),
+    descriptionMax: t('admin.promotion.validation.descriptionMax'),
+    bannerRequired: t('admin.promotion.validation.bannerRequired'),
+    startDateRequired: t('admin.promotion.validation.startDateRequired'),
+    endDateRequired: t('admin.promotion.validation.endDateRequired'),
+    discountRequired: t('admin.promotion.validation.discountRequired'),
+    discountPositive: t('admin.promotion.validation.discountPositive'),
+    positionInvalid: t('admin.promotion.validation.positionInvalid'),
+  }), [t]);
+
   const methods = useForm<CreatePromotionFormValues>({
-    resolver: zodResolver(createPromotionFormSchema),
+    resolver: zodResolver(promotionFormSchema),
     defaultValues: {
       title: '',
       titleEn: '',
@@ -210,7 +224,7 @@ export const PromotionForm = ({ promotionId }: PromotionFormProps) => {
         <form ref={formRef} onSubmit={onSubmit} className={s.form}>
           <BasicInfoSection langTab={langTab} onTabChange={handleLangTabChange} />
           <ScheduleSection />
-          <DiscountSection />
+          <DiscountSection currentPromotionId={promotionId} />
           <BannerSection />
           <ProductsSection
             products={products}

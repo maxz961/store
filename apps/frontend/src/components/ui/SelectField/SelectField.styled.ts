@@ -12,5 +12,6 @@ export const s = {
   panel: 'absolute left-0 right-0 top-[calc(100%+4px)] z-50 rounded-lg border border-border bg-card shadow-lg py-1 overflow-hidden',
   option: 'flex cursor-pointer items-center px-3 py-2 text-sm text-foreground transition-colors duration-100 hover:bg-accent',
   optionActive: 'text-primary font-medium bg-primary/5',
+  optionDisabled: 'cursor-not-allowed opacity-40 hover:bg-transparent',
   error: 'text-xs text-destructive',
 };

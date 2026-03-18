@@ -15,7 +15,7 @@ export const s = {
   table: 'w-full text-sm',
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',
-  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0',
+  tr: 'border-b border-border transition-colors duration-150 hover:bg-accent/40 last:border-0',
   td: 'px-4 py-3.5 align-top',
   tdCenter: 'px-4 py-3.5 text-center align-middle',
 

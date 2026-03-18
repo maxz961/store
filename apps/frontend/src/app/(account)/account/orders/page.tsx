@@ -11,7 +11,6 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useMyOrders } from '@/lib/hooks/useOrders';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { breadcrumbs } from './page.constants';
 import { OrderCard } from './OrderCard';
 import { OrderSkeleton } from './OrderSkeleton';
 
@@ -22,6 +21,12 @@ const OrdersPage = () => {
   const { data: orders, isLoading: ordersLoading } = useMyOrders();
 
   const isLoading = authLoading || ordersLoading;
+
+  const breadcrumbs = [
+    { label: t('nav.home'), href: '/' },
+    { label: t('profile.breadcrumb'), href: '/account/profile' },
+    { label: t('orders.title') },
+  ];
 
   if (isLoading) {
     return (

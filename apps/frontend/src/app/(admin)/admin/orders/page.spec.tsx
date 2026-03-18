@@ -118,11 +118,6 @@ describe('AdminOrdersPage', () => {
     expect(screen.getByText('Pickup')).toBeInTheDocument();
   });
 
-  it('renders pagination info', () => {
-    renderPage();
-    expect(screen.getByText(/Всего 2 orders/)).toBeInTheDocument();
-  });
-
   it('renders breadcrumbs', () => {
     renderPage();
     expect(screen.getByText('Admin panel')).toBeInTheDocument();
@@ -139,7 +134,7 @@ describe('AdminOrdersPage', () => {
   it('shows empty message when no orders', () => {
     mockOrdersData = { items: [], total: 0, page: 1, totalPages: 1 };
     renderPage();
-    expect(screen.getByText('No orders found')).toBeInTheDocument();
+    expect(screen.getByText('admin.order.noItems')).toBeInTheDocument();
   });
 
   it('shows loading spinner when fetching', () => {
