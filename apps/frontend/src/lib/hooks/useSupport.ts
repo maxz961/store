@@ -36,11 +36,12 @@ export const useMyMessages = () =>
     refetchInterval: 10_000,
   });
 
-export const useMyUnreadCount = () =>
+export const useMyUnreadCount = (enabled = true) =>
   useQuery({
     queryKey: ['support', 'unread-count'],
     queryFn: () => api.get<number>('/support/unread-count'),
     refetchInterval: 30_000,
+    enabled,
   });
 
 export const useAdminUnreadCount = (enabled = true) =>

@@ -4,6 +4,7 @@ import { useState, useRef, useCallback, useMemo, useEffect } from 'react';
 import { ImagePlus } from 'lucide-react';
 import { When } from 'react-if';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { ImageThumb } from './ImageThumb';
 import type { ImageUploadProps } from './ImageUpload.types';
 import { MAX_FILE_SIZE } from './ImageUpload.constants';
@@ -19,6 +20,7 @@ export const ImageUpload = ({
   onRemoveExisting,
   maxFiles = 6,
 }: ImageUploadProps) => {
+  const { t } = useLanguage();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -53,13 +55,13 @@ export const ImageUpload = ({
     const errors: string[] = [];
     if (tooLarge.length > 0) {
       const names = tooLarge.map((f) => f.name).join(', ');
-      errors.push(`Файл слишком большой (макс. ${MAX_FILE_SIZE_MB} МБ): ${names}`);
+      errors.push(t('imageUpload.errorTooLarge').replace('{max}', String(MAX_FILE_SIZE_MB)).replace('{names}', names));
     }
     if (wrongType.length > 0) {
-      errors.push('Поддерживаются только JPG, PNG и WebP');
+      errors.push(t('imageUpload.errorWrongType'));
     }
     if (overLimit) {
-      errors.push(`Можно загрузить ещё ${remaining} фото (макс. ${maxFiles})`);
+      errors.push(t('imageUpload.errorOverLimit').replace('{remaining}', String(remaining)).replace('{max}', String(maxFiles)));
     }
 
     setError(errors.length > 0 ? errors.join('. ') : null);
@@ -67,7 +69,7 @@ export const ImageUpload = ({
     if (toAdd.length > 0) {
       onChange([...files, ...toAdd]);
     }
-  }, [files, totalCount, maxFiles, onChange]);
+  }, [files, totalCount, maxFiles, onChange, t]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -121,8 +123,8 @@ export const ImageUpload = ({
           onClick={handleTriggerInput}
         >
           <ImagePlus className={s.dropzoneIcon} />
-          <p className={s.dropzoneText}>Добавить фото</p>
-          <p className={s.dropzoneHint}>JPG, PNG или WebP, до {MAX_FILE_SIZE_MB} МБ</p>
+          <p className={s.dropzoneText}>{t('imageUpload.addPhoto')}</p>
+          <p className={s.dropzoneHint}>{t('imageUpload.hint').replace('{max}', String(MAX_FILE_SIZE_MB))}</p>
           <input
             ref={inputRef}
             type="file"

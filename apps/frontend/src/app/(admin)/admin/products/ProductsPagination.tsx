@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import type { ProductsPaginationProps, SortOrder } from './page.types';
 
@@ -31,18 +34,19 @@ const buildPages = (currentPage: number, totalPages: number): (number | '...')[]
 
 export const ProductsPagination = ({ currentPage, totalPages, search, sortBy, sortOrder, view }: ProductsPaginationProps) => {
   const pages = buildPages(currentPage, totalPages);
+  const { t } = useLanguage();
 
   return (
     <div className={s.pagination}>
       {currentPage <= 1 ? (
         <span className={s.paginationArrowDisabled}>
           <ChevronLeft className="h-4 w-4" />
-          <span>Назад</span>
+          <span>{t('admin.products.prev')}</span>
         </span>
       ) : (
         <Link href={buildPageUrl(currentPage - 1, search, sortBy, sortOrder, view)} className={s.paginationArrow}>
           <ChevronLeft className="h-4 w-4" />
-          <span>Назад</span>
+          <span>{t('admin.products.prev')}</span>
         </Link>
       )}
 
@@ -65,12 +69,12 @@ export const ProductsPagination = ({ currentPage, totalPages, search, sortBy, so
 
       {currentPage >= totalPages ? (
         <span className={s.paginationArrowDisabled}>
-          <span>Вперёд</span>
+          <span>{t('admin.products.next')}</span>
           <ChevronRight className="h-4 w-4" />
         </span>
       ) : (
         <Link href={buildPageUrl(currentPage + 1, search, sortBy, sortOrder, view)} className={s.paginationArrow}>
-          <span>Вперёд</span>
+          <span>{t('admin.products.next')}</span>
           <ChevronRight className="h-4 w-4" />
         </Link>
       )}

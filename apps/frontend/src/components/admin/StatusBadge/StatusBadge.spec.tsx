@@ -3,19 +3,19 @@ import { StatusBadge } from './StatusBadge';
 
 
 describe('StatusBadge', () => {
-  it('renders Russian label for PENDING', () => {
+  it('renders English label for PENDING', () => {
     render(<StatusBadge status="PENDING" />);
-    expect(screen.getByText('Ожидает')).toBeInTheDocument();
+    expect(screen.getByText('Pending')).toBeInTheDocument();
   });
 
-  it('renders Russian label for DELIVERED', () => {
+  it('renders English label for DELIVERED', () => {
     render(<StatusBadge status="DELIVERED" />);
-    expect(screen.getByText('Доставлен')).toBeInTheDocument();
+    expect(screen.getByText('Delivered')).toBeInTheDocument();
   });
 
-  it('renders Russian label for CANCELLED', () => {
+  it('renders English label for CANCELLED', () => {
     render(<StatusBadge status="CANCELLED" />);
-    expect(screen.getByText('Отменён')).toBeInTheDocument();
+    expect(screen.getByText('Cancelled')).toBeInTheDocument();
   });
 
   it('renders raw status for unknown value', () => {

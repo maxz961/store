@@ -1,13 +1,14 @@
 export interface Product {
   id: string;
   name: string;
+  nameEn?: string | null;
   slug: string;
   price: number;
-  comparePrice?: number;
+  comparePrice?: number | null;
   images: string[];
   stock: number;
-  category: { name: string; slug: string };
-  tags?: { tag: { name: string; slug: string; color?: string } }[];
+  category: { name: string; nameEn?: string | null; slug: string };
+  tags?: { tag: { name: string; nameEn?: string | null; slug: string; color?: string | null } }[];
   reviews?: { rating: number }[];
 }
 

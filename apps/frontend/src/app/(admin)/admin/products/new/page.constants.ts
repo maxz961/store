@@ -2,40 +2,57 @@ import { z } from 'zod';
 
 
 export const breadcrumbs = [
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Товары', href: '/admin/products' },
-  { label: 'Новый товар' },
+  { label: 'Адмін-панель', href: '/admin/dashboard' },
+  { label: 'Товари', href: '/admin/products' },
+  { label: 'Новий товар' },
 ];
 
 export const generateSlug = (name: string) =>
   name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
-export const createProductFormSchema = z.object({
-  name: z.string().min(1, 'Название обязательно').max(200, 'Максимум 200 символов'),
-  slug: z.string().min(1, 'Slug обязателен').max(200, 'Максимум 200 символов').regex(/^[a-z0-9-]+$/, 'Только строчные буквы, цифры и дефисы'),
-  description: z.string().min(10, 'Минимум 10 символов'),
-  price: z.string().min(1, 'Укажите цену').refine((v) => !isNaN(Number(v)) && Number(v) > 0, 'Цена должна быть больше 0'),
+type ValidationMessages = {
+  required: string;
+  nameMax: string;
+  slugFormat: string;
+  descriptionMin: string;
+  pricePositive: string;
+  stockWhole: string;
+  categoryRequired: string;
+  imageUrlsInvalid: string;
+};
+
+export const buildProductFormSchema = (msg: ValidationMessages) => z.object({
+  name: z.string().min(1, msg.required).max(200, msg.nameMax),
+  nameEn: z.string().min(1, msg.required).max(200, msg.nameMax),
+  slug: z.string().min(1, msg.required).max(200, msg.nameMax).regex(/^[a-z0-9-]+$/, msg.slugFormat),
+  description: z.string().min(10, msg.descriptionMin),
+  descriptionEn: z.string().min(10, msg.descriptionMin),
+  price: z.string().min(1, msg.required).refine((v) => !isNaN(Number(v)) && Number(v) > 0, msg.pricePositive),
   comparePrice: z.string(),
-  stock: z.string().refine((v) => !isNaN(Number(v)) && Number(v) >= 0, 'Остаток не может быть отрицательным'),
+  stock: z.string().refine((v) => v.trim() !== '' && !isNaN(Number(v)) && Number.isInteger(Number(v)) && Number(v) >= 0, msg.stockWhole),
   sku: z.string(),
-  categoryId: z.string().min(1, 'Выберите категорию'),
+  categoryId: z.string().min(1, msg.categoryRequired),
   isPublished: z.boolean(),
-  imageUrls: z.string(),
+  imageUrls: z.string().refine((v) => {
+    if (!v.trim()) return true;
+    return v.split(',').map((u) => u.trim()).filter(Boolean).every((url) => {
+      try { new URL(url); return true; } catch { return false; }
+    });
+  }, msg.imageUrlsInvalid),
   tagIds: z.array(z.string()),
 });
 
-export type CreateProductFormValues = z.infer<typeof createProductFormSchema>;
+// Static schema used for type inference only — messages don't affect the type shape
+const _schemaForType = buildProductFormSchema({
+  required: '',
+  nameMax: '',
+  slugFormat: '',
+  descriptionMin: '',
+  pricePositive: '',
+  stockWhole: '',
+  categoryRequired: '',
+  imageUrlsInvalid: '',
+});
 
-export const FIELD_TOOLTIPS = {
-  name: 'Название товара, которое покупатель увидит в каталоге и на странице товара. Используйте понятное, описательное название — например: «Беспроводные наушники Sony WH-1000XM5».',
-  slug: 'Уникальный идентификатор товара в URL. Генерируется автоматически из названия. Например, для «Наушники Sony» slug будет «naushniki-sony». Можно изменить вручную — только строчные латинские буквы, цифры и дефисы.',
-  description: 'Подробное описание товара: характеристики, материал, размеры, комплектация. Этот текст отображается на странице товара под галереей. Чем подробнее — тем выше вероятность покупки.',
-  price: 'Текущая цена продажи в гривнах. Эта цена отображается на карточке товара в каталоге и на странице товара. Должна быть больше 0.',
-  comparePrice: 'Старая цена до скидки. Если указана — на карточке товара рядом с текущей ценой будет перечёркнутая старая цена, создавая эффект выгоды. Оставьте пустым, если скидки нет.',
-  stock: 'Количество товара на складе. При оформлении заказа остаток уменьшается. Когда остаток < 10 — товар появится в предупреждении «Товары с низким остатком» на аналитике.',
-  sku: 'Артикул товара — внутренний код для учёта на складе. Необязательное поле. Отображается только в админ-панели, покупатели его не видят.',
-  categoryId: 'Категория определяет, в каком разделе каталога отображается товар. Покупатели могут фильтровать товары по категориям. Каждый товар может быть только в одной категории.',
-  tags: 'Теги — это дополнительные метки для фильтрации товаров. В отличие от категории, товар может иметь несколько тегов. Покупатели видят теги как чипсы-фильтры в каталоге.',
-  images: 'Изображения товара. Первое изображение станет главным (обложкой) на карточке в каталоге. Остальные отображаются в галерее на странице товара. Загружайте качественные фото или укажите URL.',
-  isPublished: 'Если включено — товар сразу появится в каталоге и будет доступен покупателям. Если выключено — товар сохранится как черновик, видимый только в админ-панели.',
-} as const;
+export type CreateProductFormValues = z.infer<typeof _schemaForType>;
+

@@ -1,12 +1,34 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'nav.home': 'Home',
+        'nav.login': 'Log in',
+        'nav.logout': 'Log out',
+        'nav.admin': 'Admin',
+        'cart.title': 'Cart',
+        'account.profile': 'Profile',
+        'account.orders': 'My orders',
+        'admin.sidebarTitle': 'Administration',
+        'profile.user': 'User',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('./SearchInput', () => ({
-  SearchInput: () => <input placeholder="Поиск товаров..." />,
+  SearchInput: () => <input placeholder="Search products..." />,
 }));
 
 jest.mock('next/navigation', () => ({
   usePathname: () => '/products',
+  useRouter: () => ({ prefetch: jest.fn() }),
 }));
 
 jest.mock('lucide-react', () => ({
@@ -99,7 +121,7 @@ describe('Header', () => {
 
   it('renders search input with placeholder', () => {
     render(<Header />);
-    expect(screen.getByPlaceholderText('Поиск товаров...')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Search products...')).toBeInTheDocument();
   });
 
   it('renders cart badge with item count', () => {
@@ -121,22 +143,22 @@ describe('Header', () => {
   it('shows login button when not authenticated', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false, user: null };
     render(<Header />);
-    expect(screen.getByText('Войти')).toBeInTheDocument();
+    expect(screen.getByText('Log in')).toBeInTheDocument();
   });
 
   it('calls login on login button click', () => {
     mockAuthState = { ...mockAuthState, isAuthenticated: false, user: null };
     render(<Header />);
-    fireEvent.click(screen.getByText('Войти'));
+    fireEvent.click(screen.getByText('Log in'));
     expect(mockLogin).toHaveBeenCalledTimes(1);
   });
 
   it('opens dropdown menu on avatar click', () => {
     render(<Header />);
     fireEvent.click(screen.getByLabelText('Меню пользователя'));
-    expect(screen.getByText('Профиль')).toBeInTheDocument();
-    expect(screen.getByText('Мои заказы')).toBeInTheDocument();
-    expect(screen.getByText('Выйти')).toBeInTheDocument();
+    expect(screen.getByText('Profile')).toBeInTheDocument();
+    expect(screen.getByText('My orders')).toBeInTheDocument();
+    expect(screen.getByText('Log out')).toBeInTheDocument();
   });
 
   it('shows user name and email in dropdown', () => {
@@ -150,19 +172,19 @@ describe('Header', () => {
     mockAuthState = { ...mockAuthState, isAdmin: true };
     render(<Header />);
     fireEvent.click(screen.getByLabelText('Меню пользователя'));
-    expect(screen.getByText('Админ-панель')).toBeInTheDocument();
+    expect(screen.getByText('Administration')).toBeInTheDocument();
   });
 
   it('hides admin link for regular users', () => {
     render(<Header />);
     fireEvent.click(screen.getByLabelText('Меню пользователя'));
-    expect(screen.queryByText('Админ-панель')).not.toBeInTheDocument();
+    expect(screen.queryByText('Administration')).not.toBeInTheDocument();
   });
 
   it('calls logout on logout button click', () => {
     render(<Header />);
     fireEvent.click(screen.getByLabelText('Меню пользователя'));
-    fireEvent.click(screen.getByText('Выйти'));
+    fireEvent.click(screen.getByText('Log out'));
     expect(mockLogout).toHaveBeenCalledTimes(1);
   });
 

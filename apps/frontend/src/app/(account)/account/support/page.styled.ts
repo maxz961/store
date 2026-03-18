@@ -15,8 +15,10 @@ export const s = {
   // Message bubbles
   messageRowUser: 'flex justify-end',
   messageRowAdmin: 'flex justify-start',
-  bubbleUser: 'max-w-[75%] rounded-2xl rounded-tr-sm bg-primary px-4 py-2.5 text-sm text-primary-foreground',
-  bubbleAdmin: 'max-w-[75%] rounded-2xl rounded-tl-sm bg-muted px-4 py-2.5 text-sm',
+  messageWrapperUser: 'max-w-[75%]',
+  messageWrapperAdmin: 'max-w-[75%]',
+  bubbleUser: 'rounded-2xl rounded-tr-sm bg-primary px-4 py-2.5 text-sm text-primary-foreground break-words',
+  bubbleAdmin: 'rounded-2xl rounded-tl-sm bg-muted px-4 py-2.5 text-sm break-words',
   messageTime: 'mt-1 text-[11px] text-muted-foreground',
   messageTimeUser: 'mt-1 text-[11px] text-primary/70 text-right',
 
@@ -27,7 +29,7 @@ export const s = {
   inputArea: 'border-t border-border p-4',
   inputRow: 'flex items-end gap-3',
   textarea: 'flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[44px] max-h-[160px]',
-  sendButton: 'h-[44px] shrink-0',
+  sendButton: 'h-[44px] w-[110px] shrink-0',
 
   // Status
   notAuth: 'flex min-h-[400px] flex-col items-center justify-center gap-4 text-center',

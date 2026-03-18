@@ -1,14 +1,23 @@
+'use client';
+
+import { useState, useCallback } from 'react';
 import Image from 'next/image';
 import { If, Then, Else, When } from 'react-if';
 import type { ChangeEvent } from 'react';
 import { SelectField } from '@/components/ui/SelectField';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { ROLE_OPTIONS } from './page.constants';
-import { getInitials } from '@/lib/utils';
+import { getInitials, langToLocale } from '@/lib/utils';
 import type { UserRowProps, UserRole } from './page.types';
 
 
-export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
+export const UserRow = ({ user, canEditRole, onUpdateRole, onToggleBan }: UserRowProps) => {
+  const [imgError, setImgError] = useState(false);
+  const { lang } = useLanguage();
+
+  const handleImgError = useCallback(() => setImgError(true), []);
+
   const handleRoleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     onUpdateRole(user.id, e.target.value as UserRole);
   };
@@ -17,10 +26,10 @@ export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
     onToggleBan(user.id, !user.isBanned);
   };
 
-  const dateStr = new Date(user.createdAt).toLocaleDateString('ru-RU');
+  const dateStr = new Date(user.createdAt).toLocaleDateString(langToLocale(lang));
 
   const avatar = (
-    <If condition={!!user.image}>
+    <If condition={!!user.image && !imgError}>
       <Then>
         <Image
           src={user.image ?? ''}
@@ -29,6 +38,7 @@ export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
           height={32}
           className={s.avatar}
           unoptimized
+          onError={handleImgError}
         />
       </Then>
       <Else>
@@ -51,21 +61,30 @@ export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
         </div>
       </td>
       <td className={s.tdCenter}>
-        <SelectField
-          label=""
-          value={user.role}
-          onChange={handleRoleChange}
-          options={ROLE_OPTIONS}
-          className={s.roleSelect}
-        />
+        <If condition={canEditRole}>
+          <Then>
+            <SelectField
+              label=""
+              value={user.role}
+              onChange={handleRoleChange}
+              options={ROLE_OPTIONS}
+              className={s.roleSelect}
+            />
+          </Then>
+          <Else>
+            <span className={user.role === 'ADMIN' ? s.roleAdmin : s.roleCustomer}>
+              {user.role}
+            </span>
+          </Else>
+        </If>
       </td>
       <td className={s.tdCenter}>
         <If condition={user.isBanned}>
           <Then>
-            <span className={s.bannedBadge}>Заблокирован</span>
+            <span className={s.bannedBadge}>Banned</span>
           </Then>
           <Else>
-            <span className={s.activeBadge}>Активен</span>
+            <span className={s.activeBadge}>Active</span>
           </Else>
         </If>
       </td>
@@ -73,13 +92,13 @@ export const UserRow = ({ user, onUpdateRole, onToggleBan }: UserRowProps) => {
         <span className={s.date}>{dateStr}</span>
       </td>
       <td className={s.td}>
-        <When condition={user.role !== 'ADMIN'}>
+        <When condition={canEditRole && user.role !== 'ADMIN'}>
           <button
             type="button"
             className={user.isBanned ? s.unbanBtn : s.banBtn}
             onClick={handleToggleBan}
           >
-            {user.isBanned ? 'Разблокировать' : 'Заблокировать'}
+            {user.isBanned ? 'Unban' : 'Ban'}
           </button>
         </When>
       </td>

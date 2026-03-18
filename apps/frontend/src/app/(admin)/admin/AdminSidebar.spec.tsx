@@ -1,8 +1,23 @@
 import { render, screen } from '@testing-library/react';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'uk',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.sidebarTitle': 'Administration',
+        'admin.closeMenu': 'Close menu',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('next/navigation', () => ({
   usePathname: jest.fn(() => '/admin/dashboard'),
+  useRouter: () => ({ prefetch: jest.fn(), push: jest.fn(), replace: jest.fn(), back: jest.fn() }),
 }));
 
 jest.mock('next/link', () => ({
@@ -51,11 +66,11 @@ describe('AdminSidebar', () => {
 
   it('renders all nav items', () => {
     render(<AdminSidebar />);
-    expect(screen.getByText('Аналитика')).toBeInTheDocument();
-    expect(screen.getByText('Товары')).toBeInTheDocument();
-    expect(screen.getByText('Категории')).toBeInTheDocument();
-    expect(screen.getByText('Поддержка')).toBeInTheDocument();
-    expect(screen.getByText('Логи')).toBeInTheDocument();
+    expect(screen.getByText('Analytics')).toBeInTheDocument();
+    expect(screen.getByText('Products')).toBeInTheDocument();
+    expect(screen.getByText('Categories')).toBeInTheDocument();
+    expect(screen.getByText('Support')).toBeInTheDocument();
+    expect(screen.getByText('Logs')).toBeInTheDocument();
   });
 
   it('shows unread badge on Поддержка when count > 0', () => {
@@ -73,7 +88,7 @@ describe('AdminSidebar', () => {
 
   it('shows active style for current route', () => {
     render(<AdminSidebar />);
-    const dashboardLink = screen.getByText('Аналитика').closest('a');
+    const dashboardLink = screen.getByText('Analytics').closest('a');
     expect(dashboardLink?.className).toContain('text-primary');
   });
 
@@ -112,5 +127,10 @@ describe('AdminSidebar', () => {
     mockLogsUnread = undefined as unknown as number;
     render(<AdminSidebar />);
     expect(screen.queryByTestId('logs-unread-badge')).not.toBeInTheDocument();
+  });
+
+  it('shows Users link for all admin users', () => {
+    render(<AdminSidebar />);
+    expect(screen.getByText('Users')).toBeInTheDocument();
   });
 });

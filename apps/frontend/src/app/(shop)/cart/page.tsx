@@ -8,12 +8,14 @@ import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Spinner } from '@/components/ui/Spinner';
 import { useCartStore } from '@/store/cart';
 import { formatCurrency } from '@/lib/constants/format';
+import { useLanguage } from '@/lib/i18n';
 import { CartItem } from './CartItem';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 
 
 const CartPage = () => {
+  const { t } = useLanguage();
   const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart, hydrated } = useCartStore();
 
   if (!hydrated) {
@@ -38,17 +40,17 @@ const CartPage = () => {
       <Breadcrumbs items={breadcrumbs} />
 
       <div className={s.header}>
-        <h1 className={s.title}>Корзина</h1>
+        <h1 className={s.title}>{t('cart.title')}</h1>
       </div>
 
       <If condition={items.length === 0}>
         <Then>
           <div className={s.empty}>
             <ShoppingBag className={s.emptyIcon} />
-            <p className={s.emptyTitle}>Корзина пуста</p>
-            <p className={s.emptyText}>Добавьте товары из каталога</p>
+            <p className={s.emptyTitle}>{t('cart.empty')}</p>
+            <p className={s.emptyText}>{t('cart.emptyText')}</p>
             <Link href="/products">
-              <Button>Перейти в каталог</Button>
+              <Button>{t('cart.browseCatalog')}</Button>
             </Link>
           </div>
         </Then>
@@ -67,23 +69,23 @@ const CartPage = () => {
           </div>
 
           <div className={s.summary}>
-            <h2 className={s.summaryTitle}>Итого</h2>
+            <h2 className={s.summaryTitle}>{t('cart.total')}</h2>
             <div className={s.summaryRow}>
-              <span>Товаров</span>
-              <span>{totalItems()} шт.</span>
+              <span>{t('cart.items')}</span>
+              <span>{totalItems()} {t('product.pieces')}</span>
             </div>
             <div className={s.summaryDivider} />
             <div className={s.summaryTotal}>
-              <span>Сумма</span>
+              <span>{t('cart.subtotal')}</span>
               <span>{formatCurrency(totalPrice())}</span>
             </div>
             <Link href="/checkout">
               <Button size="lg" className={s.checkoutButton}>
-                Оформить заказ
+                {t('cart.checkout')}
               </Button>
             </Link>
             <button className={s.clearButton} onClick={clearCart}>
-              Очистить корзину
+              {t('cart.clear')}
             </button>
           </div>
         </div>

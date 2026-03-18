@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 jest.mock('lucide-react', () => ({
@@ -18,16 +19,48 @@ jest.mock('next/navigation', () => ({
   useSearchParams: () => new URLSearchParams(),
 }));
 
+let mockProductsData: any;
+let mockIsLoading: boolean;
+let mockImageErrorData: any;
+
 jest.mock('@/lib/hooks/useAdmin', () => ({
+  useAdminProducts: () => ({
+    data: mockProductsData,
+    isLoading: mockIsLoading,
+  }),
+  useImageErrorCount: () => ({
+    data: mockImageErrorData,
+  }),
   useAdminProductSuggestions: () => ({ data: undefined }),
 }));
 
-let mockApiGet: jest.Mock;
-
-jest.mock('@/lib/api', () => ({
-  api: {
-    get: (...args: any[]) => mockApiGet(...args),
-  },
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'nav.admin': 'Admin',
+        'admin.dashboard.products': 'Products',
+        'admin.products.addProduct': 'Add product',
+        'admin.products.searchPlaceholder': 'Search products...',
+        'admin.products.viewAll': 'All',
+        'admin.products.viewBroken': 'Broken',
+        'admin.products.colProduct': 'Product',
+        'admin.products.colCategory': 'Category',
+        'admin.products.colTags': 'Tags',
+        'admin.products.colPrice': 'Price',
+        'admin.products.colStock': 'Stock',
+        'admin.products.colStatus': 'Status',
+        'admin.products.notFound': 'Products not found',
+        'admin.products.statusPublished': 'Published',
+        'admin.products.statusDraft': 'Draft',
+        'admin.products.prev': 'Previous',
+        'admin.products.next': 'Next',
+      };
+      return map[key] ?? key;
+    },
+  }),
 }));
 
 import AdminProductsPage from './page';
@@ -38,18 +71,18 @@ const mockProducts = {
     {
       id: 'prod-1',
       slug: 'sony-headphones',
-      name: 'Наушники Sony WH-1000XM5',
+      name: 'Sony WH-1000XM5 Headphones',
       price: 9999,
       stock: 25,
       isPublished: true,
       images: ['https://example.com/img.jpg'],
-      category: { name: 'Электроника' },
-      tags: [{ tag: { slug: 'wireless', name: 'Беспроводные' } }],
+      category: { name: 'Electronics' },
+      tags: [{ tag: { slug: 'wireless', name: 'Wireless' } }],
     },
     {
       id: 'prod-2',
       slug: 'draft-product',
-      name: 'Черновик товара',
+      name: 'Draft Product',
       price: 500,
       stock: 0,
       isPublished: false,
@@ -64,126 +97,102 @@ const mockProducts = {
 };
 
 
+const createWrapper = () => {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false } },
+  });
+  const Wrapper = ({ children }: { children: React.ReactNode }) => (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+  Wrapper.displayName = 'TestWrapper';
+  return Wrapper;
+};
+
+const renderPage = () => render(<AdminProductsPage />, { wrapper: createWrapper() });
+
+
 describe('AdminProductsPage', () => {
   beforeEach(() => {
-    mockApiGet = jest.fn()
-      .mockResolvedValueOnce(mockProducts)
-      .mockResolvedValueOnce({ count: 0 });
+    mockProductsData = mockProducts;
+    mockIsLoading = false;
+    mockImageErrorData = { count: 0 };
   });
 
-  it('renders add product button', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Добавить товар')).toBeInTheDocument();
+  it('renders add product button', () => {
+    renderPage();
+    expect(screen.getByText('Add product')).toBeInTheDocument();
   });
 
-  it('renders product names', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Наушники Sony WH-1000XM5')).toBeInTheDocument();
-    expect(screen.getByText('Черновик товара')).toBeInTheDocument();
+  it('renders product names', () => {
+    renderPage();
+    expect(screen.getByText('Sony WH-1000XM5 Headphones')).toBeInTheDocument();
+    expect(screen.getByText('Draft Product')).toBeInTheDocument();
   });
 
-  it('renders category name', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Электроника')).toBeInTheDocument();
+  it('renders category name', () => {
+    renderPage();
+    expect(screen.getByText('Electronics')).toBeInTheDocument();
   });
 
-  it('renders tags', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Беспроводные')).toBeInTheDocument();
+  it('renders tags', () => {
+    renderPage();
+    expect(screen.getByText('Wireless')).toBeInTheDocument();
   });
 
-  it('renders published status in Russian', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Опубликован')).toBeInTheDocument();
-    expect(screen.getByText('Черновик')).toBeInTheDocument();
+  it('renders published status in English', () => {
+    renderPage();
+    expect(screen.getByText('Published')).toBeInTheDocument();
+    expect(screen.getByText('Draft')).toBeInTheDocument();
   });
 
-  it('renders breadcrumbs', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Админ-панель')).toBeInTheDocument();
+  it('renders breadcrumbs', () => {
+    renderPage();
+    expect(screen.getByText('Admin')).toBeInTheDocument();
+    expect(screen.getAllByText('Products').length).toBeGreaterThanOrEqual(1);
   });
 
-  it('passes server: true for cookie forwarding', async () => {
-    await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    expect(mockApiGet).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({ server: true }),
-    );
+  it('shows empty message when no products', () => {
+    mockProductsData = { items: [], total: 0, page: 1, totalPages: 1 };
+    renderPage();
+    expect(screen.getByText('Products not found')).toBeInTheDocument();
   });
 
-  it('shows empty message when no products', async () => {
-    mockApiGet = jest.fn()
-      .mockResolvedValueOnce({ items: [], total: 0, page: 1, totalPages: 1 })
-      .mockResolvedValueOnce({ count: 0 });
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Товары не найдены')).toBeInTheDocument();
-  });
-
-  it('highlights low stock', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
+  it('highlights low stock', () => {
+    renderPage();
     const zeroStock = screen.getByText('0');
     expect(zeroStock).toHaveClass('text-destructive');
   });
 
-  it('renders sortable column headers', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Товар')).toBeInTheDocument();
-    expect(screen.getByText('Цена')).toBeInTheDocument();
-    expect(screen.getByText('Остаток')).toBeInTheDocument();
+  it('renders sortable column headers', () => {
+    renderPage();
+    expect(screen.getByText('Product')).toBeInTheDocument();
+    expect(screen.getByText('Price')).toBeInTheDocument();
+    expect(screen.getByText('Stock')).toBeInTheDocument();
   });
 
-  it('renders active sort icon when sortBy matches column', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({ sortBy: 'price', sortOrder: 'asc' }) });
-    render(jsx);
-    expect(screen.getByTestId('icon-sort-asc')).toBeInTheDocument();
+  it('renders search input', () => {
+    renderPage();
+    expect(screen.getByPlaceholderText('Search products...')).toBeInTheDocument();
   });
 
-  it('passes sortBy and sortOrder to API', async () => {
-    await AdminProductsPage({ searchParams: Promise.resolve({ sortBy: 'price', sortOrder: 'desc' }) });
-    expect(mockApiGet).toHaveBeenCalledWith(
-      expect.stringContaining('sortBy=price'),
-      expect.any(Object),
-    );
-  });
-
-  it('renders search input', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByPlaceholderText('Поиск товаров...')).toBeInTheDocument();
-  });
-
-  it('renders pagination with page numbers', async () => {
-    mockApiGet = jest.fn()
-      .mockResolvedValueOnce({ ...mockProducts, page: 1, totalPages: 3 })
-      .mockResolvedValueOnce({ count: 0 });
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
+  it('renders pagination with page numbers', () => {
+    mockProductsData = { ...mockProducts, page: 1, totalPages: 3 };
+    renderPage();
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('2')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
   });
 
-  it('renders view switch tabs', async () => {
-    const jsx = await AdminProductsPage({ searchParams: Promise.resolve({}) });
-    render(jsx);
-    expect(screen.getByText('Все')).toBeInTheDocument();
-    expect(screen.getByText('Проблемные')).toBeInTheDocument();
+  it('renders view switch tabs', () => {
+    renderPage();
+    expect(screen.getByText('All')).toBeInTheDocument();
+    expect(screen.getByText('Broken')).toBeInTheDocument();
   });
 
-  it('passes imageError=true to API when view=broken', async () => {
-    await AdminProductsPage({ searchParams: Promise.resolve({ view: 'broken' }) });
-    expect(mockApiGet).toHaveBeenCalledWith(
-      expect.stringContaining('imageError=true'),
-      expect.any(Object),
-    );
+  it('shows loading spinner when fetching', () => {
+    mockIsLoading = true;
+    mockProductsData = undefined;
+    renderPage();
+    expect(screen.queryByText('Sony WH-1000XM5 Headphones')).not.toBeInTheDocument();
   });
 });

@@ -7,11 +7,12 @@ export const statusStyles: Record<string, string> = {
 };
 
 export const statusLabels: Record<string, string> = {
-  PENDING: 'Ожидает',
-  PROCESSING: 'Обрабатывается',
-  SHIPPED: 'Отправлен',
-  DELIVERED: 'Доставлен',
-  CANCELLED: 'Отменён',
+  PENDING: 'Pending',
+  CONFIRMED: 'Confirmed',
+  PROCESSING: 'Processing',
+  SHIPPED: 'Shipped',
+  DELIVERED: 'Delivered',
+  CANCELLED: 'Cancelled',
 };
 
 export const s = {

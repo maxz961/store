@@ -1,16 +1,16 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Plus } from 'lucide-react';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/Spinner';
+import { useLanguage } from '@/lib/i18n';
 import { useAdminProducts, useImageErrorCount } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
 import type { SortOrder } from './page.types';
-import { breadcrumbs } from './page.constants';
 import { ProductsTable } from './ProductsTable';
 import { ProductsPagination } from './ProductsPagination';
 import { ProductSearch } from './ProductSearch';
@@ -24,6 +24,7 @@ const AdminProductsContent = () => {
   const view = searchParams.get('view') === 'broken' ? 'broken' : 'all';
   const page = searchParams.get('page') ?? undefined;
   const search = searchParams.get('search') ?? undefined;
+  const { t } = useLanguage();
 
   const { data, isLoading } = useAdminProducts({
     page,
@@ -46,7 +47,7 @@ const AdminProductsContent = () => {
         <Link href="/admin/products/new">
           <Button size="sm">
             <Plus className={s.buttonIcon} />
-            Добавить товар
+            {t('admin.products.addProduct')}
           </Button>
         </Link>
       </div>
@@ -70,13 +71,21 @@ const AdminProductsContent = () => {
 };
 
 
-const AdminProductsPage = () => (
-  <div className={s.page}>
-    <Breadcrumbs items={breadcrumbs} />
-    <Suspense fallback={<div className="flex justify-center py-24"><Spinner /></div>}>
-      <AdminProductsContent />
-    </Suspense>
-  </div>
-);
+const AdminProductsPage = () => {
+  const { t } = useLanguage();
+  const breadcrumbs = useMemo(() => [
+    { label: t('nav.admin'), href: '/admin/dashboard' },
+    { label: t('admin.dashboard.products') },
+  ], [t]);
+
+  return (
+    <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
+      <Suspense fallback={<div className="flex justify-center py-24"><Spinner /></div>}>
+        <AdminProductsContent />
+      </Suspense>
+    </div>
+  );
+};
 
 export default AdminProductsPage;

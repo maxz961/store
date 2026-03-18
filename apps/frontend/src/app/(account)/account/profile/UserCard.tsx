@@ -2,11 +2,14 @@ import Image from 'next/image';
 import { LogOut } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import { UserCardProps } from './page.types';
 
 
 export const UserCard = ({ name, email, image, initials, memberSince, onLogout }: UserCardProps) => {
+  const { t } = useLanguage();
+
   const handleLogout = () => onLogout();
 
   return (
@@ -21,16 +24,16 @@ export const UserCard = ({ name, email, image, initials, memberSince, onLogout }
           </Else>
         </If>
         <div className={s.userInfo}>
-          <p className={s.userName}>{name ?? 'Пользователь'}</p>
+          <p className={s.userName}>{name ?? t('profile.user')}</p>
           <p className={s.userEmail}>{email}</p>
-          <p className={s.userMeta}>Участник с {memberSince}</p>
+          <p className={s.userMeta}>{t('profile.memberSince')} {memberSince}</p>
         </div>
       </div>
 
       <div className={s.actions}>
         <Button variant="outline" size="sm" onClick={handleLogout}>
           <LogOut className={s.logoutIcon} />
-          Выйти
+          {t('nav.logout')}
         </Button>
       </div>
     </div>

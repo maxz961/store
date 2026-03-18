@@ -2,6 +2,24 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import type { Product } from '@/components/product/ProductCard/ProductCard.types';
 
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'product.addToCart': 'Add to cart',
+        'product.inCart': 'In cart',
+        'product.outOfStock': 'Out of stock',
+        'product.noPhoto': 'No photo',
+        'favorites.title': 'Favorites',
+        'favorites.empty': 'No favorites yet',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 class MockResizeObserver {
   observe = jest.fn();
   unobserve = jest.fn();

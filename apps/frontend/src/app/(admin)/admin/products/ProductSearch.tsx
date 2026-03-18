@@ -6,6 +6,7 @@ import { Search } from 'lucide-react';
 import Image from 'next/image';
 import { If, Then, Else, When } from 'react-if';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/lib/i18n';
 import { useAdminProductSuggestions } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
 
@@ -21,6 +22,7 @@ export const ProductSearch = ({ defaultValue, sortBy, sortOrder }: {
   const router = useRouter();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
+  const { t } = useLanguage();
   const { data } = useAdminProductSuggestions(value);
   const suggestions = useMemo(() => data?.items ?? [], [data]);
   const showDropdown = isOpen && value.trim().length >= 2 && suggestions.length > 0;
@@ -95,7 +97,7 @@ export const ProductSearch = ({ defaultValue, sortBy, sortOrder }: {
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
-            placeholder="Поиск товаров..."
+            placeholder={t('admin.products.searchPlaceholder')}
             className={s.searchInput}
             autoComplete="off"
           />
@@ -129,7 +131,7 @@ export const ProductSearch = ({ defaultValue, sortBy, sortOrder }: {
               <span className={s.suggestionName}>{product.name}</span>
               <span className={s.suggestionMeta}>
                 <When condition={!product.isPublished}>
-                  <span className={s.suggestionDraftBadge}>Черновик</span>
+                  <span className={s.suggestionDraftBadge}>{t('admin.products.statusDraft')}</span>
                 </When>
                 <When condition={!!product.category}>
                   <span className={s.suggestionCategory}>{product.category?.name}</span>

@@ -21,11 +21,12 @@ export const useLogs = () =>
     queryFn: () => api.get<ErrorLog[]>('/logs'),
   });
 
-export const useUnreadLogsCount = () =>
+export const useUnreadLogsCount = (enabled = true) =>
   useQuery<number>({
     queryKey: ['admin', 'logs', 'unread-count'],
     queryFn: () => api.get<number>('/logs/unread-count'),
     refetchInterval: 30_000,
+    enabled,
   });
 
 export const useMarkLogsRead = () => {

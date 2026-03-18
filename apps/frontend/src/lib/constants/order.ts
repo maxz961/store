@@ -1,26 +1,27 @@
 export const STATUS_LABELS: Record<string, string> = {
-  PENDING: 'Ожидает',
-  PROCESSING: 'Обрабатывается',
-  SHIPPED: 'Отправлен',
-  DELIVERED: 'Доставлен',
-  CANCELLED: 'Отменён',
+  PENDING: 'Pending',
+  CONFIRMED: 'Confirmed',
+  PROCESSING: 'Processing',
+  SHIPPED: 'Shipped',
+  DELIVERED: 'Delivered',
+  CANCELLED: 'Cancelled',
 };
 
 export const DELIVERY_LABELS: Record<string, string> = {
-  COURIER: 'Курьер',
-  PICKUP: 'Самовывоз',
-  POST: 'Почта',
+  COURIER: 'Courier',
+  PICKUP: 'Pickup',
+  POST: 'Post office',
 };
 
 export const STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'] as const;
 
 export const FILTER_TABS = [
-  { value: '', label: 'Все' },
-  { value: 'PENDING', label: 'Ожидает' },
-  { value: 'PROCESSING', label: 'Обрабатывается' },
-  { value: 'SHIPPED', label: 'Отправлен' },
-  { value: 'DELIVERED', label: 'Доставлен' },
-  { value: 'CANCELLED', label: 'Отменён' },
+  { value: '', label: 'All' },
+  { value: 'PENDING', label: 'Pending' },
+  { value: 'PROCESSING', label: 'Processing' },
+  { value: 'SHIPPED', label: 'Shipped' },
+  { value: 'DELIVERED', label: 'Delivered' },
+  { value: 'CANCELLED', label: 'Cancelled' },
 ];
 
 export const PIE_COLORS: Record<string, string> = {

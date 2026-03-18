@@ -19,8 +19,9 @@ export const s = {
   // Bubbles
   messageRowUser: 'flex justify-end',
   messageRowAdmin: 'flex justify-start',
-  bubbleUser: 'max-w-[75%] rounded-2xl rounded-tr-sm bg-muted px-4 py-2.5 text-sm',
-  bubbleAdmin: 'max-w-[75%] rounded-2xl rounded-tl-sm bg-primary px-4 py-2.5 text-sm text-primary-foreground',
+  messageWrapper: 'max-w-[75%]',
+  bubbleUser: 'rounded-2xl rounded-tr-sm bg-muted px-4 py-2.5 text-sm break-words',
+  bubbleAdmin: 'rounded-2xl rounded-tl-sm bg-primary px-4 py-2.5 text-sm text-primary-foreground break-words',
   senderLabel: 'text-xs font-medium text-muted-foreground mb-1',
   senderLabelRight: 'text-xs font-medium text-muted-foreground mb-1 text-right',
   messageTime: 'mt-1 text-[11px] text-muted-foreground',
@@ -30,4 +31,5 @@ export const s = {
   inputArea: 'border-t border-border p-4',
   inputRow: 'flex items-end gap-3',
   textarea: 'flex-1 resize-none rounded-lg border border-input bg-background px-3 py-2.5 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring min-h-[44px] max-h-[160px]',
+  sendButton: 'h-[44px] w-[110px] shrink-0',
 };

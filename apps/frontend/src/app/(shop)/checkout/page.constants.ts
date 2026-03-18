@@ -4,25 +4,25 @@ import type { DeliveryOption } from './page.types';
 
 
 export const DELIVERY_OPTIONS: DeliveryOption[] = [
-  { value: 'COURIER', label: 'Курьер', description: 'Доставка до двери', icon: Truck },
-  { value: 'PICKUP', label: 'Самовывоз', description: 'Забрать из магазина', icon: MapPin },
-  { value: 'POST', label: 'Почта', description: 'Почтовая доставка', icon: Package },
+  { value: 'COURIER', label: 'Courier', description: 'Door-to-door delivery', icon: Truck },
+  { value: 'PICKUP', label: 'Pickup', description: 'Pick up from store', icon: MapPin },
+  { value: 'POST', label: 'Post office', description: 'Postal delivery', icon: Package },
 ];
 
 export const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Корзина', href: '/cart' },
-  { label: 'Оформление заказа' },
+  { label: 'Home', href: '/' },
+  { label: 'Cart', href: '/cart' },
+  { label: 'Checkout' },
 ];
 
 export const checkoutFormSchema = z.object({
-  fullName: z.string().min(2, 'Введите полное имя'),
-  line1: z.string().min(1, 'Введите адрес'),
+  fullName: z.string().min(2, 'Enter your full name'),
+  line1: z.string().min(1, 'Enter your address'),
   line2: z.string(),
-  city: z.string().min(1, 'Введите город'),
-  state: z.string().min(1, 'Введите область'),
-  postalCode: z.string().min(1, 'Введите индекс'),
-  country: z.string().length(2, 'Код страны — 2 буквы (например UA)'),
+  city: z.string().min(1, 'Enter your city'),
+  state: z.string().min(1, 'Enter your region'),
+  postalCode: z.string().min(1, 'Enter postal code'),
+  country: z.string().length(2, 'Country code must be 2 letters (e.g. UA)'),
 });
 
 export type CheckoutFormValues = z.infer<typeof checkoutFormSchema>;

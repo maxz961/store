@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import Image from 'next/image';
 import { When } from 'react-if';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './PromoBanner.styled';
 import type { PromoBannerSlideProps } from './PromoBanner.types';
 
@@ -16,8 +19,11 @@ export const PromoBannerSlide = ({
   bannerBgColor,
   discountType,
   discountValue,
-  link,
-}: PromoBannerSlideProps) => (
+  slug,
+}: PromoBannerSlideProps) => {
+  const { t } = useLanguage();
+
+  return (
   <div
     className={s.slide}
     style={{ backgroundColor: bannerBgColor ?? '#f1f5f9', minHeight: 140 }}
@@ -30,9 +36,9 @@ export const PromoBannerSlide = ({
       <When condition={!!description}>
         <p className={s.slideDescription}>{description}</p>
       </When>
-      <When condition={!!link}>
-        <Link href={link ?? '#'} className={s.slideLink}>
-          Подробнее
+      <When condition={!!slug}>
+        <Link href={`/promotions/${slug}`} className={s.slideLink}>
+          {t('promotions.learnMore')}
         </Link>
       </When>
     </div>
@@ -48,4 +54,5 @@ export const PromoBannerSlide = ({
       />
     </div>
   </div>
-);
+  );
+};

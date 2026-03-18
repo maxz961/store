@@ -1,19 +1,27 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import Link from 'next/link';
 import { UserCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/i18n';
 import { getInitials } from '@/lib/utils';
 import { s } from './page.styled';
-import { breadcrumbs } from './page.constants';
 import { UserCard } from './UserCard';
 import { QuickLinks } from './QuickLinks';
 
 
 const ProfilePage = () => {
+  const { t, lang } = useLanguage();
   const { user, isLoading, isAuthenticated, logout } = useAuth();
+
+  const breadcrumbs = [
+    { label: t('nav.home'), href: '/' },
+    { label: t('profile.breadcrumb') },
+  ];
 
   if (isLoading) {
     return (
@@ -39,10 +47,10 @@ const ProfilePage = () => {
       <div className={s.page}>
         <div className={s.notAuth}>
           <UserCircle className={s.avatarFallbackIcon} />
-          <p className={s.notAuthTitle}>Вы не авторизованы</p>
-          <p className={s.notAuthText}>Войдите, чтобы увидеть свой профиль</p>
+          <p className={s.notAuthTitle}>{t('profile.notAuth')}</p>
+          <p className={s.notAuthText}>{t('profile.notAuthText')}</p>
           <Link href="/login">
-            <Button>Войти</Button>
+            <Button>{t('profile.login')}</Button>
           </Link>
         </div>
       </div>
@@ -51,7 +59,7 @@ const ProfilePage = () => {
 
   const initials = getInitials(user.name, user.email);
 
-  const memberSince = new Date(user.createdAt).toLocaleDateString('ru-RU', {
+  const memberSince = new Date(user.createdAt).toLocaleDateString(lang === 'uk' ? 'uk-UA' : 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

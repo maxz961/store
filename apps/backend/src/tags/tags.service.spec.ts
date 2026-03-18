@@ -35,7 +35,7 @@ describe("TagsService", () => {
       (mockDb.tag.findFirst as jest.Mock).mockResolvedValue(null);
       (mockDb.tag.create as jest.Mock).mockResolvedValue(mockTag);
 
-      const result = await service.create({ name: "New", slug: "new" });
+      const result = await service.create({ name: "New", nameEn: "Test EN", slug: "new" });
       expect(result).toEqual(mockTag);
     });
 
@@ -43,9 +43,9 @@ describe("TagsService", () => {
       (mockDb.tag.findFirst as jest.Mock).mockResolvedValue(null);
       (mockDb.tag.create as jest.Mock).mockResolvedValue(mockTag);
 
-      await service.create({ name: "New", slug: "new", color: "#4361ee" });
+      await service.create({ name: "New", nameEn: "Test EN", slug: "new", color: "#4361ee" });
       expect(mockDb.tag.create).toHaveBeenCalledWith({
-        data: { name: "New", slug: "new", color: "#4361ee" },
+        data: { name: "New", nameEn: "Test EN", slug: "new", color: "#4361ee" },
       });
     });
 
@@ -53,14 +53,14 @@ describe("TagsService", () => {
       (mockDb.tag.findFirst as jest.Mock)
         .mockResolvedValueOnce(mockTag)
         .mockResolvedValueOnce(null);
-      await expect(service.create({ name: "New", slug: "new" })).rejects.toThrow(ConflictException);
+      await expect(service.create({ name: "New", nameEn: "Test EN", slug: "new" })).rejects.toThrow(ConflictException);
     });
 
     it("throws ConflictException when name already exists", async () => {
       (mockDb.tag.findFirst as jest.Mock)
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(mockTag);
-      await expect(service.create({ name: "New", slug: "new-2" })).rejects.toThrow(ConflictException);
+      await expect(service.create({ name: "New", nameEn: "Test EN", slug: "new-2" })).rejects.toThrow(ConflictException);
     });
   });
 

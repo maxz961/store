@@ -8,6 +8,7 @@ jest.mock("@store/shared", () => ({
     promotion: {
       findMany: jest.fn(),
       findUnique: jest.fn(),
+      findFirst: jest.fn(),
       create: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
@@ -103,9 +104,31 @@ describe("PromotionsService", () => {
     });
   });
 
+  describe("findBySlug", () => {
+    it("returns active promotion when found by slug", async () => {
+      (mockDb.promotion.findFirst as jest.Mock).mockResolvedValue(mockPromotion);
+
+      const result = await service.findBySlug("summer-sale");
+
+      expect(result).toEqual(mockPromotion);
+      expect(mockDb.promotion.findFirst).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: expect.objectContaining({ slug: "summer-sale", isActive: true }),
+        }),
+      );
+    });
+
+    it("throws NotFoundException when promotion not found or inactive", async () => {
+      (mockDb.promotion.findFirst as jest.Mock).mockResolvedValue(null);
+
+      await expect(service.findBySlug("nonexistent")).rejects.toThrow(NotFoundException);
+    });
+  });
+
   describe("create", () => {
     const dto = {
       title: "New Promo",
+      titleEn: "Test Promotion EN",
       slug: "new-promo",
       bannerImageUrl: "https://example.com/banner.jpg",
       startDate: "2026-03-01T00:00:00.000Z",

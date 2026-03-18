@@ -17,8 +17,10 @@ export const s = {
   quantityGroup: 'flex items-center gap-0 rounded-lg border border-border',
   quantityButton: 'flex h-7 w-7 items-center justify-center text-sm transition-colors duration-150 hover:bg-accent',
   quantity: 'w-8 text-center text-sm',
-  removeButton: 'ml-auto text-sm text-muted-foreground transition-colors duration-150 hover:text-destructive',
-  itemTotal: 'shrink-0 text-right text-sm font-semibold',
+  itemRight: 'flex shrink-0 flex-col items-end justify-between',
+  itemTotal: 'text-sm font-semibold',
+  removeIconButton: 'flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground/40 transition-colors duration-150 hover:text-destructive hover:bg-destructive/10',
+  removeIcon: 'h-4 w-4',
 
   // Summary
   summary: 'h-fit rounded-xl border border-border bg-card p-6',

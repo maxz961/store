@@ -1,21 +1,24 @@
+'use client';
+
 import { useFormContext } from 'react-hook-form';
 import { TextField } from '@/components/ui/TextField';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { FIELD_TOOLTIPS } from './page.constants';
 import type { CreateProductFormValues } from './page.constants';
 
 
 export const PricingSection = () => {
   const { register, formState: { errors } } = useFormContext<CreateProductFormValues>();
+  const { t } = useLanguage();
 
   return (
     <div className={s.card}>
-      <h2 className={s.cardTitle}>Цена и склад</h2>
+      <h2 className={s.cardTitle}>{t('admin.product.pricingAndStock')}</h2>
 
       <div className={s.grid2}>
         <TextField
-          label="Цена (₴)"
-          tooltip={FIELD_TOOLTIPS.price}
+          label={t('admin.product.priceLabel')}
+          tooltip={t('admin.product.tooltip.price')}
           type="number"
           step="0.01"
           min="0"
@@ -24,12 +27,12 @@ export const PricingSection = () => {
           {...register('price')}
         />
         <TextField
-          label="Старая цена (₴)"
-          tooltip={FIELD_TOOLTIPS.comparePrice}
+          label={t('admin.product.oldPriceLabel')}
+          tooltip={t('admin.product.tooltip.comparePrice')}
           type="number"
           step="0.01"
           min="0"
-          placeholder="Необязательно"
+          placeholder={t('admin.product.optional')}
           error={errors.comparePrice?.message}
           {...register('comparePrice')}
         />
@@ -37,8 +40,8 @@ export const PricingSection = () => {
 
       <div className={s.grid2}>
         <TextField
-          label="Остаток на складе"
-          tooltip={FIELD_TOOLTIPS.stock}
+          label={t('admin.product.stockLabel')}
+          tooltip={t('admin.product.tooltip.stock')}
           type="number"
           min="0"
           error={errors.stock?.message}
@@ -46,8 +49,8 @@ export const PricingSection = () => {
         />
         <TextField
           label="SKU"
-          tooltip={FIELD_TOOLTIPS.sku}
-          placeholder="Необязательно"
+          tooltip={t('admin.product.tooltip.sku')}
+          placeholder={t('admin.product.optional')}
           error={errors.sku?.message}
           {...register('sku')}
         />

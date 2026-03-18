@@ -25,8 +25,8 @@ export const s = {
   dropdownHeader: 'px-4 py-3 border-b border-border',
   dropdownName: 'text-sm font-medium truncate',
   dropdownEmail: 'text-xs text-muted-foreground truncate',
-  dropdownItem: 'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 hover:bg-accent',
+  dropdownItem: 'flex w-full items-center gap-3 px-4 py-2.5 text-sm transition-colors duration-150 hover:bg-accent dark:hover:bg-white/10',
   dropdownIcon: 'h-4 w-4 text-muted-foreground',
   dropdownDivider: 'my-1 border-t border-border',
-  dropdownDanger: 'flex w-full items-center gap-3 px-4 py-2.5 text-sm text-destructive transition-colors duration-150 hover:bg-accent',
+  dropdownDanger: 'flex w-full items-center gap-3 px-4 py-2.5 text-sm text-destructive dark:text-red-400 transition-colors duration-150 hover:bg-accent dark:hover:bg-white/10',
 };

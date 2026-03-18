@@ -2,14 +2,16 @@
 
 import { useState } from 'react';
 import { When } from 'react-if';
-import { cn } from '@/lib/utils';
+import { cn, langToLocale } from '@/lib/utils';
 import { formatDate } from '@/lib/constants/format';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
 import type { LogRowProps } from './page.types';
 
 
 export const LogRow = ({ log }: LogRowProps) => {
   const [expanded, setExpanded] = useState(false);
+  const { lang } = useLanguage();
 
   const handleToggle = () => {
     setExpanded((prev) => !prev);
@@ -37,7 +39,7 @@ export const LogRow = ({ log }: LogRowProps) => {
           </When>
         </td>
         <td className={s.tdUser}>{log.userId ?? '—'}</td>
-        <td className={s.tdDate}>{formatDate(log.createdAt, 'long')}</td>
+        <td className={s.tdDate}>{formatDate(log.createdAt, 'long', langToLocale(lang))}</td>
       </tr>
       <When condition={expanded && !!log.stack}>
         <tr>

@@ -40,6 +40,20 @@ jest.mock('@/lib/api', () => ({
   api: { patch: jest.fn().mockResolvedValue({}) },
 }));
 
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'admin.products.statusPublished': 'Published',
+        'admin.products.statusDraft': 'Draft',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 jest.mock('@/lib/constants/format', () => ({
   formatCurrency: (v: number) => `${v} ₴`,
 }));
@@ -100,13 +114,13 @@ describe('ProductRow', () => {
 
   it('shows published status', () => {
     render(<table><tbody><ProductRow product={baseProduct} /></tbody></table>);
-    expect(screen.getByText('Опубликован')).toBeInTheDocument();
+    expect(screen.getByText('Published')).toBeInTheDocument();
   });
 
   it('shows draft status when not published', () => {
     const product = { ...baseProduct, isPublished: false };
     render(<table><tbody><ProductRow product={product} /></tbody></table>);
-    expect(screen.getByText('Черновик')).toBeInTheDocument();
+    expect(screen.getByText('Draft')).toBeInTheDocument();
   });
 
   it('shows dash when no category', () => {

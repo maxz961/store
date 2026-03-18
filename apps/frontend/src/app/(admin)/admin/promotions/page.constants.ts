@@ -1,6 +1,6 @@
 export const breadcrumbs = [
-  { label: 'Админ-панель', href: '/admin/dashboard' },
-  { label: 'Акции' },
+  { label: 'Admin panel', href: '/admin/dashboard' },
+  { label: 'Promotions' },
 ];
 
 export const DISCOUNT_TYPE_LABELS: Record<string, string> = {

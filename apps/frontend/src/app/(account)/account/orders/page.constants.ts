@@ -2,9 +2,9 @@ import { s } from './page.styled';
 
 
 export const breadcrumbs = [
-  { label: 'Главная', href: '/' },
-  { label: 'Профиль', href: '/account/profile' },
-  { label: 'Мои заказы' },
+  { label: 'Home', href: '/' },
+  { label: 'Profile', href: '/account/profile' },
+  { label: 'My Orders' },
 ];
 
 export const STATUS_STYLES: Record<string, string> = {
