@@ -26,7 +26,7 @@ export const ProductGallery = ({ productId, images, name, unoptimized }: Product
 
   const handleMainImgError = useCallback(() => {
     setMainImgError(true);
-    if (errorReported.current) return;
+    if (!productId || errorReported.current) return;
     errorReported.current = true;
     api.patch(`/products/${productId}/image-error`).catch(() => undefined);
   }, [productId]);
