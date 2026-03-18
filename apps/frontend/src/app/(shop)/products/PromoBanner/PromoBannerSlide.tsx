@@ -36,9 +36,11 @@ export const PromoBannerSlide = ({
       <When condition={!!description}>
         <p className={s.slideDescription}>{description}</p>
       </When>
-      <Link href={`/promotions/${slug}`} className={s.slideLink}>
-        {t('promotions.learnMore')}
-      </Link>
+      <When condition={!!slug}>
+        <Link href={`/promotions/${slug}`} className={s.slideLink}>
+          {t('promotions.learnMore')}
+        </Link>
+      </When>
     </div>
 
     <div className={s.slideRight}>
