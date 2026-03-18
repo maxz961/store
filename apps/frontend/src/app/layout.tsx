@@ -25,7 +25,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="uk" suppressHydrationWarning>
       <head>
         {/* Sets lang attribute before React renders so datetime-local inputs use the correct locale */}
-        {/* eslint-disable-next-line react/no-danger */}
         <script dangerouslySetInnerHTML={{ __html: `try{var l=localStorage.getItem('lang');if(l==='en'||l==='uk')document.documentElement.lang=l;}catch(e){}` }} />
       </head>
       <body className={inter.className}>
