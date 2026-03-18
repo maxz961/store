@@ -4,7 +4,7 @@ export interface Product {
   nameEn?: string | null;
   slug: string;
   price: number;
-  comparePrice?: number;
+  comparePrice?: number | null;
   images: string[];
   stock: number;
   category: { name: string; nameEn?: string | null; slug: string };
