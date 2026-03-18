@@ -96,4 +96,22 @@ describe('PriceRangeSlider', () => {
     expect(screen.getByLabelText('Минимальная цена')).toHaveValue('0');
     expect(screen.getByLabelText('Максимальная цена')).toHaveValue('1000');
   });
+
+  it('fill bar left does not exceed 100% when min input value is typed beyond max', () => {
+    const { container } = render(<PriceRangeSlider {...defaultProps} />);
+    const minInput = screen.getByLabelText('Минимальная цена');
+    fireEvent.change(minInput, { target: { value: '9999' } });
+    const fill = container.querySelector('[style]') as HTMLElement;
+    const left = parseFloat(fill?.style.left ?? '0');
+    expect(left).toBeLessThanOrEqual(100);
+  });
+
+  it('fill bar right does not go negative when max input value is typed beyond max', () => {
+    const { container } = render(<PriceRangeSlider {...defaultProps} />);
+    const maxInput = screen.getByLabelText('Максимальная цена');
+    fireEvent.change(maxInput, { target: { value: '9999' } });
+    const fill = container.querySelector('[style]') as HTMLElement;
+    const right = parseFloat(fill?.style.right ?? '0');
+    expect(right).toBeGreaterThanOrEqual(0);
+  });
 });
