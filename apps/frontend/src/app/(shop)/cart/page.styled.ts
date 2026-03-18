@@ -14,7 +14,7 @@ export const s = {
   itemName: 'text-sm font-medium transition-colors duration-150 hover:text-primary',
   itemPrice: 'text-sm text-muted-foreground',
   itemActions: 'mt-auto flex items-center gap-2',
-  quantityGroup: 'flex items-center gap-0 rounded-lg border border-border',
+  quantityGroup: 'flex items-center gap-0 rounded-lg border border-border overflow-hidden',
   quantityButton: 'flex h-7 w-7 items-center justify-center text-sm transition-colors duration-150 hover:bg-accent',
   quantity: 'w-8 text-center text-sm',
   itemRight: 'flex shrink-0 flex-col items-end justify-between',
