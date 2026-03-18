@@ -10,6 +10,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 import { UsersTable } from './UsersTable';
+import type { UserRole } from './page.types';
 
 
 const AdminUsersPage = () => {
@@ -32,7 +33,7 @@ const AdminUsersPage = () => {
   }, [users, query]);
 
   const handleUpdateRole = useCallback(
-    (id: string, role: 'CUSTOMER' | 'ADMIN') => {
+    (id: string, role: UserRole) => {
       updateRole.mutate({ id, role });
     },
     [updateRole],
