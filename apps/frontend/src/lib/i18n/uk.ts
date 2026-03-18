@@ -293,7 +293,7 @@ export const uk: Translations = {
       validation: {
         required: 'Обов\'язкове поле',
         nameMax: 'Максимум 100 символів',
-        slugFormat: 'Тільки малі літери, цифри та дефіси',
+        slugFormat: 'Тільки малі латинські літери, цифри та дефіси',
       },
       confirmDeleteTitle: 'Видалити категорію?',
       confirmDeletePrefix: 'Категорія',
@@ -332,7 +332,7 @@ export const uk: Translations = {
       validation: {
         required: 'Обов\'язкове поле',
         nameMax: 'Максимум 100 символів',
-        slugFormat: 'Тільки малі літери, цифри та дефіси',
+        slugFormat: 'Тільки малі латинські літери, цифри та дефіси',
       },
       confirmDeleteTitle: 'Видалити тег?',
       confirmDeletePrefix: 'Тег',

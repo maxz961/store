@@ -58,7 +58,7 @@ const CategoriesPage = () => {
     slugFormat: t('admin.category.validation.slugFormat'),
   }), [t]);
 
-  const { register, handleSubmit, reset, setValue, watch, setError, trigger, formState: { errors } } = useForm<CategoryFormValues>({
+  const { register, handleSubmit, reset, setValue, watch, setError, formState: { errors } } = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: EMPTY_VALUES,
   });
@@ -66,9 +66,6 @@ const CategoriesPage = () => {
   watch((values, { name: field }) => {
     if (field === 'name' && !editingId) {
       setValue('slug', generateSlug(values.name ?? ''));
-    }
-    if (field === 'slug') {
-      trigger('slug');
     }
   });
 
