@@ -64,6 +64,13 @@ jest.mock('@/lib/i18n', () => ({
         'admin.category.editWarningAfter': 'products in this category',
         'admin.category.slugTaken': 'This slug is already taken',
         'admin.category.nameTaken': 'This name is already taken',
+        'admin.category.validation.required': 'Required',
+        'admin.category.validation.nameMax': 'Max 100 characters',
+        'admin.category.validation.slugFormat': 'Lowercase letters, digits and hyphens only',
+        'admin.category.confirmDeleteTitle': 'Delete category?',
+        'admin.category.confirmDeletePrefix': 'Category',
+        'admin.category.confirmDeleteSuffix': 'will be deleted.',
+        'admin.category.confirmDeleteProductsSuffix': 'products will lose their category.',
       };
       return map[key] ?? key;
     },

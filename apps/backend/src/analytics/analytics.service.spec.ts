@@ -170,21 +170,21 @@ describe("AnalyticsService", () => {
       expect(result.averageOrderValue).toBe(100);
     });
 
-    it("returns low stock products with first image", async () => {
+    it("returns low stock products with first image and nameEn (regression: language switching)", async () => {
       setupDefaultMocks();
       (mockDb.product.findMany as jest.Mock)
         .mockReset()
         .mockResolvedValueOnce([ // low stock (in Promise.all)
-          { id: "p1", name: "Товар A", slug: "tovar-a", stock: 3, images: ["img1.jpg", "img2.jpg"] },
-          { id: "p2", name: "Товар B", slug: "tovar-b", stock: 0, images: [] },
+          { id: "p1", name: "Товар A", nameEn: "Product A", slug: "tovar-a", stock: 3, images: ["img1.jpg", "img2.jpg"] },
+          { id: "p2", name: "Товар B", nameEn: null, slug: "tovar-b", stock: 0, images: [] },
         ])
         .mockResolvedValueOnce([]); // top product details (after Promise.all)
 
       const result = await service.getSummary();
 
       expect(result.lowStockProducts).toEqual([
-        { id: "p1", name: "Товар A", slug: "tovar-a", stock: 3, image: "img1.jpg" },
-        { id: "p2", name: "Товар B", slug: "tovar-b", stock: 0, image: null },
+        { id: "p1", name: "Товар A", nameEn: "Product A", slug: "tovar-a", stock: 3, image: "img1.jpg" },
+        { id: "p2", name: "Товар B", nameEn: null, slug: "tovar-b", stock: 0, image: null },
       ]);
     });
 

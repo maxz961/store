@@ -6,16 +6,22 @@ import { Spinner } from '@/components/ui/Spinner';
 import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 import { useLogs, useMarkLogsRead } from '@/lib/hooks/useLogs';
+import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { breadcrumbs } from './page.constants';
 import { LogsTable } from './LogsTable';
 
 
 const AdminLogsPage = () => {
+  const { t } = useLanguage();
   const { data: logs = [], isLoading } = useLogs();
   const markRead = useMarkLogsRead();
 
   const unreadCount = logs.filter((l) => !l.isRead).length;
+
+  const breadcrumbs = [
+    { label: t('nav.admin'), href: '/admin/dashboard' },
+    { label: t('admin.logs.breadcrumbLabel') },
+  ];
 
   const handleMarkAllRead = () => {
     markRead.mutate();
@@ -33,7 +39,7 @@ const AdminLogsPage = () => {
     <div className={s.page}>
       <Breadcrumbs items={breadcrumbs} />
       <div className={s.header}>
-        <h1 className={s.title}>Логи ошибок</h1>
+        <h1 className={s.title}>{t('admin.logs.pageTitle')}</h1>
         <When condition={unreadCount > 0}>
           <Button
             size="sm"
@@ -41,7 +47,7 @@ const AdminLogsPage = () => {
             disabled={markRead.isPending}
             onClick={handleMarkAllRead}
           >
-            Отметить все как прочитанные
+            {t('admin.logs.markAllRead')}
           </Button>
         </When>
       </div>
@@ -49,7 +55,7 @@ const AdminLogsPage = () => {
       <When condition={logs.length === 0}>
         <div className={s.emptyState}>
           <AlertTriangle className={s.emptyIcon} />
-          <p className={s.emptyText}>Ошибок не зафиксировано</p>
+          <p className={s.emptyText}>{t('admin.logs.emptyState')}</p>
         </div>
       </When>
 

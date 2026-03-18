@@ -7,7 +7,7 @@ import type { ChangeEvent } from 'react';
 import { SelectField } from '@/components/ui/SelectField';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { ROLE_OPTIONS } from './page.constants';
+import { ROLE_OPTIONS, ROLE_LABELS } from './page.constants';
 import { getInitials, langToLocale } from '@/lib/utils';
 import type { UserRowProps, UserRole } from './page.types';
 
@@ -72,8 +72,12 @@ export const UserRow = ({ user, canEditRole, onUpdateRole, onToggleBan }: UserRo
             />
           </Then>
           <Else>
-            <span className={user.role === 'ADMIN' ? s.roleAdmin : s.roleCustomer}>
-              {user.role}
+            <span className={
+              user.role === 'ADMIN' ? s.roleAdmin
+              : user.role === 'MANAGER' ? s.roleManager
+              : s.roleCustomer
+            }>
+              {ROLE_LABELS[user.role] ?? user.role}
             </span>
           </Else>
         </If>

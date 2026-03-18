@@ -7,6 +7,9 @@ jest.mock('@/lib/i18n', () => ({
     setLang: jest.fn(),
     t: (key: string) => {
       const map: Record<string, string> = {
+        'nav.home': 'Home',
+        'profile.breadcrumb': 'Profile',
+        'orders.title': 'My Orders',
         'orders.order': 'Order',
         'orders.empty': 'No orders yet',
         'orders.emptyText': 'Go to the catalog and place your first order',
@@ -124,5 +127,12 @@ describe('OrdersPage', () => {
   it('renders breadcrumbs', () => {
     render(<OrdersPage />);
     expect(screen.getByText('Profile')).toBeInTheDocument();
+  });
+
+  it('breadcrumbs use i18n keys, not hardcoded English', () => {
+    render(<OrdersPage />);
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Profile')).toBeInTheDocument();
+    expect(screen.getByText('My Orders')).toBeInTheDocument();
   });
 });

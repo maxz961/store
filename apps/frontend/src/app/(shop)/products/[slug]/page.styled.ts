@@ -38,7 +38,7 @@ export const s = {
   favoriteIcon: 'h-5 w-5 transition-colors duration-150',
   favoriteIconActive: 'fill-red-500 text-red-500',
   favoriteIconInactive: 'text-muted-foreground',
-  quantityGroup: 'flex items-center gap-0 rounded-lg border border-border bg-card',
+  quantityGroup: 'flex items-center gap-0 rounded-lg border border-border bg-card overflow-hidden',
   quantityButton: 'flex h-10 w-10 items-center justify-center text-lg transition-colors duration-150 hover:bg-accent dark:hover:bg-white/10',
   quantity: 'flex h-10 w-10 items-center justify-center text-sm font-medium',
   buttonIcon: 'mr-2 h-4 w-4 shrink-0',

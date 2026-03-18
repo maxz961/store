@@ -23,7 +23,9 @@ export const LowStockCard = ({ products }: LowStockCardProps) => {
             {products.map((product) => (
               <LowStockRow
                 key={product.id}
+                id={product.id}
                 name={product.name}
+                nameEn={product.nameEn}
                 slug={product.slug}
                 stock={product.stock}
                 image={product.image}

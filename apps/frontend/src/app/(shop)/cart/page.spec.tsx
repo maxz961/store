@@ -7,6 +7,9 @@ jest.mock('@/lib/i18n', () => ({
     setLang: jest.fn(),
     t: (key: string) => {
       const map: Record<string, string> = {
+        'nav.home': 'Home',
+        'nav.catalog': 'Catalog',
+        'nav.cart': 'Cart',
         'cart.title': 'Cart',
         'cart.empty': 'Your cart is empty',
         'cart.emptyText': 'Add something from the catalog',
@@ -23,6 +26,11 @@ jest.mock('@/lib/i18n', () => ({
       return map[key] ?? key;
     },
   }),
+}));
+
+jest.mock('@/lib/utils', () => ({
+  cn: (...args: any[]) => args.filter(Boolean).join(' '),
+  getLocalizedText: (_lang: string, uk: string, en?: string | null) => en ?? uk,
 }));
 
 jest.mock('lucide-react', () => ({
@@ -123,5 +131,23 @@ describe('CartPage', () => {
     render(<CartPage />);
     expect(screen.getByText('Subtotal')).toBeInTheDocument();
     expect(screen.getAllByText('449,97 ₴').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('breadcrumbs use i18n keys, not hardcoded English', () => {
+    render(<CartPage />);
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Catalog')).toBeInTheDocument();
+  });
+
+  it('shows nameEn when language is English (regression: cart was always showing Ukrainian name)', () => {
+    mockCartState = {
+      ...mockCartState,
+      items: [
+        { id: 'p1', name: 'Навушники', nameEn: 'Headphones', price: 149.99, imageUrl: '', quantity: 1, slug: 'headphones', stock: 10 },
+      ],
+    };
+    render(<CartPage />);
+    expect(screen.getByText('Headphones')).toBeInTheDocument();
+    expect(screen.queryByText('Навушники')).not.toBeInTheDocument();
   });
 });

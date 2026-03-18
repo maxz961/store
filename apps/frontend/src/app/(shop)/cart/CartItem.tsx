@@ -6,19 +6,21 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import { If, Then, Else } from 'react-if';
 import { formatCurrency } from '@/lib/constants/format';
 import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './page.styled';
 import type { CartItemProps } from './page.types';
 
 
 export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemProps) => {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const localizedName = getLocalizedText(lang, item.name, item.nameEn);
 
   return (
     <div className={s.item}>
       <Link href={`/products/${item.slug}`} className={s.itemImageLink}>
         <If condition={!!item.imageUrl}>
           <Then>
-            <Image src={item.imageUrl} alt={item.name} fill className={s.itemImage} sizes="80px" />
+            <Image src={item.imageUrl} alt={localizedName} fill className={s.itemImage} sizes="80px" />
           </Then>
           <Else>
             <div className={s.itemImageFallback}>
@@ -30,7 +32,7 @@ export const CartItem = ({ item, onDecrease, onIncrease, onRemove }: CartItemPro
 
       <div className={s.itemInfo}>
         <Link href={`/products/${item.slug}`} className={s.itemName}>
-          {item.name}
+          {localizedName}
         </Link>
         <span className={s.itemPrice}>{formatCurrency(item.price)}</span>
 

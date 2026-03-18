@@ -12,7 +12,7 @@ export const s = {
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',
   thCenter: 'px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground',
-  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0',
+  tr: 'border-b border-border transition-colors duration-150 hover:bg-accent/40 last:border-0',
   td: 'px-4 py-3.5',
   tdCenter: 'px-4 py-3.5 text-center',
 
@@ -25,6 +25,7 @@ export const s = {
 
   // Role
   roleAdmin: 'inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary',
+  roleManager: 'inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-xs font-medium text-amber-700 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
   roleCustomer: 'inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground',
   roleSelect: 'w-36 [&>label]:hidden [&>div]:mt-0',
 
@@ -33,7 +34,7 @@ export const s = {
   activeBadge: 'inline-flex items-center rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-xs font-medium text-green-700 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800',
 
   // Actions
-  actionBtn: 'rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors duration-150 hover:bg-muted',
+  actionBtn: 'rounded-lg border border-border bg-background px-3 py-1.5 text-xs font-medium text-foreground transition-colors duration-150 hover:bg-accent',
   banBtn: 'rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 transition-colors duration-150 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 dark:border-red-800 dark:hover:bg-red-900/40',
   unbanBtn: 'rounded-lg border border-green-200 bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700 transition-colors duration-150 hover:bg-green-100 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800 dark:hover:bg-green-900/40',
   actions: 'flex items-center gap-2',
@@ -46,5 +47,5 @@ export const s = {
 
   // Load More
   loadMoreWrapper: 'mt-4 flex justify-center',
-  loadMoreBtn: 'rounded-lg border border-border bg-background px-6 py-2 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50',
+  loadMoreBtn: 'rounded-lg border border-border bg-background px-6 py-2 text-sm font-medium text-foreground transition-colors duration-150 hover:bg-accent disabled:cursor-not-allowed disabled:opacity-50',
 };

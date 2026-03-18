@@ -8,9 +8,9 @@ export const s = {
   formRow: 'grid grid-cols-1 gap-4 sm:grid-cols-2',
 
   // Lang tabs
-  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 p-1 w-fit',
+  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 dark:bg-black/30 p-1 w-fit',
   langTab: 'rounded-md px-3 py-1 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
-  langTabActive: 'bg-white text-foreground shadow-sm ring-1 ring-border/50 dark:bg-slate-800',
+  langTabActive: 'bg-white dark:bg-slate-600 text-foreground shadow-sm ring-1 ring-border/50',
 
   // Table
   tableWrapper: 'mt-6 overflow-x-auto rounded-xl border border-border bg-card shadow-sm',
@@ -18,7 +18,7 @@ export const s = {
   thead: 'border-b border-border bg-muted/40',
   th: 'px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground',
   thCenter: 'px-4 py-3 text-center text-xs font-medium uppercase tracking-wider text-muted-foreground',
-  tr: 'border-b border-border transition-colors duration-150 hover:bg-muted/30 last:border-0',
+  tr: 'border-b border-border transition-colors duration-150 hover:bg-accent/40 last:border-0',
   td: 'px-4 py-3.5',
   tdCenter: 'px-4 py-3.5 text-center',
 

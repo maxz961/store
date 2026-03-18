@@ -57,6 +57,7 @@ export const BasicInfoSection = ({ langTab, onTabChange }: BasicInfoSectionProps
             label={t('admin.promotion.description')}
             tooltip={t('admin.promotion.tooltip.description')}
             placeholder={t('admin.promotion.descriptionPlaceholder')}
+            maxLength={500}
             error={errors.description?.message}
             {...register('description')}
           />
@@ -76,6 +77,7 @@ export const BasicInfoSection = ({ langTab, onTabChange }: BasicInfoSectionProps
             label={t('admin.promotion.descriptionEn')}
             tooltip={t('admin.promotion.tooltip.description')}
             placeholder={t('admin.promotion.descriptionPlaceholder')}
+            maxLength={500}
             error={errors.descriptionEn?.message}
             {...register('descriptionEn')}
           />

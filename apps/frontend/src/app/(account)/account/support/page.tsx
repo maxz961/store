@@ -19,16 +19,15 @@ const formatTime = (iso: string) =>
   new Date(iso).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
 
 
-const breadcrumbs = [
-  { label: 'Home', href: '/' },
-  { label: 'Profile', href: '/account/profile' },
-  { label: 'Support' },
-];
-
-
 const SupportPage = () => {
   const router = useRouter();
   const { t } = useLanguage();
+
+  const breadcrumbs = [
+    { label: t('nav.home'), href: '/' },
+    { label: t('profile.breadcrumb'), href: '/account/profile' },
+    { label: t('support.title') },
+  ];
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: messages = [], isLoading } = useMyMessages();
   const sendMessage = useSendMessage();

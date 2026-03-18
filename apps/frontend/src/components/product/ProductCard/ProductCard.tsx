@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, ImageOff, Heart, Check } from 'lucide-react';
@@ -14,6 +14,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useLanguage } from '@/lib/i18n';
 import { formatCurrency } from '@/lib/constants/format';
 import { cn, getLocalizedText } from '@/lib/utils';
+import { api } from '@/lib/api';
 import type { Props } from './ProductCard.types';
 import { s } from './ProductCard.styled';
 
@@ -27,6 +28,7 @@ export const ProductCard = ({ product }: Props) => {
   const removeFavorite = useRemoveFavorite();
   const [imgError, setImgError] = useState(false);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const errorReported = useRef(false);
   const [cartState, setCartState] = useState<'idle' | 'loading' | 'success'>('idle');
 
   const isFavorite = isAuthenticated && (favoriteIds ?? []).includes(product.id);
@@ -47,7 +49,12 @@ export const ProductCard = ({ product }: Props) => {
 
   const handleImgLoad = () => setImgLoaded(true);
 
-  const handleImgError = () => setImgError(true);
+  const handleImgError = () => {
+    setImgError(true);
+    if (errorReported.current) return;
+    errorReported.current = true;
+    api.patch(`/products/${product.id}/image-error`).catch(() => undefined);
+  };
 
   const handleToggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -64,7 +71,8 @@ export const ProductCard = ({ product }: Props) => {
     if (cartState !== 'idle') return;
     addItem({
       id: product.id,
-      name: displayName,
+      name: product.name,
+      nameEn: product.nameEn,
       price: product.price,
       imageUrl: product.images[0] ?? '',
       slug: product.slug,

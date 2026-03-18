@@ -46,11 +46,13 @@ export interface RatingDistributionCardProps {
 }
 
 export interface LowStockCardProps {
-  products: { id: string; name: string; slug: string; stock: number; image: string | null }[];
+  products: { id: string; name: string; nameEn: string | null; slug: string; stock: number; image: string | null }[];
 }
 
 export interface LowStockRowProps {
+  id: string;
   name: string;
+  nameEn: string | null;
   slug: string;
   stock: number;
   image: string | null;

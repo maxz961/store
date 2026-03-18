@@ -54,7 +54,7 @@ export const ProductPageClient = ({ slug }: Props) => {
       <Breadcrumbs items={breadcrumbs} />
 
       <div className={s.layout}>
-        <ProductGallery images={product.images} name={product.name} />
+        <ProductGallery productId={product.id} images={product.images} name={product.name} />
         <ProductInfo product={product} />
       </div>
 

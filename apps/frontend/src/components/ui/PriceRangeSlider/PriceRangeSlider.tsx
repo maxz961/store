@@ -48,12 +48,12 @@ export const PriceRangeSlider = ({ min, max, value: [minVal, maxVal], onChange }
   }, [minVal, maxVal]);
 
   const minPercent = useMemo(
-    () => (rMax === rMin ? 0 : ((localMin - rMin) / (rMax - rMin)) * 100),
+    () => Math.max(0, Math.min(100, rMax === rMin ? 0 : ((localMin - rMin) / (rMax - rMin)) * 100)),
     [localMin, rMin, rMax],
   );
 
   const maxPercent = useMemo(
-    () => (rMax === rMin ? 100 : ((localMax - rMin) / (rMax - rMin)) * 100),
+    () => Math.max(0, Math.min(100, rMax === rMin ? 100 : ((localMax - rMin) / (rMax - rMin)) * 100)),
     [localMax, rMin, rMax],
   );
 

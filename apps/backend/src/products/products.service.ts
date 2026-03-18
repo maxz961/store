@@ -19,13 +19,19 @@ export class ProductsService {
         ? { OR: [
               { name: { startsWith: search, mode: 'insensitive' } },
               { name: { contains: ` ${search}`, mode: 'insensitive' } },
+              { nameEn: { startsWith: search, mode: 'insensitive' } },
+              { nameEn: { contains: ` ${search}`, mode: 'insensitive' } },
             ],
           }
         : { OR: [
               { name: { startsWith: search, mode: 'insensitive' } },
               { name: { contains: ` ${search}`, mode: 'insensitive' } },
+              { nameEn: { startsWith: search, mode: 'insensitive' } },
+              { nameEn: { contains: ` ${search}`, mode: 'insensitive' } },
               { description: { startsWith: search, mode: 'insensitive' } },
               { description: { contains: ` ${search}`, mode: 'insensitive' } },
+              { descriptionEn: { startsWith: search, mode: 'insensitive' } },
+              { descriptionEn: { contains: ` ${search}`, mode: 'insensitive' } },
             ],
           }
       )),
@@ -39,7 +45,11 @@ export class ProductsService {
           ...(maxPrice !== undefined && { lte: maxPrice }),
         },
       }),
-      ...(imageError !== undefined && { hasImageError: imageError }),
+      ...(imageError !== undefined && (
+        imageError
+          ? { OR: [{ hasImageError: true }, { images: { isEmpty: true } }] }
+          : { hasImageError: false, images: { isEmpty: false } }
+      )),
     };
 
     const [items, total] = await Promise.all([
@@ -171,7 +181,9 @@ export class ProductsService {
   }
 
   async getImageErrorCount() {
-    const count = await db.product.count({ where: { hasImageError: true } });
+    const count = await db.product.count({
+      where: { OR: [{ hasImageError: true }, { images: { isEmpty: true } }] },
+    });
     return { count };
   }
 

@@ -97,7 +97,7 @@ describe("ProductsService", () => {
       expect(call.where.category).toEqual({ slug: "electronics" });
     });
 
-    it("filters by search term across name and description", async () => {
+    it("filters by search term across name, nameEn, description, descriptionEn", async () => {
       (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
       (mockDb.product.count as jest.Mock).mockResolvedValue(0);
 
@@ -107,12 +107,28 @@ describe("ProductsService", () => {
       expect(call.where.OR).toEqual([
         { name: { startsWith: "laptop", mode: "insensitive" } },
         { name: { contains: " laptop", mode: "insensitive" } },
+        { nameEn: { startsWith: "laptop", mode: "insensitive" } },
+        { nameEn: { contains: " laptop", mode: "insensitive" } },
         { description: { startsWith: "laptop", mode: "insensitive" } },
         { description: { contains: " laptop", mode: "insensitive" } },
+        { descriptionEn: { startsWith: "laptop", mode: "insensitive" } },
+        { descriptionEn: { contains: " laptop", mode: "insensitive" } },
       ]);
     });
 
-    it("filters by name only when nameOnly=true", async () => {
+    it("English search term is included in OR clause (regression: search was UK-only)", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ search: "headphones" }, false);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      const orFields = call.where.OR.map((c: any) => Object.keys(c)[0]);
+      expect(orFields).toContain("nameEn");
+      expect(orFields).toContain("descriptionEn");
+    });
+
+    it("filters by name and nameEn when nameOnly=true", async () => {
       (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
       (mockDb.product.count as jest.Mock).mockResolvedValue(0);
 
@@ -122,6 +138,8 @@ describe("ProductsService", () => {
       expect(call.where.OR).toEqual([
         { name: { startsWith: "laptop", mode: "insensitive" } },
         { name: { contains: " laptop", mode: "insensitive" } },
+        { nameEn: { startsWith: "laptop", mode: "insensitive" } },
+        { nameEn: { contains: " laptop", mode: "insensitive" } },
       ]);
       expect(call.where.name).toBeUndefined();
     });
@@ -380,21 +398,49 @@ describe("ProductsService", () => {
   });
 
   describe("getImageErrorCount", () => {
-    it("returns count of products with hasImageError true", async () => {
+    it("counts both hasImageError products AND products with no images (regression)", async () => {
       (mockDb.product.count as jest.Mock).mockResolvedValue(3);
 
       const result = await service.getImageErrorCount();
 
       expect(result).toEqual({ count: 3 });
-      expect(mockDb.product.count).toHaveBeenCalledWith({ where: { hasImageError: true } });
+      expect(mockDb.product.count).toHaveBeenCalledWith({
+        where: { OR: [{ hasImageError: true }, { images: { isEmpty: true } }] },
+      });
     });
 
-    it("returns zero when no broken products", async () => {
+    it("returns zero when no broken or missing-image products", async () => {
       (mockDb.product.count as jest.Mock).mockResolvedValue(0);
 
       const result = await service.getImageErrorCount();
 
       expect(result).toEqual({ count: 0 });
+    });
+  });
+
+  describe("findAll imageError filter", () => {
+    it("includes products with no images in imageError=true filter (regression: empty images were invisible)", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ imageError: true }, true);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.OR).toEqual([
+        { hasImageError: true },
+        { images: { isEmpty: true } },
+      ]);
+    });
+
+    it("imageError=false excludes products with broken images and empty images", async () => {
+      (mockDb.product.findMany as jest.Mock).mockResolvedValue([]);
+      (mockDb.product.count as jest.Mock).mockResolvedValue(0);
+
+      await service.findAll({ imageError: false }, true);
+
+      const call = (mockDb.product.findMany as jest.Mock).mock.calls[0][0];
+      expect(call.where.hasImageError).toBe(false);
+      expect(call.where.images).toEqual({ isEmpty: false });
     });
   });
 

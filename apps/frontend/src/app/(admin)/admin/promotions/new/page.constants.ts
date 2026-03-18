@@ -30,26 +30,41 @@ export const DISCOUNT_TYPE_OPTIONS = [
   { value: 'FIXED', label: 'Fixed ($)' },
 ];
 
-export const createPromotionFormSchema = z.object({
-  title: z.string().min(1, 'Required').max(200),
-  titleEn: z.string().min(1, 'Required').max(200),
-  slug: z.string().min(1, 'Slug is required').regex(/^[a-z0-9-]+$/, 'Lowercase letters, digits and dashes only'),
-  description: z.string(),
-  descriptionEn: z.string(),
-  bannerImageUrl: z.string().min(1, 'Banner image URL is required'),
-  bannerBgColor: z.string(),
-  startDate: z.string().min(1, 'Start date is required'),
-  endDate: z.string().min(1, 'End date is required'),
-  discountType: z.enum(['PERCENTAGE', 'FIXED']),
-  discountValue: z.string().min(1, 'Discount amount is required').refine(
-    (v) => !isNaN(Number(v)) && Number(v) > 0,
-    'Discount must be greater than 0',
-  ),
-  isActive: z.boolean(),
-  position: z.string().refine((v) => !isNaN(Number(v)) && Number(v) >= 0, 'Position cannot be negative'),
-  link: z.string(),
-  productIds: z.array(z.string()),
-});
+interface PromotionValidationMessages {
+  required: string;
+  slugRequired: string;
+  slugFormat: string;
+  descriptionMin: string;
+  descriptionMax: string;
+  bannerRequired: string;
+  startDateRequired: string;
+  endDateRequired: string;
+  discountRequired: string;
+  discountPositive: string;
+  positionInvalid: string;
+}
 
-export type CreatePromotionFormValues = z.infer<typeof createPromotionFormSchema>;
+export const buildPromotionFormSchema = (msg: PromotionValidationMessages) =>
+  z.object({
+    title: z.string().min(1, msg.required).max(200),
+    titleEn: z.string().min(1, msg.required).max(200),
+    slug: z.string().min(1, msg.slugRequired).regex(/^[a-z0-9-]+$/, msg.slugFormat),
+    description: z.string().max(500, msg.descriptionMax).refine((v) => v.length === 0 || v.length >= 10, msg.descriptionMin),
+    descriptionEn: z.string().max(500, msg.descriptionMax).refine((v) => v.length === 0 || v.length >= 10, msg.descriptionMin),
+    bannerImageUrl: z.string().min(1, msg.bannerRequired),
+    bannerBgColor: z.string(),
+    startDate: z.string().min(1, msg.startDateRequired),
+    endDate: z.string().min(1, msg.endDateRequired),
+    discountType: z.enum(['PERCENTAGE', 'FIXED']),
+    discountValue: z.string().min(1, msg.discountRequired).refine(
+      (v) => !isNaN(Number(v)) && Number(v) > 0,
+      msg.discountPositive,
+    ),
+    isActive: z.boolean(),
+    position: z.string().refine((v) => !isNaN(Number(v)) && Number(v) >= 0, msg.positionInvalid),
+    link: z.string(),
+    productIds: z.array(z.string()),
+  });
+
+export type CreatePromotionFormValues = z.infer<ReturnType<typeof buildPromotionFormSchema>>;
 

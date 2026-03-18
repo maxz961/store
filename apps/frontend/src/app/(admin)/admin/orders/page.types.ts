@@ -35,6 +35,7 @@ export interface OrderRowProps {
 export interface OrdersPaginationProps {
   currentPage: number;
   totalPages: number;
-  total: number;
   activeStatus: string;
+  sortBy?: string;
+  sortOrder?: string;
 }
