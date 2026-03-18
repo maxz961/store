@@ -7,6 +7,9 @@ jest.mock('@/lib/i18n', () => ({
     setLang: jest.fn(),
     t: (key: string) => {
       const map: Record<string, string> = {
+        'nav.home': 'Home',
+        'profile.breadcrumb': 'Profile',
+        'support.title': 'Support',
         'support.subtitle': 'Write to us — we will respond as soon as possible',
         'support.noMessages': 'No messages yet',
         'support.noMessagesText': 'Start a conversation with our support team',
@@ -16,7 +19,7 @@ jest.mock('@/lib/i18n', () => ({
         'support.send': 'Send',
         'support.sending': 'Sending...',
         'support.placeholder': 'Write a message...',
-        'support.adminLabel': 'Support',
+        'support.adminLabel': 'Support team',
       };
       return map[key] ?? key;
     },
@@ -125,5 +128,12 @@ describe('SupportPage', () => {
     const textarea = screen.getByPlaceholderText(/Write a message/);
     fireEvent.change(textarea, { target: { value: 'Мой вопрос' } });
     expect(screen.getByText('Send')).not.toBeDisabled();
+  });
+
+  it('breadcrumbs use i18n keys, not hardcoded English', () => {
+    render(<SupportPage />);
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Profile')).toBeInTheDocument();
+    expect(screen.getByText('Support')).toBeInTheDocument();
   });
 });
