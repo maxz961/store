@@ -95,7 +95,7 @@ export const ProductPreview = ({ isOpen, onClose, files }: ProductPreviewProps) 
         </button>
 
         <div className={s.previewLayout}>
-          <ProductGallery images={allImages} name={product.name} unoptimized />
+          <ProductGallery productId="" images={allImages} name={product.name} unoptimized />
           <ProductInfo product={product} previewMode />
         </div>
       </div>
