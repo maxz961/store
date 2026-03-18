@@ -114,7 +114,7 @@ async function main() {
       slug: "smart-watch-pro",
       description: "Смарт-годинник з AMOLED екраном 1.4\". Моніторинг серцевого ритму, SpO2, сну. GPS, NFC для оплати. Водонепроникність 5ATM. 100+ спортивних режимів.",
       descriptionEn: "Smart watch with 1.4\" AMOLED display. Heart rate, SpO2, and sleep monitoring. Built-in GPS, NFC payments. 5ATM water resistance. 100+ sports modes.",
-      price: 99999, stock: 30,
+      price: 99999, stock: 3,
       images: [img("photo-1523275335684-37898b6baf30"), img("photo-1546868871-af0de0ae72be")],
       categoryId: electronics.id, isPublished: true,
       tags: { create: [{ tagId: newTag.id }, { tagId: premiumTag.id }] }
@@ -136,7 +136,7 @@ async function main() {
       slug: "mechanical-keyboard",
       description: "Ігрова механічна клавіатура з RGB підсвіткою. Свічі Cherry MX Red. Алюмінієвий корпус, знімний USB-C кабель, PBT кейкапи.",
       descriptionEn: "Gaming mechanical keyboard with RGB backlight. Cherry MX Red switches. Aluminum body, detachable USB-C cable, PBT keycaps.",
-      price: 6999, stock: 45,
+      price: 6999, stock: 7,
       images: [img("photo-1587829741301-dc798b83add3")],
       categoryId: electronics.id, isPublished: true,
       tags: { create: [{ tagId: hitTag.id }] }
@@ -224,7 +224,7 @@ async function main() {
       slug: "dumbbells-5kg",
       description: "Набір гантелей з чавуну з неопреновим покриттям. 2 штуки по 5 кг. Ергономічна рукоятка, не ковзає.",
       descriptionEn: "Cast iron dumbbell set with neoprene coating. 2 pieces of 5 kg. Ergonomic grip, non-slip.",
-      price: 1799, stock: 40,
+      price: 1799, stock: 2,
       images: [img("photo-1583454110551-21f2fa2afe61")],
       categoryId: sports.id, isPublished: true
     },
@@ -335,7 +335,7 @@ async function main() {
       slug: "winter-jacket",
       description: "Тепла зимова куртка з наповнювачем 200 г. Водовідштовхувальне покриття DWR. Регульований капюшон, ущільнені манжети. Температурний рейтинг до -15°C.",
       descriptionEn: "Warm winter jacket with 200g filling. DWR water-repellent coating. Adjustable hood, sealed cuffs. Temperature rating down to -15°C.",
-      price: 7999, comparePrice: 9999, stock: 40,
+      price: 7999, comparePrice: 9999, stock: 8,
       images: [img("photo-1544923246-77307dd654cb")],
       categoryId: clothing.id, isPublished: true,
       tags: { create: [{ tagId: saleTag.id }, { tagId: premiumTag.id }] }
@@ -448,7 +448,7 @@ async function main() {
       slug: "design-patterns",
       description: "«Банда чотирьох». Класика об'єктно-орієнтованого проектування. 23 патерни з прикладами на C++ та Smalltalk. Обов'язкова книга для архітекторів ПЗ. 395 сторінок.",
       descriptionEn: "Gang of Four. Classic OOP design patterns book. 23 patterns with C++ and Smalltalk examples. Essential reading for software architects. 395 pages.",
-      price: 1499, stock: 85,
+      price: 1499, stock: 5,
       images: [img("photo-1507842217343-583bb7270b66")],
       categoryId: books.id, isPublished: true,
       tags: { create: [{ tagId: premiumTag.id }] }
