@@ -22,14 +22,14 @@ export const s = {
   tagBtnInactive: 'border-border text-muted-foreground hover:bg-accent hover:text-foreground',
 
   // Lang tabs (UK/EN switcher)
-  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 p-1 w-fit',
+  langTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 dark:bg-black/30 p-1 w-fit',
   langTab: 'rounded-md px-3 py-1 text-xs font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
-  langTabActive: 'bg-white text-foreground shadow-sm ring-1 ring-border/50 dark:bg-slate-800',
+  langTabActive: 'bg-white dark:bg-slate-600 text-foreground shadow-sm ring-1 ring-border/50',
 
   // Image tabs
-  imageTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 p-1',
+  imageTabs: 'flex gap-1 rounded-lg border border-border bg-muted/60 dark:bg-black/30 p-1',
   imageTab: 'flex-1 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors duration-150 hover:text-foreground',
-  imageTabActive: 'bg-white text-foreground shadow-sm ring-1 ring-border/50 dark:bg-slate-800',
+  imageTabActive: 'bg-white dark:bg-slate-600 text-foreground shadow-sm ring-1 ring-border/50',
 
   // Existing image thumbnails (edit page)
   existingThumbs: 'flex flex-wrap gap-2',

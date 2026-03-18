@@ -1,15 +1,22 @@
 import { z } from 'zod';
 
 
-export const categoryFormSchema = z.object({
-  name: z.string().min(1, 'Required').max(100, 'Max 100 characters'),
-  nameEn: z.string().min(1, 'Required').max(100, 'Max 100 characters'),
-  slug: z.string().min(1, 'Required').max(100, 'Max 100 characters').regex(/^[a-z0-9-]+$/, 'Lowercase letters, digits and hyphens only'),
-  description: z.string().optional(),
-  descriptionEn: z.string().optional(),
-});
+interface CategoryValidationMessages {
+  required: string;
+  nameMax: string;
+  slugFormat: string;
+}
 
-export type CategoryFormValues = z.infer<typeof categoryFormSchema>;
+export const buildCategoryFormSchema = (msg: CategoryValidationMessages) =>
+  z.object({
+    name: z.string().min(1, msg.required).max(100, msg.nameMax),
+    nameEn: z.string().min(1, msg.required).max(100, msg.nameMax),
+    slug: z.string().min(1, msg.required).max(100, msg.nameMax).regex(/^[a-z0-9-]+$/, msg.slugFormat),
+    description: z.string().optional(),
+    descriptionEn: z.string().optional(),
+  });
+
+export type CategoryFormValues = z.infer<ReturnType<typeof buildCategoryFormSchema>>;
 
 export const generateSlug = (name: string) =>
   name

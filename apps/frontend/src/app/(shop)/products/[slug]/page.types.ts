@@ -3,12 +3,14 @@ export interface Props {
 }
 
 export interface ProductGalleryProps {
+  productId: string;
   images: string[];
   name: string;
   unoptimized?: boolean;
 }
 
 export interface ProductInfoProps {
+  previewMode?: boolean;
   product: {
     name: string;
     nameEn?: string | null;

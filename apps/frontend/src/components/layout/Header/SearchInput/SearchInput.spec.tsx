@@ -20,13 +20,17 @@ jest.mock('@/lib/hooks/useProducts', () => ({
 }));
 
 jest.mock('@/lib/i18n', () => ({
-  useLanguage: () => ({ t: (key: string) => key === 'catalog.search' ? 'Search products...' : key }),
+  useLanguage: () => ({ lang: 'en', t: (key: string) => key === 'catalog.search' ? 'Search products...' : key }),
+}));
+
+jest.mock('@/lib/utils', () => ({
+  getLocalizedText: (_lang: string, uk: string, en?: string | null) => en ?? uk,
 }));
 
 
 const products = [
-  { id: '1', name: 'RTX 5070', slug: 'rtx-5070' },
-  { id: '2', name: 'RTX 5080', slug: 'rtx-5080' },
+  { id: '1', name: 'Відеокарта RTX 5070', nameEn: 'RTX 5070', slug: 'rtx-5070' },
+  { id: '2', name: 'Відеокарта RTX 5080', nameEn: 'RTX 5080', slug: 'rtx-5080' },
 ];
 
 describe('SearchInput', () => {
@@ -102,5 +106,30 @@ describe('SearchInput', () => {
     fireEvent.submit(input.closest('form')!);
 
     expect(mockUpdate).toHaveBeenCalledWith({ search: undefined });
+  });
+
+  it('dropdown shows nameEn when language is English (regression: was always showing Ukrainian name)', () => {
+    mockUseSuggestions.mockReturnValue({ data: { items: products } });
+
+    render(<SearchInput />);
+    const input = screen.getByPlaceholderText('Search products...');
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'rtx' } });
+
+    expect(screen.getByText('RTX 5070')).toBeInTheDocument();
+    expect(screen.queryByText('Відеокарта RTX 5070')).not.toBeInTheDocument();
+  });
+
+  it('clicking English suggestion fills input with English name', () => {
+    mockUseSuggestions.mockReturnValue({ data: { items: products } });
+
+    render(<SearchInput />);
+    const input = screen.getByPlaceholderText('Search products...');
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: 'rtx' } });
+    fireEvent.click(screen.getByText('RTX 5070'));
+
+    expect(mockUpdate).toHaveBeenCalledWith({ search: 'RTX 5070' });
+    expect(input).toHaveValue('RTX 5070');
   });
 });

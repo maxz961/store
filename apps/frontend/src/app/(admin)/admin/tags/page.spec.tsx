@@ -60,6 +60,14 @@ jest.mock('@/lib/i18n', () => ({
         'admin.tag.editWarningAfter': 'products with this tag',
         'admin.tag.slugTaken': 'This slug is already taken',
         'admin.tag.nameTaken': 'This name is already taken',
+        'admin.tag.validation.required': 'Required',
+        'admin.tag.validation.nameMax': 'Max 100 characters',
+        'admin.tag.validation.slugFormat': 'Lowercase letters, digits and hyphens only',
+        'admin.tag.confirmDeleteTitle': 'Delete tag?',
+        'admin.tag.confirmDeletePrefix': 'Tag',
+        'admin.tag.confirmDeleteSuffix': 'will be deleted.',
+        'admin.tag.confirmDeleteProductsBefore': 'It will be removed from',
+        'admin.tag.confirmDeleteProductsAfter': 'products.',
       };
       return map[key] ?? key;
     },

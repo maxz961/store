@@ -178,7 +178,7 @@ describe('AdminUsersPage', () => {
     mockApiGet = jest.fn().mockResolvedValue([]);
     renderPage();
     expect(
-      await screen.findByText('No users found'),
+      await screen.findByText('admin.users.noItems'),
     ).toBeInTheDocument();
   });
 
@@ -245,7 +245,7 @@ describe('AdminUsersPage', () => {
     renderPage();
     const searchInput = await screen.findByPlaceholderText('Search by name or email...');
     fireEvent.change(searchInput, { target: { value: 'xyz-not-exists' } });
-    expect(screen.getByText('No users found')).toBeInTheDocument();
+    expect(screen.getByText('admin.users.noItems')).toBeInTheDocument();
   });
 
   it('shows all users when search is cleared', async () => {

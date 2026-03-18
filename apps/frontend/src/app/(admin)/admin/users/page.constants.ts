@@ -5,6 +5,7 @@ export const breadcrumbs = [
 
 export const ROLE_LABELS: Record<string, string> = {
   CUSTOMER: 'Customer',
+  MANAGER: 'Manager',
   ADMIN: 'Admin',
 };
 

@@ -1,14 +1,21 @@
 import { z } from 'zod';
 
 
-export const tagFormSchema = z.object({
-  name: z.string().min(1, 'Required').max(100, 'Max 100 characters'),
-  nameEn: z.string().min(1, 'Required').max(100, 'Max 100 characters'),
-  slug: z.string().min(1, 'Required').max(100, 'Max 100 characters').regex(/^[a-z0-9-]+$/, 'Lowercase letters, digits and hyphens only'),
-  color: z.string().optional(),
-});
+interface TagValidationMessages {
+  required: string;
+  nameMax: string;
+  slugFormat: string;
+}
 
-export type TagFormValues = z.infer<typeof tagFormSchema>;
+export const buildTagFormSchema = (msg: TagValidationMessages) =>
+  z.object({
+    name: z.string().min(1, msg.required).max(100, msg.nameMax),
+    nameEn: z.string().min(1, msg.required).max(100, msg.nameMax),
+    slug: z.string().min(1, msg.required).max(100, msg.nameMax).regex(/^[a-z0-9-]+$/, msg.slugFormat),
+    color: z.string().optional(),
+  });
+
+export type TagFormValues = z.infer<ReturnType<typeof buildTagFormSchema>>;
 
 export const DEFAULT_TAG_COLOR = '#4361ee';
 

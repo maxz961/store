@@ -13,7 +13,6 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useFavorites } from '@/lib/hooks/useFavorites';
 import { useLanguage } from '@/lib/i18n';
 import { s } from './page.styled';
-import { breadcrumbs } from './page.constants';
 import { FavoriteCard } from './FavoriteCard';
 
 
@@ -31,6 +30,12 @@ const FavoriteSkeleton = () => (
 const FavoritesPage = () => {
   const { t } = useLanguage();
   const router = useRouter();
+
+  const breadcrumbs = [
+    { label: t('nav.home'), href: '/' },
+    { label: t('profile.breadcrumb'), href: '/account/profile' },
+    { label: t('favorites.title') },
+  ];
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { data: favorites, isLoading: favoritesLoading } = useFavorites();
 

@@ -100,7 +100,7 @@ export class AnalyticsService {
       // Low stock products (published, stock < 10)
       db.product.findMany({
         where: { stock: { lt: 10 }, isPublished: true },
-        select: { id: true, name: true, slug: true, stock: true, images: true },
+        select: { id: true, name: true, nameEn: true, slug: true, stock: true, images: true },
         orderBy: { stock: "asc" },
         take: 10,
       }),
@@ -172,6 +172,7 @@ export class AnalyticsService {
       lowStockProducts: lowStockProducts.map((p) => ({
         id: p.id,
         name: p.name,
+        nameEn: p.nameEn,
         slug: p.slug,
         stock: p.stock,
         image: p.images[0] ?? null,

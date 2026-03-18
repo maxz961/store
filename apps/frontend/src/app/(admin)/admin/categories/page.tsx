@@ -21,7 +21,7 @@ import type { Category } from '@/lib/hooks/useProducts';
 import { useLanguage } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 import { s } from './page.styled';
-import { categoryFormSchema, generateSlug, type CategoryFormValues } from './page.constants';
+import { buildCategoryFormSchema, generateSlug, type CategoryFormValues } from './page.constants';
 import { CategoryRow } from './CategoryRow';
 
 
@@ -51,6 +51,12 @@ const CategoriesPage = () => {
     () => categories.find((c) => c.id === editingId),
     [categories, editingId],
   );
+
+  const categoryFormSchema = useMemo(() => buildCategoryFormSchema({
+    required: t('admin.category.validation.required'),
+    nameMax: t('admin.category.validation.nameMax'),
+    slugFormat: t('admin.category.validation.slugFormat'),
+  }), [t]);
 
   const { register, handleSubmit, reset, setValue, watch, setError, formState: { errors } } = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
@@ -168,6 +174,7 @@ const CategoriesPage = () => {
                 label={t('admin.category.slug')}
                 placeholder={t('admin.category.slugPlaceholder')}
                 hint={t('admin.category.slugHint')}
+                tooltip={t('admin.category.slugTooltip')}
                 error={errors.slug?.message}
                 {...register('slug')}
               />
@@ -268,13 +275,13 @@ const CategoriesPage = () => {
         open={!!pendingDelete}
         onClose={handleCancelDelete}
         onConfirm={handleConfirmDelete}
-        title="Delete category?"
+        title={t('admin.category.confirmDeleteTitle')}
         isLoading={deleteCategory.isPending}
         description={
           <>
-            Category <strong>«{pendingDelete?.name}»</strong> will be deleted.{' '}
+            {t('admin.category.confirmDeletePrefix')} <strong>«{pendingDelete?.name}»</strong> {t('admin.category.confirmDeleteSuffix')}{' '}
             <When condition={(pendingDelete?._count?.products ?? 0) > 0}>
-              {pendingDelete?._count?.products} products will lose their category.
+              {pendingDelete?._count?.products} {t('admin.category.confirmDeleteProductsSuffix')}
             </When>
           </>
         }

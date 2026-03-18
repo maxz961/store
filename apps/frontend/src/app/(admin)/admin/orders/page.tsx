@@ -3,13 +3,13 @@
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
-import { AdminPagination } from '@/components/ui/AdminPagination';
 import { Spinner } from '@/components/ui/Spinner';
 import { useAdminOrders } from '@/lib/hooks/useAdmin';
 import { s } from './page.styled';
 import { breadcrumbs } from './page.constants';
 import { OrderFilterTabs } from './OrderFilterTabs';
 import { OrdersTable } from './OrdersTable';
+import { OrdersPagination } from './OrdersPagination';
 
 
 const AdminOrdersContent = () => {
@@ -34,11 +34,12 @@ const AdminOrdersContent = () => {
     <>
       <OrderFilterTabs activeStatus={status} />
       <OrdersTable orders={data?.items ?? []} />
-      <AdminPagination
-        page={data?.page ?? 1}
+      <OrdersPagination
+        currentPage={data?.page ?? 1}
         totalPages={data?.totalPages ?? 1}
-        total={data?.total ?? 0}
-        itemLabel="orders"
+        activeStatus={status}
+        sortBy={sortBy}
+        sortOrder={sortOrder}
       />
     </>
   );

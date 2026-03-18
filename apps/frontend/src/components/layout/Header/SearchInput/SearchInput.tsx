@@ -6,6 +6,7 @@ import { When } from 'react-if';
 import { useSearchSuggestions } from '@/lib/hooks/useProducts';
 import { useProductParams } from '@/lib/hooks/useProductParams';
 import { useLanguage } from '@/lib/i18n';
+import { getLocalizedText } from '@/lib/utils';
 import { s } from './SearchInput.styled';
 
 
@@ -14,7 +15,7 @@ export const SearchInput = () => {
   const [query, setQuery] = useState(get('search') ?? '');
   const [isOpen, setIsOpen] = useState(false);
   const blurTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   const { data } = useSearchSuggestions(query);
   const suggestions = data?.items ?? [];
@@ -65,16 +66,19 @@ export const SearchInput = () => {
         />
         <When condition={showDropdown}>
           <div className={s.dropdown}>
-            {suggestions.map((product) => (
-              <button
-                key={product.id}
-                type="button"
-                className={s.item}
-                onClick={handleSelectSuggestion(product.name)}
-              >
-                {product.name}
-              </button>
-            ))}
+            {suggestions.map((product) => {
+              const localizedName = getLocalizedText(lang, product.name, product.nameEn);
+              return (
+                <button
+                  key={product.id}
+                  type="button"
+                  className={s.item}
+                  onClick={handleSelectSuggestion(localizedName)}
+                >
+                  {localizedName}
+                </button>
+              );
+            })}
           </div>
         </When>
       </div>

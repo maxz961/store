@@ -19,7 +19,7 @@ interface AnalyticsSummary {
   averageOrderValue: number;
   deliveryMethodDistribution: { method: string; count: number }[];
   ratingDistribution: { rating: number; count: number }[];
-  lowStockProducts: { id: string; name: string; slug: string; stock: number; image: string | null }[];
+  lowStockProducts: { id: string; name: string; nameEn: string | null; slug: string; stock: number; image: string | null }[];
 }
 
 interface AdminOrder {
@@ -101,6 +101,7 @@ export const useCreateProduct = () => {
       api.post('/products', data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
     },
     onError: (err) => reportAdminError(err, 'Создание товара'),
   });
@@ -126,6 +127,7 @@ export const useUpdateProduct = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
       queryClient.invalidateQueries({ queryKey: ['product'] });
+      queryClient.invalidateQueries({ queryKey: ['admin', 'products'] });
     },
     onError: (err) => reportAdminError(err, 'Обновление товара'),
   });
