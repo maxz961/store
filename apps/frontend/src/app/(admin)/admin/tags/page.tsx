@@ -63,7 +63,7 @@ const TagsPage = () => {
     slugFormat: t('admin.tag.validation.slugFormat'),
   }), [t]);
 
-  const { register, handleSubmit, reset, setValue, watch, setError, formState: { errors } } = useForm<TagFormValues>({
+  const { register, handleSubmit, reset, setValue, watch, setError, trigger, formState: { errors } } = useForm<TagFormValues>({
     resolver: zodResolver(tagFormSchema),
     defaultValues: makeEmptyValues(),
   });
@@ -73,6 +73,9 @@ const TagsPage = () => {
   watch((values, { name: field }) => {
     if (field === 'name' && !editingId) {
       setValue('slug', generateSlug(values.name ?? ''));
+    }
+    if (field === 'slug') {
+      trigger('slug');
     }
   });
 
