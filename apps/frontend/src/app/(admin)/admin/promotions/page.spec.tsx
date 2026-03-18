@@ -122,7 +122,7 @@ describe('AdminPromotionsPage', () => {
   it('shows empty message when no promotions', () => {
     mockPromotionsData = [];
     renderPage();
-    expect(screen.getByText('No promotions found')).toBeInTheDocument();
+    expect(screen.getByText('admin.promotion.noItems')).toBeInTheDocument();
   });
 
   it('renders date period', () => {

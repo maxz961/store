@@ -401,6 +401,12 @@ export const en = {
       updateFailed: 'Failed to update promotion',
       dangerZone: 'Danger zone',
       dangerText: 'Deleting a promotion is irreversible. The banner will disappear from the catalog and product links will be removed.',
+      tableName: 'Promotion',
+      tablePeriod: 'Period',
+      tableDiscount: 'Discount',
+      tableStatus: 'Status',
+      tablePosition: 'Position',
+      noItems: 'No promotions found',
     },
     order: {
       title: 'Orders',
@@ -413,6 +419,8 @@ export const en = {
       items: 'Items',
       total: 'Total',
       backToOrders: 'Back to orders',
+      tableDate: 'Date',
+      noItems: 'No orders found',
     },
     users: {
       title: 'Users',
@@ -425,6 +433,16 @@ export const en = {
       banning: 'Banning...',
       unbanning: 'Unbanning...',
       support: 'Support chat',
+      tableUser: 'User',
+      tableStatus: 'Status',
+      tableRegistered: 'Registered',
+      tableActions: 'Actions',
+      noItems: 'No users found',
+    },
+    logs: {
+      tableMessage: 'Message / URL',
+      tableUser: 'User',
+      tableDate: 'Date',
     },
     products: {
       addProduct: 'Add product',

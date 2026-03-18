@@ -139,7 +139,7 @@ describe('AdminOrdersPage', () => {
   it('shows empty message when no orders', () => {
     mockOrdersData = { items: [], total: 0, page: 1, totalPages: 1 };
     renderPage();
-    expect(screen.getByText('No orders found')).toBeInTheDocument();
+    expect(screen.getByText('admin.order.noItems')).toBeInTheDocument();
   });
 
   it('shows loading spinner when fetching', () => {

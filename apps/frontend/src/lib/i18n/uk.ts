@@ -389,6 +389,12 @@ export const uk: Translations = {
       updateFailed: 'Не вдалося оновити акцію',
       dangerZone: 'Небезпечна зона',
       dangerText: 'Видалення акції незворотнє. Банер зникне з каталогу, зв\'язки з товарами будуть видалені.',
+      tableName: 'Акція',
+      tablePeriod: 'Термін',
+      tableDiscount: 'Знижка',
+      tableStatus: 'Статус',
+      tablePosition: 'Позиція',
+      noItems: 'Акцій не знайдено',
       tooltip: {
         banner: 'Банер відображається в каруселі на головній сторінці каталогу. Рекомендований розмір: 1200×400 пікселів.',
         title: 'Назва акції — відображається на банері в каталозі та у списку адмін-панелі.',
@@ -416,6 +422,8 @@ export const uk: Translations = {
       items: 'Товари',
       total: 'Сума',
       backToOrders: 'До замовлень',
+      tableDate: 'Дата',
+      noItems: 'Замовлень не знайдено',
     },
     users: {
       title: 'Користувачі',
@@ -428,6 +436,16 @@ export const uk: Translations = {
       banning: 'Блокування...',
       unbanning: 'Розблокування...',
       support: 'Чат підтримки',
+      tableUser: 'Користувач',
+      tableStatus: 'Статус',
+      tableRegistered: 'Зареєстровано',
+      tableActions: 'Дії',
+      noItems: 'Користувачів не знайдено',
+    },
+    logs: {
+      tableMessage: 'Повідомлення / URL',
+      tableUser: 'Користувач',
+      tableDate: 'Дата',
     },
     products: {
       addProduct: 'Додати товар',
