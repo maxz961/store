@@ -3,6 +3,7 @@ export interface Props {
 }
 
 export interface ProductGalleryProps {
+  productId: string;
   images: string[];
   name: string;
   unoptimized?: boolean;

@@ -50,6 +50,7 @@ export interface LowStockCardProps {
 }
 
 export interface LowStockRowProps {
+  id: string;
   name: string;
   slug: string;
   stock: number;
