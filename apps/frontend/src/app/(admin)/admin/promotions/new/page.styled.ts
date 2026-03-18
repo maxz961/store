@@ -48,8 +48,8 @@ export const s = {
   error: 'rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive',
 
   // Danger zone
-  dangerZone: 'rounded-xl border border-destructive/30 bg-destructive/5 p-6 space-y-4',
-  dangerTitle: 'text-lg font-medium text-destructive',
+  dangerZone: 'rounded-xl border border-destructive/30 dark:border-red-800/70 bg-destructive/5 dark:bg-red-900/20 p-6 space-y-4',
+  dangerTitle: 'text-lg font-medium text-destructive dark:text-red-400',
   dangerText: 'text-sm text-muted-foreground',
   dangerActions: 'flex gap-3',
 
