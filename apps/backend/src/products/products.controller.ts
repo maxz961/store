@@ -3,15 +3,20 @@ import {
   Get,
   Post,
   Put,
+  Patch,
   Delete,
   Param,
   Body,
   Query,
   UseGuards,
+  UseInterceptors,
+  UploadedFiles,
   HttpCode,
   HttpStatus,
 } from "@nestjs/common";
+import { FilesInterceptor } from "@nestjs/platform-express";
 import { ProductsService } from "./products.service";
+import { UploadService } from "../upload/upload.service";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductFiltersDto } from "./dto/product-filters.dto";
@@ -20,9 +25,14 @@ import { RolesGuard } from "../auth/guards/roles.guard";
 import { Roles } from "../auth/decorators/roles.decorator";
 import { Role } from "@store/shared";
 
+const BUCKET = 'product-images';
+
 @Controller("products")
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(
+    private readonly productsService: ProductsService,
+    private readonly uploadService: UploadService,
+  ) {}
 
   @Get()
   findAll(@Query() filters: ProductFiltersDto) {
@@ -31,9 +41,33 @@ export class ProductsController {
 
   @Get("admin")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findAllAdmin(@Query() filters: ProductFiltersDto) {
     return this.productsService.findAll(filters, true);
+  }
+
+  @Get("admin/image-error-count")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  getImageErrorCount() {
+    return this.productsService.getImageErrorCount();
+  }
+
+  @Patch(":id/image-error")
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  reportImageError(@Param("id") id: string) {
+    return this.productsService.reportImageError(id);
+  }
+
+  @Get("price-range")
+  getPriceRange() {
+    return this.productsService.getPriceRange();
+  }
+
+  @Get(":slug/similar")
+  findSimilar(@Param("slug") slug: string) {
+    return this.productsService.findSimilar(slug);
   }
 
   @Get(":slug")
@@ -41,16 +75,27 @@ export class ProductsController {
     return this.productsService.findBySlug(slug);
   }
 
+  @Post('upload')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  @UseInterceptors(FilesInterceptor('images', 6))
+  async uploadImages(@UploadedFiles() files: Express.Multer.File[]) {
+    const urls = await Promise.all(
+      files.map((file) => this.uploadService.uploadFile(BUCKET, file)),
+    );
+    return { urls };
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   create(@Body() dto: CreateProductDto) {
     return this.productsService.create(dto);
   }
 
   @Put(":id")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   update(@Param("id") id: string, @Body() dto: UpdateProductDto) {
     return this.productsService.update(id, dto);
   }

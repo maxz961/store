@@ -1,175 +1,199 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { useCartStore } from "@/store/cart";
-import { useRouter } from "next/navigation";
-import { api } from "@/lib/api";
+import { useState, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
+import { useForm, FormProvider } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import { LogIn } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { Spinner } from '@/components/ui/Spinner';
+import { useCartStore } from '@/store/cart';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/i18n';
+import { useCreateOrder } from '@/lib/hooks/useOrders';
+import { api } from '@/lib/api';
+import { DeliveryMethodSection } from './DeliveryMethodSection';
+import { ShippingAddressSection } from './ShippingAddressSection';
+import { OrderSummary } from './OrderSummary';
+import { PaymentSection } from './PaymentSection';
+import { StepBar } from './StepBar';
+import { s } from './page.styled';
+import type { DeliveryMethod, CheckoutStep } from './page.types';
+import {
+  breadcrumbs,
+  checkoutFormSchema,
+  type CheckoutFormValues,
+} from './page.constants';
 
-type DeliveryMethod = "COURIER" | "PICKUP" | "POST";
 
-const DELIVERY_OPTIONS: { value: DeliveryMethod; label: string; description: string }[] = [
-  { value: "COURIER", label: "Courier", description: "Delivery to your address" },
-  { value: "PICKUP", label: "Pickup", description: "Pick up at our location" },
-  { value: "POST", label: "Post", description: "Postal delivery" },
-];
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-export default function CheckoutPage() {
-  const { items, totalPrice, clearCart } = useCartStore();
+
+const CheckoutPage = () => {
+  const { t } = useLanguage();
+  const { items, totalPrice, clearCart, hydrated } = useCartStore();
+  const { isAuthenticated, isLoading: authLoading, login } = useAuth();
   const router = useRouter();
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>("COURIER");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const createOrder = useCreateOrder();
 
-  const [address, setAddress] = useState({
-    fullName: "",
-    line1: "",
-    line2: "",
-    city: "",
-    state: "",
-    postalCode: "",
-    country: "US",
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('COURIER');
+  const [step, setStep] = useState<CheckoutStep>('info');
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [formSnapshot, setFormSnapshot] = useState<CheckoutFormValues | null>(null);
+  const [isCreatingIntent, setIsCreatingIntent] = useState(false);
+  const [intentError, setIntentError] = useState<string | null>(null);
+  const [orderSubmitted, setOrderSubmitted] = useState(false);
+
+  const methods = useForm<CheckoutFormValues>({
+    resolver: zodResolver(checkoutFormSchema),
+    defaultValues: {
+      fullName: '',
+      line1: '',
+      line2: '',
+      city: '',
+      state: '',
+      postalCode: '',
+      country: 'UA',
+    },
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
+  const handleSelectDelivery = (method: DeliveryMethod) => () => setDeliveryMethod(method);
 
+  const handleInfoSubmit = useCallback(async (data: CheckoutFormValues) => {
+    setIntentError(null);
+    setIsCreatingIntent(true);
     try {
-      const order = await api.post("/orders", {
-        deliveryMethod,
-        shippingAddress: address,
-        items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
-      });
-
-      clearCart();
-      router.push(`/orders/${(order as { id: string }).id}`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to place order");
+      const { clientSecret: secret } = await api.post<{ clientSecret: string }>(
+        '/payments/create-intent',
+        { amount: totalPrice() },
+      );
+      setClientSecret(secret);
+      setFormSnapshot(data);
+      setStep('payment');
+    } catch {
+      setIntentError(t('checkout.intentError'));
     } finally {
-      setLoading(false);
+      setIsCreatingIntent(false);
     }
-  };
+  }, [totalPrice, t]);
 
-  if (items.length === 0) {
-    router.push("/cart");
+  const handlePaymentSuccess = useCallback((paymentIntentId: string) => {
+    if (!formSnapshot) return;
+    createOrder.mutate(
+      {
+        deliveryMethod,
+        shippingAddress: {
+          fullName: formSnapshot.fullName,
+          line1: formSnapshot.line1,
+          line2: formSnapshot.line2 || undefined,
+          city: formSnapshot.city,
+          state: formSnapshot.state,
+          postalCode: formSnapshot.postalCode,
+          country: formSnapshot.country,
+        },
+        items: items.map((i) => ({ productId: i.id, quantity: i.quantity })),
+        paymentIntentId,
+      },
+      {
+        onSuccess: (order) => {
+          setOrderSubmitted(true);
+          clearCart();
+          router.push(`/account/orders/${order.id}`);
+        },
+      },
+    );
+  }, [formSnapshot, deliveryMethod, items, createOrder, clearCart, router]);
+
+  const handleBack = useCallback(() => setStep('info'), []);
+
+  if (!hydrated || authLoading) {
+    return (
+      <div className={s.page}>
+        <Breadcrumbs items={breadcrumbs} />
+        <div className="flex min-h-[400px] items-center justify-center">
+          <Spinner />
+        </div>
+      </div>
+    );
+  }
+
+  if (hydrated && items.length === 0 && !createOrder.isPending && !orderSubmitted) {
+    router.replace('/cart');
     return null;
   }
 
+  if (!isAuthenticated) {
+    return (
+      <div className={s.page}>
+        <Breadcrumbs items={breadcrumbs} />
+        <div className={s.authCard}>
+          <LogIn className={s.authIcon} />
+          <h1 className={s.authTitle}>{t('checkout.loginRequired')}</h1>
+          <p className={s.authText}>{t('checkout.loginRequiredText')}</p>
+          <Button onClick={login} size="lg">
+            {t('checkout.loginViaGoogle')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto max-w-2xl py-8">
-      <h1 className="mb-6 text-3xl font-bold">Checkout</h1>
+    <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
+      <StepBar step={step} />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Delivery Method */}
-        <div>
-          <h2 className="mb-3 text-lg font-semibold">Delivery Method</h2>
-          <div className="grid grid-cols-3 gap-3">
-            {DELIVERY_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setDeliveryMethod(opt.value)}
-                className={`rounded-lg border p-3 text-left transition-colors ${
-                  deliveryMethod === opt.value
-                    ? "border-primary bg-primary/10"
-                    : "hover:bg-accent"
-                }`}
-              >
-                <div className="font-medium">{opt.label}</div>
-                <div className="text-xs text-muted-foreground">{opt.description}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Shipping Address */}
-        <div>
-          <h2 className="mb-3 text-lg font-semibold">Shipping Address</h2>
-          <div className="space-y-3">
-            <input
-              placeholder="Full Name"
-              required
-              value={address.fullName}
-              onChange={(e) => setAddress({ ...address, fullName: e.target.value })}
-              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            <input
-              placeholder="Address Line 1"
-              required
-              value={address.line1}
-              onChange={(e) => setAddress({ ...address, line1: e.target.value })}
-              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            <input
-              placeholder="Address Line 2 (optional)"
-              value={address.line2}
-              onChange={(e) => setAddress({ ...address, line2: e.target.value })}
-              className="w-full rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-            />
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                placeholder="City"
-                required
-                value={address.city}
-                onChange={(e) => setAddress({ ...address, city: e.target.value })}
-                className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                placeholder="State / Region"
-                required
-                value={address.state}
-                onChange={(e) => setAddress({ ...address, state: e.target.value })}
-                className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+      {step === 'info' ? (
+        <FormProvider {...methods}>
+          <form className={s.layout} onSubmit={methods.handleSubmit(handleInfoSubmit)}>
+            <div className={s.formColumn}>
+              <div className="space-y-8">
+                <DeliveryMethodSection
+                  deliveryMethod={deliveryMethod}
+                  onSelectDelivery={handleSelectDelivery}
+                />
+                <ShippingAddressSection />
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <input
-                placeholder="Postal Code"
-                required
-                value={address.postalCode}
-                onChange={(e) => setAddress({ ...address, postalCode: e.target.value })}
-                className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                placeholder="Country (e.g. US)"
-                required
-                maxLength={2}
-                value={address.country}
-                onChange={(e) => setAddress({ ...address, country: e.target.value.toUpperCase() })}
-                className="rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
+
+            <OrderSummary
+              items={items}
+              totalPrice={totalPrice()}
+              step="info"
+              error={intentError ? new Error(intentError) : null}
+              isPending={isCreatingIntent}
+            />
+          </form>
+        </FormProvider>
+      ) : (
+        <div className={s.layout}>
+          <div className={s.formColumn}>
+            {clientSecret && (
+              <Elements stripe={stripePromise} options={{ clientSecret }}>
+                <PaymentSection
+                  amount={totalPrice()}
+                  isCreatingOrder={createOrder.isPending}
+                  onSuccess={handlePaymentSuccess}
+                  onBack={handleBack}
+                />
+              </Elements>
+            )}
           </div>
+
+          <OrderSummary
+            items={items}
+            totalPrice={totalPrice()}
+            step="payment"
+            error={createOrder.error}
+            isPending={false}
+          />
         </div>
-
-        {/* Order Summary */}
-        <div className="rounded-lg border p-4">
-          <h2 className="mb-3 text-lg font-semibold">Order Summary</h2>
-          {items.map((item) => (
-            <div key={item.id} className="flex justify-between py-1 text-sm">
-              <span>{item.name} × {item.quantity}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-          ))}
-          <div className="mt-3 flex justify-between border-t pt-3 font-bold">
-            <span>Total</span>
-            <span>${totalPrice().toFixed(2)}</span>
-          </div>
-        </div>
-
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full rounded-md bg-primary py-3 font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-        >
-          {loading ? "Placing order..." : "Place Order"}
-        </button>
-      </form>
+      )}
     </div>
   );
-}
+};
+
+export default CheckoutPage;

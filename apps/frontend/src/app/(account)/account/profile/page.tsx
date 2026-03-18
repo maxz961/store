@@ -1,0 +1,86 @@
+'use client';
+
+export const dynamic = 'force-dynamic';
+
+import Link from 'next/link';
+import { UserCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useLanguage } from '@/lib/i18n';
+import { getInitials } from '@/lib/utils';
+import { s } from './page.styled';
+import { UserCard } from './UserCard';
+import { QuickLinks } from './QuickLinks';
+
+
+const ProfilePage = () => {
+  const { t, lang } = useLanguage();
+  const { user, isLoading, isAuthenticated, logout } = useAuth();
+
+  const breadcrumbs = [
+    { label: t('nav.home'), href: '/' },
+    { label: t('profile.breadcrumb') },
+  ];
+
+  if (isLoading) {
+    return (
+      <div className={s.page}>
+        <Breadcrumbs items={breadcrumbs} />
+        <div className={s.loadingSection}>
+          <div className={s.card}>
+            <div className={s.cardHeader}>
+              <div className={s.skeletonAvatar} />
+              <div className={s.userInfo}>
+                <div className={s.skeletonName} />
+                <div className={s.skeletonEmail} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated || !user) {
+    return (
+      <div className={s.page}>
+        <div className={s.notAuth}>
+          <UserCircle className={s.avatarFallbackIcon} />
+          <p className={s.notAuthTitle}>{t('profile.notAuth')}</p>
+          <p className={s.notAuthText}>{t('profile.notAuthText')}</p>
+          <Link href="/login">
+            <Button>{t('profile.login')}</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  const initials = getInitials(user.name, user.email);
+
+  const memberSince = new Date(user.createdAt).toLocaleDateString(lang === 'uk' ? 'uk-UA' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return (
+    <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
+
+      <UserCard
+        name={user.name}
+        email={user.email}
+        image={user.image}
+        initials={initials}
+        memberSince={memberSince}
+        onLogout={logout}
+      />
+
+      <QuickLinks />
+    </div>
+  );
+};
+
+export default ProfilePage;

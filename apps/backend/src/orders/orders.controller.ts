@@ -26,13 +26,15 @@ export class OrdersController {
 
   @Get("admin")
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   findAll(
     @Query("page") page?: number,
     @Query("limit") limit?: number,
-    @Query("status") status?: OrderStatus
+    @Query("status") status?: OrderStatus,
+    @Query("sortBy") sortBy?: 'createdAt' | 'totalAmount',
+    @Query("sortOrder") sortOrder?: 'asc' | 'desc',
   ) {
-    return this.ordersService.findAll(page, limit, status);
+    return this.ordersService.findAll(page, limit, status, sortBy, sortOrder);
   }
 
   @Get(":id")
@@ -42,7 +44,7 @@ export class OrdersController {
 
   @Put(":id/status")
   @UseGuards(RolesGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.MANAGER)
   updateStatus(@Param("id") id: string, @Body() dto: UpdateOrderStatusDto) {
     return this.ordersService.updateStatus(id, dto);
   }

@@ -1,4 +1,4 @@
-import { IsEnum, IsArray, IsObject, IsString, IsNumber, Min, ValidateNested, ArrayMinSize } from "class-validator";
+import { IsEnum, IsArray, IsObject, IsString, IsNumber, IsOptional, Min, ValidateNested, ArrayMinSize } from "class-validator";
 import { Type } from "class-transformer";
 import { DeliveryMethod } from "@store/shared";
 
@@ -46,4 +46,8 @@ export class CreateOrderDto {
   @Type(() => OrderItemDto)
   @ArrayMinSize(1)
   items: OrderItemDto[];
+
+  @IsOptional()
+  @IsString()
+  paymentIntentId?: string;
 }

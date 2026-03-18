@@ -1,0 +1,18 @@
+export interface TextFieldProps {
+  label: string;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  type?: 'text' | 'number' | 'email' | 'tel' | 'url' | 'datetime-local';
+  placeholder?: string;
+  hint?: string;
+  tooltip?: string;
+  error?: string;
+  required?: boolean;
+  disabled?: boolean;
+  maxLength?: number;
+  min?: string | number;
+  step?: string;
+  lang?: string;
+  className?: string;
+  inputClassName?: string;
+}

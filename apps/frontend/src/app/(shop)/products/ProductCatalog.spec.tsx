@@ -1,0 +1,239 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { ProductCatalog } from './ProductCatalog';
+
+
+jest.mock('@/lib/i18n', () => ({
+  useLanguage: () => ({
+    lang: 'en',
+    setLang: jest.fn(),
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'common.error': 'An error occurred',
+        'catalog.loading': 'Loading products...',
+        'catalog.noResults': 'No products found',
+        'catalog.noResultsText': 'Try changing the search term or filters',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
+
+jest.mock('lucide-react', () => ({
+  ChevronLeft: () => <svg data-testid="chevron-left" />,
+  ChevronRight: () => <svg data-testid="chevron-right" />,
+  SlidersHorizontal: () => <svg data-testid="sliders-icon" />,
+}));
+
+jest.mock('./FiltersDrawer', () => ({
+  FiltersDrawer: ({ children }: { children: React.ReactNode }) => <div data-testid="filters-drawer">{children}</div>,
+}));
+
+const mockGet = jest.fn().mockReturnValue(undefined);
+
+jest.mock('@/lib/hooks/useProductParams', () => ({
+  useProductParams: () => ({ get: mockGet, update: jest.fn(), reset: jest.fn() }),
+}));
+
+const mockUseProducts = jest.fn();
+const mockUseCategories = jest.fn().mockReturnValue({ data: [] });
+const mockUseTags = jest.fn().mockReturnValue({ data: [] });
+
+jest.mock('@/lib/hooks/useProducts', () => ({
+  useProducts: (...args: unknown[]) => mockUseProducts(...args),
+  useCategories: () => mockUseCategories(),
+  useTags: () => mockUseTags(),
+}));
+
+// Mock ProductCard to avoid Next.js Image issues in tests
+jest.mock('@/components/product/ProductCard', () => ({
+  ProductCard: ({ product }: { product: { name: string } }) => (
+    <div data-testid="product-card">{product.name}</div>
+  ),
+}));
+
+// Mock ProductFilters
+jest.mock('./ProductFilters', () => ({
+  ProductFilters: () => <div data-testid="product-filters" />,
+
+
+}));
+
+const mockProduct = {
+  id: '1',
+  name: 'Test Product',
+  slug: 'test-product',
+  price: 99.99,
+  images: [],
+  stock: 10,
+  category: { name: 'Electronics', slug: 'electronics' },
+  tags: [],
+};
+
+describe('ProductCatalog', () => {
+  beforeEach(() => {
+    mockGet.mockReturnValue(undefined);
+  });
+
+  it('shows spinner while loading', () => {
+    mockUseProducts.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isFetching: true,
+      isError: false,
+    });
+
+    const { container } = render(<ProductCatalog />);
+    const spinner = container.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it('shows spinner while fetching (refetch after filter change)', () => {
+    mockUseProducts.mockReturnValue({
+      data: { items: [mockProduct], total: 1, page: 1, totalPages: 1 },
+      isLoading: false,
+      isFetching: true,
+      isError: false,
+    });
+
+    const { container } = render(<ProductCatalog />);
+    const spinner = container.querySelector('.animate-spin');
+    expect(spinner).toBeInTheDocument();
+  });
+
+  it('hides spinner when data is loaded', () => {
+    mockUseProducts.mockReturnValue({
+      data: { items: [mockProduct], total: 1, page: 1, totalPages: 1 },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    const { container } = render(<ProductCatalog />);
+    const spinner = container.querySelector('.animate-spin');
+    expect(spinner).not.toBeInTheDocument();
+  });
+
+  it('shows error state', () => {
+    mockUseProducts.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isFetching: false,
+      isError: true,
+    });
+
+    render(<ProductCatalog />);
+    expect(screen.getByText('An error occurred')).toBeInTheDocument();
+    expect(screen.getByText('Loading products...')).toBeInTheDocument();
+  });
+
+  it('shows empty state when no products', () => {
+    mockUseProducts.mockReturnValue({
+      data: { items: [], total: 0, page: 1, totalPages: 0 },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+    expect(screen.getByText('No products found')).toBeInTheDocument();
+  });
+
+  it('renders product cards', () => {
+    mockUseProducts.mockReturnValue({
+      data: {
+        items: [
+          mockProduct,
+          { ...mockProduct, id: '2', name: 'Another Product', slug: 'another' },
+        ],
+        total: 2,
+        page: 1,
+        totalPages: 1,
+      },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+    const cards = screen.getAllByTestId('product-card');
+    expect(cards).toHaveLength(2);
+    expect(screen.getByText('Test Product')).toBeInTheDocument();
+    expect(screen.getByText('Another Product')).toBeInTheDocument();
+  });
+
+  it('renders filters sidebar', () => {
+    mockUseProducts.mockReturnValue({
+      data: { items: [], total: 0, page: 1, totalPages: 0 },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+    // Filters render twice: desktop sidebar + mobile drawer
+    expect(screen.getAllByTestId('product-filters').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('passes URL params to useProducts', () => {
+    mockGet.mockImplementation((key: string) => {
+      const params: Record<string, string> = {
+        search: 'laptop',
+        categorySlug: 'electronics',
+      };
+      return params[key];
+    });
+
+    mockUseProducts.mockReturnValue({
+      data: { items: [], total: 0, page: 1, totalPages: 0 },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+
+    expect(mockUseProducts).toHaveBeenCalledWith({
+      search: 'laptop',
+      categorySlug: 'electronics',
+      tagSlugs: undefined,
+      page: undefined,
+      minPrice: undefined,
+      maxPrice: undefined,
+      sortBy: undefined,
+      sortOrder: undefined,
+    });
+  });
+
+  it('shows pagination when totalPages > 1', () => {
+    mockUseProducts.mockReturnValue({
+      data: {
+        items: [mockProduct],
+        total: 35,
+        page: 1,
+        totalPages: 3,
+      },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+    expect(screen.getByText('Назад')).toBeInTheDocument();
+    expect(screen.getByText('Вперёд')).toBeInTheDocument();
+  });
+
+  it('hides pagination when totalPages <= 1', () => {
+    mockUseProducts.mockReturnValue({
+      data: { items: [mockProduct], total: 1, page: 1, totalPages: 1 },
+      isLoading: false,
+      isFetching: false,
+      isError: false,
+    });
+
+    render(<ProductCatalog />);
+    expect(screen.queryByText('Назад')).not.toBeInTheDocument();
+    expect(screen.queryByText('Вперёд')).not.toBeInTheDocument();
+  });
+});

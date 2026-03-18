@@ -12,6 +12,7 @@ const mockUser: User = {
   image: null,
   googleId: "google-123",
   role: Role.CUSTOMER,
+  isBanned: false,
   createdAt: new Date(),
   updatedAt: new Date(),
 };

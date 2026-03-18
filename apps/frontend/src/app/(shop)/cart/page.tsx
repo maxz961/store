@@ -1,93 +1,98 @@
-"use client";
+'use client';
 
-import { useCartStore } from "@/store/cart";
-import Link from "next/link";
+import Link from 'next/link';
+import { ShoppingBag } from 'lucide-react';
+import { If, Then, Else } from 'react-if';
+import { Button } from '@/components/ui/button';
+import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
+import { Spinner } from '@/components/ui/Spinner';
+import { useCartStore } from '@/store/cart';
+import { formatCurrency } from '@/lib/constants/format';
+import { useLanguage } from '@/lib/i18n';
+import { CartItem } from './CartItem';
+import { s } from './page.styled';
+import { breadcrumbs } from './page.constants';
 
-export default function CartPage() {
-  const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCartStore();
 
-  if (items.length === 0) {
+const CartPage = () => {
+  const { t } = useLanguage();
+  const { items, removeItem, updateQuantity, totalPrice, totalItems, clearCart, hydrated } = useCartStore();
+
+  if (!hydrated) {
     return (
-      <div className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center gap-4 py-8">
-        <h1 className="text-2xl font-bold">Your cart is empty</h1>
-        <Link
-          href="/products"
-          className="rounded-md bg-primary px-6 py-2 text-primary-foreground hover:bg-primary/90"
-        >
-          Continue Shopping
-        </Link>
+      <div className={s.page}>
+        <Breadcrumbs items={breadcrumbs} />
+        <div className="flex min-h-[400px] items-center justify-center">
+          <Spinner />
+        </div>
       </div>
     );
   }
 
+  const handleDecrease = (id: string, qty: number) => () => updateQuantity(id, qty - 1);
+
+  const handleIncrease = (id: string, qty: number) => () => updateQuantity(id, qty + 1);
+
+  const handleRemove = (id: string) => () => removeItem(id);
+
   return (
-    <div className="container mx-auto py-8">
-      <h1 className="mb-6 text-3xl font-bold">Cart</h1>
+    <div className={s.page}>
+      <Breadcrumbs items={breadcrumbs} />
 
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-4">
-          {items.map((item) => (
-            <div key={item.id} className="flex gap-4 rounded-lg border p-4">
-              <img
-                src={item.imageUrl}
-                alt={item.name}
-                className="h-20 w-20 rounded object-cover"
-              />
-              <div className="flex flex-1 flex-col gap-1">
-                <Link href={`/products/${item.slug}`} className="font-semibold hover:text-primary">
-                  {item.name}
-                </Link>
-                <span className="text-sm font-medium">${item.price.toFixed(2)}</span>
-                <div className="mt-auto flex items-center gap-2">
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    className="h-7 w-7 rounded border text-lg leading-none hover:bg-accent"
-                  >
-                    −
-                  </button>
-                  <span className="w-8 text-center text-sm">{item.quantity}</span>
-                  <button
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                    className="h-7 w-7 rounded border text-lg leading-none hover:bg-accent"
-                    disabled={item.quantity >= item.stock}
-                  >
-                    +
-                  </button>
-                  <button
-                    onClick={() => removeItem(item.id)}
-                    className="ml-auto text-sm text-destructive hover:underline"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-              <div className="text-right font-bold">
-                ${(item.price * item.quantity).toFixed(2)}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="rounded-lg border p-6 h-fit">
-          <h2 className="mb-4 text-xl font-bold">Order Summary</h2>
-          <div className="mb-4 flex justify-between text-lg font-bold">
-            <span>Total</span>
-            <span>${totalPrice().toFixed(2)}</span>
-          </div>
-          <Link
-            href="/checkout"
-            className="block w-full rounded-md bg-primary py-3 text-center font-medium text-primary-foreground hover:bg-primary/90"
-          >
-            Checkout
-          </Link>
-          <button
-            onClick={clearCart}
-            className="mt-3 w-full text-sm text-muted-foreground hover:text-destructive"
-          >
-            Clear cart
-          </button>
-        </div>
+      <div className={s.header}>
+        <h1 className={s.title}>{t('cart.title')}</h1>
       </div>
+
+      <If condition={items.length === 0}>
+        <Then>
+          <div className={s.empty}>
+            <ShoppingBag className={s.emptyIcon} />
+            <p className={s.emptyTitle}>{t('cart.empty')}</p>
+            <p className={s.emptyText}>{t('cart.emptyText')}</p>
+            <Link href="/products">
+              <Button>{t('cart.browseCatalog')}</Button>
+            </Link>
+          </div>
+        </Then>
+        <Else>
+          <div className={s.layout}>
+            <div className={s.itemsList}>
+              {items.map((item) => (
+                <CartItem
+                  key={item.id}
+                  item={item}
+                  onDecrease={handleDecrease(item.id, item.quantity)}
+                  onIncrease={handleIncrease(item.id, item.quantity)}
+                  onRemove={handleRemove(item.id)}
+                />
+              ))}
+          </div>
+
+          <div className={s.summary}>
+            <h2 className={s.summaryTitle}>{t('cart.total')}</h2>
+            <div className={s.summaryRow}>
+              <span>{t('cart.items')}</span>
+              <span>{totalItems()} {t('product.pieces')}</span>
+            </div>
+            <div className={s.summaryDivider} />
+            <div className={s.summaryTotal}>
+              <span>{t('cart.subtotal')}</span>
+              <span>{formatCurrency(totalPrice())}</span>
+            </div>
+            <Link href="/checkout">
+              <Button size="lg" className={s.checkoutButton}>
+                {t('cart.checkout')}
+              </Button>
+            </Link>
+            <button className={s.clearButton} onClick={clearCart}>
+              {t('cart.clear')}
+            </button>
+          </div>
+        </div>
+        </Else>
+      </If>
     </div>
   );
-}
+};
+
+export default CartPage;

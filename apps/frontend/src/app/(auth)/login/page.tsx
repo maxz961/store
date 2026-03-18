@@ -1,20 +1,35 @@
-import { getGoogleLoginUrl } from "@/lib/auth";
+'use client';
 
-export default function LoginPage() {
-  const googleLoginUrl = getGoogleLoginUrl();
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { s } from './page.styled';
+
+
+const LoginPage = () => {
+  const { isAuthenticated, isLoading, login } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.replace('/products');
+    }
+  }, [isAuthenticated, router]);
+
+  if (isLoading || isAuthenticated) {
+    return null;
+  }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="w-full max-w-sm rounded-lg border p-8 shadow-sm">
-        <h1 className="mb-2 text-2xl font-bold">Sign In</h1>
-        <p className="mb-6 text-sm text-muted-foreground">
-          Sign in to your account to continue
-        </p>
-        <a
-          href={googleLoginUrl}
-          className="flex w-full items-center justify-center gap-3 rounded-md border px-4 py-2.5 font-medium transition-colors hover:bg-accent"
-        >
-          <svg viewBox="0 0 24 24" className="h-5 w-5">
+    <div className={s.page}>
+      <div className={s.card}>
+        <h1 className={s.title}>Вход в магазин</h1>
+        <p className={s.subtitle}>Войдите, чтобы оформлять заказы и отслеживать доставку</p>
+
+        <div className={s.divider} />
+
+        <button onClick={login} className={s.googleButton}>
+          <svg viewBox="0 0 24 24" className={s.googleIcon}>
             <path
               d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
               fill="#4285F4"
@@ -32,9 +47,15 @@ export default function LoginPage() {
               fill="#EA4335"
             />
           </svg>
-          Continue with Google
-        </a>
+          Продолжить с Google
+        </button>
+
+        <p className={s.footer}>
+          Мы не храним пароли — вход только через Google
+        </p>
       </div>
     </div>
   );
-}
+};
+
+export default LoginPage;
