@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { reportAdminError } from '@/lib/errorReporter';
+import { buildProductsSearchParams, type ProductsFilters } from '@/lib/buildProductsParams';
 
 
 interface Product {
@@ -79,31 +80,10 @@ export interface CreateTagInput {
   color?: string;
 }
 
-interface ProductsFilters {
-  search?: string;
-  categorySlug?: string;
-  tagSlugs?: string;
-  page?: string;
-  minPrice?: string;
-  maxPrice?: string;
-  sortBy?: string;
-  sortOrder?: string;
-}
-
 export const useProducts = (filters: ProductsFilters) => {
-  const params = new URLSearchParams();
-  if (filters.search) params.set('search', filters.search);
-  if (filters.categorySlug) params.set('categorySlug', filters.categorySlug);
-  if (filters.tagSlugs) params.set('tagSlugs', filters.tagSlugs);
-  if (filters.page) params.set('page', filters.page);
-  if (filters.minPrice) params.set('minPrice', filters.minPrice);
-  if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
-  if (filters.sortBy) params.set('sortBy', filters.sortBy);
-  if (filters.sortOrder) params.set('sortOrder', filters.sortOrder);
-
   return useQuery({
     queryKey: ['products', filters],
-    queryFn: () => api.get<ProductsResponse>(`/products?${params.toString()}`),
+    queryFn: () => api.get<ProductsResponse>(`/products?${buildProductsSearchParams(filters)}`),
     placeholderData: keepPreviousData,
   });
 };
@@ -218,3 +198,5 @@ export const useDeleteTag = () => {
     onError: (err) => reportAdminError(err, 'Удаление тега'),
   });
 };
+
+export type { ProductsFilters } from '@/lib/buildProductsParams';

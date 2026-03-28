@@ -1,40 +1,66 @@
-'use client';
-
-import { Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { ProductCatalog } from './ProductCatalog';
-import { PromoBanner } from './PromoBanner';
-import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
-import { useCategories } from '@/lib/hooks/useProducts';
-import { useLanguage } from '@/lib/i18n';
-import { getLocalizedText } from '@/lib/utils';
-import { s } from './page.styled';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
+import { createServerQueryClient } from '@/lib/queryHelpers';
+import { buildProductsSearchParams } from '@/lib/buildProductsParams';
+import { api } from '@/lib/api';
+import { ProductsPageClient } from './ProductsPageClient';
+import type { Category, Tag } from '@/lib/hooks/useProducts';
+import type { Metadata } from 'next';
 
 
-const ProductsPage = () => {
-  const searchParams = useSearchParams();
-  const categorySlug = searchParams.get('categorySlug');
-  const { data: categories = [] } = useCategories();
-  const { t, lang } = useLanguage();
+interface ProductsPageProps {
+  searchParams: Promise<{
+    search?: string;
+    categorySlug?: string;
+    tagSlugs?: string;
+    page?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    sortBy?: string;
+    sortOrder?: string;
+  }>;
+}
 
-  const activeCategory = categorySlug
-    ? categories.find((c) => c.slug === categorySlug)
-    : null;
 
-  const catalogLabel = t('catalog.title');
-  const breadcrumbs = activeCategory
-    ? [{ label: catalogLabel, href: '/products' }, { label: getLocalizedText(lang, activeCategory.name, activeCategory.nameEn) }]
-    : [{ label: catalogLabel }];
-
-  return (
-    <div className={s.page}>
-      <Breadcrumbs items={breadcrumbs} />
-      <PromoBanner />
-      <Suspense>
-        <ProductCatalog />
-      </Suspense>
-    </div>
-  );
+export const metadata: Metadata = {
+  title: 'Catalog | Store',
+  description: 'Browse our product catalog',
 };
 
-export default ProductsPage;
+
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const sp = await searchParams;
+
+  const filters = {
+    search: sp.search ?? undefined,
+    categorySlug: sp.categorySlug ?? undefined,
+    tagSlugs: sp.tagSlugs ?? undefined,
+    page: sp.page ?? undefined,
+    minPrice: sp.minPrice ?? undefined,
+    maxPrice: sp.maxPrice ?? undefined,
+    sortBy: sp.sortBy ?? undefined,
+    sortOrder: sp.sortOrder ?? undefined,
+  };
+
+  const queryClient = createServerQueryClient();
+
+  await Promise.all([
+    queryClient.prefetchQuery({
+      queryKey: ['products', filters],
+      queryFn: () => api.get(`/products?${buildProductsSearchParams(filters)}`, { server: true }),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['categories'],
+      queryFn: () => api.get<Category[]>('/categories', { server: true }),
+    }),
+    queryClient.prefetchQuery({
+      queryKey: ['tags'],
+      queryFn: () => api.get<Tag[]>('/tags', { server: true }),
+    }),
+  ]);
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProductsPageClient />
+    </HydrationBoundary>
+  );
+}
