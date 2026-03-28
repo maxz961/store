@@ -1,7 +1,9 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { api, ApiError } from '@/lib/api';
+import { createServerQueryClient } from '@/lib/queryHelpers';
 import { ProductPageClient } from './ProductPageClient';
 import type { Props } from './page.types';
 
@@ -69,5 +71,16 @@ export default async function ProductPage({ params }: Props) {
     throw error;
   }
 
-  return <ProductPageClient slug={slug} />;
+  const queryClient = createServerQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['product', slug],
+    queryFn: () => api.get(`/products/${slug}`, { server: true }),
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ProductPageClient slug={slug} />
+    </HydrationBoundary>
+  );
 }

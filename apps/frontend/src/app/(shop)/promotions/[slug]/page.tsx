@@ -1,7 +1,9 @@
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import { api, ApiError } from '@/lib/api';
+import { createServerQueryClient } from '@/lib/queryHelpers';
 import { PromotionPageClient } from './PromotionPageClient';
 
 
@@ -72,5 +74,16 @@ export default async function PromotionPage({ params }: Props) {
     throw error;
   }
 
-  return <PromotionPageClient slug={slug} />;
+  const queryClient = createServerQueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ['promotions', 'slug', slug],
+    queryFn: () => api.get(`/promotions/slug/${slug}`, { server: true }),
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <PromotionPageClient slug={slug} />
+    </HydrationBoundary>
+  );
 }

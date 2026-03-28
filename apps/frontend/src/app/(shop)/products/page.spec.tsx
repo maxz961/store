@@ -36,26 +36,26 @@ jest.mock('./PromoBanner', () => ({
   PromoBanner: () => <div data-testid="promo-banner">PromoBanner</div>,
 }));
 
-import ProductsPage from './page';
+import { ProductsPageClient } from './ProductsPageClient';
 
 
-describe('ProductsPage', () => {
+describe('ProductsPageClient', () => {
   it('renders without crashing', () => {
-    render(<ProductsPage />);
+    render(<ProductsPageClient />);
   });
 
   it('renders breadcrumb with catalog title', () => {
-    render(<ProductsPage />);
+    render(<ProductsPageClient />);
     expect(screen.getByText('Catalog')).toBeInTheDocument();
   });
 
   it('renders ProductCatalog', () => {
-    render(<ProductsPage />);
+    render(<ProductsPageClient />);
     expect(screen.getByTestId('product-catalog')).toBeInTheDocument();
   });
 
   it('renders PromoBanner', () => {
-    render(<ProductsPage />);
+    render(<ProductsPageClient />);
     expect(screen.getByTestId('promo-banner')).toBeInTheDocument();
   });
 
@@ -70,7 +70,7 @@ describe('ProductsPage', () => {
       useCategories: () => ({ data: [{ id: 'c1', name: 'Electronics', nameEn: 'Electronics', slug: 'electronics' }] }),
     }));
     // Re-import is not straightforward — simple render check is sufficient
-    render(<ProductsPage />);
+    render(<ProductsPageClient />);
     expect(screen.getByText('Catalog')).toBeInTheDocument();
   });
 });
